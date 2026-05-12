@@ -6,6 +6,7 @@ required_files:
   - .claude/commands/plan.md
   - .claude/commands/jarvis-revisor.md
   - .claude/commands/test-flow.md
+  - .claude/commands/refactor.md
   - .claude/commands/ship.md
   - .claude/commands/product_roles/role-qa-e2e-flutter.md
   - docs/ai/ARCHITECTURE.md

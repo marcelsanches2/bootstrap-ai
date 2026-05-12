@@ -13,6 +13,7 @@ REQUIRED_COMMON = [
     '.claude/commands/plan.md',
     '.claude/commands/jarvis-revisor.md',
     '.claude/commands/test-flow.md',
+    '.claude/commands/refactor.md',
     '.claude/commands/ship.md',
     '.claude/commands/product_roles/localizar-plano.md',
     '.claude/commands/product_roles/carregar-referencias.md',
@@ -225,7 +226,7 @@ def create(args):
     (kp/'CLAUDE.md').write_text(f'# CLAUDE.md\n\nContrato principal para Claude Code neste projeto.\n\n## Projeto\n\n{desc}\n\n## Processo obrigatório\n\n1. Criar plano em `plans/`.\n2. Rodar `/jarvis-revisor`.\n3. Sanar BLOCKER/MAJOR.\n4. Implementar somente o plano revisado.\n5. Rodar `/test-flow`.\n6. Rodar `/ship`.\n', encoding='utf-8')
     # copy common commands if available
     common_cmd=ROOT/'common/commands'
-    for rel in ['plan.md','jarvis-revisor.md','ship.md','product_roles/localizar-plano.md','product_roles/carregar-referencias.md','product_roles/consolidar-parecer.md','product_roles/gerar-relatorio.md']:
+    for rel in ['plan.md','jarvis-revisor.md','refactor.md','ship.md','product_roles/localizar-plano.md','product_roles/carregar-referencias.md','product_roles/consolidar-parecer.md','product_roles/gerar-relatorio.md']:
         src=common_cmd/rel; dst=kp/'.claude/commands'/rel; dst.parent.mkdir(parents=True, exist_ok=True)
         if src.exists(): shutil.copy2(src,dst)
         else: dst.write_text(f'# {rel}\n\nTODO: gerado para {name}.\n', encoding='utf-8')

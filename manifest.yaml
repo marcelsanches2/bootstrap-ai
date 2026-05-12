@@ -21,6 +21,7 @@ kits:
       - CLAUDE.md
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/test-flow.md
+      - .claude/commands/refactor.md
       - .claude/commands/product_roles/role-qa-e2e-flutter.md
       - docs/ai/ARCHITECTURE.md
       - docs/ai/CODING_STANDARDS.md
@@ -36,6 +37,7 @@ kits:
       - CLAUDE.md
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/test-flow.md
+      - .claude/commands/refactor.md
       - .claude/commands/product_roles/role-db.md
       - .claude/commands/product_roles/role-api.md
       - docs/ai/ARCHITECTURE.md
@@ -53,6 +55,7 @@ kits:
       - CLAUDE.md
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/test-flow.md
+      - .claude/commands/refactor.md
       - .claude/commands/product_roles/role-accessibility.md
       - .claude/commands/product_roles/role-performance.md
       - docs/ai/ARCHITECTURE.md
@@ -69,6 +72,7 @@ kits:
       - CLAUDE.md
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/test-flow.md
+      - .claude/commands/refactor.md
       - .claude/commands/product_roles/role-db.md
       - .claude/commands/product_roles/role-api.md
       - docs/ai/API_GUIDE.md

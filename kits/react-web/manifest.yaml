@@ -5,6 +5,7 @@ required_files:
   - CLAUDE.md
   - .claude/commands/jarvis-revisor.md
   - .claude/commands/test-flow.md
+  - .claude/commands/refactor.md
   - .claude/commands/product_roles/role-accessibility.md
   - .claude/commands/product_roles/role-performance.md
   - docs/ai/DESIGN_SYSTEM.md
