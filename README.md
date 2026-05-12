@@ -36,6 +36,42 @@ Use `--force` apenas se quiser substituir arquivos existentes.
 
 
 
+
+
+## Importer de arquivo único
+
+Se você não quiser lembrar o caminho do `project-kits`, copie apenas este arquivo para qualquer projeto:
+
+```txt
+bootstrap/import-project-kit.md
+```
+
+Destino no projeto alvo:
+
+```txt
+.claude/commands/import-project-kit.md
+```
+
+Ou instale automaticamente:
+
+```bash
+/path/para/project-kits/bin/kit install-importer /path/do/projeto
+```
+
+Depois, dentro do Claude Code no projeto alvo:
+
+```txt
+/import-project-kit
+```
+
+Ele localiza/clona `project-kits`, roda `detect`, mostra `diff`, aplica `apply auto --refresh` sem `--force` e verifica os arquivos principais.
+
+Alternativa terminal, também de arquivo único:
+
+```bash
+/path/para/project-kits/bootstrap/import-project-kit.sh /path/do/projeto
+```
+
 ## Importar em projeto novo
 
 ```bash

@@ -244,6 +244,28 @@ def create(args):
     print(f'Created kit: {name}')
     validate(argparse.Namespace(kit=name))
 
+def install_importer(args):
+    target=Path(args.target).resolve()
+    target.mkdir(parents=True, exist_ok=True)
+    src=ROOT/'bootstrap/import-project-kit.md'
+    if not src.exists(): die('bootstrap/import-project-kit.md não encontrado')
+    dst=target/'.claude/commands/import-project-kit.md'
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    if dst.exists() and not args.force:
+        if sha(src)==sha(dst):
+            print(f'Importer já instalado: {dst}')
+            return
+        ndst=Path(str(dst)+'.kit-new')
+        i=1
+        while ndst.exists():
+            ndst=Path(str(dst)+f'.kit-new.{i}'); i+=1
+        shutil.copy2(src,ndst)
+        print(f'Conflito: importer existente. Novo arquivo criado em {ndst}')
+        return
+    shutil.copy2(src,dst)
+    print(f'Importer instalado: {dst}')
+    print('Use no Claude Code: /import-project-kit')
+
 def main():
     p=argparse.ArgumentParser(prog='kit')
     sub=p.add_subparsers(dest='cmd', required=True)
@@ -253,5 +275,6 @@ def main():
     s=sub.add_parser('refresh'); s.add_argument('kit'); s.set_defaults(func=refresh)
     s=sub.add_parser('validate'); s.add_argument('kit'); s.set_defaults(func=validate)
     s=sub.add_parser('create'); s.add_argument('name'); s.add_argument('--from', dest='from_desc'); s.add_argument('--description'); s.add_argument('--force', action='store_true'); s.set_defaults(func=create)
+    s=sub.add_parser('install-importer'); s.add_argument('target'); s.add_argument('--force', action='store_true'); s.set_defaults(func=install_importer)
     args=p.parse_args(); args.func(args)
 if __name__ == '__main__': main()
