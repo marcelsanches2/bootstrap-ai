@@ -1,0 +1,76 @@
+version: 1
+
+repo:
+  name: project-kits
+  description: Project lifecycle kits for Claude Code and Hermes
+
+defaults:
+  conflict_policy: keep-existing-create-new
+  lockfile: .project-kit.lock
+  plans_dir: plans
+  docs_dir: docs/ai
+
+kits:
+  flutter-app:
+    path: kits/flutter-app
+    detects:
+      any: [pubspec.yaml]
+      contains:
+        pubspec.yaml: ["flutter:"]
+    required_files:
+      - CLAUDE.md
+      - .claude/commands/jarvis-revisor.md
+      - .claude/commands/test-flow.md
+      - .claude/commands/product_roles/role-qa-e2e-flutter.md
+      - docs/ai/ARCHITECTURE.md
+      - docs/ai/CODING_STANDARDS.md
+      - docs/ai/FEATURE_GUIDE.md
+      - docs/ai/TESTING_GUIDE.md
+
+  python-backend:
+    path: kits/python-backend
+    detects:
+      any: [pyproject.toml, requirements.txt, setup.py]
+      prefer_if: [alembic.ini, app/main.py, src]
+    required_files:
+      - CLAUDE.md
+      - .claude/commands/jarvis-revisor.md
+      - .claude/commands/test-flow.md
+      - .claude/commands/product_roles/role-db.md
+      - .claude/commands/product_roles/role-api.md
+      - docs/ai/ARCHITECTURE.md
+      - docs/ai/API_GUIDE.md
+      - docs/ai/DATABASE_GUIDE.md
+      - docs/ai/TESTING_GUIDE.md
+
+  react-web:
+    path: kits/react-web
+    detects:
+      any: [package.json]
+      contains:
+        package.json: ["react"]
+    required_files:
+      - CLAUDE.md
+      - .claude/commands/jarvis-revisor.md
+      - .claude/commands/test-flow.md
+      - .claude/commands/product_roles/role-accessibility.md
+      - .claude/commands/product_roles/role-performance.md
+      - docs/ai/ARCHITECTURE.md
+      - docs/ai/DESIGN_SYSTEM.md
+      - docs/ai/TESTING_GUIDE.md
+
+
+  node-backend:
+    path: kits/node-backend
+    detects:
+      any: [package.json]
+      prefer_if: [src, tsconfig.json]
+    required_files:
+      - CLAUDE.md
+      - .claude/commands/jarvis-revisor.md
+      - .claude/commands/test-flow.md
+      - .claude/commands/product_roles/role-db.md
+      - .claude/commands/product_roles/role-api.md
+      - docs/ai/API_GUIDE.md
+      - docs/ai/DATABASE_GUIDE.md
+      - docs/ai/TESTING_GUIDE.md

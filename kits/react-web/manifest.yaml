@@ -1,0 +1,11 @@
+name: react-web
+version: 1
+description: "React web lifecycle kit"
+required_files:
+  - CLAUDE.md
+  - .claude/commands/jarvis-revisor.md
+  - .claude/commands/test-flow.md
+  - .claude/commands/product_roles/role-accessibility.md
+  - .claude/commands/product_roles/role-performance.md
+  - docs/ai/DESIGN_SYSTEM.md
+  - docs/ai/ACCESSIBILITY_GUIDE.md

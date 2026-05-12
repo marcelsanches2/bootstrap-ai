@@ -1,0 +1,7 @@
+name: python
+checks:
+  - name: validate-template-files
+    type: local
+  - name: semantic-refresh
+    type: manual-report
+    note: "Checar versões e práticas atuais antes de aplicar automaticamente."

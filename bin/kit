@@ -1,0 +1,256 @@
+#!/usr/bin/env python3
+"""Non-destructive project lifecycle kit manager."""
+from __future__ import annotations
+import argparse, datetime as dt, filecmp, hashlib, json, os, shutil, subprocess, sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+KITS = ROOT / 'kits'
+LOCKFILE = '.project-kit.lock'
+
+REQUIRED_COMMON = [
+    'CLAUDE.md',
+    '.claude/commands/plan.md',
+    '.claude/commands/jarvis-revisor.md',
+    '.claude/commands/test-flow.md',
+    '.claude/commands/ship.md',
+    '.claude/commands/product_roles/localizar-plano.md',
+    '.claude/commands/product_roles/carregar-referencias.md',
+    '.claude/commands/product_roles/consolidar-parecer.md',
+    '.claude/commands/product_roles/gerar-relatorio.md',
+    'docs/ai/ARCHITECTURE.md',
+    'docs/ai/CODING_STANDARDS.md',
+    'docs/ai/FEATURE_GUIDE.md',
+    'docs/ai/TESTING_GUIDE.md',
+]
+
+def die(msg: str, code: int = 1) -> None:
+    print(f'erro: {msg}', file=sys.stderr)
+    raise SystemExit(code)
+
+def sha(path: Path) -> str:
+    h = hashlib.sha256(); h.update(path.read_bytes()); return h.hexdigest()
+
+def kit_path(name: str) -> Path:
+    p = KITS / name
+    if not p.is_dir():
+        die(f'kit não encontrado: {name}')
+    return p
+
+def list_kits() -> list[str]:
+    return sorted(p.name for p in KITS.iterdir() if p.is_dir()) if KITS.exists() else []
+
+def score_kit(kname: str, target: Path) -> tuple[int, list[str]]:
+    signals=[]; score=0
+    if kname == 'flutter-app':
+        if (target/'pubspec.yaml').exists(): score+=50; signals.append('pubspec.yaml found')
+        txt=(target/'pubspec.yaml').read_text(errors='ignore') if (target/'pubspec.yaml').exists() else ''
+        if 'flutter:' in txt: score+=40; signals.append('flutter: in pubspec.yaml')
+    elif kname == 'python-backend':
+        for f in ['pyproject.toml','requirements.txt','setup.py']:
+            if (target/f).exists(): score+=30; signals.append(f'{f} found')
+        for f in ['alembic.ini','app/main.py','src']:
+            if (target/f).exists(): score+=10; signals.append(f'{f} found')
+    elif kname == 'react-web':
+        pkg=target/'package.json'
+        if pkg.exists(): score+=30; signals.append('package.json found')
+        txt=pkg.read_text(errors='ignore') if pkg.exists() else ''
+        if 'react' in txt.lower(): score+=50; signals.append('react dependency/string found')
+        if any((target/f).exists() for f in ['vite.config.ts','vite.config.js','next.config.js','next.config.mjs']): score+=10; signals.append('web framework config found')
+    else:
+        # generic generated backend/service/frontend hints
+        if (target/'go.mod').exists() and 'go' in kname: score+=80; signals.append('go.mod found')
+        if (target/'package.json').exists() and any(x in kname for x in ['node','web','frontend']): score+=50; signals.append('package.json found')
+    return score, signals
+
+def detect(args):
+    target=Path(args.target).resolve()
+    if not target.exists(): die(f'target inexistente: {target}')
+    ranked=[]
+    for k in list_kits():
+        s, sig = score_kit(k, target)
+        ranked.append((s,k,sig))
+    ranked.sort(reverse=True)
+    best=ranked[0] if ranked else (0,None,[])
+    if not best[1] or best[0] == 0:
+        die('não consegui detectar kit automaticamente')
+    conf='high' if best[0] >= 70 else 'medium' if best[0] >= 40 else 'low'
+    print(f'Detected kit: {best[1]}')
+    print(f'Confidence: {conf}')
+    print('\nSignals:')
+    for s in best[2]: print(f'- {s}')
+    return best[1]
+
+def iter_files(base: Path):
+    for p in sorted(base.rglob('*')):
+        if p.is_file() and '.git' not in p.parts:
+            yield p
+
+def classify(kname: str, target: Path):
+    kp=kit_path(kname)
+    creates=[]; skips=[]; conflicts=[]
+    for src in iter_files(kp):
+        rel=src.relative_to(kp)
+        dst=target/rel
+        if not dst.exists(): creates.append(rel)
+        elif dst.is_file() and sha(src)==sha(dst): skips.append(rel)
+        else: conflicts.append(rel)
+    return creates, skips, conflicts
+
+def diff(args):
+    target=Path(args.target).resolve()
+    kname=args.kit
+    if kname=='auto':
+        ns=argparse.Namespace(target=str(target)); kname=detect(ns); print()
+    creates,skips,conflicts=classify(kname,target)
+    print(f'Kit: {kname}')
+    print(f'Target: {target}\n')
+    print('Would create:')
+    for p in creates: print(f'  {p}')
+    print('\nWould skip identical:')
+    for p in skips: print(f'  {p}')
+    print('\nWould conflict:')
+    for p in conflicts: print(f'  {p} -> {p}.kit-new')
+    print('\nNo files will be overwritten.' if not args.force else '\n--force enabled: conflicts would be overwritten.')
+
+def git_commit() -> str:
+    try:
+        return subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        return 'unknown'
+
+def refresh(args):
+    if (ROOT/'.git').exists():
+        p=subprocess.run(['git','pull','--ff-only'], cwd=ROOT, text=True, capture_output=True)
+        status='OK' if p.returncode==0 else 'WARN'
+        print(f'git pull: {status}')
+        if p.stdout.strip(): print(p.stdout.strip())
+        if p.stderr.strip(): print(p.stderr.strip(), file=sys.stderr)
+    validate(argparse.Namespace(kit=args.kit))
+    reports=ROOT/'.refresh-reports'; reports.mkdir(exist_ok=True)
+    report=reports/f'{args.kit}-{dt.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")}.md'
+    report.write_text(f'# Refresh report: {args.kit}\n\n- generated_at: {dt.datetime.utcnow().isoformat()}Z\n- structure: checked\n- semantic refresh: manual review required\n', encoding='utf-8')
+    print(f'Refresh report: {report}')
+
+def apply(args):
+    target=Path(args.target).resolve(); target.mkdir(parents=True, exist_ok=True)
+    kname=args.kit
+    if kname=='auto':
+        kname=detect(argparse.Namespace(target=str(target))); print()
+    if args.refresh:
+        refresh(argparse.Namespace(kit=kname))
+    kp=kit_path(kname)
+    created=[]; skipped=[]; conflicted=[]; overwritten=[]
+    for src in iter_files(kp):
+        rel=src.relative_to(kp); dst=target/rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if not dst.exists():
+            shutil.copy2(src,dst); created.append(str(rel))
+        elif dst.is_file() and sha(src)==sha(dst):
+            skipped.append(str(rel))
+        elif args.force:
+            shutil.copy2(src,dst); overwritten.append(str(rel))
+        else:
+            ndst=Path(str(dst)+'.kit-new')
+            i=1
+            while ndst.exists():
+                ndst=Path(str(dst)+f'.kit-new.{i}'); i+=1
+            shutil.copy2(src,ndst); conflicted.append(f'{rel} -> {ndst.relative_to(target)}')
+    lock=target/LOCKFILE
+    lock.write_text('\n'.join([
+        f'kit: {kname}',
+        'kit_version: 1',
+        f'applied_at: "{dt.datetime.utcnow().isoformat()}Z"',
+        'source_repo: "github.com/marcelsanches2/project-kits"',
+        f'source_commit: "{git_commit()}"',
+        f'conflict_policy: {"force-overwrite" if args.force else "keep-existing-create-new"}',
+        ''
+    ]), encoding='utf-8')
+    print(f'Applied kit: {kname}')
+    print(f'Created: {len(created)} | Skipped: {len(skipped)} | Conflicts: {len(conflicted)} | Overwritten: {len(overwritten)}')
+    if conflicted:
+        print('\nConflicts:')
+        for x in conflicted: print(f'- {x}')
+    print(f'Lockfile: {lock}')
+
+def validate(args):
+    kp=kit_path(args.kit)
+    missing=[]
+    req=list(REQUIRED_COMMON)
+    mf=kp/'manifest.yaml'
+    if mf.exists():
+        txt=mf.read_text(encoding='utf-8')
+        for line in txt.splitlines():
+            line=line.strip()
+            if line.startswith('- '):
+                val=line[2:].strip().strip('"\'')
+                if '/' in val or val.endswith('.md'):
+                    req.append(val)
+    for rel in sorted(set(req)):
+        if not (kp/rel).exists(): missing.append(rel)
+    # check jarvis references to product_roles
+    jr=kp/'.claude/commands/jarvis-revisor.md'
+    if jr.exists():
+        txt=jr.read_text(errors='ignore')
+        import re
+        for m in re.findall(r'product_roles/[\w\-]+\.md', txt):
+            if not (kp/'.claude/commands'/m).exists(): missing.append('.claude/commands/'+m)
+    if missing:
+        print(f'Kit {args.kit}: FAIL')
+        for m in sorted(set(missing)): print(f'- missing {m}')
+        raise SystemExit(1)
+    print(f'Kit {args.kit}: OK')
+
+def slug(s: str) -> str:
+    import re
+    s=s.lower().strip().replace('_','-')
+    return re.sub(r'[^a-z0-9-]+','-',s).strip('-')
+
+def create(args):
+    name=slug(args.name)
+    desc=args.from_desc or args.description or name
+    kp=KITS/name
+    if kp.exists() and not args.force: die(f'kit já existe: {name}')
+    kp.mkdir(parents=True, exist_ok=True)
+    typ='backend' if any(x in desc.lower() for x in ['api','backend','service','go','python','node']) else 'frontend'
+    docs=['ARCHITECTURE.md','CODING_STANDARDS.md','FEATURE_GUIDE.md','TESTING_GUIDE.md']
+    if typ=='backend': docs += ['API_GUIDE.md','DATABASE_GUIDE.md','SECURITY_GUIDE.md','OBSERVABILITY_GUIDE.md','DEPLOYMENT_GUIDE.md']
+    else: docs += ['DESIGN_SYSTEM.md','ACCESSIBILITY_GUIDE.md','PERFORMANCE_GUIDE.md','DEPLOYMENT_GUIDE.md']
+    (kp/'.claude/commands/product_roles').mkdir(parents=True, exist_ok=True)
+    (kp/'docs/ai').mkdir(parents=True, exist_ok=True)
+    (kp/'plans').mkdir(exist_ok=True)
+    (kp/'plans/.gitkeep').write_text('', encoding='utf-8')
+    (kp/'.claude/settings.json').parent.mkdir(parents=True, exist_ok=True)
+    (kp/'.claude/settings.json').write_text('{\n  "permissions": {"deny": ["Read(.env)", "Bash(rm -rf *)"]}\n}\n')
+    (kp/'CLAUDE.md').write_text(f'# CLAUDE.md\n\nContrato principal para Claude Code neste projeto.\n\n## Projeto\n\n{desc}\n\n## Processo obrigatório\n\n1. Criar plano em `plans/`.\n2. Rodar `/jarvis-revisor`.\n3. Sanar BLOCKER/MAJOR.\n4. Implementar somente o plano revisado.\n5. Rodar `/test-flow`.\n6. Rodar `/ship`.\n', encoding='utf-8')
+    # copy common commands if available
+    common_cmd=ROOT/'common/commands'
+    for rel in ['plan.md','jarvis-revisor.md','ship.md','product_roles/localizar-plano.md','product_roles/carregar-referencias.md','product_roles/consolidar-parecer.md','product_roles/gerar-relatorio.md']:
+        src=common_cmd/rel; dst=kp/'.claude/commands'/rel; dst.parent.mkdir(parents=True, exist_ok=True)
+        if src.exists(): shutil.copy2(src,dst)
+        else: dst.write_text(f'# {rel}\n\nTODO: gerado para {name}.\n', encoding='utf-8')
+    # minimal roles
+    roles=['role-pm.md','role-security.md','role-test.md','role-delivery.md']
+    if typ=='backend': roles += ['role-api.md','role-db.md','role-observability.md']
+    else: roles += ['role-designer.md','role-accessibility.md','role-performance.md']
+    for r in roles:
+        (kp/'.claude/commands/product_roles'/r).write_text(f'# {r}\n\n## Objetivo\n\nRevisar `{name}` sob a perspectiva `{r}`.\n\n## Checklist obrigatório\n\n- [ ] Escopo claro\n- [ ] Riscos identificados\n- [ ] Testes previstos\n- [ ] Pendências classificadas\n\n## Regra dura\n\nSe o plano não fornecer evidência suficiente, marque `PENDÊNCIA`.\n', encoding='utf-8')
+    tf = 'go test ./...\n' if 'go' in desc.lower() else ('pytest\nruff check\n' if 'python' in desc.lower() else 'npm test\nnpm run build\n')
+    (kp/'.claude/commands/test-flow.md').write_text(f'# /test-flow\n\nValide o projeto `{name}`.\n\nComandos base candidatos:\n\n```bash\n{tf}```\n\nDetecte comandos reais antes de executar. Não use `--no-verify`. Não maquie testes.\n', encoding='utf-8')
+    for d in docs:
+        (kp/'docs/ai'/d).write_text(f'# {d[:-3].replace("_"," ").title()}\n\nDocumento base para `{name}`.\n\nStack descrita: {desc}\n\n## Regras\n\n- Explícito > implícito.\n- Sem secrets no git.\n- Testes precisam ser determinísticos.\n- Pendências devem ser classificadas como BLOCKER, MAJOR ou MINOR.\n', encoding='utf-8')
+    (kp/'manifest.yaml').write_text(f'name: {name}\nversion: 1\ndescription: "{desc}"\nrequired_files:\n' + ''.join(f'  - docs/ai/{d}\n' for d in docs), encoding='utf-8')
+    print(f'Created kit: {name}')
+    validate(argparse.Namespace(kit=name))
+
+def main():
+    p=argparse.ArgumentParser(prog='kit')
+    sub=p.add_subparsers(dest='cmd', required=True)
+    s=sub.add_parser('detect'); s.add_argument('target'); s.set_defaults(func=detect)
+    s=sub.add_parser('diff'); s.add_argument('kit'); s.add_argument('target'); s.add_argument('--force', action='store_true'); s.set_defaults(func=diff)
+    s=sub.add_parser('apply'); s.add_argument('kit'); s.add_argument('target'); s.add_argument('--refresh', action='store_true'); s.add_argument('--force', action='store_true'); s.set_defaults(func=apply)
+    s=sub.add_parser('refresh'); s.add_argument('kit'); s.set_defaults(func=refresh)
+    s=sub.add_parser('validate'); s.add_argument('kit'); s.set_defaults(func=validate)
+    s=sub.add_parser('create'); s.add_argument('name'); s.add_argument('--from', dest='from_desc'); s.add_argument('--description'); s.add_argument('--force', action='store_true'); s.set_defaults(func=create)
+    args=p.parse_args(); args.func(args)
+if __name__ == '__main__': main()

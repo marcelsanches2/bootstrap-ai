@@ -1,0 +1,8 @@
+name: {{KIT_NAME}}
+version: 1
+description: "{{DESCRIPTION}}"
+required_files:
+  - CLAUDE.md
+  - .claude/commands/jarvis-revisor.md
+  - .claude/commands/test-flow.md
+  - docs/ai/ARCHITECTURE.md

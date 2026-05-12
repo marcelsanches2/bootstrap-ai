@@ -1,0 +1,15 @@
+name: flutter-app
+version: 1
+description: "Flutter app lifecycle kit based on PaceBattle pattern"
+required_files:
+  - CLAUDE.md
+  - .claude/commands/plan.md
+  - .claude/commands/jarvis-revisor.md
+  - .claude/commands/test-flow.md
+  - .claude/commands/ship.md
+  - .claude/commands/product_roles/role-qa-e2e-flutter.md
+  - docs/ai/ARCHITECTURE.md
+  - docs/ai/CODING_STANDARDS.md
+  - docs/ai/DESIGN_SYSTEM.md
+  - docs/ai/FEATURE_GUIDE.md
+  - docs/ai/TESTING_GUIDE.md

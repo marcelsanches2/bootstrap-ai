@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+.refresh-reports/
+.DS_Store
+.project-kit.lock
+*.kit-new
