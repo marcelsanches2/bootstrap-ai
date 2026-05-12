@@ -1,5 +1,39 @@
 {
   "permissions": {
     "deny": ["Read(.env)", "Read(.env.*)", "Bash(rm -rf *)", "Bash(git push --force*)"]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ruff check --select E,F,W --exit-zero . 2>&1 | tail -15"
+          }
+        ]
+      },
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"O usuário acabou de aceitar um plano. Invoque imediatamente a skill /jarvis-revisor para revisar o plano aceito. Não execute o plano antes da revisão.\"}}'",
+            "statusMessage": "Disparando revisão do plano..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if ! git diff --quiet HEAD -- src/ app/ tests/ alembic/ pyproject.toml requirements*.txt 2>/dev/null || [ -n \"$(git ls-files --others --exclude-standard -- src/ app/ tests/ 2>/dev/null)\" ]; then echo 'Invoque /test-flow agora' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ]
   }
 }
