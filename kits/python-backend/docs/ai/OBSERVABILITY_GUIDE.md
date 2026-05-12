@@ -48,3 +48,16 @@ Plano deve permitir descobrir:
 - usuário/tenant afetado sem vazar PII
 - dependência externa envolvida
 - se rollback resolve
+
+## Sinais de escala
+
+Para fluxo crítico ou de alto volume, monitore ao menos:
+
+- p95/p99 de latência
+- throughput por rota/job
+- taxa de erro por código
+- pool/conexões de banco quando disponível
+- backlog de fila
+- tempo de dependência externa
+
+Sem esses sinais, performance em produção vira chute.

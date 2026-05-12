@@ -8,8 +8,10 @@ required_files:
   - .claude/commands/refactor.md
   - .claude/commands/product_roles/role-db.md
   - .claude/commands/product_roles/role-api.md
+  - .claude/commands/product_roles/role-scalability.md
   - docs/ai/API_GUIDE.md
   - docs/ai/DATABASE_GUIDE.md
+  - docs/ai/SCALABILITY_GUIDE.md
 
 tech_tags:
   - python

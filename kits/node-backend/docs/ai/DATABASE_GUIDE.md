@@ -52,3 +52,9 @@ Antes de tocar produção:
 2. migration testada em cópia ou ambiente staging
 3. rollback/downgrade documentado
 4. impacto de lock estimado para tabelas grandes
+
+## Escala de leitura/escrita
+
+Para tabela ou query que pode crescer, o plano deve citar `SCALABILITY_GUIDE.md` e responder: paginação, índice, cardinalidade, concorrência, retenção e validação com volume representativo.
+
+Mudança de banco em caminho quente sem análise de escala deve ser tratada como pendência pelo `role-scalability`.

@@ -9,6 +9,7 @@ Carregue somente as referências necessárias para revisar o plano localizado.
 - `docs/ai/CODING_STANDARDS.md`
 - `docs/ai/FEATURE_GUIDE.md`
 - `docs/ai/TESTING_GUIDE.md`
+- `docs/ai/SCALABILITY_GUIDE.md` quando existir e houver volume/concorrência/produção
 
 ## Específicas por impacto
 
@@ -19,7 +20,8 @@ Carregue somente as referências necessárias para revisar o plano localizado.
 - Deploy/env/rollback: `docs/ai/DEPLOYMENT_GUIDE.md`
 - UI/design: `docs/ai/DESIGN_SYSTEM.md`
 - Acessibilidade: `docs/ai/ACCESSIBILITY_GUIDE.md`
-- Performance: `docs/ai/PERFORMANCE_GUIDE.md`
+- Performance frontend: `docs/ai/PERFORMANCE_GUIDE.md`
+- Escalabilidade/produção: `docs/ai/SCALABILITY_GUIDE.md`
 
 ## Saída obrigatória
 

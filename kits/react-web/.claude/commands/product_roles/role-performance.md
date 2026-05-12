@@ -67,6 +67,17 @@ Resultado:
 - `OK — não aplicável` se performance não é objetivo/risco.
 - `PENDÊNCIA` se otimização sem métrica ou risco sem validação.
 
+
+### 6. Escala de frontend
+
+Verifique rotas/features grandes, cache de server state, listas longas, contexto global, formulários grandes e observabilidade frontend.
+
+Resultado:
+
+- `OK` se o plano evita crescimento descontrolado de bundle/renderização/cache.
+- `OK — não aplicável` se a mudança é pequena e sem risco de escala.
+- `PENDÊNCIA` se uma tela/feature grande ignora bundle, cache, listas, rerenders ou Web Vitals.
+
 ## Saída esperada
 
 ```md
@@ -77,6 +88,7 @@ Resultado:
 - [OK/PENDÊNCIA] Renderizações — evidência objetiva e correção sugerida quando pendente.
 - [OK/PENDÊNCIA] Imagens/assets — evidência objetiva e correção sugerida quando pendente.
 - [OK/PENDÊNCIA] Medição — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Escala de frontend — evidência objetiva e correção sugerida quando pendente.
 
 ### Pendências
 

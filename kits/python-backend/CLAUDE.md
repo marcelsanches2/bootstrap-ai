@@ -29,6 +29,7 @@ Os arquivos em `docs/ai/` devem ser lidos conforme o tipo da tarefa. Não leia t
 | Modelos, migrations, índices, constraints ou queries | `docs/ai/DATABASE_GUIDE.md` |
 | Auth, autorização, secrets, PII, rate limit ou validação sensível | `docs/ai/SECURITY_GUIDE.md` |
 | Logs, métricas, tracing, healthcheck ou incidentes | `docs/ai/OBSERVABILITY_GUIDE.md` |
+| Escala, concorrência, performance backend, filas, cache, pool, carga ou produção crítica | `docs/ai/SCALABILITY_GUIDE.md` |
 | Deploy, env vars, systemd, nginx, CI/CD, release ou rollback | `docs/ai/DEPLOYMENT_GUIDE.md` |
 | Código, refactor ou testes | `docs/ai/CODING_STANDARDS.md`, `docs/ai/TESTING_GUIDE.md` |
 | Feature completa | `docs/ai/FEATURE_GUIDE.md` + documentos das áreas afetadas |
@@ -41,6 +42,7 @@ Os arquivos em `docs/ai/` devem ser lidos conforme o tipo da tarefa. Não leia t
 4. testes determinísticos
 5. observabilidade mínima para debug em produção
 6. deploy recuperável
+7. escala em produção sem adivinhar gargalo
 
 ## Regras obrigatórias
 
@@ -54,6 +56,7 @@ Os arquivos em `docs/ai/` devem ser lidos conforme o tipo da tarefa. Não leia t
 - Transações devem ter fronteira explícita.
 - Testes não podem depender de produção, relógio real sem controle ou rede externa sem mock.
 - Não criar abstração antes de existir pelo menos um uso real.
+- Plano que toca caminho crítico, banco crescente, fila ou integração externa precisa tratar escala, limites e diagnóstico.
 
 ## Processo obrigatório para mudanças não triviais
 
