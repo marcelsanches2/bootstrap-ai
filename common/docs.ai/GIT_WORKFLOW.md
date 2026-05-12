@@ -1,11 +1,45 @@
 # Git Workflow
 
-Documento comum dos project-kits.
+Fluxo Git comum para projetos usando project-kits.
 
 ## Princípios
 
-- Simples primeiro.
-- Explícito > implícito.
-- Testes determinísticos.
-- Sem secrets no git.
-- Planos ruins não passam por simpatia.
+- Commit pequeno com intenção clara.
+- Diff revisável.
+- Não commitar secrets, dumps, `.env` real, build output desnecessário ou arquivo gerado sem motivo.
+- Branch/commit deve refletir escopo da mudança.
+
+## Antes de editar
+
+```bash
+git status --short
+git branch --show-current
+```
+
+Se houver alterações do usuário, não sobrescreva sem entender.
+
+## Antes de commit
+
+```bash
+git diff --check
+git diff --stat
+```
+
+Rode também o `/test-flow` ou comandos equivalentes do kit.
+
+## Mensagem de commit
+
+Use formato direto:
+
+```txt
+feat: add billing checkout validation
+fix: handle expired session on webhook
+refactor: isolate user repository
+chore: update project kit docs
+```
+
+## Merge/deploy
+
+- PR/diff deve mencionar testes executados.
+- Mudança com migration precisa rollback/backup.
+- Mudança operacional precisa plano de deploy.
