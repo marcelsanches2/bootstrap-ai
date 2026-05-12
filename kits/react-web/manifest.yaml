@@ -10,3 +10,11 @@ required_files:
   - .claude/commands/product_roles/role-performance.md
   - docs/ai/DESIGN_SYSTEM.md
   - docs/ai/ACCESSIBILITY_GUIDE.md
+
+tech_tags:
+  - node
+  - typescript
+  - react
+  - next
+  - vite
+  - tailwind

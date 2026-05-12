@@ -14,3 +14,7 @@ required_files:
   - docs/ai/DESIGN_SYSTEM.md
   - docs/ai/FEATURE_GUIDE.md
   - docs/ai/TESTING_GUIDE.md
+
+tech_tags:
+  - dart
+  - flutter

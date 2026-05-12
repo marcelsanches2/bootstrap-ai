@@ -24,10 +24,12 @@ Depois rode no Claude Code:
 1. Encontrar a raiz do projeto atual.
 2. Garantir que o repo `project-kits` existe localmente.
 3. Atualizar o repo `project-kits`.
-4. Detectar o kit correto para o projeto atual.
-5. Mostrar diff do que será importado.
-6. Aplicar o kit em modo não destrutivo.
-7. Verificar se os arquivos principais entraram.
+4. Analisar a stack real do projeto.
+5. Validar se algum kit cobre todas as tecnologias centrais detectadas.
+6. Se faltar cobertura, criar um kit novo específico para o cenário do projeto.
+7. Mostrar diff do que será importado.
+8. Aplicar o kit em modo não destrutivo.
+9. Verificar se os arquivos principais entraram.
 
 ## Regras duras
 
@@ -84,23 +86,34 @@ git pull --ff-only
 
 Se `git pull --ff-only` falhar, pare e reporte. Não faça merge/rebase automático.
 
-### 4. Detectar kit
+### 4. Analisar stack e cobertura
+
+Antes de importar qualquer coisa, rode:
 
 ```bash
-"$PROJECT_KITS_DIR/bin/kit" detect "$ROOT"
+"$PROJECT_KITS_DIR/bin/kit" analyze "$ROOT"
 ```
 
-Se a detecção for ambígua ou falhar, pergunte ao usuário qual kit usar:
+Isso detecta tecnologias centrais por arquivos reais do projeto: `pubspec.yaml`, `pyproject.toml`, `requirements.txt`, `package.json`, `go.mod`, `Gemfile`, configs de framework, dependências e sinais de banco.
 
-- `flutter-app`
-- `python-backend`
-- `react-web`
-- `node-backend`
-
-### 5. Mostrar diff
+### 5. Selecionar ou criar kit específico
 
 ```bash
-"$PROJECT_KITS_DIR/bin/kit" diff auto "$ROOT"
+KIT="$($PROJECT_KITS_DIR/bin/kit select "$ROOT" --create-missing --print-kit)"
+printf 'Kit selecionado: %s
+' "$KIT"
+```
+
+Regra:
+
+- se um kit existente cobre a stack → use esse kit
+- se a stack tem tecnologia central não coberta → crie novo kit via `kit create`
+- exemplos que criam kit novo: Rails, Go, Python+React no mesmo repo, React+Node API no mesmo repo, stack híbrida sem cobertura
+
+### 6. Mostrar diff
+
+```bash
+"$PROJECT_KITS_DIR/bin/kit" diff "$KIT" "$ROOT"
 ```
 
 Explique que:
@@ -109,15 +122,15 @@ Explique que:
 - `Would skip identical` = já iguais
 - `Would conflict` = serão criados como `.kit-new`
 
-### 6. Aplicar kit
+### 7. Aplicar kit
 
 ```bash
-"$PROJECT_KITS_DIR/bin/kit" apply auto "$ROOT" --refresh
+"$PROJECT_KITS_DIR/bin/kit" apply "$KIT" "$ROOT" --refresh
 ```
 
 Não use `--force`.
 
-### 7. Verificar importação
+### 8. Verificar importação
 
 Verifique se existem:
 
@@ -139,7 +152,7 @@ test -f "$ROOT/.claude/commands/refactor.md" && echo "refactor OK"
 test -f "$ROOT/.project-kit.lock" && echo "lock OK"
 ```
 
-### 8. Resposta final
+### 9. Resposta final
 
 Reporte:
 

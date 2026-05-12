@@ -41,6 +41,174 @@ def kit_path(name: str) -> Path:
 def list_kits() -> list[str]:
     return sorted(p.name for p in KITS.iterdir() if p.is_dir()) if KITS.exists() else []
 
+
+def read_text_if_exists(path: Path) -> str:
+    try:
+        return path.read_text(encoding='utf-8', errors='ignore') if path.exists() and path.is_file() else ''
+    except Exception:
+        return ''
+
+def package_json(target: Path) -> dict:
+    try:
+        return json.loads((target/'package.json').read_text(encoding='utf-8'))
+    except Exception:
+        return {}
+
+def project_tech(target: Path) -> tuple[set[str], list[str]]:
+    """Detecta tecnologias relevantes para escolher/criar kit. Conservador por design."""
+    tech=set(); signals=[]
+    def add(name, sig):
+        tech.add(name); signals.append(sig)
+
+    if (target/'pubspec.yaml').exists():
+        add('dart', 'pubspec.yaml')
+        if 'flutter:' in read_text_if_exists(target/'pubspec.yaml'):
+            add('flutter', 'flutter: in pubspec.yaml')
+
+    if any((target/f).exists() for f in ['pyproject.toml','requirements.txt','setup.py']):
+        add('python', 'python packaging file')
+        py_blob='\n'.join(read_text_if_exists(target/f).lower() for f in ['pyproject.toml','requirements.txt','setup.py'])
+        for name, needle in [('fastapi','fastapi'),('django','django'),('flask','flask'),('sqlalchemy','sqlalchemy'),('alembic','alembic')]:
+            if needle in py_blob or (name == 'alembic' and (target/'alembic.ini').exists()): add(name, f'{needle} detected')
+
+    pkg=package_json(target)
+    if pkg:
+        add('node', 'package.json')
+        deps={}
+        for key in ['dependencies','devDependencies','peerDependencies','optionalDependencies']:
+            deps.update(pkg.get(key) or {})
+        scripts=pkg.get('scripts') or {}
+        dep_blob=' '.join(list(deps.keys()) + list(scripts.keys()) + list(scripts.values())).lower()
+        for name, needles in {
+            'typescript':['typescript','tsc'], 'react':['react','@vitejs/plugin-react'], 'next':['next'], 'vite':['vite'],
+            'express':['express'], 'fastify':['fastify'], 'nestjs':['@nestjs/core'], 'prisma':['prisma','@prisma/client'],
+            'drizzle':['drizzle-orm'], 'tailwind':['tailwindcss']
+        }.items():
+            if any(n in dep_blob for n in needles): add(name, f'{name} in package metadata')
+
+    if (target/'go.mod').exists(): add('go', 'go.mod')
+    if (target/'Gemfile').exists() or list(target.glob('*.gemspec')):
+        add('ruby', 'Gemfile/gemspec')
+        gem=read_text_if_exists(target/'Gemfile').lower()
+        if 'rails' in gem or (target/'config/application.rb').exists(): add('rails', 'Rails detected')
+
+    if any((target/f).exists() for f in ['Cargo.toml']): add('rust', 'Cargo.toml')
+    if any(target.glob('*.csproj')) or any(target.glob('*.sln')): add('dotnet', '.NET project file')
+    if any((target/f).exists() for f in ['pom.xml','build.gradle','build.gradle.kts']): add('java', 'JVM build file')
+
+    blob='\n'.join(read_text_if_exists(target/f).lower() for f in ['docker-compose.yml','docker-compose.yaml','.env.example','README.md','package.json','pyproject.toml','requirements.txt','Gemfile'])
+    if 'postgres' in blob or 'psycopg' in blob or '"pg"' in blob or "'pg'" in blob or 'gem "pg"' in blob or "gem 'pg'" in blob: add('postgres', 'postgres signal')
+    if 'sqlite' in blob or list(target.glob('*.sqlite')) or list(target.glob('*.db')): add('sqlite', 'sqlite signal')
+    if 'redis' in blob: add('redis', 'redis signal')
+
+    return tech, signals
+
+KIT_COVERAGE = {
+    'flutter-app': {'dart','flutter'},
+    'python-backend': {'python','fastapi','sqlalchemy','alembic','postgres','sqlite','redis'},
+    'react-web': {'node','typescript','react','next','vite','tailwind'},
+    'node-backend': {'node','typescript','express','fastify','nestjs','prisma','drizzle','postgres','sqlite','redis'},
+}
+
+# Tecnologias que devem influenciar criação de kit. Dependências auxiliares ficam fora.
+CORE_TECH = {'flutter','dart','python','fastapi','django','flask','node','typescript','react','next','vite','express','fastify','nestjs','go','ruby','rails','rust','dotnet','java'}
+
+def coverage_for_kit(kname: str) -> set[str]:
+    if kname in KIT_COVERAGE:
+        return set(KIT_COVERAGE[kname])
+    mf=KITS/kname/'manifest.yaml'
+    txt=read_text_if_exists(mf)
+    tags=set()
+    in_tags=False
+    for raw in txt.splitlines():
+        line=raw.strip()
+        if line.startswith('tech_tags:'):
+            in_tags=True; continue
+        if in_tags:
+            if line.startswith('- '): tags.add(line[2:].strip().strip('"\''))
+            elif line and not line.startswith('#'): break
+    return tags
+
+def suggested_kit_name(tech: set[str]) -> str:
+    priority=['flutter','rails','ruby','go','python','fastapi','django','flask','react','next','node','express','fastify','nestjs','rust','dotnet','java']
+    chosen=[x for x in priority if x in tech]
+    if not chosen:
+        chosen=sorted(t for t in tech if t in CORE_TECH)[:3] or ['custom']
+    # Evita criar node-react quando react-web já é suficiente; só chega aqui quando falta algo.
+    return slug('-'.join(chosen[:4]) + '-kit')
+
+def stack_description(target: Path, tech: set[str], signals: list[str]) -> str:
+    name=target.name
+    return f"Kit específico para projeto existente `{name}`. Tecnologias detectadas: {', '.join(sorted(tech)) or 'desconhecidas'}. Sinais: {', '.join(signals[:12])}."
+
+def select_kit_name(target: Path, create_missing: bool=False) -> tuple[str, set[str], set[str], list[str], bool]:
+    tech, signals = project_tech(target)
+    ranked=[]
+    for k in list_kits():
+        s, sig = score_kit(k, target)
+        covered=coverage_for_kit(k)
+        core={x for x in tech if x in CORE_TECH}
+        missing=core - covered
+        # Penaliza kit que acerta um pedaço mas deixa stack central fora.
+        penalty=len(missing)*25
+        ranked.append((s-penalty, s, k, sig, missing, covered))
+    ranked.sort(reverse=True)
+    best=ranked[0] if ranked else (0,0,None,[],set(),set())
+    core={x for x in tech if x in CORE_TECH}
+    if not core and (not best[2] or best[1] == 0):
+        missing={'custom'}
+    elif not best[2] or best[1] == 0:
+        missing=core
+    else:
+        missing=core - best[5]
+    if missing:
+        new_name=suggested_kit_name(tech)
+        if create_missing:
+            desc=stack_description(target, tech, signals)
+            if not (KITS/new_name).exists():
+                create(argparse.Namespace(name=new_name, from_desc=desc, description=None, force=False))
+                mf=KITS/new_name/'manifest.yaml'
+                txt=read_text_if_exists(mf)
+                if 'tech_tags:' not in txt:
+                    txt += 'tech_tags:\n' + ''.join(f'  - {x}\n' for x in sorted(tech))
+                    mf.write_text(txt, encoding='utf-8')
+            return new_name, tech, set(), signals, True
+        return new_name, tech, missing, signals, False
+    return best[2], tech, set(), signals, False
+
+def analyze(args):
+    target=Path(args.target).resolve()
+    tech, signals=project_tech(target)
+    kit, _tech, missing, _signals, created=select_kit_name(target, create_missing=False)
+    result={'target': str(target), 'tech': sorted(tech), 'signals': signals, 'suggested_kit': kit, 'missing_core_tech': sorted(missing), 'coverage_ok': not bool(missing)}
+    if args.json:
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+    else:
+        print(f'Target: {target}')
+        print('Detected tech: ' + (', '.join(sorted(tech)) or 'none'))
+        print('Signals:')
+        for s in signals: print(f'- {s}')
+        print(f'Suggested kit: {kit}')
+        print('Coverage: OK' if not missing else 'Coverage: MISSING ' + ', '.join(sorted(missing)))
+
+def select(args):
+    target=Path(args.target).resolve()
+    if args.print_kit:
+        import contextlib
+        with contextlib.redirect_stdout(sys.stderr):
+            kit, tech, missing, signals, created=select_kit_name(target, create_missing=args.create_missing)
+        print(kit)
+        return
+    kit, tech, missing, signals, created=select_kit_name(target, create_missing=args.create_missing)
+    print(f'Selected kit: {kit}')
+    print('Detected tech: ' + (', '.join(sorted(tech)) or 'none'))
+    if created: print('Created missing kit: yes')
+    elif missing:
+        print('Coverage missing: ' + ', '.join(sorted(missing)))
+        print(f'Run: {Path(sys.argv[0]).name} select {target} --create-missing')
+    else:
+        print('Coverage: OK')
+
 def score_kit(kname: str, target: Path) -> tuple[int, list[str]]:
     signals=[]; score=0
     if kname == 'flutter-app':
@@ -213,7 +381,7 @@ def create(args):
     kp=KITS/name
     if kp.exists() and not args.force: die(f'kit já existe: {name}')
     kp.mkdir(parents=True, exist_ok=True)
-    typ='backend' if any(x in desc.lower() for x in ['api','backend','service','go','python','node']) else 'frontend'
+    typ='backend' if any(x in desc.lower() for x in ['api','backend','service','server','go','python','node','ruby','rails','fastapi','django','flask','express','fastify','nestjs']) else 'frontend'
     docs=['ARCHITECTURE.md','CODING_STANDARDS.md','FEATURE_GUIDE.md','TESTING_GUIDE.md']
     if typ=='backend': docs += ['API_GUIDE.md','DATABASE_GUIDE.md','SECURITY_GUIDE.md','OBSERVABILITY_GUIDE.md','DEPLOYMENT_GUIDE.md']
     else: docs += ['DESIGN_SYSTEM.md','ACCESSIBILITY_GUIDE.md','PERFORMANCE_GUIDE.md','DEPLOYMENT_GUIDE.md']
@@ -270,6 +438,8 @@ def main():
     p=argparse.ArgumentParser(prog='kit')
     sub=p.add_subparsers(dest='cmd', required=True)
     s=sub.add_parser('detect'); s.add_argument('target'); s.set_defaults(func=detect)
+    s=sub.add_parser('analyze'); s.add_argument('target'); s.add_argument('--json', action='store_true'); s.set_defaults(func=analyze)
+    s=sub.add_parser('select'); s.add_argument('target'); s.add_argument('--create-missing', action='store_true'); s.add_argument('--print-kit', action='store_true'); s.set_defaults(func=select)
     s=sub.add_parser('diff'); s.add_argument('kit'); s.add_argument('target'); s.add_argument('--force', action='store_true'); s.set_defaults(func=diff)
     s=sub.add_parser('apply'); s.add_argument('kit'); s.add_argument('target'); s.add_argument('--refresh', action='store_true'); s.add_argument('--force', action='store_true'); s.set_defaults(func=apply)
     s=sub.add_parser('refresh'); s.add_argument('kit'); s.set_defaults(func=refresh)

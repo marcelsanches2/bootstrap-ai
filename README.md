@@ -64,13 +64,25 @@ Depois, dentro do Claude Code no projeto alvo:
 /import-project-kit
 ```
 
-Ele localiza/clona `project-kits`, roda `detect`, mostra `diff`, aplica `apply auto --refresh` sem `--force` e verifica os arquivos principais.
+Ele localiza/clona `project-kits`, roda `analyze`, valida se a stack é coberta por um kit existente, cria um kit novo quando faltar tecnologia central, mostra `diff`, aplica sem `--force` e verifica os arquivos principais.
 
 Alternativa terminal, também de arquivo único:
 
 ```bash
 /path/para/project-kits/bootstrap/import-project-kit.sh /path/do/projeto
 ```
+
+## Cobertura de stack antes de importar
+
+O importer não aplica cegamente o kit mais parecido. Antes ele roda:
+
+```bash
+./bin/kit analyze /path/do/projeto
+./bin/kit select /path/do/projeto --create-missing
+```
+
+Se o projeto usar tecnologia não coberta pelos kits atuais — por exemplo Rails, Go, Rust, Java, ou monorepo React+Node/Python — o `select --create-missing` cria um kit específico em `kits/<stack>-kit/` usando o `skill-creator`/`kit create`, adiciona `tech_tags` no manifest e só então importa.
+
 
 ## Importar em projeto novo
 

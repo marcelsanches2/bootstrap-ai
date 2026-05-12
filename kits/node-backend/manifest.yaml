@@ -10,3 +10,15 @@ required_files:
   - .claude/commands/product_roles/role-api.md
   - docs/ai/API_GUIDE.md
   - docs/ai/DATABASE_GUIDE.md
+
+tech_tags:
+  - node
+  - typescript
+  - express
+  - fastify
+  - nestjs
+  - prisma
+  - drizzle
+  - postgres
+  - sqlite
+  - redis

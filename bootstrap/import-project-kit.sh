@@ -34,14 +34,16 @@ log "raiz do projeto alvo: $ROOT"
 log "atualizando project-kits"
 git -C "$PROJECT_KITS_DIR" pull --ff-only
 
-log "detectando kit"
-"$PROJECT_KITS_DIR/bin/kit" detect "$ROOT" || fail "não consegui detectar kit automaticamente"
+log "analisando stack e cobertura do kit"
+"$PROJECT_KITS_DIR/bin/kit" analyze "$ROOT"
+KIT="$($PROJECT_KITS_DIR/bin/kit select "$ROOT" --create-missing --print-kit)"
+log "kit selecionado: $KIT"
 
 log "diff não destrutivo"
-"$PROJECT_KITS_DIR/bin/kit" diff auto "$ROOT"
+"$PROJECT_KITS_DIR/bin/kit" diff "$KIT" "$ROOT"
 
 log "aplicando kit sem --force"
-"$PROJECT_KITS_DIR/bin/kit" apply auto "$ROOT" --refresh
+"$PROJECT_KITS_DIR/bin/kit" apply "$KIT" "$ROOT" --refresh
 
 log "verificando arquivos principais"
 test -f "$ROOT/CLAUDE.md" || fail "CLAUDE.md ausente"
