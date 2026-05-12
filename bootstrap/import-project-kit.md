@@ -94,7 +94,7 @@ Antes de importar qualquer coisa, rode:
 "$PROJECT_KITS_DIR/bin/kit" analyze "$ROOT"
 ```
 
-Isso detecta tecnologias centrais por arquivos reais do projeto: `pubspec.yaml`, `pyproject.toml`, `requirements.txt`, `package.json`, `go.mod`, `Gemfile`, configs de framework, dependências e sinais de banco.
+Isso detecta tecnologias centrais e bibliotecas estruturais por arquivos reais do projeto: `pubspec.yaml`, `pyproject.toml`, `requirements.txt`, `package.json`, `go.mod`, `Gemfile`, configs de framework, dependências e sinais de banco. Exemplos: `dio`, `riverpod`, `go_router`, `sqlalchemy`, `alembic`, `prisma`, `tanstack-query`, `sidekiq`, `chi`, `pgx`.
 
 ### 5. Selecionar ou criar kit específico
 
@@ -106,8 +106,8 @@ printf 'Kit selecionado: %s
 
 Regra:
 
-- se um kit existente cobre a stack → use esse kit
-- se a stack tem tecnologia central não coberta → crie novo kit via `kit create`
+- se um kit existente cobre a stack e as bibliotecas estruturais → use esse kit
+- se a stack ou biblioteca estrutural não for coberta → crie novo kit via `kit create`
 - exemplos que criam kit novo: Rails, Go, Python+React no mesmo repo, React+Node API no mesmo repo, stack híbrida sem cobertura
 
 ### 6. Mostrar diff

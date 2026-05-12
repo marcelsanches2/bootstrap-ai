@@ -19,3 +19,16 @@ tech_tags:
   - postgres
   - sqlite
   - redis
+
+library_tags:
+  - pydantic
+  - pytest
+  - ruff
+  - mypy
+  - httpx
+  - requests
+  - celery
+  - psycopg
+  - asyncpg
+  - uvicorn
+  - gunicorn

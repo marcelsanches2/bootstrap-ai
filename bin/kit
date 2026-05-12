@@ -54,43 +54,113 @@ def package_json(target: Path) -> dict:
     except Exception:
         return {}
 
+
+def pubspec_deps(target: Path) -> set[str]:
+    txt=read_text_if_exists(target/'pubspec.yaml')
+    deps=set()
+    in_dep=False
+    for raw in txt.splitlines():
+        if not raw.strip() or raw.lstrip().startswith('#'):
+            continue
+        if raw.startswith(('dependencies:', 'dev_dependencies:')):
+            in_dep=True; continue
+        if raw and not raw.startswith(' ') and not raw.startswith('\t'):
+            in_dep=False
+        if in_dep:
+            line=raw.strip()
+            if ':' in line:
+                name=line.split(':',1)[0].strip()
+                if name and name not in {'sdk','flutter'}:
+                    deps.add(name)
+    return deps
+
+def python_deps(target: Path) -> set[str]:
+    blob='\n'.join(read_text_if_exists(target/f).lower() for f in ['pyproject.toml','requirements.txt','setup.py'])
+    known={'fastapi','django','flask','sqlalchemy','alembic','pydantic','pytest','ruff','mypy','httpx','requests','celery','redis','psycopg','asyncpg','uvicorn','gunicorn'}
+    return {k for k in known if k in blob}
+
+def node_deps(target: Path) -> set[str]:
+    pkg=package_json(target)
+    deps={}
+    for key in ['dependencies','devDependencies','peerDependencies','optionalDependencies']:
+        deps.update(pkg.get(key) or {})
+    scripts=pkg.get('scripts') or {}
+    names=set(deps.keys())
+    # include script tools only when they imply project workflow
+    script_blob=' '.join(list(scripts.keys()) + list(scripts.values())).lower()
+    for k in ['tsc','vite','next','jest','vitest','playwright','cypress','eslint','prettier']:
+        if k in script_blob: names.add(k)
+    return names
+
+def gem_deps(target: Path) -> set[str]:
+    gem=read_text_if_exists(target/'Gemfile').lower()
+    known={'rails','pg','puma','sidekiq','redis','rspec','rubocop','devise','graphql','faraday'}
+    return {k for k in known if k in gem}
+
 def project_tech(target: Path) -> tuple[set[str], list[str]]:
-    """Detecta tecnologias relevantes para escolher/criar kit. Conservador por design."""
+    """Detecta tecnologias e bibliotecas estruturais para escolher/criar kit.
+
+    Retorna um conjunto único por compatibilidade histórica, mas separa a decisão:
+    CORE_TECH define stack; STRUCTURAL_LIBS define bibliotecas que mudam arquitetura.
+    """
     tech=set(); signals=[]
     def add(name, sig):
         tech.add(name); signals.append(sig)
 
     if (target/'pubspec.yaml').exists():
         add('dart', 'pubspec.yaml')
-        if 'flutter:' in read_text_if_exists(target/'pubspec.yaml'):
+        txt=read_text_if_exists(target/'pubspec.yaml').lower()
+        if 'flutter:' in txt:
             add('flutter', 'flutter: in pubspec.yaml')
+        deps=pubspec_deps(target)
+        flutter_libs={
+            'dio':'dio', 'http':'http', 'graphql_flutter':'graphql_flutter',
+            'riverpod':'riverpod', 'flutter_riverpod':'flutter_riverpod', 'hooks_riverpod':'hooks_riverpod',
+            'provider':'provider', 'flutter_bloc':'flutter_bloc', 'bloc':'bloc', 'get':'getx', 'mobx':'mobx',
+            'go_router':'go_router', 'auto_route':'auto_route',
+            'freezed':'freezed', 'json_serializable':'json_serializable', 'build_runner':'build_runner',
+            'drift':'drift', 'sqflite':'sqflite', 'isar':'isar', 'hive':'hive',
+            'firebase_core':'firebase', 'firebase_auth':'firebase_auth', 'cloud_firestore':'cloud_firestore',
+            'flutter_test':'flutter_test', 'mocktail':'mocktail', 'mockito':'mockito', 'integration_test':'integration_test',
+        }
+        for dep, tag in flutter_libs.items():
+            if dep in deps: add(tag, f'{dep} in pubspec dependencies')
 
     if any((target/f).exists() for f in ['pyproject.toml','requirements.txt','setup.py']):
         add('python', 'python packaging file')
-        py_blob='\n'.join(read_text_if_exists(target/f).lower() for f in ['pyproject.toml','requirements.txt','setup.py'])
-        for name, needle in [('fastapi','fastapi'),('django','django'),('flask','flask'),('sqlalchemy','sqlalchemy'),('alembic','alembic')]:
-            if needle in py_blob or (name == 'alembic' and (target/'alembic.ini').exists()): add(name, f'{needle} detected')
+        deps=python_deps(target)
+        for name in sorted(deps):
+            add(name, f'{name} detected')
 
     pkg=package_json(target)
     if pkg:
         add('node', 'package.json')
-        deps={}
-        for key in ['dependencies','devDependencies','peerDependencies','optionalDependencies']:
-            deps.update(pkg.get(key) or {})
-        scripts=pkg.get('scripts') or {}
-        dep_blob=' '.join(list(deps.keys()) + list(scripts.keys()) + list(scripts.values())).lower()
-        for name, needles in {
-            'typescript':['typescript','tsc'], 'react':['react','@vitejs/plugin-react'], 'next':['next'], 'vite':['vite'],
-            'express':['express'], 'fastify':['fastify'], 'nestjs':['@nestjs/core'], 'prisma':['prisma','@prisma/client'],
-            'drizzle':['drizzle-orm'], 'tailwind':['tailwindcss']
-        }.items():
-            if any(n in dep_blob for n in needles): add(name, f'{name} in package metadata')
+        deps=node_deps(target)
+        node_libs={
+            'typescript':'typescript', 'tsc':'typescript', 'react':'react', '@vitejs/plugin-react':'react',
+            'next':'next', 'vite':'vite', 'tailwindcss':'tailwind',
+            'express':'express', 'fastify':'fastify', '@nestjs/core':'nestjs',
+            'prisma':'prisma', '@prisma/client':'prisma', 'drizzle-orm':'drizzle',
+            'axios':'axios', '@tanstack/react-query':'tanstack-query', 'react-query':'react-query',
+            'zustand':'zustand', 'redux':'redux', '@reduxjs/toolkit':'redux-toolkit',
+            'react-router-dom':'react-router', 'zod':'zod', 'react-hook-form':'react-hook-form',
+            'jest':'jest', 'vitest':'vitest', 'playwright':'playwright', 'cypress':'cypress',
+            'eslint':'eslint', 'prettier':'prettier'
+        }
+        for dep, tag in node_libs.items():
+            if dep in deps: add(tag, f'{dep} in package metadata')
 
-    if (target/'go.mod').exists(): add('go', 'go.mod')
+    if (target/'go.mod').exists():
+        add('go', 'go.mod')
+        gomod=read_text_if_exists(target/'go.mod').lower()
+        for needle, tag in [('gin-gonic/gin','gin'),('go-chi/chi','chi'),('gofiber/fiber','fiber'),('jackc/pgx','pgx'),('gorm.io/gorm','gorm'),('pressly/goose','goose'),('sqlc-dev/sqlc','sqlc')]:
+            if needle in gomod: add(tag, f'{tag} in go.mod')
+
     if (target/'Gemfile').exists() or list(target.glob('*.gemspec')):
         add('ruby', 'Gemfile/gemspec')
-        gem=read_text_if_exists(target/'Gemfile').lower()
-        if 'rails' in gem or (target/'config/application.rb').exists(): add('rails', 'Rails detected')
+        deps=gem_deps(target)
+        if 'rails' in deps or (target/'config/application.rb').exists(): add('rails', 'Rails detected')
+        for name in sorted(deps - {'rails'}): add(name, f'{name} in Gemfile')
 
     if any((target/f).exists() for f in ['Cargo.toml']): add('rust', 'Cargo.toml')
     if any(target.glob('*.csproj')) or any(target.glob('*.sln')): add('dotnet', '.NET project file')
@@ -104,14 +174,17 @@ def project_tech(target: Path) -> tuple[set[str], list[str]]:
     return tech, signals
 
 KIT_COVERAGE = {
-    'flutter-app': {'dart','flutter'},
-    'python-backend': {'python','fastapi','sqlalchemy','alembic','postgres','sqlite','redis'},
-    'react-web': {'node','typescript','react','next','vite','tailwind'},
-    'node-backend': {'node','typescript','express','fastify','nestjs','prisma','drizzle','postgres','sqlite','redis'},
+    'flutter-app': {'dart','flutter','dio','http','riverpod','flutter_riverpod','hooks_riverpod','go_router','freezed','json_serializable','build_runner','mocktail','mockito','integration_test'},
+    'python-backend': {'python','fastapi','sqlalchemy','alembic','postgres','sqlite','redis','pydantic','pytest','ruff','mypy','httpx','requests','celery','psycopg','asyncpg','uvicorn','gunicorn'},
+    'react-web': {'node','typescript','react','next','vite','tailwind','axios','tanstack-query','react-query','zustand','redux','redux-toolkit','react-router','zod','react-hook-form','jest','vitest','playwright','cypress','eslint','prettier'},
+    'node-backend': {'node','typescript','express','fastify','nestjs','prisma','drizzle','postgres','sqlite','redis','axios','zod','jest','vitest','playwright','eslint','prettier'},
 }
 
 # Tecnologias que devem influenciar criação de kit. Dependências auxiliares ficam fora.
 CORE_TECH = {'flutter','dart','python','fastapi','django','flask','node','typescript','react','next','vite','express','fastify','nestjs','go','ruby','rails','rust','dotnet','java'}
+LIBRARY_TAGS = {'dio','http','graphql_flutter','riverpod','flutter_riverpod','hooks_riverpod','provider','flutter_bloc','bloc','getx','mobx','go_router','auto_route','freezed','json_serializable','build_runner','drift','sqflite','isar','hive','firebase','firebase_auth','cloud_firestore','flutter_test','mocktail','mockito','integration_test','sqlalchemy','alembic','pydantic','pytest','ruff','mypy','httpx','requests','celery','psycopg','asyncpg','uvicorn','gunicorn','prisma','drizzle','axios','tanstack-query','react-query','zustand','redux','redux-toolkit','react-router','zod','react-hook-form','jest','vitest','playwright','cypress','eslint','prettier','sidekiq','devise','graphql','rspec','rubocop','faraday','gin','chi','fiber','pgx','gorm','goose','sqlc'}
+# Bibliotecas que alteram arquitetura/processo. Se o kit escolhido não cobrir, geram kit específico.
+STRUCTURAL_LIBS = {'dio','graphql_flutter','riverpod','flutter_riverpod','hooks_riverpod','provider','flutter_bloc','bloc','getx','mobx','go_router','auto_route','drift','sqflite','isar','hive','firebase','firebase_auth','cloud_firestore','sqlalchemy','alembic','django','flask','celery','prisma','drizzle','tanstack-query','react-query','zustand','redux','redux-toolkit','react-router','zod','react-hook-form','rails','sidekiq','devise','graphql','gin','chi','fiber','pgx','gorm','goose','sqlc'}
 
 def coverage_for_kit(kname: str) -> set[str]:
     if kname in KIT_COVERAGE:
@@ -122,11 +195,12 @@ def coverage_for_kit(kname: str) -> set[str]:
     in_tags=False
     for raw in txt.splitlines():
         line=raw.strip()
-        if line.startswith('tech_tags:'):
+        if line.startswith('tech_tags:') or line.startswith('library_tags:'):
             in_tags=True; continue
-        if in_tags:
-            if line.startswith('- '): tags.add(line[2:].strip().strip('"\''))
-            elif line and not line.startswith('#'): break
+        if line.endswith(':') and not line.startswith('- '):
+            in_tags=False; continue
+        if in_tags and line.startswith('- '):
+            tags.add(line[2:].strip().strip('"\''))
     return tags
 
 def suggested_kit_name(tech: set[str]) -> str:
@@ -139,7 +213,13 @@ def suggested_kit_name(tech: set[str]) -> str:
 
 def stack_description(target: Path, tech: set[str], signals: list[str]) -> str:
     name=target.name
-    return f"Kit específico para projeto existente `{name}`. Tecnologias detectadas: {', '.join(sorted(tech)) or 'desconhecidas'}. Sinais: {', '.join(signals[:12])}."
+    core=sorted(x for x in tech if x in CORE_TECH)
+    libs=sorted(x for x in tech if x in LIBRARY_TAGS and x not in CORE_TECH)
+    parts=[f"Tecnologias centrais: {', '.join(core) or 'desconhecidas'}"]
+    if libs:
+        parts.append(f"Bibliotecas estruturais/de fluxo: {', '.join(libs)}")
+    parts.append(f"Sinais: {', '.join(signals[:12])}")
+    return f"Kit específico para projeto existente `{name}`. " + '. '.join(parts) + '.'
 
 def select_kit_name(target: Path, create_missing: bool=False) -> tuple[str, set[str], set[str], list[str], bool]:
     tech, signals = project_tech(target)
@@ -147,20 +227,22 @@ def select_kit_name(target: Path, create_missing: bool=False) -> tuple[str, set[
     for k in list_kits():
         s, sig = score_kit(k, target)
         covered=coverage_for_kit(k)
+        important={x for x in tech if x in CORE_TECH or x in STRUCTURAL_LIBS}
         core={x for x in tech if x in CORE_TECH}
-        missing=core - covered
-        # Penaliza kit que acerta um pedaço mas deixa stack central fora.
+        missing=important - covered
+        # Penaliza kit que acerta um pedaço mas deixa stack/biblioteca estrutural fora.
         penalty=len(missing)*25
         ranked.append((s-penalty, s, k, sig, missing, covered))
     ranked.sort(reverse=True)
     best=ranked[0] if ranked else (0,0,None,[],set(),set())
+    important={x for x in tech if x in CORE_TECH or x in STRUCTURAL_LIBS}
     core={x for x in tech if x in CORE_TECH}
-    if not core and (not best[2] or best[1] == 0):
+    if not important and (not best[2] or best[1] == 0):
         missing={'custom'}
     elif not best[2] or best[1] == 0:
-        missing=core
+        missing=important
     else:
-        missing=core - best[5]
+        missing=important - best[5]
     if missing:
         new_name=suggested_kit_name(tech)
         if create_missing:
@@ -170,7 +252,11 @@ def select_kit_name(target: Path, create_missing: bool=False) -> tuple[str, set[
                 mf=KITS/new_name/'manifest.yaml'
                 txt=read_text_if_exists(mf)
                 if 'tech_tags:' not in txt:
-                    txt += 'tech_tags:\n' + ''.join(f'  - {x}\n' for x in sorted(tech))
+                    tech_tags=sorted(x for x in tech if x in CORE_TECH)
+                    lib_tags=sorted(x for x in tech if x in LIBRARY_TAGS and x not in CORE_TECH)
+                    txt += 'tech_tags:\n' + ''.join(f'  - {x}\n' for x in tech_tags)
+                    if lib_tags:
+                        txt += 'library_tags:\n' + ''.join(f'  - {x}\n' for x in lib_tags)
                     mf.write_text(txt, encoding='utf-8')
             return new_name, tech, set(), signals, True
         return new_name, tech, missing, signals, False
@@ -180,12 +266,14 @@ def analyze(args):
     target=Path(args.target).resolve()
     tech, signals=project_tech(target)
     kit, _tech, missing, _signals, created=select_kit_name(target, create_missing=False)
-    result={'target': str(target), 'tech': sorted(tech), 'signals': signals, 'suggested_kit': kit, 'missing_core_tech': sorted(missing), 'coverage_ok': not bool(missing)}
+    result={'target': str(target), 'tech': sorted(x for x in tech if x in CORE_TECH), 'libraries': sorted(x for x in tech if x in LIBRARY_TAGS and x not in CORE_TECH), 'signals': signals, 'suggested_kit': kit, 'missing_core_tech': sorted(x for x in missing if x in CORE_TECH), 'missing_libraries': sorted(x for x in missing if x in STRUCTURAL_LIBS and x not in CORE_TECH), 'coverage_ok': not bool(missing)}
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
         print(f'Target: {target}')
-        print('Detected tech: ' + (', '.join(sorted(tech)) or 'none'))
+        print('Detected tech: ' + (', '.join(sorted(x for x in tech if x in CORE_TECH)) or 'none'))
+        libs=sorted(x for x in tech if x in LIBRARY_TAGS and x not in CORE_TECH)
+        print('Detected libraries: ' + (', '.join(libs) or 'none'))
         print('Signals:')
         for s in signals: print(f'- {s}')
         print(f'Suggested kit: {kit}')
@@ -201,7 +289,9 @@ def select(args):
         return
     kit, tech, missing, signals, created=select_kit_name(target, create_missing=args.create_missing)
     print(f'Selected kit: {kit}')
-    print('Detected tech: ' + (', '.join(sorted(tech)) or 'none'))
+    print('Detected tech: ' + (', '.join(sorted(x for x in tech if x in CORE_TECH)) or 'none'))
+    libs=sorted(x for x in tech if x in LIBRARY_TAGS and x not in CORE_TECH)
+    print('Detected libraries: ' + (', '.join(libs) or 'none'))
     if created: print('Created missing kit: yes')
     elif missing:
         print('Coverage missing: ' + ', '.join(sorted(missing)))
@@ -404,7 +494,23 @@ def create(args):
     else: roles += ['role-designer.md','role-accessibility.md','role-performance.md']
     for r in roles:
         (kp/'.claude/commands/product_roles'/r).write_text(f'# {r}\n\n## Objetivo\n\nRevisar `{name}` sob a perspectiva `{r}`.\n\n## Checklist obrigatório\n\n- [ ] Escopo claro\n- [ ] Riscos identificados\n- [ ] Testes previstos\n- [ ] Pendências classificadas\n\n## Regra dura\n\nSe o plano não fornecer evidência suficiente, marque `PENDÊNCIA`.\n', encoding='utf-8')
-    tf = 'go test ./...\n' if 'go' in desc.lower() else ('pytest\nruff check\n' if 'python' in desc.lower() else 'npm test\nnpm run build\n')
+    dlow=desc.lower()
+    if 'flutter' in dlow or 'dart' in dlow:
+        tf = 'flutter pub get\nflutter analyze\nflutter test\n'
+    elif 'go' in dlow:
+        tf = 'go test ./...\n'
+    elif 'python' in dlow or 'fastapi' in dlow or 'django' in dlow or 'flask' in dlow:
+        tf = 'ruff check .\npytest\n'
+    elif 'ruby' in dlow or 'rails' in dlow:
+        tf = 'bundle exec rubocop\nbundle exec rspec\n'
+    elif 'rust' in dlow:
+        tf = 'cargo fmt --check\ncargo test\n'
+    elif 'java' in dlow:
+        tf = './gradlew test || mvn test\n'
+    elif 'dotnet' in dlow:
+        tf = 'dotnet test\n'
+    else:
+        tf = 'npm test\nnpm run build\n'
     (kp/'.claude/commands/test-flow.md').write_text(f'# /test-flow\n\nValide o projeto `{name}`.\n\nComandos base candidatos:\n\n```bash\n{tf}```\n\nDetecte comandos reais antes de executar. Não use `--no-verify`. Não maquie testes.\n', encoding='utf-8')
     for d in docs:
         (kp/'docs/ai'/d).write_text(f'# {d[:-3].replace("_"," ").title()}\n\nDocumento base para `{name}`.\n\nStack descrita: {desc}\n\n## Regras\n\n- Explícito > implícito.\n- Sem secrets no git.\n- Testes precisam ser determinísticos.\n- Pendências devem ser classificadas como BLOCKER, MAJOR ou MINOR.\n', encoding='utf-8')

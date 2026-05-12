@@ -18,3 +18,17 @@ required_files:
 tech_tags:
   - dart
   - flutter
+
+library_tags:
+  - dio
+  - http
+  - riverpod
+  - flutter_riverpod
+  - hooks_riverpod
+  - go_router
+  - freezed
+  - json_serializable
+  - build_runner
+  - mocktail
+  - mockito
+  - integration_test

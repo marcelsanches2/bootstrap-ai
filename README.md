@@ -72,6 +72,24 @@ Alternativa terminal, também de arquivo único:
 /path/para/project-kits/bootstrap/import-project-kit.sh /path/do/projeto
 ```
 
+## Bibliotecas estruturais
+
+O `analyze` considera também bibliotecas que definem arquitetura, não só linguagem/framework.
+
+Exemplos:
+
+```txt
+Flutter: dio, riverpod, go_router, freezed, json_serializable, drift, firebase, mocktail
+React: axios, tanstack-query, zustand, redux, react-router, zod, react-hook-form, vitest, playwright
+Python: sqlalchemy, alembic, pydantic, celery, httpx, pytest, ruff, mypy
+Node backend: prisma, drizzle, zod, jest, vitest
+Ruby/Rails: sidekiq, devise, graphql, rspec, rubocop
+Go: chi, gin, fiber, pgx, gorm, goose, sqlc
+```
+
+Regra: biblioteca auxiliar comum não cria kit novo sozinha. Biblioteca estrutural não coberta pelo kit selecionado cria um kit específico antes da importação.
+
+
 ## Cobertura de stack antes de importar
 
 O importer não aplica cegamente o kit mais parecido. Antes ele roda:

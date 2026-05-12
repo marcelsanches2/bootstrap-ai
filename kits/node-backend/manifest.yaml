@@ -22,3 +22,12 @@ tech_tags:
   - postgres
   - sqlite
   - redis
+
+library_tags:
+  - axios
+  - zod
+  - jest
+  - vitest
+  - playwright
+  - eslint
+  - prettier

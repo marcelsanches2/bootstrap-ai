@@ -18,3 +18,20 @@ tech_tags:
   - next
   - vite
   - tailwind
+
+library_tags:
+  - axios
+  - tanstack-query
+  - react-query
+  - zustand
+  - redux
+  - redux-toolkit
+  - react-router
+  - zod
+  - react-hook-form
+  - jest
+  - vitest
+  - playwright
+  - cypress
+  - eslint
+  - prettier
