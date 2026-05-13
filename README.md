@@ -32,6 +32,8 @@ CLAUDE.md
 .claude/commands/jarvis-plan-revisor.md
 .claude/commands/refactor.md
 .claude/commands/jarvis-test-flow.md
+.claude/commands/jarvis-revisor.md
+.claude/commands/jarvis-full-test.md
 .claude/commands/ship.md
 .claude/commands/carregar-contexto-projeto.md
 .claude/commands/product_roles/*
@@ -69,7 +71,7 @@ git pull --ff-only
 Onde executar os comandos:
 
 - comandos `./bin/kit ...` devem ser executados **dentro do repositório `project-kits`**;
-- comandos `/plan`, `/jarvis-plan-revisor`, `/refactor`, `/jarvis-test-flow`, `/ship` devem ser executados **dentro do projeto alvo**, depois do kit aplicado;
+- comandos `/plan`, `/jarvis-plan-revisor`, `/refactor`, `/jarvis-test-flow`, `/jarvis-revisor`, `/jarvis-full-test`, `/ship` devem ser executados **dentro do projeto alvo**, depois do kit aplicado;
 - o importer `/import-project-kit` também roda **dentro do projeto alvo** no Claude Code.
 
 ---
@@ -190,6 +192,8 @@ CLAUDE.md
 .claude/commands/jarvis-plan-revisor.md
 .claude/commands/refactor.md
 .claude/commands/jarvis-test-flow.md
+.claude/commands/jarvis-revisor.md
+.claude/commands/jarvis-full-test.md
 .claude/commands/ship.md
 docs/ai/ARCHITECTURE.md
 docs/ai/CODING_STANDARDS.md
@@ -282,6 +286,8 @@ Depois que o kit estiver no projeto alvo, o fluxo normal é dentro do Claude Cod
 /plan
 /jarvis-plan-revisor
 /jarvis-test-flow
+/jarvis-revisor
+/jarvis-full-test
 /ship
 ```
 
@@ -428,6 +434,16 @@ Revisa plano com papéis especializados em `.claude/commands/product_roles/*`.
 Planeja e executa refatoração incremental em projeto existente.
 
 ### `/jarvis-test-flow`
+
+Pipeline de validação E2E. Roda automaticamente via hook **Stop** quando há diff em arquivos da stack. Valida lint, tipos, testes unitários, integração e build.
+
+### `/jarvis-revisor`
+
+Auditoria global do projeto. Revisão profunda sob múltiplas perspectivas (arquiteto, PM, QA, security, performance, DevOps). Gera relatório com score de saúde e plano de ação priorizado. **Manual apenas** — use quando quiser um checkup completo.
+
+### `/jarvis-full-test`
+
+Regressão completa. Executa todas as camadas: lint, type check, formatação, testes unitários, integração, E2E e build. Gera relatório com PASS/PARTIAL/FAIL por fase. **Manual apenas** — use após mudanças grandes ou antes de releases.
 
 Executa validação de qualidade antes de encerrar ou commitar.
 
