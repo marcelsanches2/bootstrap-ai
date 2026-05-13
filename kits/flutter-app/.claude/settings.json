@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"O usuário acabou de aceitar um plano. Invoque imediatamente a skill /revisar-plano para revisar o plano aceito. Não execute o plano antes da revisão.\"}}'",
+            "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"O usuário acabou de aceitar um plano. Invoque imediatamente a skill /jarvis-plan-revisor para revisar o plano aceito. Não execute o plano antes da revisão.\"}}'",
             "statusMessage": "Disparando revisão do plano..."
           }
         ]
