@@ -1,4 +1,4 @@
-# project-kits
+# ai-project-kits
 
 Kits versionados de lifecycle para projetos com Claude Code e Hermes.
 
@@ -52,7 +52,7 @@ Política de escrita padrão:
 
 ---
 
-## 2. Setup inicial do `project-kits`
+## 2. Setup inicial do `ai-project-kits`
 
 Execute uma vez na sua máquina/agente:
 
@@ -64,13 +64,13 @@ cd ai-project-kits
 Se o repo já existir localmente:
 
 ```bash
-cd /path/para/project-kits
+cd /path/para/ai-project-kits
 git pull --ff-only
 ```
 
 Onde executar os comandos:
 
-- comandos `./bin/kit ...` devem ser executados **dentro do repositório `project-kits`**;
+- comandos `./bin/kit ...` devem ser executados **dentro do repositório `ai-project-kits`**;
 - comandos `/plan`, `/jarvis-plan-revisor`, `/refactor`, `/jarvis-test-flow`, `/jarvis-revisor`, `/jarvis-full-test`, `/ship` devem ser executados **dentro do projeto alvo**, depois do kit aplicado;
 - o importer `/import-project-kit` também roda **dentro do projeto alvo** no Claude Code.
 
@@ -82,10 +82,10 @@ Use este fluxo quando você estiver dentro de um projeto novo ou existente e qui
 
 ### 3.1 Instalar o importer no projeto alvo
 
-A partir do `project-kits`:
+A partir do `ai-project-kits`:
 
 ```bash
-cd /path/para/project-kits
+cd /path/para/ai-project-kits
 ./bin/kit install-importer /path/do/projeto-alvo
 ```
 
@@ -120,13 +120,14 @@ Dentro do Claude Code:
 O importer faz:
 
 1. acha a raiz do projeto alvo;
-2. localiza ou clona `marcelsanches2/ai-project-kits`;
-3. atualiza o `project-kits` com `git pull --ff-only`;
+2. usa o **source embutido** (path absoluto gravado na instalação) ou localiza/clona `marcelsanches2/ai-project-kits`;
+3. atualiza o repo com `git pull --ff-only`;
 4. roda `analyze` para detectar stack e bibliotecas estruturais;
 5. roda `select --create-missing` para escolher ou criar kit específico;
-6. mostra diff não destrutivo;
-7. aplica o kit sem `--force`;
-8. verifica arquivos principais gerados.
+6. detecta o **nome do projeto** (`package.json`, `pubspec.yaml`, `pyproject.toml` ou nome do diretório);
+7. mostra diff não destrutivo;
+8. aplica o kit com **substituição de `{{PROJECT_NAME}}`** pelo nome real do projeto;
+9. verifica arquivos principais gerados.
 
 Use este caminho para a maioria dos casos.
 
@@ -160,10 +161,10 @@ O detector usa arquivos como `pubspec.yaml`, `pyproject.toml`, `requirements.txt
 
 ### 4.2 Ver o que seria aplicado
 
-Execute dentro do `project-kits`:
+Execute dentro do `ai-project-kits`:
 
 ```bash
-cd /path/para/project-kits
+cd /path/para/ai-project-kits
 ./bin/kit detect /path/do/projeto-alvo
 ./bin/kit analyze /path/do/projeto-alvo
 ./bin/kit select /path/do/projeto-alvo --create-missing
@@ -226,10 +227,10 @@ Se houver mudanças locais, commit ou stash antes. O kit não foi feito para mis
 
 ### 5.2 Inspecionar detecção
 
-No `project-kits`:
+No `ai-project-kits`:
 
 ```bash
-cd /path/para/project-kits
+cd /path/para/ai-project-kits
 git pull --ff-only
 ./bin/kit analyze /path/do/projeto-existente
 ./bin/kit select /path/do/projeto-existente --create-missing
@@ -314,7 +315,7 @@ Regra: sem big-bang refactor, sem feature nova misturada, sem sobrescrever compo
 
 ## 7. Lista de comandos do CLI
 
-Execute estes comandos dentro do repo `project-kits`.
+Execute estes comandos dentro do repo `ai-project-kits`.
 
 ### `detect`
 
@@ -362,12 +363,15 @@ Use sempre antes de aplicar em projeto existente.
 
 ### `apply`
 
-Aplica o kit no projeto alvo.
+Aplica o kit no projeto alvo. Substitui `{{PROJECT_NAME}}` pelo nome real do projeto em todos os arquivos de texto.
 
 ```bash
 ./bin/kit apply auto /path/do/projeto --refresh
 ./bin/kit apply react-web /path/do/projeto --refresh
+./bin/kit apply auto /path/do/projeto --refresh --project-name "meu-app"
 ```
+
+Detecção automática do nome (nesta ordem): `package.json` → `pubspec.yaml` → `pyproject.toml` → basename do diretório. Use `--project-name` para forçar um nome específico.
 
 Sem `--force`, conflitos viram `<arquivo>.kit-new`.
 
@@ -402,7 +406,7 @@ Isso cria `kits/<nome>/` com `CLAUDE.md`, comandos, roles, `docs/ai`, manifest e
 
 ### `install-importer`
 
-Instala o importer de arquivo único em um projeto.
+Instala o importer de arquivo único em um projeto. O path absoluto do repo `ai-project-kits` é embutido no arquivo, então o importer sempre encontra o CLI independente de onde o repo foi clonado.
 
 ```bash
 ./bin/kit install-importer /path/do/projeto
@@ -479,7 +483,7 @@ Regra: biblioteca auxiliar comum não cria kit novo sozinha. Biblioteca estrutur
 ### Novo backend Python
 
 ```bash
-cd /path/para/project-kits
+cd /path/para/ai-project-kits
 ./bin/kit analyze /path/minha-api
 ./bin/kit diff auto /path/minha-api
 ./bin/kit apply auto /path/minha-api --refresh
@@ -500,7 +504,7 @@ Depois no Claude Code:
 cd /path/app-react
 git switch -c chore/import-project-kit
 
-cd /path/para/project-kits
+cd /path/para/ai-project-kits
 ./bin/kit diff auto /path/app-react
 ./bin/kit apply auto /path/app-react --refresh
 
@@ -518,7 +522,7 @@ Depois no Claude Code:
 ### Usando só o importer
 
 ```bash
-cd /path/para/project-kits
+cd /path/para/ai-project-kits
 ./bin/kit install-importer /path/projeto
 
 cd /path/projeto
@@ -572,25 +576,28 @@ Isso sobrescreve arquivos existentes. Só use depois de commit/backup.
 
 Depois rode o fluxo normal: `diff`, `apply` e revise os arquivos criados no projeto alvo.
 
-### O importer não achou o `project-kits`
+### O importer não achou o `ai-project-kits`
 
-Instale via caminho absoluto:
+O `install-importer` embute o path absoluto do repo no arquivo do importer, então isso só acontece se o importer foi copiado manualmente (sem `install-importer`).
 
-```bash
-/path/para/project-kits/bootstrap/import-project-kit.sh /path/do/projeto
-```
-
-Ou clone manualmente:
+Se precisar resolver manualmente:
 
 ```bash
-git clone https://github.com/marcelsanches2/ai-project-kits.git /path/para/project-kits
+# Opção 1: exportar variável de ambiente
+export PROJECT_KITS_DIR=/path/para/ai-project-kits
+
+# Opção 2: rodar o script de bootstrap
+/path/para/ai-project-kits/bootstrap/import-project-kit.sh /path/do/projeto
+
+# Opção 3: clone manual
+git clone https://github.com/marcelsanches2/ai-project-kits.git ~/workspace/ai-project-kits
 ```
 
 ---
 
 ## 12. Manutenção do repo
 
-Esta seção é para quem for editar o `project-kits`, não para quem só vai importar um kit em um projeto.
+Esta seção é para quem for editar o `ai-project-kits`, não para quem só vai importar um kit em um projeto.
 
 - `flutter-app` é referência; não reescreva casualmente.
 - `docs/ai/*.md` devem ter conteúdo operacional real, não placeholder.
