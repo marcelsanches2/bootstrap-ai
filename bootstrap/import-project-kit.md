@@ -58,23 +58,100 @@ Use `$ROOT` como projeto alvo.
 Procure nesta ordem:
 
 ```bash
+# 1. Variável de ambiente explícita
 $PROJECT_KITS_PATH
+
+# 2. Workspace comum do usuário (onde ele provavelmente clonou)
+$HOME/workspace/project-kits
+$HOME/code/project-kits
+$HOME/projects/project-kits
+$HOME/dev/project-kits
+$HOME/work/project-kits
 $HOME/repos/project-kits
-$HOME/project-kits
+$HOME/development/project-kits
+$HOME/sources/project-kits
+$HOME/src/project-kits
+
+# 3. Local padrão
 $HOME/.local/share/project-kits
+$HOME/project-kits
 ```
 
-Se não existir, clone:
+Use esta função de busca:
 
 ```bash
-mkdir -p "$HOME/.local/share"
-gh repo clone marcelsanches2/project-kits "$HOME/.local/share/project-kits"
+find_project_kits() {
+  # 1. Variável de ambiente
+  if [ -n "${PROJECT_KITS_PATH:-}" ] && [ -x "${PROJECT_KITS_PATH}/bin/kit" ]; then
+    printf '%s\n' "$PROJECT_KITS_PATH"
+    return 0
+  fi
+
+  # 2. Buscar em workspaces comuns do usuário
+  local workspace_dirs=(
+    "$HOME/workspace"
+    "$HOME/code"
+    "$HOME/projects"
+    "$HOME/dev"
+    "$HOME/work"
+    "$HOME/repos"
+    "$HOME/development"
+    "$HOME/sources"
+    "$HOME/src"
+  )
+
+  for ws in "${workspace_dirs[@]}"; do
+    if [ -x "$ws/project-kits/bin/kit" ]; then
+      printf '%s\n' "$ws/project-kits"
+      return 0
+    fi
+    # Buscar um nível mais fundo (ex: workspace/group/project-kits)
+    if [ -d "$ws" ]; then
+      local found
+      found=$(find "$ws" -maxdepth 2 -path '*/project-kits/bin/kit' -executable -print -quit 2>/dev/null | sed 's|/bin/kit$||')
+      if [ -n "$found" ]; then
+        printf '%s\n' "$found"
+        return 0
+      fi
+    fi
+  done
+
+  # 3. Locais padrão
+  for d in "$HOME/.local/share/project-kits" "$HOME/project-kits"; do
+    if [ -x "$d/bin/kit" ]; then
+      printf '%s\n' "$d"
+      return 0
+    fi
+  done
+
+  return 1
+}
 ```
 
-Se `gh` não estiver disponível, use git HTTPS:
+Se não existir em nenhum local, clone:
 
 ```bash
-git clone https://github.com/marcelsanches2/project-kits.git "$HOME/.local/share/project-kits"
+# Determinar workspace preferida do usuário
+WORKSPACE_DIR=""
+for d in "$HOME/workspace" "$HOME/code" "$HOME/projects" "$HOME/dev" "$HOME/work" "$HOME/repos"; do
+  if [ -d "$d" ]; then
+    WORKSPACE_DIR="$d"
+    break
+  fi
+done
+
+# Fallback para workspace
+if [ -z "$WORKSPACE_DIR" ]; then
+  WORKSPACE_DIR="$HOME/workspace"
+  mkdir -p "$WORKSPACE_DIR"
+fi
+
+printf 'Clonando project-kits em %s\n' "$WORKSPACE_DIR/project-kits"
+if command -v gh >/dev/null 2>&1; then
+  gh repo clone marcelsanches2/project-kits "$WORKSPACE_DIR/project-kits"
+else
+  git clone https://github.com/marcelsanches2/project-kits.git "$WORKSPACE_DIR/project-kits"
+fi
 ```
 
 ### 3. Atualizar `project-kits`
@@ -99,9 +176,8 @@ Isso detecta tecnologias centrais e bibliotecas estruturais por arquivos reais d
 ### 5. Selecionar ou criar kit específico
 
 ```bash
-KIT="$($PROJECT_KITS_DIR/bin/kit select "$ROOT" --create-missing --print-kit)"
-printf 'Kit selecionado: %s
-' "$KIT"
+KIT="$( $PROJECT_KITS_DIR/bin/kit select "$ROOT" --create-missing --print-kit )"
+printf 'Kit selecionado: %s\n' "$KIT"
 ```
 
 Regra:
