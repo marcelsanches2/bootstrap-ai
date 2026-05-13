@@ -85,7 +85,7 @@ Cada fase deve ser pequena o suficiente para validar com `/jarvis-test-flow`.
 
 ### 4. Rodar revisão multi-role
 
-Rode `/jarvis-revisor` no plano criado.
+Rode `/jarvis-plan-revisor` no plano criado.
 
 - Se houver BLOCKER: pare.
 - Se houver MAJOR: sane com o usuário antes de executar.

@@ -22,14 +22,14 @@ kits/<nome>/
 ├── manifest.yaml                          # Metadados, roles, required_files, library_tags
 ├── plans/.gitkeep
 ├── .claude/
-│   ├── settings.json                      # Hooks: ExitPlanMode → jarvis-revisor, Stop → test-flow
+│   ├── settings.json                      # Hooks: ExitPlanMode → jarvis-plan-revisor, Stop → jarvis-test-flow
 │   ├── commands/
 │   │   ├── carregar-contexto-projeto.md   # Context loader automático
-│   │   ├── jarvis-revisor.md              # Revisão multi-role de planos
+│   │   ├── jarvis-plan-revisor.md         # Revisão multi-role de planos
 │   │   ├── plan.md                        # Criação de planos técnicos
 │   │   ├── refactor.md                    # Refatoração segura incremental
 │   │   ├── ship.md                        # Checklist final de entrega
-│   │   ├── test-flow.md                   # Pipeline de validação E2E
+│   │   ├── jarvis-test-flow.md             # Pipeline de validação E2E
 │   │   └── product_roles/
 │   │       ├── carregar-referencias.md    # Helper: carrega docs por relevância
 │   │       ├── consolidar-parecer.md      # Helper: consolida pareceres
@@ -49,9 +49,9 @@ kits/<nome>/
 
 ```
 /plan          → cria plano técnico
-/jarvis-revisor → revisa plano contra docs/ai e roles (via hook ExitPlanMode)
+/jarvis-plan-revisor → revisa plano contra docs/ai e roles (via hook ExitPlanMode)
 (desenvolve)
-/test-flow     → valida tudo antes de commitar (via hook Stop)
+/jarvis-test-flow  → valida tudo antes de commitar (via hook Stop)
 /ship          → checklist final
 ```
 
@@ -60,7 +60,7 @@ kits/<nome>/
 - `prompts/create-new-kit.md` — Instrução principal para gerar o kit completo
 - `prompts/derive-docs-ai.md` — Deriva guias `docs/ai/` específicos da stack
 - `prompts/derive-roles.md` — Deriva roles de revisão específicos da stack
-- `prompts/derive-test-flow.md` — Deriva pipeline de teste específico da stack
+- `prompts/derive-jarvis-test-flow.md` — Deriva pipeline de teste específico da stack
 
 ## Estrutura dos templates
 

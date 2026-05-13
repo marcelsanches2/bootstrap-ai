@@ -7,7 +7,7 @@ Repositório de kits de lifecycle para projetos com Claude Code e Hermes.
 Cada kit é um pacote autocontido que instala processo operacional em um projeto alvo:
 
 ```txt
-/plan → /jarvis-revisor → implementação → /test-flow → /ship
+/plan → /jarvis-plan-revisor → implementação → /jarvis-test-flow → /ship
 ```
 
 Os kits NÃO são bibliotecas. São conjuntos de arquivos que vivem dentro do projeto consumidor em `.claude/commands/` e `docs/ai/`.
@@ -26,11 +26,11 @@ project-kits/
 │   ├── react-web/               # React web frontend
 │   └── node-backend/            # Node/TypeScript backend
 ├── common/                      # Recursos compartilhados entre kits
-│   ├── commands/                # Comandos genéricos (jarvis-revisor, plan, ship, refactor)
+│   ├── commands/                # Comandos genéricos (jarvis-plan-revisor, jarvis-revisor, plan, ship, refactor)
 │   ├── docs.ai/                 # Docs AI genéricos (AI_OPERATING_MODEL, CODING_STANDARDS, etc.)
 │   └── roles/                   # Roles genéricos (arquiteto, designer, pm, test, security, etc.)
 ├── generators/skill-creator/    # Gerador de novos kits
-│   ├── prompts/                 # Instruções para criação de kit, docs, roles, test-flow
+│   ├── prompts/                 # Instruções para criação de kit, docs, roles, jarvis-test-flow
 │   └── templates/               # Templates com placeholders para gerar arquivos
 ├── bootstrap/                   # Importer de arquivo único
 │   ├── import-project-kit.md    # Skill Claude Code para importar kit
@@ -145,8 +145,8 @@ Cada role DEVE ter:
 Todo kit tem 3 hooks:
 
 1. **PostToolUse (Edit|Write|MultiEdit)**: lint/typecheck rápido da stack
-2. **ExitPlanMode**: dispara `/jarvis-revisor` automaticamente quando plano é aceito
-3. **Stop**: se houver `git diff` em arquivos da stack, força `/test-flow` antes de encerrar
+2. **ExitPlanMode**: dispara `/jarvis-plan-revisor` automaticamente quando plano é aceito
+3. **Stop**: se houver `git diff` em arquivos da stack, força `/jarvis-test-flow` antes de encerrar
 
 ## Regras deste repositório
 

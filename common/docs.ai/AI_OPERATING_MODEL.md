@@ -5,7 +5,7 @@ Documento comum dos project-kits. Define como agentes devem trabalhar dentro de 
 ## Ciclo operacional
 
 ```txt
-contexto -> plano -> revisão por papéis -> execução incremental -> test-flow -> ship
+contexto -> plano -> revisão por papéis -> execução incremental -> jarvis-test-flow -> ship
 ```
 
 ## Princípios

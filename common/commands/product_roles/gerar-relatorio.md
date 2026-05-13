@@ -17,4 +17,4 @@ Plano analisado: `<arquivo>`
 ## Veredito
 ```
 
-Use exatamente um dos vereditos permitidos pelo `jarvis-revisor`.
+Use exatamente um dos vereditos permitidos pelo `jarvis-plan-revisor`.

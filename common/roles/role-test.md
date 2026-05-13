@@ -67,7 +67,7 @@ Resultado:
 
 - `OK` se comandos estão listados e executáveis.
 - `OK — não aplicável` se não há validação automatizada.
-- `PENDÊNCIA` se test-flow/lint/build está ausente.
+- `PENDÊNCIA` se jarvis-test-flow/lint/build está ausente.
 
 ## Saída esperada
 

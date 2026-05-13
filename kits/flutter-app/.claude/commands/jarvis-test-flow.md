@@ -27,7 +27,7 @@ Valida um fluxo end-to-end do app {{PROJECT_NAME}}. Argumento opcional: `flow_id
 
 3. **Inventariar teste**
    - Procurar `integration_test/{flow_id}_test.dart` ou `integration_test/app_test.dart` que cubra o flow.
-   - Verificar se existe um relatorio de revisao (`docs/revisao_*.md`, `plans/*_revisao.md` ou similar) gerado pelo `/jarvis-revisor` para o mesmo fluxo. Se existir, extrair os **Cenarios E2E sugeridos** da secao correspondente e considera-los como requisitos minimos de cobertura alem dos cenarios proprios do test-flow.
+   - Verificar se existe um relatorio de revisao (`docs/revisao_*.md`, `plans/*_revisao.md` ou similar) gerado pelo `/jarvis-plan-revisor` para o mesmo fluxo. Se existir, extrair os **Cenarios E2E sugeridos** da secao correspondente e considera-los como requisitos minimos de cobertura alem dos cenarios proprios do test-flow.
    - Se nao existir, prosseguir normalmente.
    - Se nao existir teste de integracao, criar com `package:integration_test`. Mockar `LocationService` via `ProviderScope.overrides` (sem tapar dialogos nativos). `IntegrationTestWidgetsFlutterBinding.ensureInitialized()` no inicio.
    - Validar que o teste cobre as etapas criticas e usa os dados deterministicos da massa.
