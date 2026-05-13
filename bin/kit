@@ -439,6 +439,12 @@ def apply(args):
     for src in iter_files(kp):
         rel=src.relative_to(kp); dst=target/rel
         dst.parent.mkdir(parents=True, exist_ok=True)
+        # Não sobrescrever DESIGN_SYSTEM.md se já tem conteúdo real (da design phase)
+        if rel == Path('docs/ai/DESIGN_SYSTEM.md') and dst.exists():
+            existing = read_text_if_exists(dst)
+            if existing and len(existing) > 200 and 'Gerado automaticamente' not in existing and 'Fonte:' not in existing.split('\n')[0:5]:
+                skipped.append(str(rel))
+                continue
         if not dst.exists():
             content = src.read_text(encoding='utf-8', errors='ignore') if src.suffix in ('.md', '.yaml', '.yml', '.txt', '.json', '.toml') else None
             if content and '{{PROJECT_NAME}}' in content:
@@ -542,7 +548,7 @@ def create(args):
     (kp/'CLAUDE.md').write_text(f'# CLAUDE.md\n\nContrato principal para Claude Code neste projeto.\n\n## Projeto\n\n{desc}\n\n## Processo obrigatório\n\n1. Criar plano em `plans/`.\n2. Rodar `/jarvis-revisor`.\n3. Sanar BLOCKER/MAJOR.\n4. Implementar somente o plano revisado.\n5. Rodar `/test-flow`.\n6. Rodar `/ship`.\n', encoding='utf-8')
     # copy common commands if available
     common_cmd=ROOT/'common/commands'
-    for rel in ['plan.md','jarvis-plan-revisor.md','refactor.md','ship.md','product_roles/localizar-plano.md','product_roles/carregar-referencias.md','product_roles/consolidar-parecer.md','product_roles/gerar-relatorio.md']:
+    for rel in ['plan.md','jarvis-plan-revisor.md','refactor.md','ship.md','kickoff.md','design-phase.md','product_roles/localizar-plano.md','product_roles/carregar-referencias.md','product_roles/consolidar-parecer.md','product_roles/gerar-relatorio.md']:
         src=common_cmd/rel; dst=kp/'.claude/commands'/rel; dst.parent.mkdir(parents=True, exist_ok=True)
         if src.exists(): shutil.copy2(src,dst)
         else: dst.write_text(f'# {rel}\n\nTODO: gerado para {name}.\n', encoding='utf-8')

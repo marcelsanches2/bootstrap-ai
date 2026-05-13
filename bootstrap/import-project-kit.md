@@ -59,7 +59,7 @@ fi
 
 Se o source embutido for válido, pule para o passo 3 (atualizar). Caso contrário, continue no passo 2.
 
-### 1. Resolver raiz do projeto
+### 1. Resolver raiz do projeto e detectar estado
 
 Execute:
 
@@ -68,7 +68,34 @@ ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 printf 'Project root: %s\n' "$ROOT"
 ```
 
-Use `$ROOT` como projeto alvo.
+**Detectar se é pasta vazia (projeto do zero):**
+
+```bash
+# Contar arquivos relevantes (excluindo .git e ocultos)
+FILE_COUNT=$(find "$ROOT" -maxdepth 1 -type f ! -name '.*' | wc -l)
+DIR_COUNT=$(find "$ROOT" -maxdepth 1 -type d ! -name '.*' ! -name "$(basename "$ROOT")" | wc -l)
+HAS_STACK=false
+for f in pubspec.yaml package.json pyproject.toml requirements.txt go.mod Gemfile Cargo.toml pom.xml build.gradle; do
+  if [ -f "$ROOT/$f" ]; then HAS_STACK=true; break; fi
+done
+
+if [ "$FILE_COUNT" -eq 0 ] && [ "$DIR_COUNT" -eq 0 ] && [ "$HAS_STACK" = false ]; then
+  printf 'Pasta vazia detectada. Este é um projeto novo.\n'
+  printf 'Direcionando para /kickoff (onboarding completo).\n\n'
+  printf 'Carregue o command /kickoff do kit e execute-o.\n'
+  printf 'O /kickoff vai:\n'
+  printf '  1. Coletar requisitos (7 perguntas)\n'
+  printf '  2. Gerar PRODUCT_BRIEF.md\n'
+  printf '  3. Decidir a stack\n'
+  printf '  4. Oferecer design phase (se tem front)\n'
+  printf '  5. Aplicar o kit correto\n\n'
+  printf 'Após o /kickoff completar, este command já terá sido executado.\n'
+  # STOP HERE — não continue os passos abaixo
+  return
+fi
+```
+
+Se a pasta **não** está vazia, continue normalmente com o passo 2.
 
 ### 2. Localizar ou clonar `ai-project-kits`
 
