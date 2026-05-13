@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if ! git diff --quiet HEAD -- lib/ integration_test/ pubspec.yaml 2>/dev/null || [ -n \"$(git ls-files --others --exclude-standard -- lib/ integration_test/ 2>/dev/null)\" ]; then echo 'Invoque /test-flow agora' >&2; exit 2; fi"
+            "command": "if ! git diff --quiet HEAD -- lib/ integration_test/ pubspec.yaml 2>/dev/null || [ -n \"$(git ls-files --others --exclude-standard -- lib/ integration_test/ 2>/dev/null)\" ]; then echo 'Invoque /jarvis-test-flow agora' >&2; exit 2; fi"
           }
         ]
       }

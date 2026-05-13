@@ -87,7 +87,7 @@ app.use('/api/v1/auth', rateLimit({ windowMs: 60_000, max: 5 }));
 
 ## Segurança — checklist de produção
 
-Este guia existe para orientar implementação real em `node-backend`. Ele deve ser usado por `/plan`, `/jarvis-revisor`, `/refactor` e `/test-flow` antes de qualquer mudança relevante.
+Este guia existe para orientar implementação real em `node-backend`. Ele deve ser usado por `/plan`, `/jarvis-plan-revisor`, `/refactor` e `/jarvis-test-flow` antes de qualquer mudança relevante.
 
 ### Princípios
 

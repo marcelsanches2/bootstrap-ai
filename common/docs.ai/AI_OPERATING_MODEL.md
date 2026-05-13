@@ -24,7 +24,7 @@ contexto -> plano -> revisão por papéis -> execução incremental -> test-flow
 2. Leia os `docs/ai/` relevantes.
 3. Inspecione arquivos existentes antes de sobrescrever.
 4. Crie plano em `plans/` para mudança não trivial.
-5. Rode `/jarvis-revisor` quando o kit existir.
+5. Rode `/jarvis-plan-revisor` quando o kit existir.
 
 ## Durante implementação
 
@@ -36,7 +36,7 @@ contexto -> plano -> revisão por papéis -> execução incremental -> test-flow
 
 ## Depois de implementar
 
-- Rode comandos do `/test-flow`.
+- Rode comandos do `/jarvis-test-flow`.
 - Corrija erro introduzido.
 - Gere resumo com arquivos, comandos, resultado e pendências.
 - Rode `/ship` antes de considerar pronto para merge/deploy.

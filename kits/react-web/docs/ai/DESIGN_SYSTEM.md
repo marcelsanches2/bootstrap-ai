@@ -51,7 +51,7 @@ Não aceite UI "funcional mas feia" em entrega de produto. Se o plano não defin
 
 ## Design system — checklist de produção
 
-Este guia existe para orientar implementação real em `react-web`. Ele deve ser usado por `/plan`, `/jarvis-revisor`, `/refactor` e `/test-flow` antes de qualquer mudança relevante.
+Este guia existe para orientar implementação real em `react-web`. Ele deve ser usado por `/plan`, `/jarvis-plan-revisor`, `/refactor` e `/jarvis-test-flow` antes de qualquer mudança relevante.
 
 ### Princípios
 

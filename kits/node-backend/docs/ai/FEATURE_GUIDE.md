@@ -6,9 +6,9 @@ Como desenvolver features novas no Node.js backend.
 
 1. Ler docs relevantes em `docs/ai/`.
 2. Criar plano em `plans/YYYY-MM-DD-<slug>.md`.
-3. Revisar com `/jarvis-revisor`.
+3. Revisar com `/jarvis-plan-revisor`.
 4. Implementar incrementalmente.
-5. Validar com `/test-flow`.
+5. Validar com `/jarvis-test-flow`.
 6. Checklist final com `/ship`.
 
 ## Nova feature passo a passo

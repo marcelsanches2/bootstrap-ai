@@ -55,10 +55,10 @@ Stack padrão:
 ## Processo obrigatório para mudanças não triviais
 
 1. Criar plano em `plans/` com telas, estados, arquivos, riscos e testes.
-2. Rodar `/jarvis-revisor`.
+2. Rodar `/jarvis-plan-revisor`.
 3. Sanar `BLOCKER` e `MAJOR`.
 4. Implementar incrementalmente.
-5. Rodar `/test-flow`.
+5. Rodar `/jarvis-test-flow`.
 6. Rodar `/ship`.
 
 ## Depois de alterar

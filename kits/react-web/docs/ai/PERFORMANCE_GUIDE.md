@@ -54,7 +54,7 @@ Plano de frontend grande que só fala em componente visual e ignora dados/cache/
 
 ## Performance — checklist de produção
 
-Este guia existe para orientar implementação real em `react-web`. Ele deve ser usado por `/plan`, `/jarvis-revisor`, `/refactor` e `/test-flow` antes de qualquer mudança relevante.
+Este guia existe para orientar implementação real em `react-web`. Ele deve ser usado por `/plan`, `/jarvis-plan-revisor`, `/refactor` e `/jarvis-test-flow` antes de qualquer mudança relevante.
 
 ### Princípios
 

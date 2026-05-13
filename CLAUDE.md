@@ -48,10 +48,10 @@ kits/<nome>/
 ├── manifest.yaml                          # Metadados: detecção, required_files, roles, library_tags
 ├── plans/.gitkeep
 ├── .claude/
-│   ├── settings.json                      # Hooks: ExitPlanMode → jarvis-revisor, Stop → test-flow
+│   ├── settings.json                      # Hooks: ExitPlanMode → jarvis-plan-revisor, Stop → jarvis-test-flow
 │   └── commands/
-│       ├── jarvis-revisor.md              # Revisão multi-role de planos (~200+ linhas)
-│       ├── test-flow.md                   # Pipeline de validação E2E (~200+ linhas)
+│       ├── jarvis-plan-revisor.md              # Revisão multi-role de planos (~200+ linhas)
+│       ├── jarvis-test-flow.md                   # Pipeline de validação E2E (~200+ linhas)
 │       ├── plan.md                        # Criação de planos técnicos
 │       ├── refactor.md                    # Refatoração segura incremental
 │       ├── ship.md                        # Checklist final
@@ -73,9 +73,9 @@ kits/<nome>/
 
 ```
 /plan             → cria plano em plans/YYYY-MM-DD-slug.md
-/jarvis-revisor   → revisa plano contra docs/ai e roles (hook ExitPlanMode dispara automaticamente)
+/jarvis-plan-revisor → revisa plano contra docs/ai e roles (hook ExitPlanMode dispara automaticamente)
 (desenvolve)      → hook PostToolUse roda lint rápido a cada edição
-/test-flow        → pipeline completo antes de commitar (hook Stop dispara se houver diff)
+/jarvis-test-flow  → pipeline completo antes de commitar (hook Stop dispara se houver diff)
 /ship             → checklist final
 ```
 
@@ -121,8 +121,8 @@ Biblioteca estrutural não coberta pelo kit selecionado → cria kit novo automa
 
 ## Regras de qualidade para kits
 
-- `jarvis-revisor.md`: mínimo 200 linhas
-- `test-flow.md`: mínimo 200 linhas
+- `jarvis-plan-revisor.md`: mínimo 200 linhas
+- `jarvis-test-flow.md`: mínimo 200 linhas
 - Cada `role-*.md`: mínimo 80 linhas
 - Cada `docs/ai/*.md`: mínimo 100 linhas
 - `CLAUDE.md`: mínimo 80 linhas
@@ -152,7 +152,7 @@ Todo kit tem 3 hooks:
 
 - Não commitar `.env`, `.project-kit.lock`, `.refresh-reports/` ou `*.kit-new`
 - Não usar `--force` em projetos existentes sem revisar diff
-- Não criar kit sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-revisor.md` e `test-flow.md`
+- Não criar kit sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan-revisor.md` e `jarvis-test-flow.md`
 - Manter `common/` como fallback genérico — kit específico sempre sobrepõe
 - Todo kit novo deve passar em `./bin/kit validate <nome>`
 - Templates do `skill-creator` devem ter conteúdo real, não placeholder vazio

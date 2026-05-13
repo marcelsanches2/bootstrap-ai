@@ -9,12 +9,12 @@ Um plano ou implementação só está pronto quando pode ser entendido, validado
 - Riscos de arquitetura, dados, segurança e operação considerados.
 - Testes/comandos de validação definidos.
 - Critérios de aceite verificáveis.
-- `/jarvis-revisor` sem `BLOCKER` e sem `MAJOR` pendente.
+- `/jarvis-plan-revisor` sem `BLOCKER` e sem `MAJOR` pendente.
 
 ## Para implementação
 
 - Escopo implementado sem feature creep.
-- Comandos do `/test-flow` executados ou limitação documentada.
+- Comandos do `/jarvis-test-flow` executados ou limitação documentada.
 - Erros introduzidos corrigidos.
 - Secrets fora do git.
 - Migrations/rollback documentados quando toca dados.

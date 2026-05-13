@@ -52,8 +52,8 @@ Codigo, refatoracao, review | `CLAUDE.md`, `docs/ai/CODING*`
 Tela, componente, cor, UI | `CLAUDE.md`, `docs/ai/DESIGN*`
 Feature nova, fluxo, comportamento | `CLAUDE.md`, `docs/ai/FEATURE*`
 Teste, E2E, mock, massa | `CLAUDE.md`, `docs/ai/TEST*`
-Revisar plano | `CLAUDE.md`, `plans/*.md`, `.claude/commands/jarvis-revisor*`
-Validar fluxo | `CLAUDE.md`, `.claude/commands/test-flow*`
+Revisar plano | `CLAUDE.md`, `plans/*.md`, `.claude/commands/jarvis-plan-revisor*`
+Validar fluxo | `CLAUDE.md`, `.claude/commands/jarvis-test-flow*`
 Qualquer outra coisa | `CLAUDE.md`, `README.md`, todos os `.md` em `docs/`
 
 ## 4. Respeitar skills customizadas

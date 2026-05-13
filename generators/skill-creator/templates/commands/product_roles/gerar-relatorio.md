@@ -27,7 +27,7 @@ Data: `<YYYY-MM-DD>`
 
 ## Decisão
 
-<um dos vereditos permitidos pelo jarvis-revisor>
+<um dos vereditos permitidos pelo jarvis-plan-revisor>
 
 ## Próximos passos obrigatórios
 

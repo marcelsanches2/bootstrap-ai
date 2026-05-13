@@ -48,7 +48,7 @@ Salvar em `plans/YYYY-MM-DD-refactor-<slug>.md`:
 ## Estratégia / Fases incrementais / Arquivos / Testes / Riscos / Rollback / Critérios
 ```
 
-### 4. Rodar `/jarvis-revisor` no plano.
+### 4. Rodar `/jarvis-plan-revisor` no plano.
 
 ### 5. Executar incrementalmente por fase.
 

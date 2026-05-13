@@ -25,7 +25,7 @@ git diff --check
 git diff --stat
 ```
 
-Rode também o `/test-flow` ou comandos equivalentes do kit.
+Rode também o `/jarvis-test-flow` ou comandos equivalentes do kit.
 
 ## Mensagem de commit
 

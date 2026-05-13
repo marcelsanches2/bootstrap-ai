@@ -2,7 +2,7 @@
 description: Validar um fluxo E2E garantindo massa deterministica, integration test, comparacao visual com Figma e relatorio atualizado.
 ---
 
-# /test-flow
+# /jarvis-test-flow
 
 Valida um fluxo end-to-end do app {{PROJECT_NAME}}. Argumento opcional: `flow_id` (ex.: `home_guest_location_zones`).
 

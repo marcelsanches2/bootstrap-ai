@@ -4,8 +4,8 @@ description: "Flutter app lifecycle kit based on PaceBattle pattern"
 required_files:
   - CLAUDE.md
   - .claude/commands/plan.md
-  - .claude/commands/jarvis-revisor.md
-  - .claude/commands/test-flow.md
+  - .claude/commands/jarvis-plan-revisor.md
+  - .claude/commands/jarvis-test-flow.md
   - .claude/commands/refactor.md
   - .claude/commands/ship.md
   - .claude/commands/product_roles/role-qa-e2e-flutter.md

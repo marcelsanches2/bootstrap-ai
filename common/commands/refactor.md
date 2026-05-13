@@ -81,7 +81,7 @@ Formato obrigatório:
 ## Critérios de aceite
 ```
 
-Cada fase deve ser pequena o suficiente para validar com `/test-flow`.
+Cada fase deve ser pequena o suficiente para validar com `/jarvis-test-flow`.
 
 ### 4. Rodar revisão multi-role
 
@@ -97,7 +97,7 @@ Para cada fase aprovada:
 
 1. aplicar mudança mínima
 2. rodar validação específica
-3. rodar `/test-flow` quando a fase alterar comportamento, arquitetura, testes, build ou contrato
+3. rodar `/jarvis-test-flow` quando a fase alterar comportamento, arquitetura, testes, build ou contrato
 4. registrar resultado no plano ou relatório
 5. parar se a causa raiz exigir ampliar escopo
 

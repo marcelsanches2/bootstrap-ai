@@ -3,8 +3,8 @@ version: 1
 description: "Python backend lifecycle kit"
 required_files:
   - CLAUDE.md
-  - .claude/commands/jarvis-revisor.md
-  - .claude/commands/test-flow.md
+  - .claude/commands/jarvis-plan-revisor.md
+  - .claude/commands/jarvis-test-flow.md
   - .claude/commands/refactor.md
   - .claude/commands/product_roles/role-db.md
   - .claude/commands/product_roles/role-api.md

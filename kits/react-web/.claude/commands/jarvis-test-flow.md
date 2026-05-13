@@ -2,7 +2,7 @@
 description: Valida um fluxo E2E garantindo massa deterministica, testes de componente, verificacao de acessibilidade e relatorio atualizado.
 ---
 
-# /test-flow
+# /jarvis-test-flow
 
 Valida um fluxo end-to-end do app React Web {{PROJECT_NAME}}. Argumento opcional: `flow_id` (ex.: `user_login`, `product_list`, `checkout_flow`).
 

@@ -5,7 +5,7 @@ Kits versionados de lifecycle para projetos com Claude Code e Hermes.
 O objetivo não é só copiar arquivos. Cada kit instala um processo operacional no projeto alvo:
 
 ```txt
-bootstrap → /plan → /jarvis-revisor → implementação → /test-flow → /ship
+bootstrap → /plan → /jarvis-plan-revisor → implementação → /jarvis-test-flow → /ship
 ```
 
 Os kits são arquivos de operação do projeto: `CLAUDE.md`, `.claude/commands/*`, `.claude/settings.json`, `docs/ai/*` e `plans/`.
@@ -27,9 +27,9 @@ Cada kit instala no projeto alvo:
 CLAUDE.md
 .claude/settings.json
 .claude/commands/plan.md
-.claude/commands/jarvis-revisor.md
+.claude/commands/jarvis-plan-revisor.md
 .claude/commands/refactor.md
-.claude/commands/test-flow.md
+.claude/commands/jarvis-jarvis-test-flow.md
 .claude/commands/ship.md
 .claude/commands/carregar-contexto-projeto.md
 .claude/commands/product_roles/*
@@ -67,7 +67,7 @@ git pull --ff-only
 Onde executar os comandos:
 
 - comandos `./bin/kit ...` devem ser executados **dentro do repositório `project-kits`**;
-- comandos `/plan`, `/jarvis-revisor`, `/refactor`, `/test-flow`, `/ship` devem ser executados **dentro do projeto alvo**, depois do kit aplicado;
+- comandos `/plan`, `/jarvis-plan-revisor`, `/refactor`, `/jarvis-test-flow`, `/ship` devem ser executados **dentro do projeto alvo**, depois do kit aplicado;
 - o importer `/import-project-kit` também roda **dentro do projeto alvo** no Claude Code.
 
 ---
@@ -185,9 +185,9 @@ Confira se foram criados:
 CLAUDE.md
 .claude/settings.json
 .claude/commands/plan.md
-.claude/commands/jarvis-revisor.md
+.claude/commands/jarvis-plan-revisor.md
 .claude/commands/refactor.md
-.claude/commands/test-flow.md
+.claude/commands/jarvis-jarvis-test-flow.md
 .claude/commands/ship.md
 docs/ai/ARCHITECTURE.md
 docs/ai/CODING_STANDARDS.md
@@ -278,8 +278,8 @@ Depois que o kit estiver no projeto alvo, o fluxo normal é dentro do Claude Cod
 ```txt
 /carregar-contexto-projeto
 /plan
-/jarvis-revisor
-/test-flow
+/jarvis-plan-revisor
+/jarvis-test-flow
 /ship
 ```
 
@@ -294,10 +294,10 @@ O `/refactor` não sai alterando código diretamente. Ele primeiro:
 1. carrega `CLAUDE.md` e `docs/ai/*`;
 2. inventaria arquitetura, testes, configs e dívidas;
 3. cria `plans/YYYY-MM-DD-refactor-<slug>.md`;
-4. roda `/jarvis-revisor`;
+4. roda `/jarvis-plan-revisor`;
 5. saneia `BLOCKER` e `MAJOR` com o usuário;
 6. executa por fases pequenas;
-7. roda `/test-flow` por fase relevante;
+7. roda `/jarvis-test-flow` por fase relevante;
 8. gera `docs/refactor_report_<slug>.md`.
 
 Regra: sem big-bang refactor, sem feature nova misturada, sem sobrescrever comportamento sem teste.
@@ -390,7 +390,7 @@ Cria kit para tecnologia nova.
 ./bin/kit create rails-app --from "Rails 8 com PostgreSQL, Sidekiq, RSpec e deploy via systemd"
 ```
 
-Isso cria `kits/<nome>/` com `CLAUDE.md`, comandos, roles, `docs/ai`, manifest e `test-flow` inicial.
+Isso cria `kits/<nome>/` com `CLAUDE.md`, comandos, roles, `docs/ai`, manifest e `jarvis-test-flow` inicial.
 
 ### `install-importer`
 
@@ -417,7 +417,7 @@ Carrega `CLAUDE.md`, docs relevantes e estado do projeto antes de qualquer taref
 
 Cria plano técnico em `plans/` antes de implementar.
 
-### `/jarvis-revisor`
+### `/jarvis-plan-revisor`
 
 Revisa plano com papéis especializados em `.claude/commands/product_roles/*`.
 
@@ -425,7 +425,7 @@ Revisa plano com papéis especializados em `.claude/commands/product_roles/*`.
 
 Planeja e executa refatoração incremental em projeto existente.
 
-### `/test-flow`
+### `/jarvis-test-flow`
 
 Executa validação de qualidade antes de encerrar ou commitar.
 

@@ -1,6 +1,6 @@
-# derive-test-flow.md
+# derive-jarvis-test-flow.md
 
-Gere o `test-flow.md` específico para a stack.
+Gere o `jarvis-test-flow.md` específico para a stack.
 
 ## Input
 
@@ -10,22 +10,22 @@ Gere o `test-flow.md` específico para a stack.
 
 ## Referência
 
-Leia os test-flow dos kits existentes antes de gerar:
+Leia os jarvis-test-flow dos kits existentes antes de gerar:
 
-- `kits/flutter-app/.claude/commands/test-flow.md` (~11k chars, mobile com Figma validation)
-- `kits/python-backend/.claude/commands/test-flow.md` (~9k chars, backend com pytest/ruff/mypy/alembic)
-- `kits/react-web/.claude/commands/test-flow.md` (~9.5k chars, frontend com testing-library/MSW/tsc)
-- `kits/node-backend/.claude/commands/test-flow.md` (~9.6k chars, backend com jest|vitest/tsc/prisma)
+- `kits/flutter-app/.claude/commands/jarvis-test-flow.md` (~11k chars, mobile com Figma validation)
+- `kits/python-backend/.claude/commands/jarvis-test-flow.md` (~9k chars, backend com pytest/ruff/mypy/alembic)
+- `kits/react-web/.claude/commands/jarvis-test-flow.md` (~9.5k chars, frontend com testing-library/MSW/tsc)
+- `kits/node-backend/.claude/commands/jarvis-test-flow.md` (~9.6k chars, backend com jest|vitest/tsc/prisma)
 
 ## Estrutura obrigatória
 
-O test-flow DEVE seguir esta estrutura (mesma dos kits existentes):
+O jarvis-test-flow DEVE seguir esta estrutura (mesma dos kits existentes):
 
 ```
 0. Avaliar tamanho da task (GRANDE/PEQUENA)
 1. Determinar flow_id
 2. Inventariar massa (fixtures/mocks deterministicos)
-3. Inventariar teste (com cross-ref ao jarvis-revisor)
+3. Inventariar teste (com cross-ref ao jarvis-plan-revisor)
 4. Executar pipeline (lint → typecheck → test → migration → build → healthcheck)
 4a. Loop de diagnóstico e correcao (classifica causa, planeja, corrige, max 3 tentativas)
 5. Gerar relatório em docs/test_report_{flow_id}.md

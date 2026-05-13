@@ -46,15 +46,15 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 
 4. Use o template `templates/settings.json` e adapte:
    - `PostToolUse` (Edit|Write|MultiEdit): comando de lint/typecheck da stack
-   - `PostToolUse` (ExitPlanMode): trigger do jarvis-revisor
-   - `Stop`: detecta mudanças em arquivos da stack e força /test-flow
+   - `PostToolUse` (ExitPlanMode): trigger do jarvis-plan-revisor
+   - `Stop`: detecta mudanças em arquivos da stack e força /jarvis-test-flow
    - `permissions.deny`: manter padrão (.env, rm -rf, git push --force)
 
 ### .claude/commands/ (comandos do lifecycle)
 
 5. **`carregar-contexto-projeto.md`** — Copiar de `templates/commands/carregar-contexto-projeto.md` (genérico, não muda por stack).
 
-6. **`jarvis-revisor.md`** — Use o kit mais similar como base. Adapte:
+6. **`jarvis-plan-revisor.md`** — Use o kit mais similar como base. Adapte:
    - Lista de docs/ai a carregar
    - Lista de roles a executar
    - Regras de bloqueio específicas da stack
@@ -67,7 +67,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 
 9. **`ship.md`** — Copiar de `templates/commands/ship.md` (genérico).
 
-10. **`test-flow.md`** — Use `prompts/derive-test-flow.md` para gerar. Deve ter o mesmo nível de detalhe dos kits existentes (~9000+ chars).
+10. **`jarvis-test-flow.md`** — Use `prompts/derive-jarvis-test-flow.md` para gerar. Deve ter o mesmo nível de detalhe dos kits existentes (~9000+ chars).
 
 ### .claude/commands/product_roles/ (helpers + roles)
 
@@ -112,6 +112,6 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 - Cada arquivo deve ter conteúdo substancial comparável aos kits existentes.
 - Roles devem ter pelo menos 80 linhas cada.
 - Docs AI devem ter pelo menos 100 linhas cada.
-- test-flow deve ter pelo menos 200 linhas.
-- jarvis-revisor deve ter pelo menos 200 linhas.
+- jarvis-test-flow deve ter pelo menos 200 linhas.
+- jarvis-plan-revisor deve ter pelo menos 200 linhas.
 - CLAUDE.md deve ter pelo menos 80 linhas.
