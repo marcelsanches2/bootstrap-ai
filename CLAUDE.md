@@ -1,0 +1,159 @@
+# CLAUDE.md — project-kits
+
+## Projeto
+
+Repositório de kits de lifecycle para projetos com Claude Code e Hermes.
+
+Cada kit é um pacote autocontido que instala processo operacional em um projeto alvo:
+
+```txt
+/plan → /jarvis-revisor → implementação → /test-flow → /ship
+```
+
+Os kits NÃO são bibliotecas. São conjuntos de arquivos que vivem dentro do projeto consumidor em `.claude/commands/` e `docs/ai/`.
+
+## Estrutura do repositório
+
+```
+project-kits/
+├── CLAUDE.md                    # Este arquivo — contrato do próprio project-kits
+├── README.md                    # Documentação pública
+├── manifest.yaml                # Configuração central: kits, detecção, defaults
+├── bin/kit                      # CLI Python (556 linhas) — detect, diff, apply, validate, create, analyze, select
+├── kits/                        # Kits por tecnologia
+│   ├── flutter-app/             # Mobile Flutter — baseado no pacebattle_app@master
+│   ├── python-backend/          # FastAPI/Python backend
+│   ├── react-web/               # React web frontend
+│   └── node-backend/            # Node/TypeScript backend
+├── common/                      # Recursos compartilhados entre kits
+│   ├── commands/                # Comandos genéricos (jarvis-revisor, plan, ship, refactor)
+│   ├── docs.ai/                 # Docs AI genéricos (AI_OPERATING_MODEL, CODING_STANDARDS, etc.)
+│   └── roles/                   # Roles genéricos (arquiteto, designer, pm, test, security, etc.)
+├── generators/skill-creator/    # Gerador de novos kits
+│   ├── prompts/                 # Instruções para criação de kit, docs, roles, test-flow
+│   └── templates/               # Templates com placeholders para gerar arquivos
+├── bootstrap/                   # Importer de arquivo único
+│   ├── import-project-kit.md    # Skill Claude Code para importar kit
+│   └── import-project-kit.sh    # Script shell alternativo
+└── refreshers/                  # Configs de refresh por stack (yaml)
+```
+
+## Anatomia de um kit
+
+Cada kit em `kits/<nome>/` contém:
+
+```
+kits/<nome>/
+├── CLAUDE.md                              # Contrato do projeto consumidor (não deste repo)
+├── manifest.yaml                          # Metadados: detecção, required_files, roles, library_tags
+├── plans/.gitkeep
+├── .claude/
+│   ├── settings.json                      # Hooks: ExitPlanMode → jarvis-revisor, Stop → test-flow
+│   └── commands/
+│       ├── jarvis-revisor.md              # Revisão multi-role de planos (~200+ linhas)
+│       ├── test-flow.md                   # Pipeline de validação E2E (~200+ linhas)
+│       ├── plan.md                        # Criação de planos técnicos
+│       ├── refactor.md                    # Refatoração segura incremental
+│       ├── ship.md                        # Checklist final
+│       ├── carregar-contexto-projeto.md   # Context loader automático
+│       └── product_roles/
+│           ├── carregar-referencias.md    # Helper: carrega docs por relevância
+│           ├── consolidar-parecer.md      # Helper: consolida pareceres com severidade
+│           ├── gerar-relatorio.md         # Helper: gera relatório final
+│           ├── localizar-plano.md         # Helper: localiza plano em plans/
+│           └── role-<stack-specific>.md   # Roles de revisão específicos (~80+ linhas cada)
+└── docs/ai/
+    ├── ARCHITECTURE.md                    # Estrutura e camadas
+    ├── CODING_STANDARDS.md                # Padrões de código
+    ├── TESTING_GUIDE.md                   # Padrões de teste
+    └── <stack-specific guides>            # API, DB, Security, Design, etc.
+```
+
+## Lifecycle de desenvolvimento (no projeto consumidor)
+
+```
+/plan             → cria plano em plans/YYYY-MM-DD-slug.md
+/jarvis-revisor   → revisa plano contra docs/ai e roles (hook ExitPlanMode dispara automaticamente)
+(desenvolve)      → hook PostToolUse roda lint rápido a cada edição
+/test-flow        → pipeline completo antes de commitar (hook Stop dispara se houver diff)
+/ship             → checklist final
+```
+
+## CLI (bin/kit)
+
+Comandos principais:
+
+```bash
+./bin/kit detect /path/do/projeto              # Detecta stack do projeto
+./bin/kit analyze /path/do/projeto             # Detecta stack + bibliotecas estruturais
+./bin/kit select /path/do/projeto              # Seleciona kit por stack detectada
+./bin/kit diff auto /path/do/projeto           # Mostra diff sem aplicar
+./bin/kit apply auto /path/do/projeto          # Aplica kit no projeto
+./bin/kit apply auto /path/do/projeto --refresh # Aplica com refresh dos docs
+./bin/kit validate <kit-name>                  # Valida integridade de um kit
+./bin/kit create <nome> --from "descrição"     # Cria novo kit via skill-creator
+./bin/kit install-importer /path/do/projeto    # Instala importer de arquivo único
+```
+
+Política de escrita:
+- Arquivo ausente → cria
+- Arquivo igual → ignora
+- Arquivo diferente → cria `<arquivo>.kit-new` (nunca sobrescreve sem `--force`)
+
+## Detecção de stack
+
+Cada kit tem regras de detecção no `manifest.yaml`:
+
+- `detects.any`: presença de qualquer arquivo listado
+- `detects.contains`: conteúdo obrigatório em arquivo específico
+- `detects.prefer_if`: desempate entre kits conflitantes (ex: node-backend vs react-web ambos têm package.json)
+
+## Bibliotecas estruturais
+
+Além da stack principal, o `analyze` detecta bibliotecas que definem arquitetura:
+
+- **Flutter**: dio, riverpod, go_router, freezed, drift, firebase
+- **React**: tanstack-query, zustand, redux, react-router, zod, react-hook-form
+- **Python**: sqlalchemy, alembic, pydantic, celery, fastapi
+- **Node**: prisma, drizzle, zod
+
+Biblioteca estrutural não coberta pelo kit selecionado → cria kit novo automaticamente via `skill-creator`.
+
+## Regras de qualidade para kits
+
+- `jarvis-revisor.md`: mínimo 200 linhas
+- `test-flow.md`: mínimo 200 linhas
+- Cada `role-*.md`: mínimo 80 linhas
+- Cada `docs/ai/*.md`: mínimo 100 linhas
+- `CLAUDE.md`: mínimo 80 linhas
+- Nenhum arquivo pode ser placeholder vazio
+
+## Formato dos roles
+
+Cada role DEVE ter:
+- Objetivo (1 frase)
+- Fonte de referência (docs/ai específicos)
+- Entrada esperada
+- Método
+- Checklist obrigatório (itens marcáveis)
+- Resultado esperado por item (OK / OK — não aplicável / PENDÊNCIA com severidade + evidência + correção)
+- Saída em Markdown
+- Regra dura
+
+## Hooks (settings.json)
+
+Todo kit tem 3 hooks:
+
+1. **PostToolUse (Edit|Write|MultiEdit)**: lint/typecheck rápido da stack
+2. **ExitPlanMode**: dispara `/jarvis-revisor` automaticamente quando plano é aceito
+3. **Stop**: se houver `git diff` em arquivos da stack, força `/test-flow` antes de encerrar
+
+## Regras deste repositório
+
+- Não commitar `.env`, `.project-kit.lock`, `.refresh-reports/` ou `*.kit-new`
+- Não usar `--force` em projetos existentes sem revisar diff
+- Não criar kit sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-revisor.md` e `test-flow.md`
+- Manter `common/` como fallback genérico — kit específico sempre sobrepõe
+- Todo kit novo deve passar em `./bin/kit validate <nome>`
+- Templates do `skill-creator` devem ter conteúdo real, não placeholder vazio
+- README.md é documentação pública para consumidores — CLAUDE.md é contrato interno do repo
