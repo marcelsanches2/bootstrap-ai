@@ -57,8 +57,8 @@ Política de escrita padrão:
 Execute uma vez na sua máquina/agente:
 
 ```bash
-git clone https://github.com/marcelsanches2/project-kits.git
-cd project-kits
+git clone https://github.com/marcelsanches2/ai-project-kits.git
+cd ai-project-kits
 ```
 
 Se o repo já existir localmente:
@@ -120,7 +120,7 @@ Dentro do Claude Code:
 O importer faz:
 
 1. acha a raiz do projeto alvo;
-2. localiza ou clona `marcelsanches2/project-kits`;
+2. localiza ou clona `marcelsanches2/ai-project-kits`;
 3. atualiza o `project-kits` com `git pull --ff-only`;
 4. roda `analyze` para detectar stack e bibliotecas estruturais;
 5. roda `select --create-missing` para escolher ou criar kit específico;
@@ -445,8 +445,6 @@ Auditoria global do projeto. Revisão profunda sob múltiplas perspectivas (arqu
 
 Regressão completa. Executa todas as camadas: lint, type check, formatação, testes unitários, integração, E2E e build. Gera relatório com PASS/PARTIAL/FAIL por fase. **Manual apenas** — use após mudanças grandes ou antes de releases.
 
-Executa validação de qualidade antes de encerrar ou commitar.
-
 ### `/ship`
 
 Checklist final de entrega.
@@ -585,7 +583,7 @@ Instale via caminho absoluto:
 Ou clone manualmente:
 
 ```bash
-git clone https://github.com/marcelsanches2/project-kits.git /path/para/project-kits
+git clone https://github.com/marcelsanches2/ai-project-kits.git /path/para/project-kits
 ```
 
 ---

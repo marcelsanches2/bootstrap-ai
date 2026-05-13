@@ -391,6 +391,40 @@ def refresh(args):
     report.write_text(f'# Refresh report: {args.kit}\n\n- generated_at: {dt.datetime.utcnow().isoformat()}Z\n- structure: checked\n- semantic refresh: manual review required\n', encoding='utf-8')
     print(f'Refresh report: {report}')
 
+def detect_project_name(target: Path) -> str:
+    """Detecta o nome do projeto alvo para substituição de {{PROJECT_NAME}}."""
+    # 1. package.json "name"
+    pkg_path = target / 'package.json'
+    if pkg_path.exists():
+        try:
+            pkg = json.loads(pkg_path.read_text(encoding='utf-8'))
+            name = pkg.get('name', '').strip()
+            if name:
+                return name
+        except Exception:
+            pass
+    # 2. pubspec.yaml "name:"
+    pubspec = target / 'pubspec.yaml'
+    if pubspec.exists():
+        for line in pubspec.read_text(encoding='utf-8', errors='ignore').splitlines():
+            if line.startswith('name:'):
+                name = line.split(':', 1)[1].strip().strip('"\'')
+                if name:
+                    return name
+                break
+    # 3. pyproject.toml [project] name =
+    pyproject = target / 'pyproject.toml'
+    if pyproject.exists():
+        for line in pyproject.read_text(encoding='utf-8', errors='ignore').splitlines():
+            stripped = line.strip()
+            if stripped.startswith('name'):
+                name = stripped.split('=', 1)[1].strip().strip('"\'') if '=' in stripped else ''
+                if name:
+                    return name
+                break
+    # 4. Fallback: nome do diretório
+    return target.name
+
 def apply(args):
     target=Path(args.target).resolve(); target.mkdir(parents=True, exist_ok=True)
     kname=args.kit
@@ -398,34 +432,58 @@ def apply(args):
         kname=detect(argparse.Namespace(target=str(target))); print()
     if args.refresh:
         refresh(argparse.Namespace(kit=kname))
+    # Resolve project name para substituição de placeholders
+    project_name = getattr(args, 'project_name', None) or detect_project_name(target)
     kp=kit_path(kname)
     created=[]; skipped=[]; conflicted=[]; overwritten=[]
     for src in iter_files(kp):
         rel=src.relative_to(kp); dst=target/rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         if not dst.exists():
-            shutil.copy2(src,dst); created.append(str(rel))
+            content = src.read_text(encoding='utf-8', errors='ignore') if src.suffix in ('.md', '.yaml', '.yml', '.txt', '.json', '.toml') else None
+            if content and '{{PROJECT_NAME}}' in content:
+                content = content.replace('{{PROJECT_NAME}}', project_name)
+                dst.write_text(content, encoding='utf-8')
+            else:
+                shutil.copy2(src, dst)
+            created.append(str(rel))
         elif dst.is_file() and sha(src)==sha(dst):
             skipped.append(str(rel))
         elif args.force:
-            shutil.copy2(src,dst); overwritten.append(str(rel))
+            # force: aplica substituição também ao sobrescrever
+            content = src.read_text(encoding='utf-8', errors='ignore') if src.suffix in ('.md', '.yaml', '.yml', '.txt', '.json', '.toml') else None
+            if content and '{{PROJECT_NAME}}' in content:
+                content = content.replace('{{PROJECT_NAME}}', project_name)
+                dst.write_text(content, encoding='utf-8')
+            else:
+                shutil.copy2(src, dst)
+            overwritten.append(str(rel))
         else:
+            # conflito: aplica substituição no .kit-new
+            content = src.read_text(encoding='utf-8', errors='ignore') if src.suffix in ('.md', '.yaml', '.yml', '.txt', '.json', '.toml') else None
             ndst=Path(str(dst)+'.kit-new')
             i=1
             while ndst.exists():
                 ndst=Path(str(dst)+f'.kit-new.{i}'); i+=1
-            shutil.copy2(src,ndst); conflicted.append(f'{rel} -> {ndst.relative_to(target)}')
+            if content and '{{PROJECT_NAME}}' in content:
+                content = content.replace('{{PROJECT_NAME}}', project_name)
+                ndst.write_text(content, encoding='utf-8')
+            else:
+                shutil.copy2(src, ndst)
+            conflicted.append(f'{rel} -> {ndst.relative_to(target)}')
     lock=target/LOCKFILE
     lock.write_text('\n'.join([
         f'kit: {kname}',
         'kit_version: 1',
         f'applied_at: "{dt.datetime.utcnow().isoformat()}Z"',
-        'source_repo: "github.com/marcelsanches2/project-kits"',
+        'source_repo: "github.com/marcelsanches2/ai-project-kits"',
         f'source_commit: "{git_commit()}"',
+        f'project_name: "{project_name}"',
         f'conflict_policy: {"force-overwrite" if args.force else "keep-existing-create-new"}',
         ''
     ]), encoding='utf-8')
     print(f'Applied kit: {kname}')
+    print(f'Project name: {project_name}')
     print(f'Created: {len(created)} | Skipped: {len(skipped)} | Conflicts: {len(conflicted)} | Overwritten: {len(overwritten)}')
     if conflicted:
         print('\nConflicts:')
@@ -547,7 +605,7 @@ def main():
     s=sub.add_parser('analyze'); s.add_argument('target'); s.add_argument('--json', action='store_true'); s.set_defaults(func=analyze)
     s=sub.add_parser('select'); s.add_argument('target'); s.add_argument('--create-missing', action='store_true'); s.add_argument('--print-kit', action='store_true'); s.set_defaults(func=select)
     s=sub.add_parser('diff'); s.add_argument('kit'); s.add_argument('target'); s.add_argument('--force', action='store_true'); s.set_defaults(func=diff)
-    s=sub.add_parser('apply'); s.add_argument('kit'); s.add_argument('target'); s.add_argument('--refresh', action='store_true'); s.add_argument('--force', action='store_true'); s.set_defaults(func=apply)
+    s=sub.add_parser('apply'); s.add_argument('kit'); s.add_argument('target'); s.add_argument('--refresh', action='store_true'); s.add_argument('--force', action='store_true'); s.add_argument('--project-name', dest='project_name', default=None); s.set_defaults(func=apply)
     s=sub.add_parser('refresh'); s.add_argument('kit'); s.set_defaults(func=refresh)
     s=sub.add_parser('validate'); s.add_argument('kit'); s.set_defaults(func=validate)
     s=sub.add_parser('create'); s.add_argument('name'); s.add_argument('--from', dest='from_desc'); s.add_argument('--description'); s.add_argument('--force', action='store_true'); s.set_defaults(func=create)
