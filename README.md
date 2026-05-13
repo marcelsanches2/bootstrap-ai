@@ -55,10 +55,6 @@ Execute uma vez na sua máquina/agente:
 ```bash
 git clone https://github.com/marcelsanches2/project-kits.git
 cd project-kits
-./bin/kit validate flutter-app
-./bin/kit validate python-backend
-./bin/kit validate react-web
-./bin/kit validate node-backend
 ```
 
 Se o repo já existir localmente:
@@ -66,10 +62,6 @@ Se o repo já existir localmente:
 ```bash
 cd /path/para/project-kits
 git pull --ff-only
-./bin/kit validate flutter-app
-./bin/kit validate python-backend
-./bin/kit validate react-web
-./bin/kit validate node-backend
 ```
 
 Onde executar os comandos:
@@ -389,19 +381,6 @@ Atualiza material de um kit antes de aplicar.
 
 Use quando for revisar se padrões de stack ainda fazem sentido.
 
-### `validate`
-
-Valida integridade de um kit.
-
-```bash
-./bin/kit validate flutter-app
-./bin/kit validate python-backend
-./bin/kit validate react-web
-./bin/kit validate node-backend
-```
-
-Rode depois de editar qualquer kit.
-
 ### `create`
 
 Cria kit para tecnologia nova.
@@ -575,11 +554,7 @@ Isso sobrescreve arquivos existentes. Só use depois de commit/backup.
 ./bin/kit select /path/do/projeto --create-missing
 ```
 
-Depois valide o kit criado:
-
-```bash
-./bin/kit validate <kit-criado>
-```
+Depois rode o fluxo normal: `diff`, `apply` e revise os arquivos criados no projeto alvo.
 
 ### O importer não achou o `project-kits`
 
@@ -597,10 +572,11 @@ git clone https://github.com/marcelsanches2/project-kits.git /path/para/project-
 
 ---
 
-## 12. Regras para manter este repo
+## 12. Manutenção do repo
+
+Esta seção é para quem for editar o `project-kits`, não para quem só vai importar um kit em um projeto.
 
 - `flutter-app` é referência; não reescreva casualmente.
-- Todo kit precisa passar em `./bin/kit validate <kit>`.
 - `docs/ai/*.md` devem ter conteúdo operacional real, não placeholder.
 - `role-*.md` precisam apontar evidência, risco, correção e validação.
 - Não commitar `.env`, `.project-kit.lock`, `.refresh-reports/` ou `*.kit-new`.
