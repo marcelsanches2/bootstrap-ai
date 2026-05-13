@@ -3,6 +3,24 @@ version: 1
 description: "{{DESCRIPTION}}"
 required_files:
   - CLAUDE.md
+  - manifest.yaml
+  - .claude/settings.json
   - .claude/commands/jarvis-revisor.md
   - .claude/commands/test-flow.md
-  - docs/ai/ARCHITECTURE.md
+  - .claude/commands/plan.md
+  - .claude/commands/refactor.md
+  - .claude/commands/ship.md
+  - .claude/commands/carregar-contexto-projeto.md
+  - .claude/commands/product_roles/carregar-referencias.md
+  - .claude/commands/product_roles/consolidar-parecer.md
+  - .claude/commands/product_roles/gerar-relatorio.md
+  - .claude/commands/product_roles/localizar-plano.md
+  # Adicionar role-*.md e docs/ai/*.md específicos da stack
+roles:
+  # Listar todos os role-*.md gerados
+library_tags:
+  # Listar bibliotecas estruturais que forçam este kit
+  # Exemplo para Python FastAPI:
+  #   - fastapi
+  #   - sqlalchemy
+  #   - alembic
