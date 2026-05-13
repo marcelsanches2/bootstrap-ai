@@ -42,6 +42,23 @@ Depois rode no Claude Code:
 
 ## Procedimento obrigatório
 
+### 0. Usar source embutido (se existir)
+
+Este arquivo pode conter o path absoluto do repo `ai-project-kits` de onde foi instalado. Procure por `<!-- PROJECT_KITS_SOURCE:` no final deste arquivo.
+
+Se existir:
+
+```bash
+# Extrair source embutido
+EMBEDDED_SOURCE=$(grep -oP '<!-- PROJECT_KITS_SOURCE: \K[^>]+' "$0" 2>/dev/null || true)
+if [ -n "$EMBEDDED_SOURCE" ] && [ -x "$EMBEDDED_SOURCE/bin/kit" ]; then
+  PROJECT_KITS_DIR="$EMBEDDED_SOURCE"
+  printf 'Source embutido encontrado: %s\n' "$PROJECT_KITS_DIR"
+fi
+```
+
+Se o source embutido for válido, pule para o passo 3 (atualizar). Caso contrário, continue no passo 2.
+
 ### 1. Resolver raiz do projeto
 
 Execute:

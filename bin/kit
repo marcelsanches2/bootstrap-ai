@@ -583,19 +583,31 @@ def install_importer(args):
     if not src.exists(): die('bootstrap/import-project-kit.md não encontrado')
     dst=target/'.claude/commands/import-project-kit.md'
     dst.parent.mkdir(parents=True, exist_ok=True)
+    # Lê template e injeta path absoluto da origem
+    content=src.read_text(encoding='utf-8')
+    source_marker=f'\n<!-- PROJECT_KITS_SOURCE: {ROOT} -->\n'
+    # Remove marker antigo se existir
+    import re
+    content=re.sub(r'\n*<!-- PROJECT_KITS_SOURCE:.*?-->\n*', '\n', content).rstrip()
+    content+=source_marker
     if dst.exists() and not args.force:
-        if sha(src)==sha(dst):
+        existing=dst.read_text(encoding='utf-8')
+        # Compara ignorando o marker (que muda por máquina)
+        clean_existing=re.sub(r'\n*<!-- PROJECT_KITS_SOURCE:.*?-->\n*', '\n', existing).rstrip()
+        clean_src=re.sub(r'\n*<!-- PROJECT_KITS_SOURCE:.*?-->\n*', '\n', content).rstrip()
+        if clean_existing==clean_src and f'PROJECT_KITS_SOURCE: {ROOT}' in existing:
             print(f'Importer já instalado: {dst}')
             return
         ndst=Path(str(dst)+'.kit-new')
         i=1
         while ndst.exists():
             ndst=Path(str(dst)+f'.kit-new.{i}'); i+=1
-        shutil.copy2(src,ndst)
-        print(f'Conflito: importer existente. Novo arquivo criado em {ndst}')
+        dst.write_text(content, encoding='utf-8')
+        print(f'Conflito: importer existente. Atualizado em {dst}')
         return
-    shutil.copy2(src,dst)
+    dst.write_text(content, encoding='utf-8')
     print(f'Importer instalado: {dst}')
+    print(f'Source embutido: {ROOT}')
     print('Use no Claude Code: /import-project-kit')
 
 def main():

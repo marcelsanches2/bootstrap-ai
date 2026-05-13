@@ -102,7 +102,10 @@ detect_project_name() {
   printf '%s\n' "$(basename "$root")"
 }
 
-if PROJECT_KITS_DIR="$(find_project_kits)"; then
+# Se já temos PROJECT_KITS_DIR válido (passado via env ou source embutido), pula busca
+if [ -n "${PROJECT_KITS_DIR:-}" ] && [ -x "${PROJECT_KITS_DIR}/bin/kit" ]; then
+  log "usando PROJECT_KITS_DIR pré-configurado: $PROJECT_KITS_DIR"
+elif PROJECT_KITS_DIR="$(find_project_kits)"; then
   log "project-kits encontrado: $PROJECT_KITS_DIR"
 else
   WORKSPACE_DIR="$(find_workspace_dir)"
