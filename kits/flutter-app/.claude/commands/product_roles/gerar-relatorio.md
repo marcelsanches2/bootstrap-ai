@@ -124,7 +124,7 @@ Use exatamente uma das opções definidas pela skill pai.
 
 ## Entrega do relatório
 
-Este relatório deve ser apendado no final do arquivo do plano original pela skill pai (`jarvis-revisor.md`), gerando um plano completo (plano + revisão).
+Este relatório deve ser apendado no final do arquivo do plano original pela skill pai (`jarvis-plan-revisor.md`), gerando um plano completo (plano + revisão).
 
 Se houver pendências MAJOR sanadas interativamente, registre no relatório final como `MAJOR sanada` com a decisão do usuário.
 

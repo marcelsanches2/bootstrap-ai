@@ -6,6 +6,8 @@ O objetivo não é só copiar arquivos. Cada kit instala um processo operacional
 
 ```txt
 bootstrap → /plan → /jarvis-plan-revisor → implementação → /jarvis-test-flow → /ship
+
+Manual: `/jarvis-revisor` (audit global), `/jarvis-full-test` (regressão completa)
 ```
 
 Os kits são arquivos de operação do projeto: `CLAUDE.md`, `.claude/commands/*`, `.claude/settings.json`, `docs/ai/*` e `plans/`.
@@ -29,7 +31,7 @@ CLAUDE.md
 .claude/commands/plan.md
 .claude/commands/jarvis-plan-revisor.md
 .claude/commands/refactor.md
-.claude/commands/jarvis-jarvis-test-flow.md
+.claude/commands/jarvis-test-flow.md
 .claude/commands/ship.md
 .claude/commands/carregar-contexto-projeto.md
 .claude/commands/product_roles/*
@@ -187,7 +189,7 @@ CLAUDE.md
 .claude/commands/plan.md
 .claude/commands/jarvis-plan-revisor.md
 .claude/commands/refactor.md
-.claude/commands/jarvis-jarvis-test-flow.md
+.claude/commands/jarvis-test-flow.md
 .claude/commands/ship.md
 docs/ai/ARCHITECTURE.md
 docs/ai/CODING_STANDARDS.md

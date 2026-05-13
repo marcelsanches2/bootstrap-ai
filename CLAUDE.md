@@ -52,6 +52,8 @@ kits/<nome>/
 │   └── commands/
 │       ├── jarvis-plan-revisor.md              # Revisão multi-role de planos (~200+ linhas)
 │       ├── jarvis-test-flow.md                   # Pipeline de validação E2E (~200+ linhas)
+│       ├── jarvis-revisor.md                     # Auditoria global do projeto (manual)
+│       ├── jarvis-full-test.md                   # Regressão completa (manual)
 │       ├── plan.md                        # Criação de planos técnicos
 │       ├── refactor.md                    # Refatoração segura incremental
 │       ├── ship.md                        # Checklist final
@@ -76,6 +78,8 @@ kits/<nome>/
 /jarvis-plan-revisor → revisa plano contra docs/ai e roles (hook ExitPlanMode dispara automaticamente)
 (desenvolve)      → hook PostToolUse roda lint rápido a cada edição
 /jarvis-test-flow  → pipeline completo antes de commitar (hook Stop dispara se houver diff)
+/jarvis-revisor    → auditoria global do projeto (manual, sob demanda)
+/jarvis-full-test  → regressão completa do projeto (manual, sob demanda)
 /ship             → checklist final
 ```
 
@@ -123,6 +127,8 @@ Biblioteca estrutural não coberta pelo kit selecionado → cria kit novo automa
 
 - `jarvis-plan-revisor.md`: mínimo 200 linhas
 - `jarvis-test-flow.md`: mínimo 200 linhas
+- `jarvis-revisor.md`: mínimo 100 linhas
+- `jarvis-full-test.md`: mínimo 100 linhas
 - Cada `role-*.md`: mínimo 80 linhas
 - Cada `docs/ai/*.md`: mínimo 100 linhas
 - `CLAUDE.md`: mínimo 80 linhas
@@ -152,7 +158,7 @@ Todo kit tem 3 hooks:
 
 - Não commitar `.env`, `.project-kit.lock`, `.refresh-reports/` ou `*.kit-new`
 - Não usar `--force` em projetos existentes sem revisar diff
-- Não criar kit sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan-revisor.md` e `jarvis-test-flow.md`
+- Não criar kit sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan-revisor.md`, `jarvis-test-flow.md`, `jarvis-revisor.md` e `jarvis-full-test.md`
 - Manter `common/` como fallback genérico — kit específico sempre sobrepõe
 - Todo kit novo deve passar em `./bin/kit validate <nome>`
 - Templates do `skill-creator` devem ter conteúdo real, não placeholder vazio
