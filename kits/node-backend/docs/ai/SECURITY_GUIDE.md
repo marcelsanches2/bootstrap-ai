@@ -1,51 +1,175 @@
-# Guia de Segurança
+# Security Guide
 
-## Princípios
+Padrões de segurança para Node.js backend.
 
-- Autenticação prova identidade.
-- Autorização prova permissão para aquele recurso.
-- Validação de input ocorre na borda e regra crítica no domínio/aplicação.
-- Segredo nunca vai para git, log, response ou teste fixture real.
+## Autenticação JWT
 
-## AuthN/AuthZ
+```typescript
+import jwt from 'jsonwebtoken';
 
-- Endpoint protegido deve declarar dependência de autenticação.
-- Permissão deve ser checada por recurso, não só por papel global.
-- `user_id` vindo do path/body não substitui identidade autenticada.
-- Admin bypass precisa ser explícito e testado.
+function createAccessToken(userId: number): string {
+  return jwt.sign({ sub: userId, type: 'access' }, config.JWT_SECRET, { expiresIn: '15m' });
+}
 
-## Input
+function createRefreshToken(userId: number): string {
+  return jwt.sign({ sub: userId, type: 'refresh' }, config.JWT_SECRET, { expiresIn: '7d' });
+}
 
-- Schemas Zod/class-validator validam formato.
-- Regras de negócio validam significado.
-- Normalize strings quando unicidade depende disso.
-- Defina limite de tamanho para campos livres/upload.
+// Middleware
+export function authMiddleware(req: Request, res: Response, next: NextFunction) {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Token ausente' } });
 
-## Secrets
+  try {
+    const payload = jwt.verify(token, config.JWT_SECRET) as { sub: string };
+    req.userId = parseInt(payload.sub);
+    next();
+  } catch {
+    res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Token inválido' } });
+  }
+}
+```
 
-- `.env` real no `.gitignore`.
-- Rotação possível sem mudança de código.
-- Testes usam segredo fake.
+## Password hashing
 
-## Logs e PII
+```typescript
+import bcrypt from 'bcryptjs';
+const SALT_ROUNDS = 12;
 
-Nunca logar:
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, SALT_ROUNDS);
+}
 
-- Authorization header
-- cookie/session id
-- senha/token/API key
-- documento, cartão, dados financeiros sensíveis sem mascaramento
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}
+```
 
-## Dependências
+## Input validation (Zod)
 
-- Nova lib de auth/crypto precisa justificativa forte.
-- Não implemente criptografia caseira.
-- Hash de senha deve usar algoritmo apropriado como argon2/bcrypt via lib madura.
+Sempre validar input com Zod. Nunca confiar em req.body diretamente.
 
-## Checklist de revisão
+## CORS
 
-- AuthN/AuthZ testados.
-- Validação negativa testada.
-- Erros não vazam detalhe sensível.
-- Secrets fora do git.
-- Operação sensível tem log seguro/auditável.
+```typescript
+app.use(cors({
+  origin: config.CORS_ORIGINS.split(','),
+  credentials: true,
+}));
+```
+
+Nunca `origin: '*'` em produção.
+
+## Security headers
+
+```typescript
+import helmet from 'helmet';
+app.use(helmet());
+```
+
+## Rate limiting
+
+```typescript
+import rateLimit from 'express-rate-limit';
+app.use('/api/v1/auth', rateLimit({ windowMs: 60_000, max: 5 }));
+```
+
+## Regras duras
+
+- Nunca logar senha, token, PII.
+- Nunca armazenar senha em texto plano.
+- Nunca `origin: '*'` em produção.
+- Nunca commitar `.env`.
+- Nunca usar `eval()`.
+- Nunca expor stack trace em produção.
+
+---
+
+## Segurança — checklist de produção
+
+Este guia existe para orientar implementação real em `node-backend`. Ele deve ser usado por `/plan`, `/jarvis-revisor`, `/refactor` e `/test-flow` antes de qualquer mudança relevante.
+
+### Princípios
+
+1. **Explícito vence implícito**: decisões importantes devem aparecer no plano ou neste guia.
+2. **Falha observável vence falha silenciosa**: toda operação crítica precisa deixar rastro em log, métrica ou teste.
+3. **Rollback é parte da feature**: se a mudança altera contrato, dados ou deploy, descreva como voltar.
+4. **Teste documenta contrato**: comportamento importante sem teste é comportamento acidental.
+5. **Menos dependência é melhor**: biblioteca nova precisa reduzir risco ou complexidade total.
+
+### Áreas de revisão
+
+- **authn**: declarar regra, exceção permitida e evidência esperada.
+- **authz**: declarar regra, exceção permitida e evidência esperada.
+- **secrets**: declarar regra, exceção permitida e evidência esperada.
+- **validação**: declarar regra, exceção permitida e evidência esperada.
+- **abuso**: declarar regra, exceção permitida e evidência esperada.
+
+### Regras específicas para backend Node.js/TypeScript
+
+- Use o runtime esperado: Node.js, TypeScript, Express/Fastify/Nest quando presentes, Prisma/Drizzle quando presentes.
+- Não introduza framework paralelo sem justificar migração e custo de manutenção.
+- Padronize validação na borda do sistema; dentro do domínio, trabalhe com tipos já confiáveis.
+- Trate erro com categoria operacional: entrada inválida, regra de negócio, dependência externa, bug interno ou indisponibilidade.
+- Centralize configuração por ambiente e mantenha secrets fora do repositório.
+- Prefira funções pequenas com contrato claro a helpers genéricos difíceis de testar.
+- Evite estado global mutável; quando inevitável, documente ciclo de vida e concorrência.
+- Registre decisões que afetem deploy, segurança, dados ou compatibilidade em `plans/`.
+
+### Validação mínima
+
+Antes de considerar uma mudança pronta, execute ou justifique por que não executou:
+
+```bash
+npm run typecheck && npm test && npm run lint quando configurado
+```
+
+Além disso:
+
+- [ ] Teste unitário cobre regra de negócio principal.
+- [ ] Teste de integração cobre fronteira externa relevante.
+- [ ] Caso de erro previsível tem teste ou simulação.
+- [ ] Build/typecheck passa sem warnings novos relevantes.
+- [ ] Documentação alterada quando contrato ou operação mudou.
+
+### Revisão de risco
+
+Classifique cada mudança antes de implementar:
+
+- **Baixo risco**: arquivo isolado, sem contrato externo, sem estado persistente.
+- **Médio risco**: altera fluxo, API interna, componente compartilhado ou configuração.
+- **Alto risco**: altera schema, autenticação, autorização, pagamento, deploy, cache, fila, storage ou contrato público.
+
+Para risco alto, o plano precisa conter:
+
+- sequência de deploy;
+- rollback;
+- migração/backfill quando aplicável;
+- métrica ou log para confirmar sucesso;
+- teste de regressão;
+- responsável por validar produção.
+
+### Anti-patterns bloqueantes
+
+- Capturar exceção genérica e continuar sem log estruturado.
+- Criar abstração antes de existir segundo uso real.
+- Misturar validação de entrada, regra de negócio e acesso externo no mesmo bloco.
+- Depender de ordem implícita de execução sem teste.
+- Adicionar dependência que só economiza poucas linhas de código trivial.
+- Fazer mudança de schema sem rollback ou sem compatibilidade temporária.
+- Usar dado real em teste automatizado.
+- Commitar `.env`, token, dump, fixture sensível ou configuração local.
+
+### Como o Jarvis deve usar este guia
+
+Ao revisar um plano, o Jarvis deve produzir achados com:
+
+```md
+- Evidência: arquivo/seção do plano
+- Violação: regra deste guia
+- Impacto: risco concreto
+- Correção: alteração objetiva
+- Validação: comando ou teste esperado
+```
+
+Comentário sem evidência deve ser descartado.

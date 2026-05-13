@@ -1,120 +1,223 @@
-# Arquitetura Backend Node.js/TypeScript
+# Architecture
 
-Este documento define a arquitetura técnica de um backend Node.js/TypeScript em {{PROJECT_NAME}}.
+Estrutura de diretórios e arquitetura do projeto Node.js backend.
 
-## Objetivo
+## Visão geral
 
-Separar regra de negócio, transporte HTTP, persistência e integrações externas sem criar camadas cerimoniais inúteis.
+Projeto backend em Node.js com TypeScript, seguindo arquitetura em camadas com separação clara de responsabilidades.
 
-## Estrutura base recomendada
+Fluxo de dados:
 
-```txt
-src/
-  app/
-    server.ts                 # entrypoint/app factory
-    config.ts                 # settings tipadas e validadas
-    api/
-      routes/
-      middleware/
-      errors.ts
-    application/
-      services/
-      use-cases/
-    domain/
-      entities/
-      value-objects/
-      repositories.ts
-      errors.ts
-    infrastructure/
-      db/
-        schema.ts             # Prisma/Drizzle/ORM quando aplicável
-        client.ts
-        repositories/
-      integrations/
-      clock.ts
-      logger.ts
-    observability/
-      health.ts
-      request-id.ts
-migrations/                   # ou prisma/migrations, drizzle/, conforme stack real
-tests/
-  unit/
-  integration/
-  api/
+```
+Request → Router/Controller → Schema (Zod validation) → Service → Repository → Model → Banco
 ```
 
-Ajuste nomes à realidade do projeto, mas preserve boundaries.
+## Estrutura de diretórios
 
-## Camadas
-
-### API / Transport
-
-Responsável por Fastify/Express/Nest routes/controllers, request/response schemas, status codes, middleware e tradução de erros.
-
-Não pode conter:
-
-- regra de negócio complexa
-- query SQL direta
-- transação espalhada em handler/controller
-- chamada direta a SDK externo quando houver caso de uso
-
-### Application
-
-Orquestra casos de uso, transações e chamadas a repositórios/serviços externos.
-
-Use para operações como `CreateUser`, `ChargeSubscription`, `SyncProviderData`.
-
-### Domain
-
-Contém entidades, value objects, políticas e contratos. Não depende de Express/Fastify/Nest, Prisma/Drizzle, Zod/class-validator de API ou SDK externo.
-
-### Infrastructure
-
-Implementa banco, repositórios, clients HTTP, filas, storage e adapters externos.
-
-## Regra de dependência
-
-```txt
-api -> application -> domain
-infrastructure -> domain
-application -> contracts/interfaces
+```
+<raiz>/
+├── src/
+│   ├── index.ts                  # Entry point (Express/Fastify)
+│   ├── config/
+│   │   ├── index.ts              # Config via env vars (zod validated)
+│   │   └── database.ts           # Prisma client singleton
+│   │
+│   ├── routes/                   # Definição de rotas
+│   │   ├── index.ts              # Router aggregator
+│   │   ├── auth.routes.ts
+│   │   └── users.routes.ts
+│   │
+│   ├── controllers/              # Handlers HTTP
+│   │   ├── auth.controller.ts
+│   │   └── users.controller.ts
+│   │
+│   ├── schemas/                  # Zod schemas (validação)
+│   │   ├── auth.schema.ts
+│   │   └── users.schema.ts
+│   │
+│   ├── services/                 # Lógica de negócio
+│   │   ├── auth.service.ts
+│   │   └── users.service.ts
+│   │
+│   ├── repositories/             # Acesso a dados (Prisma queries)
+│   │   ├── users.repository.ts
+│   │   └── orders.repository.ts
+│   │
+│   ├── middleware/               # Middleware (auth, logging, error)
+│   │   ├── auth.middleware.ts
+│   │   ├── error.middleware.ts
+│   │   └── logging.middleware.ts
+│   │
+│   ├── utils/                    # Helpers
+│   │   ├── hash.ts
+│   │   └── errors.ts
+│   │
+│   └── types/                    # TypeScript types/interfaces
+│       └── express.d.ts
+│
+├── prisma/
+│   ├── schema.prisma             # Schema do banco
+│   ├── migrations/               # Migrations auto-geradas
+│   └── seed.ts                   # Dados iniciais
+│
+├── tests/
+│   ├── setup.ts                  # Test setup
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+│
+├── package.json
+├── tsconfig.json
+├── .env.example
+└── .env                          # NÃO commitar
 ```
 
-O domínio não aponta para fora. Infra implementa contratos definidos para dentro.
+## Camadas e responsabilidades
+
+### Route → Controller
+
+```typescript
+// routes/users.routes.ts
+import { Router } from 'express';
+import { UsersController } from '../controllers/users.controller';
+import { authMiddleware } from '../middleware/auth.middleware';
+import { validate } from '../middleware/validate';
+import { createUserSchema, listUsersSchema } from '../schemas/users.schema';
+
+const router = Router();
+
+router.post('/', validate(createUserSchema), UsersController.create);
+router.get('/', authMiddleware, validate(listUsersSchema), UsersController.list);
+router.get('/:id', authMiddleware, UsersController.getById);
+
+export { router as usersRoutes };
+```
+
+### Schema (Zod)
+
+```typescript
+// schemas/users.schema.ts
+import { z } from 'zod';
+
+export const createUserSchema = z.object({
+  body: z.object({
+    name: z.string().min(2).max(255),
+    email: z.string().email(),
+    password: z.string().min(8).max(128),
+  }),
+});
+
+export const listUsersSchema = z.object({
+  query: z.object({
+    skip: z.coerce.number().int().min(0).default(0),
+    limit: z.coerce.number().int().min(1).max(100).default(20),
+  }),
+});
+
+export type CreateUserInput = z.infer<typeof createUserSchema>['body'];
+```
+
+### Service
+
+```typescript
+// services/users.service.ts
+import { PrismaClient } from '@prisma/client';
+import { CreateUserInput } from '../schemas/users.schema';
+import { hashPassword } from '../utils/hash';
+import { AppError } from '../utils/errors';
+
+export class UsersService {
+  constructor(private prisma: PrismaClient) {}
+
+  async create(data: CreateUserInput) {
+    const existing = await this.prisma.user.findUnique({ where: { email: data.email } });
+    if (existing) throw new AppError('CONFLICT', 'Email já cadastrado', 409);
+
+    const passwordHash = await hashPassword(data.password);
+    return this.prisma.user.create({
+      data: { name: data.name, email: data.email, passwordHash },
+      select: { id: true, name: true, email: true, createdAt: true },
+    });
+  }
+
+  async list(skip: number, limit: number) {
+    const [items, total] = await Promise.all([
+      this.prisma.user.findMany({ skip, limit, orderBy: { id: 'asc' } }),
+      this.prisma.user.count(),
+    ]);
+    return { items, total, skip, limit };
+  }
+}
+```
+
+### Repository Pattern (quando Prisma direto não basta)
+
+```typescript
+// repositories/orders.repository.ts
+import { PrismaClient, Prisma } from '@prisma/client';
+
+export class OrdersRepository {
+  constructor(private prisma: PrismaClient) {}
+
+  async findByIdWithItems(orderId: number) {
+    return this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: true },
+    });
+  }
+
+  async createWithItems(data: Prisma.OrderCreateInput) {
+    return this.prisma.order.create({ data, include: { items: true } });
+  }
+}
+```
 
 ## Configuração
 
-- Settings devem ser tipadas e validadas no startup.
-- `.env` real nunca entra no git.
-- Variável obrigatória ausente deve falhar no boot, não na primeira request.
-- Config de teste deve ser isolada da produção.
+```typescript
+// config/index.ts
+import { z } from 'zod';
 
-## Transações
+const envSchema = z.object({
+  DATABASE_URL: z.string(),
+  JWT_SECRET: z.string().min(32),
+  PORT: z.coerce.number().default(3000),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  CORS_ORIGINS: z.string().default(''),
+});
 
-- Toda escrita relevante precisa de fronteira transacional explícita.
-- Não abra transação dentro de loops longos sem justificar.
-- Não misture commit automático em repository com caso de uso que precisa atomicidade.
-- Idempotência é obrigatória para webhooks, retries e comandos que podem ser repetidos.
+export const config = envSchema.parse(process.env);
+```
 
-## Integrações externas
+## Convenções de nomenclatura
 
-- Use client dedicado por integração.
-- Configure timeout explícito.
-- Traduza erro externo para erro de domínio/aplicação.
-- Não deixe SDK externo vazar para domínio.
+| Elemento | Convenção | Exemplo |
+|---|---|---|
+| Arquivo | kebab-case | user-service.ts |
+| Classe | PascalCase | UsersService |
+| Função | camelCase | createUser() |
+| Constante | UPPER_SNAKE | MAX_RETRIES |
+| Interface | PascalCase + I prefix opcional | UserProfile |
+| Type | PascalCase | OrderStatus |
+| Enum | PascalCase | OrderStatus.Pending |
+| Tabela | PascalCase (Prisma) | User, Order |
+| Campo | camelCase (Prisma) | createdAt |
+| Rota | kebab-case | /api/v1/user-profiles |
 
-## Assincronia
+## Anti-patterns
 
-- `async` precisa propagar erro corretamente.
-- Evite bloquear event loop com I/O síncrono pesado.
-- Background jobs precisam de retry, idempotência e logging por job id.
-- Promise sem `await`/tratamento explícito é risco operacional.
+- Controller com lógica de negócio — pertence ao service.
+- Service com req/res — não conhece HTTP.
+- Raw SQL quando Prisma resolve — só raw para performance crítica.
+- `any` em TypeScript — usar tipo específico ou `unknown`.
+- Import circular — usar dependency injection.
+- Console.log em produção — usar logger estruturado.
 
-## Anti-patterns bloqueantes
+## Regras duras
 
-- Handler/controller com SQL, regra de negócio e chamada externa no mesmo arquivo.
-- Model Prisma/Drizzle usado como schema público.
-- Zod/class-validator request usado como entidade de domínio.
-- Repository que decide regra de negócio.
-- Config global mutável espalhada.
-- `catch` genérico que engole erro.
+- Não pular camadas. Controller → Service → Repository → Prisma.
+- Não usar `any` sem justificativa documentada.
+- Não commitar sem `tsc --noEmit` passando.
+- Não criar endpoint sem Zod schema de request e response.
+- Não hardcodar config — usar env vars via zod.
+- Não usar `require()` — sempre ES modules ou import.

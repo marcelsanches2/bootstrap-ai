@@ -1,60 +1,164 @@
-# Guia de Banco de Dados
+# Database Guide
 
-## Princípio
+Padrões de banco de dados com Prisma ORM + PostgreSQL.
 
-Schema é código. Toda mudança deve ser revisável, reversível quando possível e segura para dados existentes.
+## Prisma Setup
 
-## Migrations
+```typescript
+// config/database.ts
+import { PrismaClient } from '@prisma/client';
 
-- Toda alteração de schema precisa de migration do mecanismo real do projeto: Prisma Migrate, Drizzle migrations, Knex, TypeORM ou SQL versionado.
-- `upgrade` deve ser explícito.
-- `downgrade` deve existir ou documentar por que é impossível.
-- Migration destrutiva exige backup e plano de rollout.
-- Dados backfilled precisam de estratégia idempotente.
+export const prisma = new PrismaClient({
+  log: [
+    { emit: 'event', level: 'query' },
+  ],
+});
 
-## Modelagem
+prisma.$on('query', (e) => {
+  if (e.duration > 500) {
+    logger.warn({ query: e.query, duration: e.duration, params: e.params }, 'slow_query');
+  }
+});
+```
 
-- Chave primária estável.
-- Foreign keys quando integridade relacional importa.
-- `NOT NULL` somente quando backfill/valor default estiver resolvido.
-- Enum em banco exige plano para novos valores.
-- Campos de auditoria (`created_at`, `updated_at`) devem ter timezone/semântica consistente.
+## Schema (prisma/schema.prisma)
 
-## Índices
+```prisma
+generator client {
+  provider = "prisma-client-js"
+}
 
-Crie índice quando:
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
-- coluna participa de lookup frequente
-- FK é usada em join/filtro
-- ordenação/paginação depende dela
-- constraint de unicidade representa regra de negócio
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique @db.VarChar(255)
+  name         String   @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-Não crie índice por reflexo; índice aumenta custo de escrita.
+  orders Order[]
 
-## Transações e concorrência
-
-- Use transação por caso de uso, não por função aleatória.
-- Operações idempotentes precisam de chave idempotente ou constraint única.
-- Evite read-modify-write sem lock/constraint quando há concorrência.
-- Webhooks devem tolerar reentrega.
+  @@map("users")
+}
+```
 
 ## Queries
 
-- Evite N+1.
-- Paginação deve ter ordenação determinística.
-- Query complexa precisa de teste ou EXPLAIN quando performance for risco.
+```typescript
+// Criar
+const user = await prisma.user.create({
+  data: { email, name, passwordHash },
+  select: { id: true, name: true, email: true, createdAt: true },
+});
 
-## Produção
+// Buscar por ID
+const user = await prisma.user.findUnique({ where: { id } });
 
-Antes de tocar produção:
+// Buscar com include (eager loading)
+const order = await prisma.order.findUnique({
+  where: { id: orderId },
+  include: { items: true, user: { select: { id: true, name: true } } },
+});
 
-1. backup verificado
-2. migration testada em cópia ou ambiente staging
-3. rollback/downgrade documentado
-4. impacto de lock estimado para tabelas grandes
+// Paginação
+const [items, total] = await Promise.all([
+  prisma.user.findMany({ skip, limit, orderBy: { id: 'asc' } }),
+  prisma.user.count(),
+]);
 
-## Escala de leitura/escrita
+// Transação
+const [order, account] = await prisma.$transaction([
+  prisma.order.create({ data: orderData }),
+  prisma.account.update({ where: { id: accountId }, data: { balance: { decrement: amount } } }),
+]);
 
-Para tabela ou query que pode crescer, o plano deve citar `SCALABILITY_GUIDE.md` e responder: paginação, índice, cardinalidade, concorrência, retenção e validação com volume representativo.
+// Interactive transaction (para lógica entre steps)
+await prisma.$transaction(async (tx) => {
+  const account = await tx.account.findUnique({ where: { id: accountId } });
+  if (!account || account.balance < amount) throw new AppError('CONFLICT', 'Saldo insuficiente', 409);
+  await tx.account.update({ where: { id: accountId }, data: { balance: { decrement: amount } } });
+  await tx.order.create({ data: orderData });
+});
+```
 
-Mudança de banco em caminho quente sem análise de escala deve ser tratada como pendência pelo `role-scalability`.
+## Migrations
+
+```bash
+# Criar migration
+npx prisma migrate dev --name add_orders_table
+
+# Aplicar em produção
+npx prisma migrate deploy
+
+# Reset (desenvolvimento)
+npx prisma migrate reset
+
+# Status
+npx prisma migrate status
+```
+
+Regras:
+- Sempre revisar migration gerada antes de aplicar.
+- Não editar migration aplicada — criar nova.
+- Testar rollback (revert) antes de deploy.
+
+## Índices
+
+```prisma
+model Order {
+  userId Int @map("user_id")
+  status String @db.VarChar(20)
+
+  @@index([userId])
+  @@index([status])
+  @@index([userId, status])
+  @@map("orders")
+}
+```
+
+## N+1
+
+Prisma faz eager loading com `include`:
+
+```typescript
+// ❌ N+1 manual
+const users = await prisma.user.findMany();
+for (const u of users) {
+  const orders = await prisma.order.findMany({ where: { userId: u.id } });
+}
+
+// ✓ Eager loading
+const users = await prisma.user.findMany({
+  include: { orders: true },
+});
+```
+
+## Seeds
+
+```typescript
+// prisma/seed.ts
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+
+async function main() {
+  await prisma.role.upsert({ where: { name: 'admin' }, update: {}, create: { name: 'admin' } });
+  await prisma.role.upsert({ where: { name: 'user' }, update: {}, create: { name: 'user' } });
+}
+
+main().finally(() => prisma.$disconnect());
+```
+
+## Regras duras
+
+- Não usar SELECT * — sempre `select` explícito em endpoints.
+- Não fazer N+1 — usar `include`.
+- Não commitar migration sem testar.
+- Não criar tabela sem índice em FK.
+- Não usar offset em tabela grande — cursor.
+- Não logar dados sensíveis.

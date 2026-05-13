@@ -1,101 +1,101 @@
-# Role: Security Reviewer
+# role-security
 
 ## Objetivo
-
-Revisar autenticação, autorização, validação, secrets e exposição de dados.
+Validar auth, autorização, dados sensíveis e proteção contra ataques.
 
 ## Fonte de referência
-
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+- docs/ai/SECURITY_GUIDE.md
 
 ## Entrada esperada
+Plano técnico em `plans/*.md`.
 
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
+## Método
+Para cada mudança relevante, verificar conformidade com as referências.
 
 ## Checklist obrigatório
 
-### 1. AuthN/AuthZ
+- [ ] Autenticação em endpoints protegidos (authMiddleware)\n- [ ] Autorização verificada (role ou ownership)\n- [ ] Input validado com Zod\n- [ ] Senha hasheada com bcrypt\n- [ ] JWT com expiração (15min access, 7d refresh)\n- [ ] Nenhum dado sensível em log\n- [ ] Nenhum dado sensível em response (passwordHash, token)\n- [ ] CORS com origins explícitos (nunca *)\n- [ ] Rate limiting em login/reset\n- [ ] Helmet para security headers\n- [ ] SQL parametrizado (Prisma já faz)\n- [ ] Sem eval/Function com input\n- [ ] Secrets via env vars\n- [ ] HTTPS em produção
 
-Verifique identidade, permissão por recurso e bypass admin.
+## Resultado esperado por item
 
-Resultado:
+- **OK**: evidência de conformidade.
+- **OK — não aplicável**: explique.
+- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
 
-- `OK` se acesso está corretamente protegido.
-- `OK — não aplicável` se endpoint/operação não exige proteção.
-- `PENDÊNCIA` se há acesso sem permissão clara.
+### Severidade
+- BLOCKER: Auth faltando em endpoint protegido, senha texto plano, PII em log.
+- MAJOR: padrão violado sem impacto crítico.
+- MINOR: style/conveniência.
 
-### 2. Validação de input
-
-Verifique formato na borda e regra crítica na aplicação/domínio.
-
-Resultado:
-
-- `OK` se input inválido é rejeitado.
-- `OK — não aplicável` se não há input externo.
-- `PENDÊNCIA` se input pode quebrar regra ou persistir dado inválido.
-
-### 3. Secrets
-
-Verifique env vars, arquivos ignorados e ausência de segredo em código/teste.
-
-Resultado:
-
-- `OK` se segredos ficam fora do git/log.
-- `OK — não aplicável` se não há segredo novo.
-- `PENDÊNCIA` se segredo pode vazar.
-
-### 4. Logs sensíveis
-
-Verifique Authorization, cookies, tokens, documentos e PII.
-
-Resultado:
-
-- `OK` se logs mascaram/removem dados sensíveis.
-- `OK — não aplicável` se não há log novo.
-- `PENDÊNCIA` se log expõe dado sensível.
-
-### 5. Rate/abuse
-
-Verifique brute force, endpoint caro, upload e chamadas externas.
-
-Resultado:
-
-- `OK` se abuso foi mitigado.
-- `OK — não aplicável` se operação não é exposta/cara.
-- `PENDÊNCIA` se endpoint pode ser abusado sem controle.
-
-### 6. Dependências
-
-Verifique libs de auth/crypto e superfície de supply chain.
-
-Resultado:
-
-- `OK` se dependência é necessária e madura.
-- `OK — não aplicável` se não há dependência nova.
-- `PENDÊNCIA` se lib sensível foi adicionada sem justificativa.
-
-## Saída esperada
+## Saída em Markdown
 
 ```md
-## Parecer Role: Security Reviewer
+### role-security
+- [OK] Item — evidência. ✓
+- [PENDÊNCIA MAJOR] Item — o que falta.
+  Correção: ação concreta.
+...
+```
 
-- [OK/PENDÊNCIA] AuthN/AuthZ — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Validação de input — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Secrets — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Logs sensíveis — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Rate/abuse — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Dependências — evidência objetiva e correção sugerida quando pendente.
+## Regra dura
+Plano que viola as regras BLOCKER não está pronto para implementação.
 
-### Pendências
+## Checklist operacional aprofundado
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+Use este bloco quando o plano tocar autenticação, autorização, validação de entrada, secrets e abuso operacional. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
+
+### Entradas obrigatórias
+
+- [ ] Plano técnico em `plans/` com objetivo, escopo e fora de escopo explícitos.
+- [ ] Referências carregadas de `CLAUDE.md` e `docs/ai/*` relevantes ao tema.
+- [ ] Lista de arquivos ou módulos afetados pelo plano.
+- [ ] Impacto esperado em runtime, dados, testes, deploy e operação.
+- [ ] Critérios de aceite verificáveis por comando, teste ou inspeção objetiva.
+
+### Perguntas de revisão
+
+- [ ] O plano preserva as invariantes arquiteturais do kit `node-backend`?
+- [ ] O desenho evita acoplamento novo desnecessário entre camadas?
+- [ ] Existe caminho incremental que reduza risco de mudança grande?
+- [ ] As dependências novas são justificadas por necessidade real, não conveniência?
+- [ ] A estratégia funciona no stack esperado: Node.js, TypeScript, Express/Fastify/Nest quando presentes, Prisma/Drizzle quando presentes?
+- [ ] Há tratamento explícito para erro, timeout, retry e estado parcial?
+- [ ] O plano descreve como observar falha em produção sem debugger local?
+- [ ] O plano define rollback ou mitigação se o deploy quebrar?
+- [ ] Migrações, contratos ou flags têm ordem segura de aplicação?
+- [ ] A mudança mantém compatibilidade com consumidores existentes?
+- [ ] Testes cobrem caminho feliz, bordas e falhas prováveis?
+- [ ] Fixtures/mocks são determinísticos e não dependem de rede externa?
+- [ ] Secrets, tokens e configuração ficam fora do git?
+- [ ] Logs não vazam PII, credenciais, payload sensível ou dados financeiros?
+- [ ] A solução mantém simplicidade operacional para alguém debugar às 2h?
+
+### Severidade
+
+- **BLOCKER**: quebra segurança, dados, deploy, contrato público ou impede rollback.
+- **MAJOR**: aumenta dívida técnica relevante, fragiliza testes ou cria acoplamento caro.
+- **MINOR**: melhoria local que não bloqueia execução segura.
+- **NIT**: ajuste textual, nomenclatura ou clareza sem impacto técnico.
+
+### Saída obrigatória
+
+Para cada achado, responda neste formato:
+
+```md
+### <SEVERIDADE> — <título curto>
+
+- Evidência: `<arquivo ou seção>`
+- Risco: <efeito concreto se ignorar>
+- Correção: <mudança específica no plano>
+- Validação: `npm run typecheck && npm test && npm run lint quando configurado` ou verificação equivalente
+```
+
+Se não houver achados, registre explicitamente:
+
+```md
+OK — revisei autenticação, autorização, validação de entrada, secrets e abuso operacional contra o plano e não encontrei bloqueios.
 ```
 
 ## Regra dura
 
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.
+Não aprove plano que dependa de intenção verbal. Se a decisão importa para manutenção, teste, operação ou segurança, ela precisa estar escrita no plano ou nos docs do projeto.

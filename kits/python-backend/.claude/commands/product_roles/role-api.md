@@ -1,101 +1,119 @@
-# Role: API / Contract Reviewer
+# role-api
 
 ## Objetivo
-
-Revisar contrato HTTP/API para garantir previsibilidade, compatibilidade e bons erros.
+Validar que o plano segue as convenções REST e os contratos HTTP estão completos e consistentes.
 
 ## Fonte de referência
-
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+- `docs/ai/API_GUIDE.md`
+- `docs/ai/ARCHITECTURE.md`
 
 ## Entrada esperada
+Plano técnico em `plans/*.md` com endpoints documentados.
 
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
+## Método
+Para cada endpoint mencionado no plano, verificar se o contrato está completo e segue as convenções.
 
 ## Checklist obrigatório
 
-### 1. Rotas e métodos
+- [ ] Verbo HTTP correto (GET para leitura, POST para criação, PUT/PATCH para atualização, DELETE para remoção)
+- [ ] Path segue convenção (plural, kebab-case, max 2 níveis de nesting)
+- [ ] Versionamento presente (/api/v1/)
+- [ ] Schema de request definido (Pydantic com tipos, validação e exemplos)
+- [ ] Schema de response definido (sem campos sensíveis)
+- [ ] Status codes documentados (201 para POST, 204 para DELETE, 404/409/422 quando aplicável)
+- [ ] Paginação em endpoints de lista (skip/limit com limites claros)
+- [ ] Filtros e ordenação documentados quando aplicável
+- [ ] Erro segue formato padronizado (ErrorDetail com code/message/field)
+- [ ] Autenticação/autorização especificada (público, autenticado, role específica)
+- [ ] Rate limiting especificado para endpoints sensíveis (login, reset password)
+- [ ] Não há dados sensíveis em response (password_hash, token interno)
+- [ ] Não há campo booleano "success" em response (usar status code)
+- [ ] Não há lógica de negócio no router (deve estar em service)
 
-Verifique se rotas, métodos HTTP e nomes de recursos representam o comportamento sem verbos confusos ou acoplamento à implementação.
+## Resultado esperado por item
 
-Resultado:
+Para cada item:
+- **OK**: evidência de conformidade (cite o endpoint e a especificação).
+- **OK — não aplicável**: explique por que não se aplica a este plano.
+- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta, em qual endpoint, e correção concreta.
 
-- `OK` se rotas e métodos estão claros e REST pragmático foi respeitado.
-- `OK — não aplicável` se não há API HTTP no plano.
-- `PENDÊNCIA` se rota/método está ausente, ambíguo ou incompatível com a ação.
+### Severidade
 
-### 2. Status codes
+- BLOCKER: endpoint sem schema, verbo errado, dados sensíveis expostos, auth faltando em endpoint protegido.
+- MAJOR: paginação ausente em lista, status code inconsistente, erro sem formato padrão, rate limiting ausente.
+- MINOR: nomenclatura fora de padrão, exemplo ausente no schema.
 
-Verifique sucesso, criação, erro de validação, autenticação, autorização, não encontrado e conflito.
-
-Resultado:
-
-- `OK` se cada cenário relevante tem status code explícito.
-- `OK — não aplicável` se não há mudança de contrato HTTP.
-- `PENDÊNCIA` se status codes estão ausentes ou genéricos.
-
-### 3. Schemas request/response
-
-Verifique schemas separados, campos obrigatórios/opcionais, tipos, datas, enums e compatibilidade.
-
-Resultado:
-
-- `OK` se schemas públicos estão explícitos.
-- `OK — não aplicável` se não há payload público.
-- `PENDÊNCIA` se schema está implícito ou vaza modelo interno.
-
-### 4. Erro padrão
-
-Verifique código de erro estável, mensagem segura, details e request_id.
-
-Resultado:
-
-- `OK` se erros previsíveis estão definidos.
-- `OK — não aplicável` se não há erro esperado.
-- `PENDÊNCIA` se erro é genérico, sensível ou sem código.
-
-### 5. Paginação/filtros
-
-Para coleções, verifique limite, ordenação determinística, filtros e impacto em índices.
-
-Resultado:
-
-- `OK` se coleções crescentes têm paginação/filtro coerentes.
-- `OK — não aplicável` se endpoint não retorna coleção crescente.
-- `PENDÊNCIA` se coleção pode crescer sem paginação/ordenação.
-
-### 6. Compatibilidade
-
-Verifique se mudança breaking tem versionamento ou migração de cliente.
-
-Resultado:
-
-- `OK` se compatibilidade foi preservada ou migração foi planejada.
-- `OK — não aplicável` se contrato é interno/novo sem cliente existente.
-- `PENDÊNCIA` se quebra contrato existente sem plano.
-
-## Saída esperada
+## Saída em Markdown
 
 ```md
-## Parecer Role: API / Contract Reviewer
+### role-api
 
-- [OK/PENDÊNCIA] Rotas e métodos — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Status codes — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Schemas request/response — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Erro padrão — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Paginação/filtros — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Compatibilidade — evidência objetiva e correção sugerida quando pendente.
+- [OK] Verbo HTTP — POST /api/v1/orders para criação. ✓
+- [OK] Path — /api/v1/orders segue convenção. ✓
+- [PENDÊNCIA MAJOR] Paginação — GET /api/v1/orders não documenta skip/limit.
+  Correção: adicionar query params skip (default 0) e limit (default 20, max 100).
+...
+```
 
-### Pendências
+## Regra dura
+Plano com endpoint sem schema de request E response, ou com dados sensíveis em response, não está pronto para implementação.
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+## Checklist operacional aprofundado
+
+Use este bloco quando o plano tocar contratos HTTP, serialização, erros, versionamento e compatibilidade de clientes. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
+
+### Entradas obrigatórias
+
+- [ ] Plano técnico em `plans/` com objetivo, escopo e fora de escopo explícitos.
+- [ ] Referências carregadas de `CLAUDE.md` e `docs/ai/*` relevantes ao tema.
+- [ ] Lista de arquivos ou módulos afetados pelo plano.
+- [ ] Impacto esperado em runtime, dados, testes, deploy e operação.
+- [ ] Critérios de aceite verificáveis por comando, teste ou inspeção objetiva.
+
+### Perguntas de revisão
+
+- [ ] O plano preserva as invariantes arquiteturais do kit `python-backend`?
+- [ ] O desenho evita acoplamento novo desnecessário entre camadas?
+- [ ] Existe caminho incremental que reduza risco de mudança grande?
+- [ ] As dependências novas são justificadas por necessidade real, não conveniência?
+- [ ] A estratégia funciona no stack esperado: Python, FastAPI, Pydantic, SQLAlchemy/Alembic quando presentes?
+- [ ] Há tratamento explícito para erro, timeout, retry e estado parcial?
+- [ ] O plano descreve como observar falha em produção sem debugger local?
+- [ ] O plano define rollback ou mitigação se o deploy quebrar?
+- [ ] Migrações, contratos ou flags têm ordem segura de aplicação?
+- [ ] A mudança mantém compatibilidade com consumidores existentes?
+- [ ] Testes cobrem caminho feliz, bordas e falhas prováveis?
+- [ ] Fixtures/mocks são determinísticos e não dependem de rede externa?
+- [ ] Secrets, tokens e configuração ficam fora do git?
+- [ ] Logs não vazam PII, credenciais, payload sensível ou dados financeiros?
+- [ ] A solução mantém simplicidade operacional para alguém debugar às 2h?
+
+### Severidade
+
+- **BLOCKER**: quebra segurança, dados, deploy, contrato público ou impede rollback.
+- **MAJOR**: aumenta dívida técnica relevante, fragiliza testes ou cria acoplamento caro.
+- **MINOR**: melhoria local que não bloqueia execução segura.
+- **NIT**: ajuste textual, nomenclatura ou clareza sem impacto técnico.
+
+### Saída obrigatória
+
+Para cada achado, responda neste formato:
+
+```md
+### <SEVERIDADE> — <título curto>
+
+- Evidência: `<arquivo ou seção>`
+- Risco: <efeito concreto se ignorar>
+- Correção: <mudança específica no plano>
+- Validação: `ruff check && mypy/pyright quando configurado && pytest` ou verificação equivalente
+```
+
+Se não houver achados, registre explicitamente:
+
+```md
+OK — revisei contratos HTTP, serialização, erros, versionamento e compatibilidade de clientes contra o plano e não encontrei bloqueios.
 ```
 
 ## Regra dura
 
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.
+Não aprove plano que dependa de intenção verbal. Se a decisão importa para manutenção, teste, operação ou segurança, ela precisa estar escrita no plano ou nos docs do projeto.
