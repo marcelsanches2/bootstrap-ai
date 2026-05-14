@@ -21,11 +21,11 @@
 
 Bootstrap AI gives your AI coding assistant a project-specific brain. Instead of starting every session from scratch, you apply a **preset** — a curated set of commands, configurations, documentation scaffolds, and hooks — that tells your AI assistant exactly how your project is structured, what conventions to follow, and which workflows to enforce.
 
-**Presets are built in [Claude Code](https://docs.anthropic.com/en/docs/claude-code) format** — they install into `.claude/commands/` and `.claude/settings.json`. This means they work natively with:
+**Presets are built in [Claude Code](https://docs.anthropic.com/en/docs/claude-code) format** — they install into `.claude/commands/` and `.claude/settings.json`. Designed to run with:
 
+- **[Hermes Agent](https://hermes-agent.nousresearch.com)** — the engine. Full orchestration with cron, memory, multi-platform messaging, and autonomous workflows
 - **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — slash commands, hooks, and project context
-- **[Hermes Agent](https://hermes-agent.nousresearch.com)** — full orchestration with cron, memory, and multi-platform messaging
-- **Any tool** that reads `.claude/commands/` — Cursor, Copilot, and others adopting the Claude Code format
+- **Any tool** that reads `.claude/commands/` — Cursor, Copilot, and others adopting the format
 
 
 ---
