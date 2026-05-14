@@ -394,16 +394,131 @@ Ou:
    Para personalizar, rode /design-phase.
 ```
 
+### 8.6. Customizar guides com bibliotecas detectadas
+
+**Objetivo:** As bibliotecas estruturais detectadas no passo 4 (analyze) devem refletir nos guides aplicados. Um preset genérico fala de "state management" sem dizer qual — se o projeto usa Riverpod, os guides devem mencionar Riverpod especificamente.
+
+**Quando executar:** Sempre, tanto para projetos existentes quanto para projetos novos (após /kickoff definir a stack). Funciona em TODOS os presets.
+
+#### 8.6.1. Fonte dos dados
+
+Use as libs detectadas pelo `bin/bootstrap-ai analyze` no passo 4. O analyze retorna uma lista de bibliotecas estruturais encontradas no projeto.
+
+Para projetos novos (via /kickoff), use as libs que o /kickoff definiu ao selecionar/inicializar a stack.
+
+#### 8.6.2. Mapeamento lib → guide → customização
+
+Para cada lib detectada, identifique quais guides devem ser customizados e o que injetar:
+
+**State Management:**
+
+| Lib detectada | Guides afetados | O que customizar |
+|---|---|---|
+| Riverpod | ARCHITECTURE, CODING_STANDARDS | Padrão de DI: `Provider`, `Notifier`, `AsyncNotifier`, `ref.read/watch`. Nomenclatura de providers: `*Provider`, `*Notifier`. AsyncValue handling. |
+| BLoC | ARCHITECTURE, CODING_STANDARDS | Padrão: `Bloc`, `Event`, `State`, `BlocBuilder`. Nomenclatura: `*Bloc`, `*Event`, `*State`. |
+| GetX | ARCHITECTURE, CODING_STANDARDS | Padrão: `GetxController`, `obx`, `Get.find()`. |
+| Zustand | ARCHITECTURE, CODING_STANDARDS | Store creation: `create()`, actions, selectors. |
+| Redux | ARCHITECTURE, CODING_STANDARDS | Padrão: actions, reducers, selectors, middleware. |
+
+**Data Fetching:**
+
+| Lib detectada | Guides afetados | O que customizar |
+|---|---|---|
+| TanStack Query | FEATURE_GUIDE, ARCHITECTURE | Query keys, `useQuery`, `useMutation`, cache invalidation, optimistic updates, stale time. |
+| Dio | ARCHITECTURE, CODING_STANDARDS | Interceptors, error handling, retry, base URL config, auth headers. |
+| httpx | ARCHITECTURE, CODING_STANDARDS | Client config, interceptors, error handling. |
+
+**ORM / Database:**
+
+| Lib detectada | Guides afetados | O que customizar |
+|---|---|---|
+| Prisma | DATABASE_GUIDE, ARCHITECTURE | Schema.prisma, migrations (`prisma migrate`), query patterns, transactions. |
+| Drizzle | DATABASE_GUIDE, ARCHITECTURE | Schema definition, migrations, query builder patterns. |
+| SQLAlchemy | DATABASE_GUIDE, ARCHITECTURE | Models, sessions, Alembic migrations, query patterns, relationships. |
+| TypeORM | DATABASE_GUIDE, ARCHITECTURE | Entities, migrations, repositories, query builder. |
+| Mongoose | DATABASE_GUIDE, ARCHITECTURE | Schemas, models, middleware hooks, queries. |
+
+**Validação:**
+
+| Lib detectada | Guides afetados | O que customizar |
+|---|---|---|
+| Zod | CODING_STANDARDS, API_GUIDE | Schema definitions, `.parse()`, `.safeParse()`, error formatting. |
+| Pydantic | CODING_STANDARDS, API_GUIDE | BaseModel, validators, schema generation, error handling. |
+| class-validator | CODING_STANDARDS, API_GUIDE | Decorators, validation pipes, error responses. |
+
+**Routing:**
+
+| Lib detectada | Guides afetados | O que customizar |
+|---|---|---|
+| GoRouter | ARCHITECTURE | Route structure, guards, deep linking, redirect logic, shell routes. |
+| React Router | ARCHITECTURE | Route config, loaders, nested routes, params. |
+
+**Testing:**
+
+| Lib detectada | Guides afetados | O que customizar |
+|---|---|---|
+| Vitest | TESTING_GUIDE | Config, `describe/it/expect`, mocks, coverage. |
+| Jest | TESTING_GUIDE | Config, `describe/it/expect`, mocks, coverage. |
+| pytest | TESTING_GUIDE | Fixtures, conftest, markers, parametrize, coverage. |
+| Playwright | TESTING_GUIDE | E2E: page objects, selectors, assertions, test config. |
+| Cypress | TESTING_GUIDE | E2E: cy commands, custom commands, assertions. |
+
+#### 8.6.3. Processo de customização
+
+Para cada lib detectada que tem mapeamento acima:
+
+1. **Identifique** os guides afetados pela lib
+2. **Localize** no guide a seção genérica relevante (ex: "State Management" no ARCHITECTURE.md)
+3. **Injete** padrões específicos da lib logo após a seção genérica, com formato:
+
+```md
+### Biblioteca detectada: {LIB_NAME}
+
+{Padrões específicos da lib — convenções de naming, uso, anti-patterns}
+
+*Detectado em: {arquivo_onde_foi_encontrado}*
+```
+
+4. Se o guide não tem seção sobre o tópico (ex: ARCHITECTURE.md não menciona "validation"), **adicione** uma nova seção no final.
+5. **Não remova** conteúdo genérico existente — apenas complemente com specifics da lib.
+
+#### 8.6.4. Exemplo de saída
+
+```txt
+📚 Guides customizados com libs detectadas:
+   ARCHITECTURE.md + Riverpod (DI pattern, providers, AsyncValue)
+   ARCHITECTURE.md + GoRouter (routing structure, guards)
+   CODING_STANDARDS.md + Riverpod (naming conventions, anti-patterns)
+   CODING_STANDARDS.md + Dio (error handling, interceptors)
+   DATABASE_GUIDE.md + Prisma (schema, migrations, queries)
+   TESTING_GUIDE.md + Vitest (config, mocks, coverage)
+   6 arquivos atualizados com 6 bibliotecas.
+```
+
+Ou:
+
+```txt
+📚 Guides: nenhuma lib estrutural adicional detectada.
+   Templates genéricos mantidos.
+```
+
+#### 8.6.5. Projetos novos (via /kickoff)
+
+Quando o fluxo vem do `/kickoff`, as libs já foram definidas na seleção de stack. Aplique este passo com as libs que o /kickoff configurou no projeto (lidas de `pubspec.yaml`, `package.json`, `pyproject.toml` ou `requirements.txt` após a inicialização).
+
 ### 9. Resposta final
 
 Reporte:
 
 ```txt
-Preset aplicado: <kit>
-Project-kits usado: <path>
+Preset aplicado: <preset>
+Bootstrap AI usado: <path>
 Project name: <nome do projeto>
 Arquivos criados: <n>
 Conflitos .kit-new: <n>
+Design System: sincronizado / template genérico
+Libs detectadas: <lista>
+Guides customizados: <n> arquivos com <n> libs
 Próximo passo sugerido: /refactor, se o projeto já existe; /plan, se projeto novo.
 ```
 

@@ -1,193 +1,615 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>import-project-preset Flow — bootstrap-ai</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0d1117; display: flex; justify-content: center; padding: 40px 20px; }
-  .diagram { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; max-width: 800px; width: 100%; }
-  .title { text-align: center; color: #e6edf3; font-size: 22px; font-weight: 700; margin-bottom: 32px; letter-spacing: -0.5px; }
-  .title span { color: #8b949e; font-weight: 400; font-size: 15px; display: block; margin-top: 6px; }
 
-  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  body {
+    background: #0a0a0a;
+    display: flex;
+    justify-content: center;
+    padding: 48px 24px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 
-  .step {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 10px;
-    padding: 16px 24px;
-    text-align: center;
-    color: #e6edf3;
+  .diagram {
+    max-width: 860px;
     width: 100%;
-    max-width: 520px;
-    position: relative;
   }
-  .step .cmd { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 14px; color: #79c0ff; margin-bottom: 4px; }
-  .step .desc { font-size: 13px; color: #8b949e; }
 
-  .step.primary { border-color: #58a6ff; background: linear-gradient(135deg, #161b22 0%, #0d1d32 100%); }
-  .step.primary .cmd { color: #58a6ff; font-weight: 600; }
-
-  .step.decision {
-    border-color: #d2a8ff;
-    background: linear-gradient(135deg, #161b22 0%, #1e1430 100%);
-    border-radius: 4px;
-    transform: rotate(0deg);
-    max-width: 480px;
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
   }
-  .step.decision .cmd { color: #d2a8ff; }
+  .header .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #a78bfa;
+    background: rgba(167, 139, 250, 0.1);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+    border-radius: 20px;
+    padding: 4px 14px;
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #f0f0f0;
+    letter-spacing: -0.8px;
+  }
+  .header h1 code {
+    background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    font-size: 26px;
+  }
+  .header .subtitle {
+    color: #525252;
+    font-size: 14px;
+    margin-top: 8px;
+    font-weight: 400;
+  }
 
-  .step.action-green { border-color: #3fb950; background: linear-gradient(135deg, #161b22 0%, #0f2518 100%); }
-  .step.action-green .cmd { color: #3fb950; }
+  /* ── Flow Container ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
 
-  .step.action-orange { border-color: #d29922; background: linear-gradient(135deg, #161b22 0%, #261e0e 100%); }
-  .step.action-orange .cmd { color: #d29922; }
-
-  .step.action-red { border-color: #f85149; background: linear-gradient(135deg, #161b22 0%, #2a1215 100%); }
-  .step.action-red .cmd { color: #f85149; }
-
-  .step.result { border-color: #58a6ff; border-style: dashed; }
-  .step.result .desc { color: #e6edf3; }
-
+  /* ── Arrow ── */
   .arrow {
     display: flex;
     justify-content: center;
-    padding: 6px 0;
-    color: #484f58;
-    font-size: 20px;
+    padding: 4px 0;
+    color: #333;
+    position: relative;
   }
-  .arrow svg { width: 24px; height: 24px; }
+  .arrow svg { width: 20px; height: 20px; }
+
+  /* ── Step Number Badge ── */
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  /* ── Base Step ── */
+  .step {
+    background: #141414;
+    border: 1px solid #1e1e1e;
+    border-radius: 12px;
+    padding: 18px 24px;
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .step-content { flex: 1; min-width: 0; }
+  .step .cmd {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    line-height: 1.4;
+  }
+  .step .desc {
+    font-size: 12.5px;
+    color: #666;
+    line-height: 1.45;
+  }
+  .step .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .step .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Step Colors ── */
+  .step.s1 { border-color: rgba(99,102,241,0.3); background: linear-gradient(135deg, #141414 0%, #0f1029 100%); }
+  .step.s1 .cmd { color: #818cf8; }
+  .step.s1 .step-num { background: rgba(99,102,241,0.15); color: #818cf8; }
+
+  .step.s2 { border-color: rgba(56,189,248,0.3); background: linear-gradient(135deg, #141414 0%, #0a1a2a 100%); }
+  .step.s2 .cmd { color: #38bdf8; }
+  .step.s2 .step-num { background: rgba(56,189,248,0.15); color: #38bdf8; }
+
+  .step.s3 { border-color: rgba(192,132,252,0.3); background: linear-gradient(135deg, #141414 0%, #1a0f2a 100%); }
+  .step.s3 .cmd { color: #c084fc; }
+  .step.s3 .step-num { background: rgba(192,132,252,0.15); color: #c084fc; }
+
+  .step.s4 { border-color: rgba(52,211,153,0.3); background: linear-gradient(135deg, #141414 0%, #0a1f17 100%); }
+  .step.s4 .cmd { color: #34d399; }
+  .step.s4 .step-num { background: rgba(52,211,153,0.15); color: #34d399; }
+
+  .step.s5 { border-color: rgba(251,191,36,0.3); background: linear-gradient(135deg, #141414 0%, #1f1a0a 100%); }
+  .step.s5 .cmd { color: #fbbf24; }
+  .step.s5 .step-num { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+  .step.s6 { border-color: rgba(244,114,182,0.3); background: linear-gradient(135deg, #141414 0%, #1f0a17 100%); }
+  .step.s6 .cmd { color: #f472b6; }
+  .step.s6 .step-num { background: rgba(244,114,182,0.15); color: #f472b6; }
+
+  .step.s7 { border-color: rgba(251,146,60,0.3); background: linear-gradient(135deg, #141414 0%, #1f120a 100%); }
+  .step.s7 .cmd { color: #fb923c; }
+  .step.s7 .step-num { background: rgba(251,146,60,0.15); color: #fb923c; }
+
+  .step.s8 { border-color: rgba(74,222,128,0.4); background: linear-gradient(135deg, #141414 0%, #0a1f0f 100%); }
+  .step.s8 .cmd { color: #4ade80; }
+  .step.s8 .step-num { background: rgba(74,222,128,0.15); color: #4ade80; }
+
+  /* ── Branch Container ── */
+  .branch-wrap {
+    width: 100%;
+    max-width: 700px;
+    position: relative;
+  }
+  .branch-connector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .branch-connector svg { width: 100%; height: 28px; }
 
   .branch-container {
     display: flex;
-    width: 100%;
-    max-width: 640px;
-    gap: 16px;
+    gap: 20px;
     position: relative;
   }
-  .branch-container .step { max-width: none; flex: 1; }
+  .branch-container > div { flex: 1; min-width: 0; }
+  .branch-container .step { max-width: none; }
+  .branch-container .sub-step {
+    background: #111;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .branch-container .sub-step .cmd {
+    font-family: 'SF Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .branch-container .sub-step .desc {
+    font-size: 11.5px;
+    color: #555;
+  }
+
   .branch-label {
     text-align: center;
-    color: #8b949e;
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
   }
-  .branch-label span { background: #161b22; padding: 2px 8px; border-radius: 3px; border: 1px solid #30363d; }
+  .branch-label span {
+    padding: 3px 10px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .branch-label.empty span {
+    color: #34d399;
+    background: rgba(52,211,153,0.08);
+    border: 1px solid rgba(52,211,153,0.2);
+  }
+  .branch-label.code span {
+    color: #fbbf24;
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+  }
 
-  .merge-arrow {
+  .sub-step.green { border-color: rgba(52,211,153,0.15); }
+  .sub-step.green .cmd { color: #34d399; }
+  .sub-step.orange { border-color: rgba(251,191,36,0.15); }
+  .sub-step.orange .cmd { color: #fbbf24; }
+
+  /* ── Sub-branch (step 6) ── */
+  .sub-branch {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+    margin-left: 34px;
+  }
+  .sub-branch-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #666;
+    padding: 6px 10px;
+    background: rgba(255,255,255,0.015);
+    border-radius: 6px;
+    border: 1px solid #1a1a1a;
+  }
+  .sub-branch-item .icon {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .sub-branch-item .label {
+    color: #999;
+    font-weight: 500;
+  }
+  .sub-branch-item .detail {
+    color: #555;
+  }
+
+  /* ── Library Mapping Grid (step 7) ── */
+  .lib-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 10px;
+    margin-left: 34px;
+  }
+  .lib-card {
+    background: #111;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .lib-card .lib-name {
+    font-family: 'SF Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .lib-card .lib-target {
+    font-size: 11px;
+    color: #555;
+    line-height: 1.4;
+  }
+  .lib-card .lib-target code {
+    font-family: 'SF Mono', monospace;
+    font-size: 10.5px;
+    color: #777;
+    background: rgba(255,255,255,0.04);
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  .lib-card.riverpod .lib-name { color: #38bdf8; }
+  .lib-card.tanstack .lib-name { color: #f472b6; }
+  .lib-card.orm .lib-name { color: #34d399; }
+  .lib-card.validation .lib-name { color: #c084fc; }
+  .lib-card.routing .lib-name { color: #fbbf24; }
+
+  /* ── End State ── */
+  .end-state {
+    background: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
+    border: 1px solid rgba(52,211,153,0.3);
+    border-radius: 12px;
+    padding: 20px 28px;
+    text-align: center;
+    width: 100%;
+    max-width: 560px;
+  }
+  .end-state .cmd {
+    color: #6ee7b7;
+    font-family: 'SF Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .end-state .desc {
+    color: rgba(255,255,255,0.6);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .end-state .lifecycle {
+    margin-top: 10px;
     display: flex;
     justify-content: center;
-    padding: 6px 0;
-    color: #484f58;
+    align-items: center;
+    gap: 6px;
+    font-family: 'SF Mono', monospace;
+    font-size: 12px;
+    color: rgba(110,231,183,0.7);
   }
-  .merge-arrow svg { width: 24px; height: 30px; }
+  .end-state .lifecycle .sep { color: rgba(110,231,183,0.3); }
 
-  .end-state {
-    background: linear-gradient(135deg, #238636 0%, #1a7f37 100%);
-    border: none;
-    border-radius: 10px;
-    padding: 18px 24px;
-    text-align: center;
-    color: #ffffff;
-    width: 100%;
-    max-width: 520px;
+  /* ── Merge Connector ── */
+  .merge-connector {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
   }
-  .end-state .cmd { color: #ffffff; font-family: 'SF Mono', monospace; font-size: 14px; font-weight: 700; }
-  .end-state .desc { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px; }
+  .merge-connector svg { width: 100%; height: 28px; }
 
-  .note {
+  /* ── Divider ── */
+  .section-divider {
+    width: 40px;
+    height: 1px;
+    background: #222;
+    margin: 4px auto;
+  }
+
+  /* ── Footer ── */
+  .footer {
     text-align: center;
-    color: #484f58;
+    margin-top: 36px;
+    color: #333;
     font-size: 11px;
-    margin-top: 24px;
     font-style: italic;
   }
+  .footer a { color: #555; text-decoration: none; }
+  .footer a:hover { color: #888; }
 </style>
 </head>
 <body>
 <div class="diagram">
-  <div class="title">
-    /import-project-preset Flow
-    <span>What happens when you run the importer</span>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">bootstrap-ai</div>
+    <h1><code>/import-project-preset</code> Flow</h1>
+    <div class="subtitle">O que acontece quando você roda o importer</div>
   </div>
 
   <div class="flow">
-    <!-- Step 1: Run command -->
-    <div class="step primary">
-      <div class="cmd">/import-project-preset</div>
-      <div class="desc">You run the command in Claude Code or Hermes Agent</div>
-    </div>
 
-    <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-
-    <!-- Step 2: Detect -->
-    <div class="step">
-      <div class="cmd">bin/bootstrap-ai detect &amp;&amp; analyze</div>
-      <div class="desc">Scans the project folder for stack signatures and structural libraries</div>
-    </div>
-
-    <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-
-    <!-- Step 3: Decision -->
-    <div class="step decision">
-      <div class="cmd">Folder is empty?</div>
-      <div class="desc">Checks for pubspec.yaml · package.json · pyproject.toml · etc.</div>
-    </div>
-
-    <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-
-    <!-- Branch -->
-    <div class="branch-container">
-      <div>
-        <div class="branch-label"><span>YES — Empty</span></div>
-        <div class="step action-green">
-          <div class="cmd">→ /kickoff</div>
-          <div class="desc">7 questions → PRODUCT_BRIEF.md → choose stack</div>
-        </div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="step action-green">
-          <div class="cmd">→ /design-phase</div>
-          <div class="desc">Figma Make link · AI-generated · or skip</div>
-        </div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="step action-green">
-          <div class="cmd">→ preset apply</div>
-          <div class="desc">Scaffolds project with chosen preset</div>
-        </div>
-      </div>
-      <div>
-        <div class="branch-label"><span>NO — Has code</span></div>
-        <div class="step action-orange">
-          <div class="cmd">→ select preset</div>
-          <div class="desc">Auto-detects stack and matches to a preset</div>
-        </div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="step action-orange">
-          <div class="cmd">→ diff preview</div>
-          <div class="desc">Shows what would change — no overwrite risk</div>
-        </div>
-        <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="step action-orange">
-          <div class="cmd">→ preset apply</div>
-          <div class="desc">Missing files created · conflicts → .kit-new</div>
+    <!-- ════════ STEP 1: Detect Stack ════════ -->
+    <div class="step s1">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="cmd">Detecta Stack</div>
+        <div class="desc">Escaneia o projeto em busca de arquivos de configuração</div>
+        <div class="tags">
+          <span class="tag" style="color:#818cf8;background:rgba(99,102,241,0.1);">pubspec.yaml</span>
+          <span class="tag" style="color:#818cf8;background:rgba(99,102,241,0.1);">package.json</span>
+          <span class="tag" style="color:#818cf8;background:rgba(99,102,241,0.1);">pyproject.toml</span>
+          <span class="tag" style="color:#818cf8;background:rgba(99,102,241,0.1);">go.mod</span>
         </div>
       </div>
     </div>
 
-    <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
 
-    <!-- End state -->
+    <!-- ════════ STEP 2: Analisa Libs ════════ -->
+    <div class="step s2">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="cmd">Analisa Libs Estruturais</div>
+        <div class="desc">Identifica bibliotecas que definem a arquitetura do projeto (state mgmt, ORM, routing, validation)</div>
+        <div class="tags">
+          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">riverpod</span>
+          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">prisma</span>
+          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">sqlalchemy</span>
+          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">tanstack-query</span>
+          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">zod</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
+
+    <!-- ════════ STEP 3: Branch ════════ -->
+    <div class="step s3">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="cmd">Branch: Pasta vazia ou tem código?</div>
+        <div class="desc">Decisão baseada na presença de arquivos de projeto</div>
+      </div>
+    </div>
+
+    <!-- Branch Connector SVG -->
+    <div class="branch-wrap">
+      <div class="branch-connector">
+        <svg viewBox="0 0 700 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M350 0 L350 12 L175 32" stroke="#333" stroke-width="1.5" fill="none"/>
+          <path d="M350 0 L350 12 L525 32" stroke="#333" stroke-width="1.5" fill="none"/>
+        </svg>
+      </div>
+
+      <div class="branch-container">
+        <!-- LEFT: Empty -->
+        <div>
+          <div class="branch-label empty"><span>Pasta vazia</span></div>
+          <div class="sub-step green">
+            <div>
+              <div class="cmd">→ /kickoff</div>
+              <div class="desc">7 perguntas → brief → escolhe stack</div>
+            </div>
+          </div>
+          <div class="sub-step green">
+            <div>
+              <div class="cmd">→ /design-phase</div>
+              <div class="desc">Figma · AI-generated · ou skip</div>
+            </div>
+          </div>
+          <div class="sub-step green">
+            <div>
+              <div class="cmd">→ apply preset</div>
+              <div class="desc">Scaffolds projeto com preset escolhido</div>
+            </div>
+          </div>
+        </div>
+        <!-- RIGHT: Has Code -->
+        <div>
+          <div class="branch-label code"><span>Tem código</span></div>
+          <div class="sub-step orange">
+            <div>
+              <div class="cmd">→ auto-select preset</div>
+              <div class="desc">Detecta stack e match com preset</div>
+            </div>
+          </div>
+          <div class="sub-step orange">
+            <div>
+              <div class="cmd">→ diff preview</div>
+              <div class="desc">Mostra o que mudaria — sem risco</div>
+            </div>
+          </div>
+          <div class="sub-step orange">
+            <div>
+              <div class="cmd">→ apply</div>
+              <div class="desc">Arquivos novos criados · conflitos → .kit-new</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Merge Connector -->
+      <div class="merge-connector">
+        <svg viewBox="0 0 700 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M175 0 L175 12 L350 32" stroke="#333" stroke-width="1.5" fill="none"/>
+          <path d="M525 0 L525 12 L350 32" stroke="#333" stroke-width="1.5" fill="none"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ════════ STEP 4: Apply ════════ -->
+    <div class="step s4">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="cmd">Apply Preset</div>
+        <div class="desc">Safe write: cria arquivos ausentes · ignora iguais · conflitos → <code style="font-family:'SF Mono',monospace;font-size:11px;color:#34d399;background:rgba(52,211,153,0.08);padding:1px 4px;border-radius:3px;">.kit-new</code></div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
+
+    <!-- ════════ STEP 5: Verify ════════ -->
+    <div class="step s5">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="cmd">Verify Import</div>
+        <div class="desc">Valida que os arquivos essenciais foram aplicados</div>
+        <div class="tags">
+          <span class="tag" style="color:#fbbf24;background:rgba(251,191,36,0.08);">CLAUDE.md</span>
+          <span class="tag" style="color:#fbbf24;background:rgba(251,191,36,0.08);">commands/</span>
+          <span class="tag" style="color:#fbbf24;background:rgba(251,191,36,0.08);">docs/ai/</span>
+          <span class="tag" style="color:#fbbf24;background:rgba(251,191,36,0.08);">roles/</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
+
+    <!-- ════════ STEP 6: Sync Design System ════════ -->
+    <div class="step s6">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="cmd">Sync Design System</div>
+        <div class="desc">Escaneia tokens de design existentes e sincroniza com <code style="font-family:'SF Mono',monospace;font-size:11px;color:#f472b6;background:rgba(244,114,182,0.08);padding:1px 4px;border-radius:3px;">DESIGN_SYSTEM.md</code></div>
+        <div class="sub-branch">
+          <div class="sub-branch-item">
+            <div class="icon" style="background:#34d399;"></div>
+            <div><span class="label">Achou tokens</span> <span class="detail">→ reescreve DESIGN_SYSTEM.md com valores reais</span></div>
+          </div>
+          <div class="sub-branch-item">
+            <div class="icon" style="background:#fbbf24;"></div>
+            <div><span class="label">Parcial</span> <span class="detail">→ preenche o que encontrou</span></div>
+          </div>
+          <div class="sub-branch-item">
+            <div class="icon" style="background:#f87171;"></div>
+            <div><span class="label">Não achou</span> <span class="detail">→ pergunta se quer rodar /design-phase</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
+
+    <!-- ════════ STEP 7: Customizar Guides ════════ -->
+    <div class="step s7">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <div class="cmd">Customizar Guides com Libs</div>
+        <div class="desc">Injeta patterns das libs detectadas nos guides de documentação</div>
+        <div class="lib-grid">
+          <div class="lib-card riverpod">
+            <div class="lib-name">Riverpod</div>
+            <div class="lib-target"><code>ARCHITECTURE</code> + <code>CODING_STANDARDS</code></div>
+          </div>
+          <div class="lib-card tanstack">
+            <div class="lib-name">TanStack Query</div>
+            <div class="lib-target"><code>FEATURE_GUIDE</code> + <code>ARCHITECTURE</code></div>
+          </div>
+          <div class="lib-card orm">
+            <div class="lib-name">Prisma / SQLAlchemy</div>
+            <div class="lib-target"><code>DATABASE_GUIDE</code> + <code>ARCHITECTURE</code></div>
+          </div>
+          <div class="lib-card validation">
+            <div class="lib-name">Zod / Pydantic</div>
+            <div class="lib-target"><code>CODING_STANDARDS</code> + <code>API_GUIDE</code></div>
+          </div>
+          <div class="lib-card routing">
+            <div class="lib-name">GoRouter / React Router</div>
+            <div class="lib-target"><code>ARCHITECTURE</code></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
+
+    <!-- ════════ STEP 8: Result ════════ -->
+    <div class="step s8" style="border-style:dashed;">
+      <div class="step-num">8</div>
+      <div class="step-content">
+        <div class="cmd">Resposta Final</div>
+        <div class="desc">preset aplicado + libs detectadas + guides customizados + próximo passo sugerido</div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
+
+    <!-- ════════ End State ════════ -->
     <div class="end-state">
-      <div class="cmd">Project ready for lifecycle</div>
-      <div class="desc">/plan → /jarvis-plan-revisor → implement → /jarvis-test-flow → /ship</div>
+      <div class="cmd">✓ Projeto pronto para lifecycle</div>
+      <div class="desc">Todos os arquivos do preset foram aplicados, guides customizados com as libs detectadas</div>
+      <div class="lifecycle">
+        <span>/plan</span>
+        <span class="sep">→</span>
+        <span>/jarvis-plan-revisor</span>
+        <span class="sep">→</span>
+        <span>implement</span>
+        <span class="sep">→</span>
+        <span>/jarvis-test-flow</span>
+        <span class="sep">→</span>
+        <span>/ship</span>
+      </div>
     </div>
 
-    <div class="note">
-      No preset found? bootstrap-ai create &lt;name&gt; --from "description" generates one from scratch.
+    <div class="footer">
+      Nenhum preset encontrado? <code style="color:#555;">bootstrap-ai create &lt;name&gt; --from "descrição"</code> gera um do zero.
     </div>
+
   </div>
 </div>
 </body>

@@ -61,7 +61,8 @@ Quando você roda `/import-project-preset`, o sistema:
    - **Pasta vazia** → redireciona para `/kickoff` (7 perguntas → product brief → seleção de stack → `/design-phase` → apply do preset)
    - **Tem código** → auto-seleciona o preset correspondente → mostra preview do diff → aplica com política de escrita segura
 4. **Sincroniza Design System** — se o projeto já tem tokens de cor, tipografia ou espaçamento, o `DESIGN_SYSTEM.md` é reescrito com a identidade real do projeto em vez do template genérico
-5. **Resultado** — projeto scaffolded e pronto para o ciclo de desenvolvimento
+5. **Customiza guides com libs detectadas** — ARCHITECTURE.md, CODING_STANDARDS.md, DATABASE_GUIDE.md etc. são enriquecidos com padrões específicos das bibliotecas que o projeto realmente usa (convenções Riverpod, query patterns Prisma, cache strategies TanStack Query, etc.)
+6. **Resultado** — projeto scaffolded e pronto para o ciclo de desenvolvimento
 
 ---
 
