@@ -1,9 +1,22 @@
-# TESTING_GUIDE.md
+# Guia de Testes Flutter
 
-Este documento define os padrões de testes do projeto {{PROJECT_NAME}}.
+## Objetivo
 
-O objetivo dos testes não é aumentar cobertura artificialmente.  
-O objetivo é garantir confiança para evoluir o app sem quebrar fluxos críticos.
+Garantir confiança para evoluir o app sem quebrar fluxos críticos.
+
+O objetivo não é aumentar cobertura artificialmente.
+
+---
+
+## Camadas
+
+- Unit: funções, usecases, mappers, regras de domínio.
+- Controller/Provider: estado de tela, loading/error/success.
+- Repository: conversão e tratamento de erros.
+- Widget: comportamento visual relevante.
+- Integration/E2E: jornadas críticas do usuário.
+
+Use E2E com cuidado. É mais caro, mais lento e mais frágil. Deve cobrir jornadas críticas, não todos os detalhes do app.
 
 ---
 
@@ -30,21 +43,6 @@ Não depender de ordem de execução.
 
 ---
 
-## Pirâmide de testes
-
-Prioridade esperada:
-
-1. Testes unitários para regra de negócio.
-2. Testes de controller/provider para estado de tela.
-3. Testes de repository e mapper para conversão e tratamento de erros.
-4. Testes de widget quando houver comportamento visual relevante.
-5. Testes E2E para fluxos críticos do usuário.
-
-Use E2E com cuidado.  
-E2E é mais caro, mais lento e mais frágil. Deve cobrir jornadas críticas, não todos os detalhes do app.
-
----
-
 ## O que deve ser testado
 
 Teste obrigatoriamente quando houver:
@@ -53,14 +51,10 @@ Teste obrigatoriamente quando houver:
 - usecase relevante
 - cálculo
 - validação
-- permissão
-- localização
 - autenticação
-- ranking
-- criação de corrida
-- conclusão de corrida
+- permissão
 - tratamento de erro
-- conversão DTO -> Entity
+- conversão DTO → Entity
 - repository com datasource
 - controller com loading/error/success
 - fluxo crítico do usuário
@@ -89,6 +83,62 @@ Use nomes descritivos orientados a comportamento.
 Bom:
 
 ```dart
-test('returns ranking entries when repository succeeds', () async {});
-test('emits error state when get nearby areas fails', () async {});
-test('maps RankingEntryDto to RankingEntry entity', () {});
+test('returns items when repository succeeds', () async {});
+test('emits error state when fetch fails', () async {});
+test('maps ItemDto to Item entity', () {});
+test('controller emits loading then success on fetch', () async {});
+```
+
+Ruim:
+
+```dart
+test('test1', () {});
+test('works', () {});
+test('repository', () {});
+```
+
+---
+
+## Mocks
+
+- Use mocks determinísticos, sem depender de rede real.
+- Não mockar o alvo do teste.
+- Prefira `mocktail` ou equivalente para criar mocks.
+- Mantenha fixtures simples e reutilizáveis.
+
+---
+
+## Comandos típicos
+
+```bash
+flutter test
+flutter test test/features/auth/
+flutter test --coverage
+flutter analyze
+```
+
+Use os comandos reais do projeto.
+
+---
+
+## Build e regressão
+
+Mudança grande precisa de build. Teste unitário não substitui build.
+
+```bash
+flutter build apk       # Android
+flutter build ios       # iOS
+flutter build web       # Web quando aplicável
+```
+
+---
+
+## Pirâmide de testes
+
+Prioridade:
+
+1. Testes unitários para regra de negócio.
+2. Testes de controller/provider para estado de tela.
+3. Testes de repository e mapper para conversão e tratamento de erros.
+4. Testes de widget quando houver comportamento visual relevante.
+5. Testes E2E para fluxos críticos do usuário.

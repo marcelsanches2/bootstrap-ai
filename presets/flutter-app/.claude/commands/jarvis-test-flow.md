@@ -98,7 +98,7 @@ Valida um fluxo end-to-end do app {{PROJECT_NAME}}. Argumento opcional: `flow_id
 5. **Gerar relatorio**
    - Escrever ou atualizar `docs/e2e_report_{flow_id}.md` com:
      - Data, branch, device, estrategia
-     - Massa criada (tabela com IDs, nomes, lat/lng, status, paces)
+     - Massa criada (tabela com IDs, nomes, status)
      - Comandos executados (tabela: comando, resultado)
      - Fluxo validado (tabela: etapa, validacao)
      - Comparacao visual (se aplicavel): caminho da imagem, escala usada, divergencias encontradas, ajustes sugeridos

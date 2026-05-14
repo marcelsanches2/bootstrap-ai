@@ -1,8 +1,4 @@
-# CODING_STANDARDS.md
-
-Este documento define os padrões de código do projeto {{PROJECT_NAME}}.
-
----
+# Padrões de Código Flutter/Dart
 
 ## Princípios
 
@@ -29,9 +25,9 @@ Use nomes claros e específicos.
 Bom:
 
 ```dart
-GetNearbyBattleAreasUseCase
-BattleAreaRepository
-RankingEntryDto
+GetUserUseCase
+UserRepository
+ItemDto
 AuthController
 ```
 
@@ -113,13 +109,13 @@ Usecases devem:
 Exemplo:
 
 ```dart
-class GetRankingUseCase {
-  final RankingRepository repository;
+class GetItemsUseCase {
+  final ItemRepository repository;
 
-  GetRankingUseCase(this.repository);
+  GetItemsUseCase(this.repository);
 
-  Future<List<RankingEntry>> call(String battleAreaId) {
-    return repository.getRankingByBattleArea(battleAreaId);
+  Future<List<Item>> call({required String categoryId}) {
+    return repository.getItems(categoryId: categoryId);
   }
 }
 ```
@@ -135,8 +131,8 @@ Implementações ficam no data.
 Exemplo:
 
 ```txt
-domain/repositories/ranking_repository.dart
-data/repositories/ranking_repository_impl.dart
+domain/repositories/item_repository.dart
+data/repositories/item_repository_impl.dart
 ```
 
 ---

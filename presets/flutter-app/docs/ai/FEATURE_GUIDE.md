@@ -1,8 +1,4 @@
-# FEATURE_GUIDE.md
-
-Este documento orienta como novas features devem ser criadas no {{PROJECT_NAME}}.
-
----
+# Guia de Feature Flutter
 
 ## Estrutura padrão de uma feature
 
@@ -15,14 +11,11 @@ features/
       pages/
       widgets/
       controllers/
-
     application/
       usecases/
-
     domain/
       entities/
       repositories/
-
     data/
       datasources/
       dtos/
@@ -43,15 +36,12 @@ Exemplos:
 
 - auth
 - home
-- map
-- battle
-- ranking
 - profile
-- run_session
+- settings
 - notifications
-- social
-- achievements
-- anti_cheat
+- items (ou o domínio principal do app)
+- search
+- onboarding
 
 ---
 
@@ -68,6 +58,31 @@ Não crie feature nova para:
 - constantes globais
 
 Esses itens devem ficar em `core`, `shared` ou `app`.
+
+---
+
+## Plano mínimo
+
+Toda feature deve definir:
+
+- objetivo do usuário
+- rota/tela/componente afetado
+- fluxo principal
+- fluxos alternativos
+- estados loading/empty/error/success
+- dados consumidos/enviados
+- testes
+- impacto em performance/build
+
+---
+
+## Fatia vertical
+
+Prefira entregar uma jornada pequena completa em vez de várias telas ocas.
+
+```txt
+route/page -> controller -> usecase -> repository -> datasource -> tests -> analyze
+```
 
 ---
 
@@ -93,172 +108,71 @@ Ao implementar uma feature real:
 
 ```txt
 Page
- -> Controller
-   -> UseCase
-     -> Repository interface
-       -> Repository implementation
-         -> Datasource
-           -> Dio
+  → Controller
+    → UseCase
+      → Repository interface
+        → Repository implementation
+          → Datasource
+            → Dio
 ```
 
 ---
 
-## Exemplo de dependência errada
+## Exemplos de dependência errada
 
 ```txt
-Page
- -> Dio
+Page → Dio
 ```
 
 Errado.
 
 ```txt
-Widget
- -> Datasource
+Widget → Datasource
 ```
 
 Errado.
 
 ```txt
-Controller
- -> DTO
+Controller → DTO
 ```
 
 Evitar.
 
 ```txt
-Domain
- -> Flutter
+Domain → Flutter
 ```
 
 Errado.
 
 ---
 
-## Features previstas
+## Critérios de aceite
 
-### Auth
+Critérios devem ser verificáveis por teste ou inspeção objetiva:
 
-Responsável por:
-
-- login
-- logout
-- sessão
-- usuário autenticado
-- integração futura com provedores externos
-
-Não implementar autenticação real antes de tarefa explícita.
+- botão desabilita durante submit
+- erro aparece no campo correto
+- usuário sem permissão vê estado adequado
+- loading é exibido durante operação assíncrona
+- lista vazia mostra estado vazio
 
 ---
 
-### Home
+## Produto
 
-Responsável por:
-
-- tela inicial
-- resumo competitivo
-- atalhos
-- estado geral do usuário
-
-Não transformar Home em lugar para regra de todas as features.
-
----
-
-### Map
-
-Responsável por:
-
-- visualização de áreas
-- polígonos
-- locais próximos
-- integração futura com mapa
-- integração futura com localização
-
-Não implementar mapa real sem tarefa explícita.
-
----
-
-### Battle
-
-Responsável por:
-
-- áreas de batalha
-- detalhes de competição
-- regras de disputa
-- status do usuário naquela área
-
----
-
-### Ranking
-
-Responsável por:
-
-- leaderboard
-- ranking por área
-- ranking global
-- ranking entre amigos
-- histórico de posições
-
----
-
-### Profile
-
-Responsável por:
-
-- perfil do corredor
-- estatísticas
-- conquistas
-- histórico
-- preferências públicas
-
----
-
-### Run Session
-
-Feature futura.
-
-Responsável por:
-
-- iniciar corrida
-- pausar corrida
-- finalizar corrida
-- calcular distância
-- calcular pace
-- armazenar rota
-- enviar resultado
-
-Não implementar antes de map/GPS estarem definidos.
-
----
-
-### Anti-cheat
-
-Feature futura.
-
-Responsável por:
-
-- detectar corrida falsa
-- validar velocidade plausível
-- detectar mock location
-- detectar GPS irregular
-- validar rota
-- validar tempo/distância
-
-Não implementar cedo demais.
-
-Mas decisões de arquitetura não devem impedir anti-cheat no futuro.
+Quando comportamento estiver ambíguo, pare e exponha decisão pendente. Não invente regra de negócio.
 
 ---
 
 ## Regra de escopo
 
-Se a tarefa pedir “estrutura”, não implemente feature.
+Se a tarefa pedir "estrutura", não implemente feature.
 
-Se a tarefa pedir “feature”, implemente somente aquela feature.
+Se a tarefa pedir "feature", implemente somente aquela feature.
 
-Se a tarefa pedir “design”, não mexa em regra de negócio.
+Se a tarefa pedir "design", não mexa em regra de negócio.
 
-Se a tarefa pedir “refatoração”, não adicione comportamento novo.
+Se a tarefa pedir "refatoração", não adicione comportamento novo.
 
 ---
 

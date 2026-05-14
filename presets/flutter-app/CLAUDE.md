@@ -4,7 +4,7 @@ Contrato principal para Claude Code no projeto {{PROJECT_NAME}}.
 
 ## Projeto
 
-{{PROJECT_NAME}} é um app mobile Flutter de corrida competitiva baseada em disputas territoriais.
+{{PROJECT_NAME}} é um app mobile Flutter.
 
 Stack principal:
 
@@ -54,7 +54,7 @@ Prioridade:
 6. network foundation
 7. preparação para design system
 
-Não implemente feature, fluxo, mapa, GPS ou visual final sem pedido explícito.
+Não implemente feature, fluxo ou visual final sem pedido explícito.
 
 ## Regras obrigatórias
 
@@ -69,7 +69,6 @@ Não implemente feature, fluxo, mapa, GPS ou visual final sem pedido explícito.
 - Não sobrescrever arquivos sem inspecionar antes.
 - Não criar arquivos grandes.
 - Não duplicar lógica entre features.
-- Não usar laranja no app.
 
 ## Processo
 

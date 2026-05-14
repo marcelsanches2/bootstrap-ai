@@ -1,6 +1,8 @@
-# ARCHITECTURE.md
+# Arquitetura Flutter
 
-Este documento define a arquitetura técnica do app {{PROJECT_NAME}}.
+## Objetivo
+
+Organizar UI, estado, navegação e regras de apresentação sem transformar cada tela em framework próprio.
 
 ---
 
@@ -25,9 +27,7 @@ A arquitetura segue uma abordagem:
 
 ---
 
-## Estrutura base
-
-A estrutura principal deve seguir este formato:
+## Estrutura recomendada
 
 ```txt
 lib/
@@ -35,18 +35,14 @@ lib/
 
   app/
     app.dart
-
     router/
       app_router.dart
       route_names.dart
-
     config/
       environment.dart
       app_config.dart
-
     di/
       app_providers.dart
-
     theme/
       app_theme.dart
       app_colors.dart
@@ -58,17 +54,10 @@ lib/
       dio_client.dart
       api_result.dart
       api_exception.dart
-
     errors/
       failure.dart
-
     logging/
       app_logger.dart
-
-    location/
-      location_service.dart
-      location_permission_status.dart
-
     constants/
       app_constants.dart
 
@@ -77,87 +66,11 @@ lib/
       app_scaffold.dart
       loading_view.dart
       error_view.dart
-
     extensions/
       context_extensions.dart
 
   features/
-    auth/
-      presentation/
-        pages/
-        widgets/
-        controllers/
-      application/
-        usecases/
-      domain/
-        entities/
-        repositories/
-      data/
-        datasources/
-        dtos/
-        repositories/
-
-    home/
-      presentation/
-        pages/
-        widgets/
-        controllers/
-      application/
-        usecases/
-      domain/
-        entities/
-        repositories/
-      data/
-        datasources/
-        dtos/
-        repositories/
-
-    map/
-      presentation/
-        pages/
-        widgets/
-        controllers/
-      application/
-        usecases/
-      domain/
-        entities/
-        repositories/
-      data/
-        datasources/
-        dtos/
-        repositories/
-
-    battle/
-      presentation/
-        pages/
-        widgets/
-        controllers/
-      application/
-        usecases/
-      domain/
-        entities/
-        repositories/
-      data/
-        datasources/
-        dtos/
-        repositories/
-
-    ranking/
-      presentation/
-        pages/
-        widgets/
-        controllers/
-      application/
-        usecases/
-      domain/
-        entities/
-        repositories/
-      data/
-        datasources/
-        dtos/
-        repositories/
-
-    profile/
+    feature_name/
       presentation/
         pages/
         widgets/
@@ -180,19 +93,15 @@ lib/
 Cada feature pode ter as seguintes camadas:
 
 ```txt
-presentation
-application
-domain
-data
+presentation → application → domain
+data → domain
 ```
 
 Nem toda feature precisa ter todas as camadas desde o início.
 
 Não crie arquivos vazios sem necessidade.
 
----
-
-## Presentation
+### Presentation
 
 Responsável por:
 
@@ -212,9 +121,7 @@ Não pode conter:
 
 A presentation conversa com controllers/providers/usecases.
 
----
-
-## Application
+### Application
 
 Responsável por:
 
@@ -223,40 +130,27 @@ Responsável por:
 - aplicar regras de aplicação
 - preparar dados para a camada de presentation
 
-Use esta camada para casos de uso como:
+Exemplos de use cases:
 
 - LoginUseCase
-- GetNearbyBattleAreasUseCase
-- StartRunSessionUseCase
-- FinishRunSessionUseCase
-- GetRankingUseCase
+- GetItemsUseCase
+- SaveItemUseCase
+- GetUserProfileUseCase
 
----
-
-## Domain
+### Domain
 
 Responsável por:
 
 - entidades
 - value objects
-- contratos de repositórios
+- contratos de repositórios (interfaces)
 - regras centrais de domínio
-
-Exemplos:
-
-```txt
-domain/
-  entities/
-  repositories/
-```
 
 Repositórios devem ser interfaces no domínio.
 
 A camada de domínio não deve depender de Flutter, Dio ou detalhes externos.
 
----
-
-## Data
+### Data
 
 Responsável por:
 
@@ -267,20 +161,6 @@ Responsável por:
 - mapeamento de dados externos para entidades de domínio
 
 DTOs não podem vazar para fora da camada data.
-
----
-
-## Regra de dependência
-
-As dependências devem seguir esta direção:
-
-```txt
-presentation -> application -> domain
-data -> domain
-data -> core/network
-```
-
-A camada de domínio não depende de data, presentation ou framework.
 
 ---
 
@@ -366,48 +246,21 @@ A estrutura deve apenas estar preparada.
 
 ---
 
-## Location
+## Erros
 
-A estrutura de localização deve ficar em:
-
-```txt
-lib/core/location/
-```
-
-Inicialmente criar apenas:
-
-- LocationService abstrato
-- LocationPermissionStatus enum
-
-Não implementar GPS real sem tarefa explícita.
+- Erro de API deve virar estado renderizável.
+- Erro externo deve ser convertido para estruturas internas: ApiException, Failure, ApiResult.
+- Mensagem técnica não deve vazar para a UI sem tratamento.
 
 ---
 
-## Features iniciais esperadas
+## Anti-patterns
 
-O projeto deve estar preparado para receber:
-
-- auth
-- home
-- map
-- battle
-- ranking
-- profile
-
-Mas não deve implementar essas features antes de uma tarefa explícita.
-
----
-
-## Proibições
-
-Não fazer:
-
-- arquitetura por camada global para tudo
-- controllers gigantes
-- widgets com regra de negócio
-- chamadas HTTP na UI
-- DTO sendo usado em page/widget
-- strings de rotas espalhadas
-- temas hardcoded em várias telas
-- dependências não justificadas
-- overengineering prematuro
+- Componente de 500 linhas fazendo fetch, regra, layout e formatação.
+- Controller com regra de domínio pesada.
+- DTO sendo usado em page/widget.
+- Strings de rotas espalhadas.
+- Temas hardcoded em várias telas.
+- Dependências não justificadas.
+- Overengineering prematuro.
+- Arquitetura por camada global para tudo.
