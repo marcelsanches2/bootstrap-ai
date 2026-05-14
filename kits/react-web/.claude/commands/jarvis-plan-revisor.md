@@ -1,6 +1,6 @@
 ---
 name: jarvis-revisor
-description: Revisa plano técnico contra docs/ai e roles do kit.
+description: Revisa plano técnico contra docs/ai e roles do preset.
 ---
 
 # /jarvis-plan-revisor
@@ -13,7 +13,7 @@ Não execute implementação. Não altere código de produção. Apenas leia, va
 
 1. Localizar plano usando `product_roles/localizar-plano.md`.
 2. Carregar referências usando `product_roles/carregar-referencias.md`.
-3. Rodar todos os `product_roles/role-*.md` aplicáveis ao kit.
+3. Rodar todos os `product_roles/role-*.md` aplicáveis ao preset.
 4. Consolidar parecer usando `product_roles/consolidar-parecer.md`.
 5. Gerar relatório usando `product_roles/gerar-relatorio.md`.
 6. Se houver BLOCKER, pare.

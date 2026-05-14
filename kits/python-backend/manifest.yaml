@@ -1,6 +1,6 @@
 name: python-backend
 version: 1
-description: "Python backend lifecycle kit"
+description: "Python backend lifecycle preset"
 required_files:
   - CLAUDE.md
   - .claude/commands/jarvis-plan-revisor.md

@@ -2,7 +2,7 @@
 
 Planeja e conduz uma refatoração segura em projeto existente.
 
-Use quando este kit for aplicado em um projeto já em andamento e o objetivo for alinhar o código ao lifecycle, arquitetura, docs `docs/ai/`, roles e padrões do kit.
+Use quando este preset for aplicado em um projeto já em andamento e o objetivo for alinhar o código ao lifecycle, arquitetura, docs `docs/ai/`, roles e padrões do preset.
 
 ## Regra principal
 

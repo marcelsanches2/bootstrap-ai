@@ -1,8 +1,8 @@
-# ai-project-kits
+# bootstrap-ai
 
 Kits versionados de lifecycle para projetos com Claude Code e Hermes.
 
-O objetivo não é só copiar arquivos. Cada kit instala um processo operacional no projeto alvo:
+O objetivo não é só copiar arquivos. Cada preset instala um processo operacional no projeto alvo:
 
 ```txt
 bootstrap → /plan → /jarvis-plan-revisor → implementação → /jarvis-test-flow → /ship
@@ -23,7 +23,7 @@ Kits disponíveis:
 - `react-web` — frontend React/TypeScript com UX, acessibilidade, performance e build/testes.
 - `node-backend` — backend Node.js/TypeScript com API, DB, segurança, observabilidade e deploy.
 
-Cada kit instala no projeto alvo:
+Cada preset instala no projeto alvo:
 
 ```txt
 CLAUDE.md
@@ -39,7 +39,7 @@ CLAUDE.md
 .claude/commands/product_roles/*
 docs/ai/*
 plans/.gitkeep
-.project-kit.lock
+.bootstrap-ai.lock
 ```
 
 Política de escrita padrão:
@@ -52,54 +52,54 @@ Política de escrita padrão:
 
 ---
 
-## 2. Setup inicial do `ai-project-kits`
+## 2. Setup inicial do `bootstrap-ai`
 
 Execute uma vez na sua máquina/agente:
 
 ```bash
-git clone https://github.com/marcelsanches2/ai-project-kits.git
-cd ai-project-kits
+git clone https://github.com/marcelsanches2/bootstrap-ai.git
+cd bootstrap-ai
 ```
 
 Se o repo já existir localmente:
 
 ```bash
-cd /path/para/ai-project-kits
+cd /path/para/bootstrap-ai
 git pull --ff-only
 ```
 
 Onde executar os comandos:
 
-- comandos `./bin/kit ...` devem ser executados **dentro do repositório `ai-project-kits`**;
-- comandos `/plan`, `/jarvis-plan-revisor`, `/refactor`, `/jarvis-test-flow`, `/jarvis-revisor`, `/jarvis-full-test`, `/ship` devem ser executados **dentro do projeto alvo**, depois do kit aplicado;
-- o importer `/import-project-kit` também roda **dentro do projeto alvo** no Claude Code.
+- comandos `./bin/bootstrap-ai ...` devem ser executados **dentro do repositório `bootstrap-ai`**;
+- comandos `/plan`, `/jarvis-plan-revisor`, `/refactor`, `/jarvis-test-flow`, `/jarvis-revisor`, `/jarvis-full-test`, `/ship` devem ser executados **dentro do projeto alvo**, depois do preset aplicado;
+- o importer `/import-project-preset` também roda **dentro do projeto alvo** no Claude Code.
 
 ---
 
 ## 3. Caminho recomendado: importer de arquivo único
 
-Use este fluxo quando você estiver dentro de um projeto novo ou existente e quiser importar o kit sem lembrar caminho do CLI.
+Use este fluxo quando você estiver dentro de um projeto novo ou existente e quiser importar o preset sem lembrar caminho do CLI.
 
 ### 3.1 Instalar o importer no projeto alvo
 
-A partir do `ai-project-kits`:
+A partir do `bootstrap-ai`:
 
 ```bash
-cd /path/para/ai-project-kits
-./bin/kit install-importer /path/do/projeto-alvo
+cd /path/para/bootstrap-ai
+./bin/bootstrap-ai install-importer /path/do/projeto-alvo
 ```
 
 Isso cria:
 
 ```txt
-/path/do/projeto-alvo/.claude/commands/import-project-kit.md
+/path/do/projeto-alvo/.claude/commands/import-project-preset.md
 ```
 
 Alternativa manual:
 
 ```bash
 mkdir -p /path/do/projeto-alvo/.claude/commands
-cp bootstrap/import-project-kit.md /path/do/projeto-alvo/.claude/commands/import-project-kit.md
+cp bootstrap/import-project-preset.md /path/do/projeto-alvo/.claude/commands/import-project-preset.md
 ```
 
 ### 3.2 Executar no Claude Code
@@ -114,19 +114,19 @@ claude
 Dentro do Claude Code:
 
 ```txt
-/import-project-kit
+/import-project-preset
 ```
 
 O importer faz:
 
 1. acha a raiz do projeto alvo;
-2. usa o **source embutido** (path absoluto gravado na instalação) ou localiza/clona `marcelsanches2/ai-project-kits`;
+2. usa o **source embutido** (path absoluto gravado na instalação) ou localiza/clona `marcelsanches2/bootstrap-ai`;
 3. atualiza o repo com `git pull --ff-only`;
 4. roda `analyze` para detectar stack e bibliotecas estruturais;
-5. roda `select --create-missing` para escolher ou criar kit específico;
+5. roda `select --create-missing` para escolher ou criar preset específico;
 6. detecta o **nome do projeto** (`package.json`, `pubspec.yaml`, `pyproject.toml` ou nome do diretório);
 7. mostra diff não destrutivo;
-8. aplica o kit com **substituição de `{{PROJECT_NAME}}`** pelo nome real do projeto;
+8. aplica o preset com **substituição de `{{PROJECT_NAME}}`** pelo nome real do projeto;
 9. verifica arquivos principais gerados.
 
 Use este caminho para a maioria dos casos.
@@ -135,7 +135,7 @@ Use este caminho para a maioria dos casos.
 
 ## 4. Projeto do zero — Greenfield Flow
 
-Para quando a pasta está **vazia** (ou só tem `.git`) e você quer criar um projeto inteiro: ideia → stack → design → kit aplicado → pronto pra codar.
+Para quando a pasta está **vazia** (ou só tem `.git`) e você quer criar um projeto inteiro: ideia → stack → design → preset aplicado → pronto pra codar.
 
 ### Fluxo
 
@@ -144,14 +144,14 @@ PASTA VAZIA
   → /kickoff
      ├─ 7 perguntas estruturadas (problema, usuários, features V1, escopo, stack, plataforma, sucesso)
      ├─ PRODUCT_BRIEF.md + .hermes/requirements.json
-     ├─ Decide stack → mapeia pra kit existente ou cria novo
+     ├─ Decide stack → mapeia pra preset existente ou cria novo
      └─ Tem interface visual?
         ├─ SIM → /design-phase
         │     ├─ "Tenho Figma Make" → extrai tokens do link
         │     ├─ "Crie pra mim" → gera design system do zero
         │     └─ "Pula" → sem design por agora
         └─ NÃO → pula
-  → kit apply
+  → preset apply
   → PROJETO INICIALIZADO
 ```
 
@@ -163,7 +163,7 @@ No Claude Code, dentro da pasta vazia do projeto:
 /kickoff
 ```
 
-O comando faz 7 perguntas uma por vez, gera o product brief, decide a stack e pergunta se quer design system. Ao final, aplica o kit automaticamente.
+O comando faz 7 perguntas uma por vez, gera o product brief, decide a stack e pergunta se quer design system. Ao final, aplica o preset automaticamente.
 
 ### 4.2 Design Phase (opcional)
 
@@ -197,7 +197,7 @@ docs/ai/TESTING_GUIDE.md              # Padrões de teste
 docs/ai/DESIGN_SYSTEM.md              # Design system (se não pulou)
 design/tokens.json                    # Tokens visuais consumíveis (se não pulou)
 plans/.gitkeep
-.project-kit.lock
+.bootstrap-ai.lock
 ```
 
 Próximos passos no Claude Code:
@@ -214,17 +214,17 @@ Próximos passos no Claude Code:
 
 | Cenário | Comando |
 |---|---|
-| Pasta vazia, sem nada | `/import-project-kit` (detecta vazio → redireciona pra `/kickoff` automaticamente) |
-| Projeto com código, sem kit | `/import-project-kit` (seção 6) |
-| Projeto com kit, quer atualizar | `./bin/kit apply auto /path --refresh` (seção 6) |
+| Pasta vazia, sem nada | `/import-project-preset` (detecta vazio → redireciona pra `/kickoff` automaticamente) |
+| Projeto com código, sem kit | `/import-project-preset` (seção 6) |
+| Projeto com preset, quer atualizar | `./bin/bootstrap-ai apply auto /path --refresh` (seção 6) |
 
-> **Nota:** Você não precisa lembrar de rodar `/kickoff` direto. Basta rodar `/import-project-kit` em qualquer pasta — se estiver vazia, ele redireciona pro flow completo automaticamente.
+> **Nota:** Você não precisa lembrar de rodar `/kickoff` direto. Basta rodar `/import-project-preset` em qualquer pasta — se estiver vazia, ele redireciona pro flow completo automaticamente.
 
-> **Nota:** O `/kickoff` está disponível nos kits `flutter-app`, `react-web`, `node-backend` e `python-backend`. Para stacks não cobertas, o kickoff propõe criar um novo kit via `skill-creator`.
+> **Nota:** O `/kickoff` está disponível nos kits `flutter-app`, `react-web`, `node-backend` e `python-backend`. Para stacks não cobertas, o kickoff propõe criar um novo preset via `skill-creator`.
 
 ---
 
-## 5. Importar kit em projeto novo
+## 5. Importar preset em projeto novo
 
 Projeto novo aqui significa: repo recém-criado que já tem arquivos de stack (`package.json`, `pyproject.toml`, `pubspec.yaml`) mas ainda sem os arquivos de lifecycle (`CLAUDE.md`, `.claude/commands`, `docs/ai`). Se a pasta está completamente vazia, use o **Greenfield Flow** (seção 4).
 
@@ -248,24 +248,24 @@ git init
 printf '{"scripts":{"test":"echo test"}}\n' > package.json
 ```
 
-O detector usa arquivos como `pubspec.yaml`, `pyproject.toml`, `requirements.txt`, `package.json`, `vite.config.*`, `next.config.*`, `tsconfig.json` e conteúdo desses arquivos para escolher o kit.
+O detector usa arquivos como `pubspec.yaml`, `pyproject.toml`, `requirements.txt`, `package.json`, `vite.config.*`, `next.config.*`, `tsconfig.json` e conteúdo desses arquivos para escolher o preset.
 
 ### 5.2 Ver o que seria aplicado
 
-Execute dentro do `ai-project-kits`:
+Execute dentro do `bootstrap-ai`:
 
 ```bash
-cd /path/para/ai-project-kits
-./bin/kit detect /path/do/projeto-alvo
-./bin/kit analyze /path/do/projeto-alvo
-./bin/kit select /path/do/projeto-alvo --create-missing
-./bin/kit diff auto /path/do/projeto-alvo
+cd /path/para/bootstrap-ai
+./bin/bootstrap-ai detect /path/do/projeto-alvo
+./bin/bootstrap-ai analyze /path/do/projeto-alvo
+./bin/bootstrap-ai select /path/do/projeto-alvo --create-missing
+./bin/bootstrap-ai diff auto /path/do/projeto-alvo
 ```
 
-### 5.3 Aplicar o kit
+### 5.3 Aplicar o preset
 
 ```bash
-./bin/kit apply auto /path/do/projeto-alvo --refresh
+./bin/bootstrap-ai apply auto /path/do/projeto-alvo --refresh
 ```
 
 ### 5.4 Verificar no projeto alvo
@@ -291,14 +291,14 @@ docs/ai/ARCHITECTURE.md
 docs/ai/CODING_STANDARDS.md
 docs/ai/TESTING_GUIDE.md
 plans/.gitkeep
-.project-kit.lock
+.bootstrap-ai.lock
 ```
 
 Se aparecer `*.kit-new`, existe conflito com arquivo já existente. Revise manualmente antes de substituir.
 
 ---
 
-## 6. Importar kit em projeto existente
+## 6. Importar preset em projeto existente
 
 Projeto existente aqui significa: já tem código, histórico, talvez docs próprias, talvez `.claude/` parcial.
 
@@ -311,26 +311,26 @@ No projeto alvo:
 ```bash
 cd /path/do/projeto-existente
 git status --short
-git switch -c chore/import-project-kit
+git switch -c chore/import-project-preset
 ```
 
-Se houver mudanças locais, commit ou stash antes. O kit não foi feito para misturar bootstrap com trabalho solto.
+Se houver mudanças locais, commit ou stash antes. O preset não foi feito para misturar bootstrap com trabalho solto.
 
 ### 6.2 Inspecionar detecção
 
-No `ai-project-kits`:
+No `bootstrap-ai`:
 
 ```bash
-cd /path/para/ai-project-kits
+cd /path/para/bootstrap-ai
 git pull --ff-only
-./bin/kit analyze /path/do/projeto-existente
-./bin/kit select /path/do/projeto-existente --create-missing
+./bin/bootstrap-ai analyze /path/do/projeto-existente
+./bin/bootstrap-ai select /path/do/projeto-existente --create-missing
 ```
 
 ### 6.3 Ver diff sem aplicar
 
 ```bash
-./bin/kit diff auto /path/do/projeto-existente
+./bin/bootstrap-ai diff auto /path/do/projeto-existente
 ```
 
 Leia o diff. Ele mostra o que será criado e onde pode haver conflito.
@@ -338,7 +338,7 @@ Leia o diff. Ele mostra o que será criado e onde pode haver conflito.
 ### 6.4 Aplicar sem sobrescrever
 
 ```bash
-./bin/kit apply auto /path/do/projeto-existente --refresh
+./bin/bootstrap-ai apply auto /path/do/projeto-existente --refresh
 ```
 
 ### 6.5 Resolver conflitos
@@ -363,15 +363,15 @@ Não use `--force` para resolver conflito em lote. Isso pode substituir document
 ### 6.6 Commitar o bootstrap
 
 ```bash
-git add CLAUDE.md .claude docs/ai plans .project-kit.lock
-git commit -m "chore: import project lifecycle kit"
+git add CLAUDE.md .claude docs/ai plans .bootstrap-ai.lock
+git commit -m "chore: import project lifecycle preset"
 ```
 
 ---
 
 ## 7. Usar depois de importar
 
-Depois que o kit estiver no projeto alvo, o fluxo normal é dentro do Claude Code, na raiz do projeto alvo:
+Depois que o preset estiver no projeto alvo, o fluxo normal é dentro do Claude Code, na raiz do projeto alvo:
 
 ```txt
 /carregar-contexto-projeto
@@ -406,14 +406,14 @@ Regra: sem big-bang refactor, sem feature nova misturada, sem sobrescrever compo
 
 ## 8. Lista de comandos do CLI
 
-Execute estes comandos dentro do repo `ai-project-kits`.
+Execute estes comandos dentro do repo `bootstrap-ai`.
 
 ### `detect`
 
-Detecta o kit provável para um projeto.
+Detecta o preset provável para um projeto.
 
 ```bash
-./bin/kit detect /path/do/projeto
+./bin/bootstrap-ai detect /path/do/projeto
 ```
 
 Use antes de aplicar para saber o que o CLI enxergou.
@@ -423,43 +423,43 @@ Use antes de aplicar para saber o que o CLI enxergou.
 Detecta stack e bibliotecas estruturais.
 
 ```bash
-./bin/kit analyze /path/do/projeto
-./bin/kit analyze /path/do/projeto --json
+./bin/bootstrap-ai analyze /path/do/projeto
+./bin/bootstrap-ai analyze /path/do/projeto --json
 ```
 
 Use quando o projeto tiver libs que mudam arquitetura: Prisma, Drizzle, SQLAlchemy, Alembic, Riverpod, TanStack Query, etc.
 
 ### `select`
 
-Seleciona o kit adequado. Pode criar kit ausente.
+Seleciona o preset adequado. Pode criar preset ausente.
 
 ```bash
-./bin/kit select /path/do/projeto
-./bin/kit select /path/do/projeto --print-kit
-./bin/kit select /path/do/projeto --create-missing
+./bin/bootstrap-ai select /path/do/projeto
+./bin/bootstrap-ai select /path/do/projeto --print-preset
+./bin/bootstrap-ai select /path/do/projeto --create-missing
 ```
 
-Use `--create-missing` quando a tecnologia principal ainda não tiver kit.
+Use `--create-missing` quando a tecnologia principal ainda não tiver preset.
 
 ### `diff`
 
 Mostra o que seria aplicado sem escrever arquivos.
 
 ```bash
-./bin/kit diff auto /path/do/projeto
-./bin/kit diff python-backend /path/do/projeto
+./bin/bootstrap-ai diff auto /path/do/projeto
+./bin/bootstrap-ai diff python-backend /path/do/projeto
 ```
 
 Use sempre antes de aplicar em projeto existente.
 
 ### `apply`
 
-Aplica o kit no projeto alvo. Substitui `{{PROJECT_NAME}}` pelo nome real do projeto em todos os arquivos de texto.
+Aplica o preset no projeto alvo. Substitui `{{PROJECT_NAME}}` pelo nome real do projeto em todos os arquivos de texto.
 
 ```bash
-./bin/kit apply auto /path/do/projeto --refresh
-./bin/kit apply react-web /path/do/projeto --refresh
-./bin/kit apply auto /path/do/projeto --refresh --project-name "meu-app"
+./bin/bootstrap-ai apply auto /path/do/projeto --refresh
+./bin/bootstrap-ai apply react-web /path/do/projeto --refresh
+./bin/bootstrap-ai apply auto /path/do/projeto --refresh --project-name "meu-app"
 ```
 
 Detecção automática do nome (nesta ordem): `package.json` → `pubspec.yaml` → `pyproject.toml` → basename do diretório. Use `--project-name` para forçar um nome específico.
@@ -469,39 +469,39 @@ Sem `--force`, conflitos viram `<arquivo>.kit-new`.
 Com `--force`:
 
 ```bash
-./bin/kit apply auto /path/do/projeto --refresh --force
+./bin/bootstrap-ai apply auto /path/do/projeto --refresh --force
 ```
 
 Use somente se você quer substituir arquivos existentes. Isso pode apagar customizações locais.
 
 ### `refresh`
 
-Atualiza material de um kit antes de aplicar.
+Atualiza material de um preset antes de aplicar.
 
 ```bash
-./bin/kit refresh python-backend
+./bin/bootstrap-ai refresh python-backend
 ```
 
 Use quando for revisar se padrões de stack ainda fazem sentido.
 
 ### `create`
 
-Cria kit para tecnologia nova.
+Cria preset para tecnologia nova.
 
 ```bash
-./bin/kit create go-service --from "Go backend com chi, pgx, goose, PostgreSQL e deploy via systemd"
-./bin/kit create rails-app --from "Rails 8 com PostgreSQL, Sidekiq, RSpec e deploy via systemd"
+./bin/bootstrap-ai create go-service --from "Go backend com chi, pgx, goose, PostgreSQL e deploy via systemd"
+./bin/bootstrap-ai create rails-app --from "Rails 8 com PostgreSQL, Sidekiq, RSpec e deploy via systemd"
 ```
 
 Isso cria `kits/<nome>/` com `CLAUDE.md`, comandos, roles, `docs/ai`, manifest e `jarvis-test-flow` inicial.
 
 ### `install-importer`
 
-Instala o importer de arquivo único em um projeto. O path absoluto do repo `ai-project-kits` é embutido no arquivo, então o importer sempre encontra o CLI independente de onde o repo foi clonado.
+Instala o importer de arquivo único em um projeto. O path absoluto do repo `bootstrap-ai` é embutido no arquivo, então o importer sempre encontra o CLI independente de onde o repo foi clonado.
 
 ```bash
-./bin/kit install-importer /path/do/projeto
-./bin/kit install-importer /path/do/projeto --force
+./bin/bootstrap-ai install-importer /path/do/projeto
+./bin/bootstrap-ai install-importer /path/do/projeto --force
 ```
 
 Use `--force` apenas para substituir um importer antigo.
@@ -510,7 +510,7 @@ Use `--force` apenas para substituir um importer antigo.
 
 ## 9. Comandos disponíveis no projeto alvo
 
-Depois de aplicar um kit, estes comandos passam a existir no Claude Code do projeto alvo.
+Depois de aplicar um preset, estes comandos passam a existir no Claude Code do projeto alvo.
 
 ### `/carregar-contexto-projeto`
 
@@ -544,9 +544,9 @@ Regressão completa. Executa todas as camadas: lint, type check, formatação, t
 
 Checklist final de entrega.
 
-### `/import-project-kit`
+### `/import-project-preset`
 
-Só existe se você instalou o importer. Serve para puxar o kit correto para dentro do projeto alvo.
+Só existe se você instalou o importer. Serve para puxar o preset correto para dentro do projeto alvo.
 
 ---
 
@@ -565,7 +565,7 @@ Ruby/Rails: sidekiq, devise, graphql, rspec, rubocop
 Go: chi, gin, fiber, pgx, gorm, goose, sqlc
 ```
 
-Regra: biblioteca auxiliar comum não cria kit novo sozinha. Biblioteca estrutural não coberta pelo kit selecionado cria um kit específico antes da importação.
+Regra: biblioteca auxiliar comum não cria kit novo sozinha. Biblioteca estrutural não coberta pelo preset selecionado cria um preset específico antes da importação.
 
 ---
 
@@ -574,10 +574,10 @@ Regra: biblioteca auxiliar comum não cria kit novo sozinha. Biblioteca estrutur
 ### Novo backend Python
 
 ```bash
-cd /path/para/ai-project-kits
-./bin/kit analyze /path/minha-api
-./bin/kit diff auto /path/minha-api
-./bin/kit apply auto /path/minha-api --refresh
+cd /path/para/bootstrap-ai
+./bin/bootstrap-ai analyze /path/minha-api
+./bin/bootstrap-ai diff auto /path/minha-api
+./bin/bootstrap-ai apply auto /path/minha-api --refresh
 
 cd /path/minha-api
 git status --short
@@ -593,11 +593,11 @@ Depois no Claude Code:
 
 ```bash
 cd /path/app-react
-git switch -c chore/import-project-kit
+git switch -c chore/import-project-preset
 
-cd /path/para/ai-project-kits
-./bin/kit diff auto /path/app-react
-./bin/kit apply auto /path/app-react --refresh
+cd /path/para/bootstrap-ai
+./bin/bootstrap-ai diff auto /path/app-react
+./bin/bootstrap-ai apply auto /path/app-react --refresh
 
 cd /path/app-react
 find . -name '*.kit-new' -print
@@ -613,8 +613,8 @@ Depois no Claude Code:
 ### Usando só o importer
 
 ```bash
-cd /path/para/ai-project-kits
-./bin/kit install-importer /path/projeto
+cd /path/para/bootstrap-ai
+./bin/bootstrap-ai install-importer /path/projeto
 
 cd /path/projeto
 claude
@@ -623,20 +623,20 @@ claude
 Dentro do Claude Code:
 
 ```txt
-/import-project-kit
+/import-project-preset
 ```
 
 ---
 
 ## 12. Troubleshooting
 
-### O kit errado foi detectado
+### O preset errado foi detectado
 
 Rode:
 
 ```bash
-./bin/kit analyze /path/do/projeto --json
-./bin/kit select /path/do/projeto --print-kit
+./bin/bootstrap-ai analyze /path/do/projeto --json
+./bin/bootstrap-ai select /path/do/projeto --print-preset
 ```
 
 Verifique arquivos de sinalização: `package.json`, `pyproject.toml`, `pubspec.yaml`, `tsconfig.json`, `vite.config.*`, `next.config.*`.
@@ -654,20 +654,20 @@ Faça merge manual. Não apague sem revisar.
 ### Quero substituir tudo mesmo assim
 
 ```bash
-./bin/kit apply auto /path/do/projeto --refresh --force
+./bin/bootstrap-ai apply auto /path/do/projeto --refresh --force
 ```
 
 Isso sobrescreve arquivos existentes. Só use depois de commit/backup.
 
-### O projeto usa tecnologia sem kit
+### O projeto usa tecnologia sem preset
 
 ```bash
-./bin/kit select /path/do/projeto --create-missing
+./bin/bootstrap-ai select /path/do/projeto --create-missing
 ```
 
 Depois rode o fluxo normal: `diff`, `apply` e revise os arquivos criados no projeto alvo.
 
-### O importer não achou o `ai-project-kits`
+### O importer não achou o `bootstrap-ai`
 
 O `install-importer` embute o path absoluto do repo no arquivo do importer, então isso só acontece se o importer foi copiado manualmente (sem `install-importer`).
 
@@ -675,23 +675,23 @@ Se precisar resolver manualmente:
 
 ```bash
 # Opção 1: exportar variável de ambiente
-export PROJECT_KITS_DIR=/path/para/ai-project-kits
+export BOOTSTRAP_AI_DIR=/path/para/bootstrap-ai
 
 # Opção 2: rodar o script de bootstrap
-/path/para/ai-project-kits/bootstrap/import-project-kit.sh /path/do/projeto
+/path/para/bootstrap-ai/bootstrap/import-project-preset.sh /path/do/projeto
 
 # Opção 3: clone manual
-git clone https://github.com/marcelsanches2/ai-project-kits.git ~/workspace/ai-project-kits
+git clone https://github.com/marcelsanches2/bootstrap-ai.git ~/workspace/bootstrap-ai
 ```
 
 ---
 
 ## 13. Manutenção do repo
 
-Esta seção é para quem for editar o `ai-project-kits`, não para quem só vai importar um kit em um projeto.
+Esta seção é para quem for editar o `bootstrap-ai`, não para quem só vai importar um preset em um projeto.
 
 - `flutter-app` é referência; não reescreva casualmente.
 - `docs/ai/*.md` devem ter conteúdo operacional real, não placeholder.
 - `role-*.md` precisam apontar evidência, risco, correção e validação.
-- Não commitar `.env`, `.project-kit.lock`, `.refresh-reports/` ou `*.kit-new`.
+- Não commitar `.env`, `.bootstrap-ai.lock`, `.refresh-reports/` ou `*.kit-new`.
 - README é documentação de uso para humanos; `CLAUDE.md` é contrato interno do repo.

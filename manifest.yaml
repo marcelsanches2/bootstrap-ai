@@ -1,12 +1,12 @@
 version: 1
 
 repo:
-  name: project-kits
+  name: bootstrap-ai
   description: Project lifecycle kits for Claude Code and Hermes
 
 defaults:
   conflict_policy: keep-existing-create-new
-  lockfile: .project-kit.lock
+  lockfile: .bootstrap-ai.lock
   plans_dir: plans
   docs_dir: docs/ai
 

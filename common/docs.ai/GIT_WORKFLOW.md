@@ -1,6 +1,6 @@
 # Git Workflow
 
-Fluxo Git comum para projetos usando project-kits.
+Fluxo Git comum para projetos usando bootstrap-ai.
 
 ## Princípios
 
@@ -25,7 +25,7 @@ git diff --check
 git diff --stat
 ```
 
-Rode também o `/jarvis-test-flow` ou comandos equivalentes do kit.
+Rode também o `/jarvis-test-flow` ou comandos equivalentes dO preset.
 
 ## Mensagem de commit
 
@@ -35,7 +35,7 @@ Use formato direto:
 feat: add billing checkout validation
 fix: handle expired session on webhook
 refactor: isolate user repository
-chore: update project kit docs
+chore: update project preset docs
 ```
 
 ## Merge/deploy

@@ -7,7 +7,7 @@ Revisar qualquer plano técnico sob a perspectiva de produto, jornada do usuári
 ## Entrada esperada
 
 - plano localizado em `plans/`
-- referências carregadas do kit
+- referências carregadas do preset
 - contexto técnico citado pelo plano
 
 ## Método

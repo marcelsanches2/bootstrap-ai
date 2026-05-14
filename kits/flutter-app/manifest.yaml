@@ -1,6 +1,6 @@
 name: flutter-app
 version: 1
-description: "Flutter app lifecycle kit based on PaceBattle pattern"
+description: "Flutter app lifecycle preset based on PaceBattle pattern"
 required_files:
   - CLAUDE.md
   - .claude/commands/plan.md

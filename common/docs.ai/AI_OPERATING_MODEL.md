@@ -1,6 +1,6 @@
 # AI Operating Model
 
-Documento comum dos project-kits. Define como agentes devem trabalhar dentro de projetos versionados.
+Documento comum dos bootstrap-ai. Define como agentes devem trabalhar dentro de projetos versionados.
 
 ## Ciclo operacional
 
@@ -24,7 +24,7 @@ contexto -> plano -> revisão por papéis -> execução incremental -> jarvis-te
 2. Leia os `docs/ai/` relevantes.
 3. Inspecione arquivos existentes antes de sobrescrever.
 4. Crie plano em `plans/` para mudança não trivial.
-5. Rode `/jarvis-plan-revisor` quando o kit existir.
+5. Rode `/jarvis-plan-revisor` quando o preset existir.
 
 ## Durante implementação
 

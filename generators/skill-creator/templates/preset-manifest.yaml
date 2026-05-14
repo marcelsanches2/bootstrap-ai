@@ -19,7 +19,7 @@ required_files:
 roles:
   # Listar todos os role-*.md gerados
 library_tags:
-  # Listar bibliotecas estruturais que forçam este kit
+  # Listar bibliotecas estruturais que forçam este preset
   # Exemplo para Python FastAPI:
   #   - fastapi
   #   - sqlalchemy

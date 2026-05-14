@@ -1,23 +1,23 @@
-# Skill Creator: Create New Project Kit
+# Skill Creator: Create New Bootstrap AI
 
-Crie um kit completo para uma nova tecnologia.
+Crie um preset completo para uma nova tecnologia.
 
 ## Input
 
 O usuário forneceu:
-- **Nome do kit**: `{{KIT_NAME}}`
+- **Nome dO preset**: `{{KIT_NAME}}`
 - **Descrição da stack**: `{{DESCRIPTION}}`
 
 ## Referência
 
 Antes de gerar, leia os kits existentes para entender o padrão:
 
-1. `kits/flutter-app/` — kit mobile com Figma comparison, design system, E2E
-2. `kits/python-backend/` — kit backend com API, DB, security, scalability
-3. `kits/react-web/` — kit frontend com design system, accessibility, performance
-4. `kits/node-backend/` — kit backend com TypeScript, tipagem, migrations
+1. `kits/flutter-app/` — preset mobile com Figma comparison, design system, E2E
+2. `kits/python-backend/` — preset backend com API, DB, security, scalability
+3. `kits/react-web/` — preset frontend com design system, accessibility, performance
+4. `kits/node-backend/` — preset backend com TypeScript, tipagem, migrations
 
-Use o kit mais similar à stack descrita como base primária. Adapte de lá.
+Use o preset mais similar à stack descrita como base primária. Adapte de lá.
 
 ## Estrutura obrigatória
 
@@ -34,10 +34,10 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
    - Processo (antes/depois de alterar)
    - Princípio de decisão
 
-2. **`manifest.yaml`** — Use o template `templates/kit-manifest.yaml` e preencha:
+2. **`manifest.yaml`** — Use o template `templates/preset-manifest.yaml` e preencha:
    - `name`, `description`
    - `required_files`: todos os arquivos gerados
-   - `library_tags`: bibliotecas estruturais da stack que devem forçar este kit
+   - `library_tags`: bibliotecas estruturais da stack que devem forçar este preset
    - `roles`: lista de todos os role-*.md gerados
 
 3. **`plans/.gitkeep`** — Vazio.
@@ -54,7 +54,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 
 5. **`carregar-contexto-projeto.md`** — Copiar de `templates/commands/carregar-contexto-projeto.md` (genérico, não muda por stack).
 
-6. **`jarvis-plan-revisor.md`** — Use o kit mais similar como base. Adapte:
+6. **`jarvis-plan-revisor.md`** — Use o preset mais similar como base. Adapte:
    - Lista de docs/ai a carregar
    - Lista de roles a executar
    - Regras de bloqueio específicas da stack
@@ -62,7 +62,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 
 7. **`plan.md`** — Copiar de `templates/commands/plan.md` (genérico).
 
-8. **`refactor.md`** — Use o kit mais similar como base. Adapte:
+8. **`refactor.md`** — Use o preset mais similar como base. Adapte:
    - Seção "Regras específicas <stack>" com validações específicas
 
 9. **`ship.md`** — Copiar de `templates/commands/ship.md` (genérico).

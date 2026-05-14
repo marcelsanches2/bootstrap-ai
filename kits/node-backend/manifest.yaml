@@ -1,6 +1,6 @@
 name: node-backend
 version: 1
-description: "Node.js/TypeScript backend lifecycle kit"
+description: "Node.js/TypeScript backend lifecycle preset"
 required_files:
   - CLAUDE.md
   - .claude/commands/jarvis-plan-revisor.md

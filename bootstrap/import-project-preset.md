@@ -1,34 +1,34 @@
 ---
-name: import-project-kit
-description: Importa o project-kits correto para o projeto atual de forma não destrutiva.
+name: import-project-preset
+description: Importa o bootstrap-ai correto para o projeto atual de forma não destrutiva.
 ---
 
-# /import-project-kit
+# /import-project-preset
 
-Importa o kit correto do repositório `marcelsanches2/ai-project-kits` para dentro do projeto atual.
+Importa o preset correto do repositório `marcelsanches2/bootstrap-ai` para dentro do projeto atual.
 
 Este arquivo é feito para ser copiado sozinho para um projeto novo/existente em:
 
 ```txt
-.claude/commands/import-project-kit.md
+.claude/commands/import-project-preset.md
 ```
 
 Depois rode no Claude Code:
 
 ```txt
-/import-project-kit
+/import-project-preset
 ```
 
 ## Objetivo
 
 1. Encontrar a raiz do projeto atual.
-2. Garantir que o repo `ai-project-kits` existe localmente.
-3. Atualizar o repo `ai-project-kits`.
+2. Garantir que o repo `bootstrap-ai` existe localmente.
+3. Atualizar o repo `bootstrap-ai`.
 4. Analisar a stack real do projeto.
-5. Validar se algum kit cobre todas as tecnologias centrais detectadas.
-6. Se faltar cobertura, criar um kit novo específico para o cenário do projeto.
+5. Validar se algum preset cobre todas as tecnologias centrais detectadas.
+6. Se faltar cobertura, criar um preset novo específico para o cenário do projeto.
 7. Mostrar diff do que será importado.
-8. Aplicar o kit em modo não destrutivo.
+8. Aplicar o preset em modo não destrutivo.
 9. Verificar se os arquivos principais entraram.
 
 ## Regras duras
@@ -44,16 +44,16 @@ Depois rode no Claude Code:
 
 ### 0. Usar source embutido (se existir)
 
-Este arquivo pode conter o path absoluto do repo `ai-project-kits` de onde foi instalado. Procure por `<!-- PROJECT_KITS_SOURCE:` no final deste arquivo.
+Este arquivo pode conter o path absoluto do repo `bootstrap-ai` de onde foi instalado. Procure por `<!-- BOOTSTRAP_AI_SOURCE:` no final deste arquivo.
 
 Se existir:
 
 ```bash
 # Extrair source embutido
-EMBEDDED_SOURCE=$(grep -oP '<!-- PROJECT_KITS_SOURCE: \K[^>]+' "$0" 2>/dev/null || true)
-if [ -n "$EMBEDDED_SOURCE" ] && [ -x "$EMBEDDED_SOURCE/bin/kit" ]; then
-  PROJECT_KITS_DIR="$EMBEDDED_SOURCE"
-  printf 'Source embutido encontrado: %s\n' "$PROJECT_KITS_DIR"
+EMBEDDED_SOURCE=$(grep -oP '<!-- BOOTSTRAP_AI_SOURCE: \K[^>]+' "$0" 2>/dev/null || true)
+if [ -n "$EMBEDDED_SOURCE" ] && [ -x "$EMBEDDED_SOURCE/bin/bootstrap-ai" ]; then
+  BOOTSTRAP_AI_DIR="$EMBEDDED_SOURCE"
+  printf 'Source embutido encontrado: %s\n' "$BOOTSTRAP_AI_DIR"
 fi
 ```
 
@@ -82,13 +82,13 @@ done
 if [ "$FILE_COUNT" -eq 0 ] && [ "$DIR_COUNT" -eq 0 ] && [ "$HAS_STACK" = false ]; then
   printf 'Pasta vazia detectada. Este é um projeto novo.\n'
   printf 'Direcionando para /kickoff (onboarding completo).\n\n'
-  printf 'Carregue o command /kickoff do kit e execute-o.\n'
+  printf 'Carregue o command /kickoff do preset e execute-o.\n'
   printf 'O /kickoff vai:\n'
   printf '  1. Coletar requisitos (7 perguntas)\n'
   printf '  2. Gerar PRODUCT_BRIEF.md\n'
   printf '  3. Decidir a stack\n'
   printf '  4. Oferecer design phase (se tem front)\n'
-  printf '  5. Aplicar o kit correto\n\n'
+  printf '  5. Aplicar o preset correto\n\n'
   printf 'Após o /kickoff completar, este command já terá sido executado.\n'
   # STOP HERE — não continue os passos abaixo
   return
@@ -97,51 +97,51 @@ fi
 
 Se a pasta **não** está vazia, continue normalmente com o passo 2.
 
-### 2. Localizar ou clonar `ai-project-kits`
+### 2. Localizar ou clonar `bootstrap-ai`
 
-Procure nesta ordem (teste ambos os nomes `ai-project-kits` e `project-kits`):
+Procure nesta ordem (teste ambos os nomes `bootstrap-ai` e `bootstrap-ai`):
 
 ```bash
 # 1. Variável de ambiente explícita
-$PROJECT_KITS_PATH
+$BOOTSTRAP_AI_PATH
 
 # 2. Workspace comum do usuário (onde ele provavelmente clonou)
-$HOME/workspace/ai-project-kits
-$HOME/workspace/project-kits
-$HOME/code/ai-project-kits
-$HOME/code/project-kits
-$HOME/projects/ai-project-kits
-$HOME/projects/project-kits
-$HOME/dev/ai-project-kits
-$HOME/dev/project-kits
-$HOME/work/ai-project-kits
-$HOME/work/project-kits
-$HOME/repos/ai-project-kits
-$HOME/repos/project-kits
-$HOME/development/ai-project-kits
-$HOME/development/project-kits
-$HOME/sources/ai-project-kits
-$HOME/sources/project-kits
-$HOME/src/ai-project-kits
-$HOME/src/project-kits
+$HOME/workspace/bootstrap-ai
+$HOME/workspace/bootstrap-ai
+$HOME/code/bootstrap-ai
+$HOME/code/bootstrap-ai
+$HOME/projects/bootstrap-ai
+$HOME/projects/bootstrap-ai
+$HOME/dev/bootstrap-ai
+$HOME/dev/bootstrap-ai
+$HOME/work/bootstrap-ai
+$HOME/work/bootstrap-ai
+$HOME/repos/bootstrap-ai
+$HOME/repos/bootstrap-ai
+$HOME/development/bootstrap-ai
+$HOME/development/bootstrap-ai
+$HOME/sources/bootstrap-ai
+$HOME/sources/bootstrap-ai
+$HOME/src/bootstrap-ai
+$HOME/src/bootstrap-ai
 
 # 3. Local padrão
-$HOME/.local/share/ai-project-kits
-$HOME/.local/share/project-kits
-$HOME/ai-project-kits
-$HOME/project-kits
+$HOME/.local/share/bootstrap-ai
+$HOME/.local/share/bootstrap-ai
+$HOME/bootstrap-ai
+$HOME/bootstrap-ai
 ```
 
 Use esta função de busca:
 
 ```bash
-find_project_kits() {
+find_bootstrap_ai() {
   # Nomes aceitos
-  local names=("ai-project-kits" "project-kits")
+  local names=("bootstrap-ai" "bootstrap-ai")
 
   # 1. Variável de ambiente
-  if [ -n "${PROJECT_KITS_PATH:-}" ] && [ -x "${PROJECT_KITS_PATH}/bin/kit" ]; then
-    printf '%s\n' "$PROJECT_KITS_PATH"
+  if [ -n "${BOOTSTRAP_AI_PATH:-}" ] && [ -x "${BOOTSTRAP_AI_PATH}/bin/bootstrap-ai" ]; then
+    printf '%s\n' "$BOOTSTRAP_AI_PATH"
     return 0
   fi
 
@@ -160,7 +160,7 @@ find_project_kits() {
 
   for ws in "${workspace_dirs[@]}"; do
     for name in "${names[@]}"; do
-      if [ -x "$ws/$name/bin/kit" ]; then
+      if [ -x "$ws/$name/bin/bootstrap-ai" ]; then
         printf '%s\n' "$ws/$name"
         return 0
       fi
@@ -169,7 +169,7 @@ find_project_kits() {
     if [ -d "$ws" ]; then
       local found
       for name in "${names[@]}"; do
-        found=$(find "$ws" -maxdepth 2 -path "*/$name/bin/kit" -executable -print -quit 2>/dev/null | sed 's|/bin/kit$||')
+        found=$(find "$ws" -maxdepth 2 -path "*/$name/bin/bootstrap-ai" -executable -print -quit 2>/dev/null | sed 's|/bin/bootstrap-ai$||')
         if [ -n "$found" ]; then
           printf '%s\n' "$found"
           return 0
@@ -181,7 +181,7 @@ find_project_kits() {
   # 3. Locais padrão
   for name in "${names[@]}"; do
     for d in "$HOME/.local/share/$name" "$HOME/$name"; do
-      if [ -x "$d/bin/kit" ]; then
+      if [ -x "$d/bin/bootstrap-ai" ]; then
         printf '%s\n' "$d"
         return 0
       fi
@@ -210,18 +210,18 @@ if [ -z "$WORKSPACE_DIR" ]; then
   mkdir -p "$WORKSPACE_DIR"
 fi
 
-printf 'Clonando ai-project-kits em %s\n' "$WORKSPACE_DIR/ai-project-kits"
+printf 'Clonando bootstrap-ai em %s\n' "$WORKSPACE_DIR/bootstrap-ai"
 if command -v gh >/dev/null 2>&1; then
-  gh repo clone marcelsanches2/ai-project-kits "$WORKSPACE_DIR/ai-project-kits"
+  gh repo clone marcelsanches2/bootstrap-ai "$WORKSPACE_DIR/bootstrap-ai"
 else
-  git clone https://github.com/marcelsanches2/ai-project-kits.git "$WORKSPACE_DIR/ai-project-kits"
+  git clone https://github.com/marcelsanches2/bootstrap-ai.git "$WORKSPACE_DIR/bootstrap-ai"
 fi
 ```
 
-### 3. Atualizar `ai-project-kits`
+### 3. Atualizar `bootstrap-ai`
 
 ```bash
-cd "$PROJECT_KITS_DIR"
+cd "$BOOTSTRAP_AI_DIR"
 git pull --ff-only
 ```
 
@@ -232,28 +232,28 @@ Se `git pull --ff-only` falhar, pare e reporte. Não faça merge/rebase automát
 Antes de importar qualquer coisa, rode:
 
 ```bash
-"$PROJECT_KITS_DIR/bin/kit" analyze "$ROOT"
+"$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" analyze "$ROOT"
 ```
 
 Isso detecta tecnologias centrais e bibliotecas estruturais por arquivos reais do projeto: `pubspec.yaml`, `pyproject.toml`, `requirements.txt`, `package.json`, `go.mod`, `Gemfile`, configs de framework, dependências e sinais de banco. Exemplos: `dio`, `riverpod`, `go_router`, `sqlalchemy`, `alembic`, `prisma`, `tanstack-query`, `sidekiq`, `chi`, `pgx`.
 
-### 5. Selecionar ou criar kit específico
+### 5. Selecionar ou criar preset específico
 
 ```bash
-KIT="$( $PROJECT_KITS_DIR/bin/kit select "$ROOT" --create-missing --print-kit )"
+KIT="$( $BOOTSTRAP_AI_DIR/bin/bootstrap-ai select "$ROOT" --create-missing --print-kit )"
 printf 'Kit selecionado: %s\n' "$KIT"
 ```
 
 Regra:
 
-- se um kit existente cobre a stack e as bibliotecas estruturais → use esse kit
-- se a stack ou biblioteca estrutural não for coberta → crie novo kit via `kit create`
-- exemplos que criam kit novo: Rails, Go, Python+React no mesmo repo, React+Node API no mesmo repo, stack híbrida sem cobertura
+- se um preset existente cobre a stack e as bibliotecas estruturais → use esse kit
+- se a stack ou biblioteca estrutural não for coberta → crie novo preset via `kit create`
+- exemplos que criam preset novo: Rails, Go, Python+React no mesmo repo, React+Node API no mesmo repo, stack híbrida sem cobertura
 
 ### 6. Mostrar diff
 
 ```bash
-"$PROJECT_KITS_DIR/bin/kit" diff "$KIT" "$ROOT"
+"$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" diff "$KIT" "$ROOT"
 ```
 
 Explique que:
@@ -279,10 +279,10 @@ fi
 PROJECT_NAME="${PROJECT_NAME:-$(basename "$ROOT")}"
 printf 'Project name: %s\n' "$PROJECT_NAME"
 
-"$PROJECT_KITS_DIR/bin/kit" apply "$KIT" "$ROOT" --refresh --project-name "$PROJECT_NAME"
+"$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" apply "$KIT" "$ROOT" --refresh --project-name "$PROJECT_NAME"
 ```
 
-Isso substitui `{{PROJECT_NAME}}` em todos os arquivos `.md`, `.yaml`, `.yml`, `.txt`, `.json`, `.toml` do kit pelo nome real do projeto.
+Isso substitui `{{PROJECT_NAME}}` em todos os arquivos `.md`, `.yaml`, `.yml`, `.txt`, `.json`, `.toml` do preset pelo nome real do projeto.
 
 Não use `--force`.
 
@@ -298,14 +298,14 @@ $ROOT/.claude/commands/refactor.md
 $ROOT/.claude/commands/jarvis-test-flow.md
 $ROOT/docs/ai/
 $ROOT/plans/
-$ROOT/.project-kit.lock
+$ROOT/.bootstrap-ai.lock
 ```
 
 Execute:
 
 ```bash
 test -f "$ROOT/.claude/commands/refactor.md" && echo "refactor OK"
-test -f "$ROOT/.project-kit.lock" && echo "lock OK"
+test -f "$ROOT/.bootstrap-ai.lock" && echo "lock OK"
 ```
 
 ### 9. Resposta final
@@ -313,7 +313,7 @@ test -f "$ROOT/.project-kit.lock" && echo "lock OK"
 Reporte:
 
 ```txt
-Kit aplicado: <kit>
+Preset aplicado: <kit>
 Project-kits usado: <path>
 Project name: <nome do projeto>
 Arquivos criados: <n>

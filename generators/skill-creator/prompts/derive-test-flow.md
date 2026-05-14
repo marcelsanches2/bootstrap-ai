@@ -5,7 +5,7 @@ Gere o `jarvis-test-flow.md` específico para a stack.
 ## Input
 
 - **Stack**: `{{DESCRIPTION}}`
-- **Nome do kit**: `{{KIT_NAME}}`
+- **Nome dO preset**: `{{KIT_NAME}}`
 - **Tipo**: backend / frontend / mobile (inferir pela descrição)
 
 ## Referência

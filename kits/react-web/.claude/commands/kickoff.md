@@ -1,14 +1,14 @@
 # /kickoff
 
-Inicializa um projeto do zero: coleta requisitos, gera product brief, decide stack e direciona para o kit correto.
+Inicializa um projeto do zero: coleta requisitos, gera product brief, decide stack e direciona para o preset correto.
 
 ## Quando usar
 
 - Projeto é uma pasta vazia ou quase vazia (só `.git`)
 - Usuário diz "novo projeto", "começar do zero", "quero criar um app"
-- `/import-project-kit` detectou pasta vazia
+- `/import-project-preset` detectou pasta vazia
 
-**NÃO usar quando** o projeto já tem stack definida (arquivos de código, package.json, pubspec.yaml, etc.). Nesses casos, use `/import-project-kit` direto.
+**NÃO usar quando** o projeto já tem stack definida (arquivos de código, package.json, pubspec.yaml, etc.). Nesses casos, use `/import-project-preset` direto.
 
 ---
 
@@ -149,12 +149,12 @@ Baseado nas respostas (especialmente pergunta 5 e 6), decida a stack:
 
 1. Se o usuário especificou stack → use a preferência dele
 2. Se não especificou → sugira baseado na tabela acima
-3. Se não tem kit correspondente → avise que vai criar um novo via `skill-creator`
+3. Se não tem preset correspondente → avise que vai criar um novo via `skill-creator`
 4. Apresente a decisão:
 
 ```
 Stack decidida: [stack]
-Kit: [nome do kit ou "será criado novo"]
+Preset: [nome do preset ou "será criado novo"]
 
 Tem front-end? [SIM/NÃO]
 ```
@@ -172,21 +172,21 @@ Explique as opções:
 2. **"Quero que crie"** → `/design-phase` vai gerar design system do zero
 3. **"Depois"** → pula, pode rodar `/design-phase` a qualquer momento
 
-### Se NÃO → pule para kit apply
+### Se NÃO → pule para preset apply
 
 ---
 
 ## Fase 5 — Kit Apply
 
-Após design phase (ou se pulou), aplique o kit:
+Após design phase (ou se pulou), aplique o preset:
 
 ```bash
-# Se o kit existe
-[PROJECT_KITS_DIR]/bin/kit apply [kit-name] [project-dir] --project-name "[PROJECT_NAME]"
+# Se o preset existe
+[BOOTSTRAP_AI_DIR]/bin/bootstrap-ai apply [preset-name] [project-dir] --project-name "[PROJECT_NAME]"
 
 # Se não existe, crie primeiro
-[PROJECT_KITS_DIR]/bin/kit create [kit-name] --from "[descrição da stack]"
-[PROJECT_KITS_DIR]/bin/kit apply [kit-name] [project-dir] --project-name "[PROJECT_NAME]"
+[BOOTSTRAP_AI_DIR]/bin/bootstrap-ai create [preset-name] --from "[descrição da stack]"
+[BOOTSTRAP_AI_DIR]/bin/bootstrap-ai apply [preset-name] [project-dir] --project-name "[PROJECT_NAME]"
 ```
 
 ---
@@ -200,7 +200,7 @@ Projeto inicializado: {{PROJECT_NAME}}
 ────────────────────────────────
 Product Brief: PRODUCT_BRIEF.md
 Requisitos: .hermes/requirements.json
-Kit aplicado: [kit-name]
+Preset aplicado: [preset-name]
 Design system: [SIM - docs/ai/DESIGN_SYSTEM.md | NÃO]
 
 Próximos passos:
@@ -215,5 +215,5 @@ Próximos passos:
 - Não pule perguntas. 7 perguntas, todas respondidas.
 - Não proponha solução técnica durante clarify. Redirecione: "Vamos terminar os requisitos primeiro."
 - Se o usuário não souber responder, marque como `[QUESTÃO ABERTA: ...]` — não invente.
-- Não crie kit novo sem antes verificar se um existente serve. Use `analyze` para confirmar.
-- DESIGN_SYSTEM.md existente (da design phase) NÃO deve ser sobrescrito pelo kit genérico.
+- Não crie preset novo sem antes verificar se um existente serve. Use `analyze` para confirmar.
+- DESIGN_SYSTEM.md existente (da design phase) NÃO deve ser sobrescrito pelo preset genérico.

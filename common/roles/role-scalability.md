@@ -9,7 +9,7 @@ Este papel é genérico. Kits backend devem preferir `product_roles/role-scalabi
 ## Entrada esperada
 
 - plano localizado em `plans/`
-- referências carregadas do kit
+- referências carregadas do preset
 - endpoints/jobs/tabelas/queries/componentes citados
 - expectativa de uso ou risco quando o plano trouxer essa informação
 

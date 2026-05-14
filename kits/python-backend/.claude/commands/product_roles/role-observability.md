@@ -64,7 +64,7 @@ Use este bloco quando o plano tocar logs, métricas, traces, alertas, SLOs e dia
 
 ### Perguntas de revisão
 
-- [ ] O plano preserva as invariantes arquiteturais do kit `python-backend`?
+- [ ] O plano preserva as invariantes arquiteturais do preset `python-backend`?
 - [ ] O desenho evita acoplamento novo desnecessário entre camadas?
 - [ ] Existe caminho incremental que reduza risco de mudança grande?
 - [ ] As dependências novas são justificadas por necessidade real, não conveniência?

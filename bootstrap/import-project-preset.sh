@@ -4,16 +4,16 @@ set -euo pipefail
 TARGET="${1:-.}"
 ROOT="$(cd "$TARGET" && (git rev-parse --show-toplevel 2>/dev/null || pwd))"
 
-log() { printf '[project-kit-import] %s\n' "$*"; }
-fail() { printf '[project-kit-import] erro: %s\n' "$*" >&2; exit 1; }
+log() { printf '[bootstrap-ai-import] %s\n' "$*"; }
+fail() { printf '[bootstrap-ai-import] erro: %s\n' "$*" >&2; exit 1; }
 
-# Nomes aceitos: novo (ai-project-kits) e antigo (project-kits)
-_KIT_NAMES=("ai-project-kits" "project-kits")
+# Nomes aceitos: novo (bootstrap-ai) e antigo (bootstrap-ai)
+_KIT_NAMES=("bootstrap-ai" "bootstrap-ai")
 
-find_project_kits() {
+find_bootstrap_ai() {
   # 1. Variável de ambiente explícita
-  if [ -n "${PROJECT_KITS_PATH:-}" ] && [ -x "${PROJECT_KITS_PATH}/bin/kit" ]; then
-    printf '%s\n' "$PROJECT_KITS_PATH"
+  if [ -n "${BOOTSTRAP_AI_PATH:-}" ] && [ -x "${BOOTSTRAP_AI_PATH}/bin/bootstrap-ai" ]; then
+    printf '%s\n' "$BOOTSTRAP_AI_PATH"
     return 0
   fi
 
@@ -33,16 +33,16 @@ find_project_kits() {
   for ws in "${workspace_dirs[@]}"; do
     # Direto na raiz da workspace (testa ambos os nomes)
     for name in "${_KIT_NAMES[@]}"; do
-      if [ -x "$ws/$name/bin/kit" ]; then
+      if [ -x "$ws/$name/bin/bootstrap-ai" ]; then
         printf '%s\n' "$ws/$name"
         return 0
       fi
     done
-    # Um nível mais fundo (ex: workspace/group/ai-project-kits)
+    # Um nível mais fundo (ex: workspace/group/bootstrap-ai)
     if [ -d "$ws" ]; then
       local found
       for name in "${_KIT_NAMES[@]}"; do
-        found=$(find "$ws" -maxdepth 2 -path "*/$name/bin/kit" -executable -print -quit 2>/dev/null | sed 's|/bin/kit$||')
+        found=$(find "$ws" -maxdepth 2 -path "*/$name/bin/bootstrap-ai" -executable -print -quit 2>/dev/null | sed 's|/bin/bootstrap-ai$||')
         if [ -n "$found" ]; then
           printf '%s\n' "$found"
           return 0
@@ -54,7 +54,7 @@ find_project_kits() {
   # 3. Locais padrão (ambos os nomes)
   for name in "${_KIT_NAMES[@]}"; do
     for d in "$HOME/.local/share/$name" "$HOME/$name"; do
-      if [ -x "$d/bin/kit" ]; then
+      if [ -x "$d/bin/bootstrap-ai" ]; then
         printf '%s\n' "$d"
         return 0
       fi
@@ -102,40 +102,40 @@ detect_project_name() {
   printf '%s\n' "$(basename "$root")"
 }
 
-# Se já temos PROJECT_KITS_DIR válido (passado via env ou source embutido), pula busca
-if [ -n "${PROJECT_KITS_DIR:-}" ] && [ -x "${PROJECT_KITS_DIR}/bin/kit" ]; then
-  log "usando PROJECT_KITS_DIR pré-configurado: $PROJECT_KITS_DIR"
-elif PROJECT_KITS_DIR="$(find_project_kits)"; then
-  log "project-kits encontrado: $PROJECT_KITS_DIR"
+# Se já temos BOOTSTRAP_AI_DIR válido (passado via env ou source embutido), pula busca
+if [ -n "${BOOTSTRAP_AI_DIR:-}" ] && [ -x "${BOOTSTRAP_AI_DIR}/bin/bootstrap-ai" ]; then
+  log "usando BOOTSTRAP_AI_DIR pré-configurado: $BOOTSTRAP_AI_DIR"
+elif BOOTSTRAP_AI_DIR="$(find_bootstrap_ai)"; then
+  log "bootstrap-ai encontrado: $BOOTSTRAP_AI_DIR"
 else
   WORKSPACE_DIR="$(find_workspace_dir)"
-  PROJECT_KITS_DIR="$WORKSPACE_DIR/ai-project-kits"
-  log "clonando ai-project-kits em $PROJECT_KITS_DIR"
+  BOOTSTRAP_AI_DIR="$WORKSPACE_DIR/bootstrap-ai"
+  log "clonando bootstrap-ai em $BOOTSTRAP_AI_DIR"
   if command -v gh >/dev/null 2>&1; then
-    gh repo clone marcelsanches2/ai-project-kits "$PROJECT_KITS_DIR"
+    gh repo clone marcelsanches2/bootstrap-ai "$BOOTSTRAP_AI_DIR"
   else
-    git clone https://github.com/marcelsanches2/ai-project-kits.git "$PROJECT_KITS_DIR"
+    git clone https://github.com/marcelsanches2/bootstrap-ai.git "$BOOTSTRAP_AI_DIR"
   fi
 fi
 
 log "raiz do projeto alvo: $ROOT"
-log "atualizando ai-project-kits"
-git -C "$PROJECT_KITS_DIR" pull --ff-only
+log "atualizando bootstrap-ai"
+git -C "$BOOTSTRAP_AI_DIR" pull --ff-only
 
 log "analisando stack e cobertura do kit"
-"$PROJECT_KITS_DIR/bin/kit" analyze "$ROOT"
-KIT="$($PROJECT_KITS_DIR/bin/kit select "$ROOT" --create-missing --print-kit)"
+"$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" analyze "$ROOT"
+KIT="$($BOOTSTRAP_AI_DIR/bin/bootstrap-ai select "$ROOT" --create-missing --print-kit)"
 log "kit selecionado: $KIT"
 
 log "diff não destrutivo"
-"$PROJECT_KITS_DIR/bin/kit" diff "$KIT" "$ROOT"
+"$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" diff "$KIT" "$ROOT"
 
 # Detecta nome do projeto para substituir placeholders
 PROJECT_NAME="$(detect_project_name "$ROOT")"
 log "nome do projeto detectado: $PROJECT_NAME"
 
-log "aplicando kit sem --force"
-"$PROJECT_KITS_DIR/bin/kit" apply "$KIT" "$ROOT" --refresh --project-name "$PROJECT_NAME"
+log "aplicando preset sem --force"
+"$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" apply "$KIT" "$ROOT" --refresh --project-name "$PROJECT_NAME"
 
 log "verificando arquivos principais"
 test -f "$ROOT/CLAUDE.md" || fail "CLAUDE.md ausente"
@@ -144,7 +144,7 @@ test -f "$ROOT/.claude/commands/jarvis-plan-revisor.md" || fail "jarvis-plan-rev
 test -f "$ROOT/.claude/commands/refactor.md" || fail "refactor.md ausente"
 test -f "$ROOT/.claude/commands/jarvis-test-flow.md" || fail "jarvis-test-flow.md ausente"
 test -d "$ROOT/docs/ai" || fail "docs/ai ausente"
-test -f "$ROOT/.project-kit.lock" || fail ".project-kit.lock ausente"
+test -f "$ROOT/.bootstrap-ai.lock" || fail ".bootstrap-ai.lock ausente"
 
 CONFLICTS="$(find "$ROOT" -name '*.kit-new*' -type f 2>/dev/null | wc -l | tr -d ' ')"
 log "import concluído"

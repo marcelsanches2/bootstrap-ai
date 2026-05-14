@@ -1,10 +1,10 @@
-# CLAUDE.md — project-kits
+# CLAUDE.md — bootstrap-ai
 
 ## Projeto
 
 Repositório de kits de lifecycle para projetos com Claude Code e Hermes.
 
-Cada kit é um pacote autocontido que instala processo operacional em um projeto alvo:
+Cada preset é um pacote autocontido que instala processo operacional em um projeto alvo:
 
 ```txt
 /plan → /jarvis-plan-revisor → implementação → /jarvis-test-flow → /ship
@@ -15,11 +15,11 @@ Os kits NÃO são bibliotecas. São conjuntos de arquivos que vivem dentro do pr
 ## Estrutura do repositório
 
 ```
-project-kits/
-├── CLAUDE.md                    # Este arquivo — contrato do próprio project-kits
+bootstrap-ai/
+├── CLAUDE.md                    # Este arquivo — contrato do próprio bootstrap-ai
 ├── README.md                    # Documentação pública
 ├── manifest.yaml                # Configuração central: kits, detecção, defaults
-├── bin/kit                      # CLI Python (556 linhas) — detect, diff, apply, validate, create, analyze, select
+├── bin/bootstrap-ai                      # CLI Python (556 linhas) — detect, diff, apply, validate, create, analyze, select
 ├── kits/                        # Kits por tecnologia
 │   ├── flutter-app/             # Mobile Flutter — baseado no pacebattle_app@master
 │   ├── python-backend/          # FastAPI/Python backend
@@ -30,17 +30,17 @@ project-kits/
 │   ├── docs.ai/                 # Docs AI genéricos (AI_OPERATING_MODEL, CODING_STANDARDS, etc.)
 │   └── roles/                   # Roles genéricos (arquiteto, designer, pm, test, security, etc.)
 ├── generators/skill-creator/    # Gerador de novos kits
-│   ├── prompts/                 # Instruções para criação de kit, docs, roles, jarvis-test-flow
+│   ├── prompts/                 # Instruções para criação de preset, docs, roles, jarvis-test-flow
 │   └── templates/               # Templates com placeholders para gerar arquivos
 ├── bootstrap/                   # Importer de arquivo único
-│   ├── import-project-kit.md    # Skill Claude Code para importar kit
-│   └── import-project-kit.sh    # Script shell alternativo
+│   ├── import-project-preset.md    # Skill Claude Code para importar kit
+│   └── import-project-preset.sh    # Script shell alternativo
 └── refreshers/                  # Configs de refresh por stack (yaml)
 ```
 
-## Anatomia de um kit
+## Anatomia de um preset
 
-Cada kit em `kits/<nome>/` contém:
+Cada preset em `kits/<nome>/` contém:
 
 ```
 kits/<nome>/
@@ -83,20 +83,20 @@ kits/<nome>/
 /ship             → checklist final
 ```
 
-## CLI (bin/kit)
+## CLI (bin/bootstrap-ai)
 
 Comandos principais:
 
 ```bash
-./bin/kit detect /path/do/projeto              # Detecta stack do projeto
-./bin/kit analyze /path/do/projeto             # Detecta stack + bibliotecas estruturais
-./bin/kit select /path/do/projeto              # Seleciona kit por stack detectada
-./bin/kit diff auto /path/do/projeto           # Mostra diff sem aplicar
-./bin/kit apply auto /path/do/projeto          # Aplica kit no projeto
-./bin/kit apply auto /path/do/projeto --refresh # Aplica com refresh dos docs
-./bin/kit validate <kit-name>                  # Valida integridade de um kit
-./bin/kit create <nome> --from "descrição"     # Cria novo kit via skill-creator
-./bin/kit install-importer /path/do/projeto    # Instala importer de arquivo único
+./bin/bootstrap-ai detect /path/do/projeto              # Detecta stack do projeto
+./bin/bootstrap-ai analyze /path/do/projeto             # Detecta stack + bibliotecas estruturais
+./bin/bootstrap-ai select /path/do/projeto              # Seleciona preset por stack detectada
+./bin/bootstrap-ai diff auto /path/do/projeto           # Mostra diff sem aplicar
+./bin/bootstrap-ai apply auto /path/do/projeto          # Aplica preset no projeto
+./bin/bootstrap-ai apply auto /path/do/projeto --refresh # Aplica com refresh dos docs
+./bin/bootstrap-ai validate <preset-name>                  # Valida integridade de um preset
+./bin/bootstrap-ai create <nome> --from "descrição"     # Cria novo preset via skill-creator
+./bin/bootstrap-ai install-importer /path/do/projeto    # Instala importer de arquivo único
 ```
 
 Política de escrita:
@@ -106,7 +106,7 @@ Política de escrita:
 
 ## Detecção de stack
 
-Cada kit tem regras de detecção no `manifest.yaml`:
+Cada preset tem regras de detecção no `manifest.yaml`:
 
 - `detects.any`: presença de qualquer arquivo listado
 - `detects.contains`: conteúdo obrigatório em arquivo específico
@@ -121,7 +121,7 @@ Além da stack principal, o `analyze` detecta bibliotecas que definem arquitetur
 - **Python**: sqlalchemy, alembic, pydantic, celery, fastapi
 - **Node**: prisma, drizzle, zod
 
-Biblioteca estrutural não coberta pelo kit selecionado → cria kit novo automaticamente via `skill-creator`.
+Biblioteca estrutural não coberta pelo preset selecionado → cria kit novo automaticamente via `skill-creator`.
 
 ## Regras de qualidade para kits
 
@@ -148,7 +148,7 @@ Cada role DEVE ter:
 
 ## Hooks (settings.json)
 
-Todo kit tem 3 hooks:
+Todo preset tem 3 hooks:
 
 1. **PostToolUse (Edit|Write|MultiEdit)**: lint/typecheck rápido da stack
 2. **ExitPlanMode**: dispara `/jarvis-plan-revisor` automaticamente quando plano é aceito
@@ -156,10 +156,10 @@ Todo kit tem 3 hooks:
 
 ## Regras deste repositório
 
-- Não commitar `.env`, `.project-kit.lock`, `.refresh-reports/` ou `*.kit-new`
+- Não commitar `.env`, `.bootstrap-ai.lock`, `.refresh-reports/` ou `*.kit-new`
 - Não usar `--force` em projetos existentes sem revisar diff
-- Não criar kit sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan-revisor.md`, `jarvis-test-flow.md`, `jarvis-revisor.md` e `jarvis-full-test.md`
-- Manter `common/` como fallback genérico — kit específico sempre sobrepõe
-- Todo kit novo deve passar em `./bin/kit validate <nome>`
+- Não criar preset sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan-revisor.md`, `jarvis-test-flow.md`, `jarvis-revisor.md` e `jarvis-full-test.md`
+- Manter `common/` como fallback genérico — preset específico sempre sobrepõe
+- Todo preset novo deve passar em `./bin/bootstrap-ai validate <nome>`
 - Templates do `skill-creator` devem ter conteúdo real, não placeholder vazio
 - README.md é documentação pública para consumidores — CLAUDE.md é contrato interno do repo

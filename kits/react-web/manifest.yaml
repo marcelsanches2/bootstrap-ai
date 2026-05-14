@@ -1,6 +1,6 @@
 name: react-web
 version: 1
-description: "React web lifecycle kit"
+description: "React web lifecycle preset"
 required_files:
   - CLAUDE.md
   - .claude/commands/jarvis-plan-revisor.md

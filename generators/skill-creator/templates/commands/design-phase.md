@@ -6,7 +6,7 @@ Define o design system visual do projeto. Três modos: extrair do Figma Make, ge
 
 - Após `/kickoff` ter completado (PRODUCT_BRIEF.md existe)
 - Usuário diz "quero definir o design", "criar design system"
-- O kit aplicado tem `docs/ai/DESIGN_SYSTEM.md` genérico que precisa ser populado
+- O preset aplicado tem `docs/ai/DESIGN_SYSTEM.md` genérico que precisa ser populado
 
 ## Pré-requisitos
 
@@ -220,14 +220,14 @@ Gere `docs/ai/DESIGN_SYSTEM.md` e `design/tokens.json` no mesmo formato do Modo 
 Adicione ao topo do DESIGN_SYSTEM.md:
 
 ```markdown
-> Gerado automaticamente pelo ai-project-kits. Personalize livremente.
+> Gerado automaticamente pelo bootstrap-ai. Personalize livremente.
 ```
 
 ---
 
 ## Modo 3 — Pula
 
-Não gera design system. O kit genérico aplica `docs/ai/DESIGN_SYSTEM.md` padrão.
+Não gera design system. O preset genérico aplica `docs/ai/DESIGN_SYSTEM.md` padrão.
 
 Avise:
 ```
