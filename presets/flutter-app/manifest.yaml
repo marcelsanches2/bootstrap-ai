@@ -8,7 +8,7 @@ required_files:
   - .claude/commands/jarvis-test-flow.md
   - .claude/commands/refactor.md
   - .claude/commands/ship.md
-  - .claude/commands/product_roles/role-qa-e2e-flutter.md
+  - .claude/commands/product_roles/role-flutter-qa.md
   - docs/ai/ARCHITECTURE.md
   - docs/ai/CODING_STANDARDS.md
   - docs/ai/DESIGN_SYSTEM.md

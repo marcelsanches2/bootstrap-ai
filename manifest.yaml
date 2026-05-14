@@ -22,7 +22,7 @@ presets:
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
-      - .claude/commands/product_roles/role-qa-e2e-flutter.md
+      - .claude/commands/product_roles/role-flutter-qa.md
       - docs/ai/ARCHITECTURE.md
       - docs/ai/CODING_STANDARDS.md
       - docs/ai/FEATURE_GUIDE.md
@@ -38,7 +38,7 @@ presets:
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
-      - .claude/commands/product_roles/role-db.md
+      - .claude/commands/product_roles/role-database.md
       - .claude/commands/product_roles/role-api.md
       - docs/ai/ARCHITECTURE.md
       - docs/ai/API_GUIDE.md
@@ -73,7 +73,7 @@ presets:
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
-      - .claude/commands/product_roles/role-db.md
+      - .claude/commands/product_roles/role-database.md
       - .claude/commands/product_roles/role-api.md
       - docs/ai/API_GUIDE.md
       - docs/ai/DATABASE_GUIDE.md

@@ -1,48 +1,61 @@
-# role-db
+# role-api-qa
 
 ## Objetivo
-Validar banco, migrations, queries, índices e integridade.
+Validar que o plano é testável e cobre cenários suficientes de teste (positivos, negativos, edge cases).
 
 ## Fonte de referência
-- docs/ai/DATABASE_GUIDE.md, docs/ai/SCALABILITY_GUIDE.md
+- `docs/ai/TESTING_GUIDE.md`
+- `docs/ai/API_GUIDE.md`
 
 ## Entrada esperada
 Plano técnico em `plans/*.md`.
 
 ## Método
-Para cada mudança relevante, verificar conformidade com as referências.
+Para cada endpoint ou fluxo, inventariar cenários de teste e verificar cobertura.
 
 ## Checklist obrigatório
 
-- [ ] Migration criada e testada (prisma migrate)\n- [ ] Índice em toda foreign key (@@index)\n- [ ] Índice em colunas de busca frequente\n- [ ] Sem SELECT * — sempre select explícito\n- [ ] Sem N+1 — usar include no Prisma\n- [ ] Paginação em queries de lista\n- [ ] Transação ($transaction) em operações multi-step\n- [ ] Interactive transaction para operações concorrentes (saldo, estoque)\n- [ ] Tipos corretos (Decimal para dinheiro, DateTime com timezone)\n- [ ] Sem dado sensível em texto plano\n- [ ] Seed para dados iniciais
+- [ ] Caminho feliz testável (input válido → output esperado)
+- [ ] Cenários negativos (400: input inválido, 401: não autenticado, 403: sem permissão, 404: não encontrado, 409: conflito, 422: validação)
+- [ ] Massa de dados determinística descrita (factories, fixtures)
+- [ ] Paginação testada (primeira página, última página, beyond total, limites)
+- [ ] Edge cases identificados (lista vazia, único item, campo máximo, unicode, null)
+- [ ] Contrato API testado (response tem campos certos, tipos certos)
+- [ ] Dados sensíveis NÃO aparecem em response (password_hash, token)
+- [ ] Testes de integração para endpoints críticos
+- [ ] Mocks externos especificados (email, payment gateway, SMS)
+- [ ] Ordem de execução não importa (testes independentes)
 
 ## Resultado esperado por item
 
-- **OK**: evidência de conformidade.
+- **OK**: evidência.
 - **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
+- **PENDÊNCIA**: severidade + cenário faltando + correção.
 
 ### Severidade
-- BLOCKER: Migration sem rollback, N+1 em lista, saldo sem lock, dado sensível texto plano.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style/conveniência.
+- BLOCKER: caminho feliz sem teste, contrato API não verificável.
+- MAJOR: cenário negativo crítico ausente (auth, conflito), massa não determinística.
+- MINOR: edge case faltando.
 
 ## Saída em Markdown
 
 ```md
-### role-db
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta.
-  Correção: ação concreta.
+### role-api-qa
+
+- [OK] Caminho feliz — POST /api/v1/orders com items válidos retorna 201. ✓
+- [PENDÊNCIA MAJOR] Auth — GET /api/v1/orders sem token não testado.
+  Correção: adicionar teste esperando 401 sem Authorization header.
+- [PENDÊNCIA MAJOR] Conflito — POST /api/v1/orders com item inexistente não testado.
+  Correção: adicionar teste com product_id inválido esperando 404 ou 400.
 ...
 ```
 
 ## Regra dura
-Plano que viola as regras BLOCKER não está pronto para implementação.
+Plano com endpoint sem cenário de teste para caminho feliz, ou sem verificar contrato API, não está pronto.
 
 ## Checklist operacional aprofundado
 
-Use este bloco quando o plano tocar modelagem, migrações, índices, transações, rollback e integridade de dados. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
+Use este bloco quando o plano tocar estratégia de testes, fixtures, regressão, cobertura crítica e validação fim-a-fim. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
 
 ### Entradas obrigatórias
 
@@ -54,11 +67,11 @@ Use este bloco quando o plano tocar modelagem, migrações, índices, transaçõ
 
 ### Perguntas de revisão
 
-- [ ] O plano preserva as invariantes arquiteturais do preset `node-backend`?
+- [ ] O plano preserva as invariantes arquiteturais do preset `python-backend`?
 - [ ] O desenho evita acoplamento novo desnecessário entre camadas?
 - [ ] Existe caminho incremental que reduza risco de mudança grande?
 - [ ] As dependências novas são justificadas por necessidade real, não conveniência?
-- [ ] A estratégia funciona no stack esperado: Node.js, TypeScript, Express/Fastify/Nest quando presentes, Prisma/Drizzle quando presentes?
+- [ ] A estratégia funciona no stack esperado: Python, FastAPI, Pydantic, SQLAlchemy/Alembic quando presentes?
 - [ ] Há tratamento explícito para erro, timeout, retry e estado parcial?
 - [ ] O plano descreve como observar falha em produção sem debugger local?
 - [ ] O plano define rollback ou mitigação se o deploy quebrar?
@@ -87,13 +100,13 @@ Para cada achado, responda neste formato:
 - Evidência: `<arquivo ou seção>`
 - Risco: <efeito concreto se ignorar>
 - Correção: <mudança específica no plano>
-- Validação: `npm run typecheck && npm test && npm run lint quando configurado` ou verificação equivalente
+- Validação: `ruff check && mypy/pyright quando configurado && pytest` ou verificação equivalente
 ```
 
 Se não houver achados, registre explicitamente:
 
 ```md
-OK — revisei modelagem, migrações, índices, transações, rollback e integridade de dados contra o plano e não encontrei bloqueios.
+OK — revisei estratégia de testes, fixtures, regressão, cobertura crítica e validação fim-a-fim contra o plano e não encontrei bloqueios.
 ```
 
 ## Regra dura

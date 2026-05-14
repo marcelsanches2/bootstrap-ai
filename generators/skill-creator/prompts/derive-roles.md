@@ -54,7 +54,7 @@ Perspectiva de entrega:
 - Tipagem/contratos entre camadas
 - Anti-patterns específicos da stack
 
-#### role-db.md (~80+ linhas)
+#### role-database.md (~80+ linhas)
 - Migrations (up/down, rollback)
 - Índices em colunas de busca
 - N+1, SELECT *, query optimization
@@ -85,7 +85,7 @@ Perspectiva de entrega:
 - Pool de conexões
 - Graceful shutdown
 
-#### role-qa-api.md (~80+ linhas)
+#### role-api-qa.md (~80+ linhas)
 - Testabilidade do plano
 - Caminho feliz
 - Cenários negativos (erro 400, 401, 403, 404, 500)
@@ -124,7 +124,7 @@ Perspectiva de entrega:
 - Cache de dados e invalidação
 - Web Vitals
 
-#### role-qa-web.md (~80+ linhas)
+#### role-web-qa.md (~80+ linhas)
 - Testabilidade
 - Caminho feliz via UI
 - Cenários negativos
@@ -133,7 +133,7 @@ Perspectiva de entrega:
 
 ### Mobile (gerar TODOS)
 
-#### role-arquiteto.md (~100+ linhas)
+#### role-architect.md (~100+ linhas)
 - Feature-first + clean architecture
 - Separação presentation/domain/data
 - DI e providers

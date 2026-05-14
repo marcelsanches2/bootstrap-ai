@@ -1,4 +1,4 @@
-# role-db
+# role-database
 
 ## Objetivo
 Validar que o plano trata corretamente banco de dados, migrations, queries, índices e integridade dos dados.
@@ -43,7 +43,7 @@ Para cada mudança que envolve banco, verificar se migration, índice, query e i
 ## Saída em Markdown
 
 ```md
-### role-db
+### role-database
 
 - [OK] Migration — upgrade() e downgrade() presentes. ✓
 - [PENDÊNCIA BLOCKER] N+1 — GET /api/v1/orders lista items sem eager loading.

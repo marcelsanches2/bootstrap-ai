@@ -27,7 +27,7 @@ bootstrap-ai/
 │   └── node-backend/            # Node/TypeScript backend
 ├── common/                      # Recursos compartilhados entre presets
 │   ├── commands/                # Comandos genéricos (jarvis-plan-revisor, jarvis-revisor, plan, ship, refactor)
-│   ├── docs.ai/                 # Docs AI genéricos (AI_OPERATING_MODEL, CODING_STANDARDS, etc.)
+│   ├── docs.ai/                 # Docs AI genéricos (OPERATING_MODEL, CODING_STANDARDS, etc.)
 │   └── roles/                   # Roles genéricos (arquiteto, designer, pm, test, security, etc.)
 ├── generators/skill-creator/    # Gerador de novos presets
 │   ├── prompts/                 # Instruções para criação de preset, docs, roles, jarvis-test-flow

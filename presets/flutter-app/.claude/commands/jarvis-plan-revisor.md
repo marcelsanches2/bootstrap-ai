@@ -80,10 +80,10 @@ Se nenhum documento existir, pare e reporte que não há base suficiente para re
 
 Depois de carregar o plano e referências, execute os revisores abaixo:
 
-1. `product_roles/role-arquiteto.md`
+1. `product_roles/role-architect.md`
 2. `product_roles/role-pm.md`
 3. `product_roles/role-designer.md`, se houver UI, tela, widget, design ou rota
-4. `product_roles/role-qa-e2e-flutter.md`, se houver fluxo, API, usecase, estado, tela, repository, datasource ou regra testável
+4. `product_roles/role-flutter-qa.md`, se houver fluxo, API, usecase, estado, tela, repository, datasource ou regra testável
 5. `product_roles/consolidar-parecer.md`
 6. `product_roles/gerar-relatorio.md`
 7. Interacao para sanar pendencias MAJOR (ver secao 7)
