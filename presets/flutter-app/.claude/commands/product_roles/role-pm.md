@@ -8,40 +8,20 @@ Você não revisa código. Você revisa se o plano cobre comportamento esperado 
 
 ## Fonte de referência
 
-Use exclusivamente as referências carregadas por:
-`product_roles/carregar-referencias.md`
+Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
 
+## Entrada esperada
 
-## Responsabilidades
-
-Validar se o plano cobre:
-
-- objetivo da feature
-- usuário impactado
-- fluxo principal
-- fluxos alternativos
-- corner cases
-- empty states
-- loading states
-- error states
-- permissões
-- comportamento sem internet
-- comportamento com dados parciais
-- comportamento com usuário não autenticado, se aplicável
-- comportamento com usuário autenticado, se aplicável
-- copy mínima de mensagens importantes
-- métricas ou eventos relevantes, se aplicável
-- critérios de aceite
+- plano localizado
+- referências carregadas
+- conteúdo do plano
+- contexto do projeto quando citado pelo plano
 
 ## Checklist obrigatório
 
 ### 1. Objetivo da feature
 
-Verifique se o plano deixa claro:
-
-- qual problema resolve
-- para qual usuário
-- qual comportamento esperado
+Verifique se o plano deixa claro qual problema resolve, para qual usuário e qual comportamento esperado.
 
 Resultado:
 
@@ -59,56 +39,23 @@ Resultado:
 
 ### 3. Fluxos alternativos
 
-Verifique se o plano cobre variações relevantes:
-
-- usuário sem dados
-- usuário com dados incompletos
-- usuário sem permissão
-- usuário sem conexão
-- erro de API
-- retorno vazio da API
-- loading demorado
-- ação cancelada
-- estado inicial da feature
+Verifique se o plano cobre usuário sem dados, sem permissão, sem conexão, erro de API, retorno vazio e loading demorado.
 
 Resultado:
 
 - `OK` se os principais fluxos alternativos estão cobertos.
 - `PENDÊNCIA` se só existe caminho feliz.
 
-### 4. Empty states
+### 4. Estados da tela
 
-Verifique se o plano define o que aparece quando não há dados.
-
-Resultado:
-
-- `OK` se empty states estão definidos.
-- `PENDÊNCIA` se ausentes.
-
-### 5. Error states
-
-Verifique se o plano define tratamento para erros relevantes da experiência.
+Verifique se o plano define empty states, error states e loading states.
 
 Resultado:
 
-- `OK` se erros relevantes estão cobertos.
-- `PENDÊNCIA` se ausentes ou genéricos.
+- `OK` se estados relevantes estão definidos.
+- `PENDÊNCIA` se estados críticos estão ausentes.
 
-### 6. Loading states
-
-Verifique se o plano define:
-
-- estado carregando
-- skeleton/loading adequado
-- prevenção de duplo clique/toque
-- feedback visual durante ações
-
-Resultado:
-
-- `OK` se loading está previsto.
-- `PENDÊNCIA` se ausente.
-
-### 7. Critérios de aceite
+### 5. Critérios de aceite
 
 Verifique se o plano tem critérios verificáveis.
 
@@ -120,19 +67,19 @@ Resultado:
 ## Saída esperada
 
 ```md
-## Parecer PM
+## Parecer Role: PM / Product Reviewer
 
-- [OK/PENDÊNCIA] Objetivo da feature — ...
-- [OK/PENDÊNCIA] Fluxo principal — ...
-- [OK/PENDÊNCIA] Fluxos alternativos — ...
-- [OK/PENDÊNCIA] Empty states — ...
-- [OK/PENDÊNCIA] Error states — ...
-- [OK/PENDÊNCIA] Loading states — ...
-- [OK/PENDÊNCIA] Critérios de aceite — ...
+- [OK/PENDÊNCIA] Objetivo da feature — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Fluxo principal — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Fluxos alternativos — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Estados da tela — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Critérios de aceite — evidência objetiva e correção sugerida quando pendente.
 
-### Pendências PM
+### Pendências
 
-1. ...
+| Severidade | Item | Evidência | Correção exigida |
+|---|---|---|---|
+| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
 ```
 
 ## Regra dura

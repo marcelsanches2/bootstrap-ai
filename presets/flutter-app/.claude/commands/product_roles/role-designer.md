@@ -2,153 +2,89 @@
 
 ## Objetivo
 
-Revisar se o plano respeita as diretivas visuais, UX e design system do app.
-
-Você não cria layout novo. Você valida se o plano propõe implementar UI seguindo o design system existente.
+Revisar qualidade visual, design system, estados de interface, responsividade e usabilidade Flutter.
 
 ## Fonte de referência
 
-Use exclusivamente as referências carregadas por:
-`product_roles/carregar-referencias.md`
+Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
 
+## Entrada esperada
 
-## Quando usar
-
-Use esta validação se o plano mencionar:
-
-- UI
-- tela
-- page
-- screen
-- widget
-- component
-- router
-- tema
-- design system
-- cores
-- tipografia
-- espaçamento
-
-## Responsabilidades
-
-Validar se o plano cobre:
-
-- uso de tokens do design system
-- cores corretas
-- tipografia correta
-- espaçamento consistente
-- componentes reutilizáveis
-- hierarquia visual
-- acessibilidade básica
-- estados visuais
-- responsividade
-- consistência com telas existentes
-- ausência de hardcoded visual
-- fidelidade ao Figma quando houver
+- plano localizado
+- referências carregadas
+- conteúdo do plano
+- contexto do projeto quando citado pelo plano
 
 ## Checklist obrigatório
 
-### 1. Design system
+### 1. Tokens e componentes
 
-Verifique se o plano usa tokens e padrões centralizados conforme as referências carregadas.
+Verifique uso de tokens, Theme e componentes existentes do Design System.
 
 Resultado:
 
-- `OK` se o uso do design system está explícito.
-- `PENDÊNCIA` se o plano permite hardcoded ou não menciona tokens.
+- `OK` se usa padrão visual existente.
+- `OK — não aplicável` se mudança sem UI.
+- `PENDÊNCIA` se usa valor hardcoded ou widget paralelo sem motivo.
 
 ### 2. Fidelidade visual
 
-Se houver Figma ou referência visual, verifique se o plano menciona:
-
-- seguir layout de referência
-- respeitar componentes existentes
-- não reinterpretar visual livremente
-- preservar hierarquia visual
+Verifique hierarquia, alinhamento, espaçamento e legibilidade.
 
 Resultado:
 
-- `OK` se a fidelidade está explícita.
-- `PENDÊNCIA` se o plano deixa espaço para improviso.
+- `OK` se interface tem acabamento coerente.
+- `OK — não aplicável` se não há visual novo.
+- `PENDÊNCIA` se UI parece improvisada ou inconsistente.
 
 ### 3. Estados visuais
 
-Verifique se o plano cobre UI para:
-
-- loading
-- empty state
-- error state
-- success state, se aplicável
-- disabled state
-- pressed/tapped state, se aplicável
+Verifique loading, empty, error, success, disabled states.
 
 Resultado:
 
-- `OK` se estados visuais estão previstos.
-- `PENDÊNCIA` se ausentes.
+- `OK` se estados estão definidos.
+- `OK — não aplicável` se estado não se aplica.
+- `PENDÊNCIA` se estado relevante está ausente.
 
 ### 4. Acessibilidade
 
-Verifique se o plano considera:
-
-- contraste adequado
-- tamanho mínimo de toque
-- textos legíveis
-- semantic labels quando necessário
-- não depender apenas de cor para transmitir estado
+Verifique Semantics, labels, contraste e tamanho de toque.
 
 Resultado:
 
-- `OK` se acessibilidade básica está prevista.
-- `PENDÊNCIA` se ignorada.
+- `OK` se acessibilidade está prevista.
+- `OK — não aplicável` se não há interação nova.
+- `PENDÊNCIA` se touch target, contraste ou semântica estão ausentes.
 
 ### 5. Responsividade
 
-Verifique se o plano considera:
-
-- telas pequenas
-- telas grandes
-- safe area
-- teclado, se houver input
-- scroll quando conteúdo excede a tela
-- iOS e Android
+Verifique comportamento em larguras, orientações e tamanhos de tela principais.
 
 Resultado:
 
-- `OK` se responsividade está prevista.
-- `PENDÊNCIA` se ausente.
-
-### 6. Componentização visual
-
-Verifique se o plano evita:
-
-- tela gigante com tudo inline
-- duplicação de widgets
-- estilos repetidos
-- componentes impossíveis de testar
-
-Resultado:
-
-- `OK` se há componentização adequada.
-- `PENDÊNCIA` se a UI está concentrada demais.
+- `OK` se layout responde sem quebrar.
+- `OK — não aplicável` se componente não é responsivo por natureza.
+- `PENDÊNCIA` se só funciona em uma resolução.
 
 ## Saída esperada
 
 ```md
-## Parecer Designer
+## Parecer Role: Designer / UX Reviewer
 
-- [OK/PENDÊNCIA] Design system — ...
-- [OK/PENDÊNCIA] Fidelidade visual — ...
-- [OK/PENDÊNCIA] Estados visuais — ...
-- [OK/PENDÊNCIA] Acessibilidade — ...
-- [OK/PENDÊNCIA] Responsividade — ...
-- [OK/PENDÊNCIA] Componentização visual — ...
+- [OK/PENDÊNCIA] Tokens e componentes — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Fidelidade visual — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Estados visuais — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Acessibilidade — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Responsividade — evidência objetiva e correção sugerida quando pendente.
 
-### Pendências Designer
+### Pendências
 
-1. ...
+| Severidade | Item | Evidência | Correção exigida |
+|---|---|---|---|
+| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
 ```
 
 ## Regra dura
 
-Se houver UI e o plano não mencionar design system, tokens, tema ou padrão visual centralizado conforme referências carregadas, marque como `PENDÊNCIA`.
+Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.

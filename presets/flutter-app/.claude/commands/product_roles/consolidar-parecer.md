@@ -1,133 +1,34 @@
-## Objetivo
+# Skill filha: consolidar-parecer
 
-Consolidar os pareceres de Arquitetura, PM, Designer e QA E2E em uma decisão única.
+Consolide pareceres dos roles em uma decisão única e acionável.
 
-## Fonte de referência
+## Severidade
 
-Use exclusivamente as referências carregadas por:
-`product_roles/carregar-referencias.md`
+- `BLOCKER`: risco de quebrar arquitetura, segurança, dados, contrato público, deploy ou impedir execução segura.
+- `MAJOR`: precisa corrigir antes ou durante a implementação planejada; não bloqueia investigação, bloqueia entrega.
+- `MINOR`: melhoria desejável; pode seguir se registrada.
+- `INFO`: observação sem ação obrigatória.
 
+## Regras de consolidação
 
-## Entrada
-
-Pareceres dos revisores:
-
-- Arquitetura
-- PM
-- Designer
-- QA E2E Flutter
-
-E o inventário de referências carregadas/ausentes produzido por `product_roles/carregar-referencias.md`.
-
-## Classificação de severidade
-
-Classifique cada pendência como:
-
-### BLOCKER
-
-Impede execução.
-
-Exemplos:
-
-- violação de camadas
-- dependência proibida entre camadas
-- DTO vazando para camada errada
-- feature com API sem mock/fake testável
-- tela nova sem rota centralizada quando a rota for exigida pelas referências carregadas
-- ausência de fluxo principal
-- ausência total de critérios de aceite
-- UI sem design system quando há tela relevante
-- ausência de referência crítica que impeça validação confiável
-
-### MAJOR
-
-Deve corrigir antes ou durante a execução.
-
-Exemplos:
-
-- empty states ausentes
-- error states incompletos
-- loading state não definido
-- ausência de alguns cenários negativos
-- nomes genéricos
-- componentização fraca
-- acessibilidade esquecida
-
-### MINOR
-
-Pode seguir, mas deve virar ajuste.
-
-Exemplos:
-
-- copy pouco refinada
-- métrica/evento não mencionado
-- pequena ambiguidade visual
-- sugestão de melhoria não bloqueante
-
-## Veredito
-
-### Plano aprovado para execução.
-
-Somente se:
-
-- zero BLOCKER
-- zero MAJOR relevante
-- apenas MINOR aceitável ou nenhuma pendência
-
-### Plano aprovado com ajustes obrigatórios antes da execução.
-
-Use se:
-
-- não há violação estrutural grave
-- existem MAJOR corrigíveis
-- nenhum BLOCKER crítico
-
-### Plano reprovado. Corrigir arquitetura antes de executar.
-
-Use se houver:
-
-- qualquer BLOCKER estrutural
-- plano sem comportamento suficiente
-- feature não testável
-- arquitetura acoplada ou ambígua demais
+1. Uma pendência `BLOCKER` reprova o plano.
+2. `MAJOR` sem dono, arquivo ou correção sugerida vira `BLOCKER`.
+3. Se dois papéis discordarem, escolha o parecer mais restritivo e explique o trade-off.
+4. Não aceite "validar depois" para segurança, migration, contrato API ou dados destrutivos.
+5. Toda pendência consolidada precisa ter: severidade, dono técnico, arquivo/área afetada e correção sugerida.
 
 ## Saída esperada
 
 ```md
-## Consolidação
+## Pendências consolidadas
 
-### Pendências bloqueantes
+| Severidade | Papel | Área | Pendência | Correção exigida |
+|---|---|---|---|---|
+| BLOCKER/MAJOR/MINOR | papel responsável | módulo/arquivo afetado | risco observado | ação concreta |
 
-- ...
+## Decisão
 
-### Pendências maiores
-
-- ...
-
-### Pendências menores
-
-- ...
-
-### Decisão
-
-`<veredito>`
-
-### Próximas ações obrigatórias
-
-1. ...
-2. ...
-3. ...
+Plano aprovado para execução. // ou
+Plano aprovado com ajustes obrigatórios antes da execução. // ou
+Plano reprovado. Corrigir arquitetura antes de executar.
 ```
-
-## Regra
-
-Não deixe parecer contraditório passar.
-
-Se um papel aprova, mas outro mostra que a feature não é testável, o plano não está pronto.
-
-## Interação para MAJOR
-
-A consolidação pode conter pendências MAJOR. Se houver:
-- A skill pai (`jarvis-revisor.md`) conduzirá uma etapa interativa para sanar cada MAJOR com o usuário.
-- Durante essa etapa, o veredito provisório pode ser `Plano aprovado com ajustes obrigatórios antes da execução.`
-- Só após todas as MAJOR sanadas o veredito final pode evoluir para aprovação plena (se zero MINOR críticas restarem).

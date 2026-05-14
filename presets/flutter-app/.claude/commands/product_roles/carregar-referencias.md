@@ -1,52 +1,38 @@
-## Objetivo
+# Skill filha: carregar-referencias
 
-Carregar todos os documentos de referência disponíveis em `docs/ai/` para revisar o plano técnico contra os padrões reais do projeto.
+Carregue somente as referências necessárias para revisar o plano localizado.
 
-Esta skill é a fonte de autoridade para todos os outros filhos.
+## Obrigatórias quando existirem
 
-Nenhum filho deve inventar regra fora das referências carregadas. Quando uma validação usar uma recomendação não documentada, ela deve ser explicitamente marcada como recomendação, não como regra oficial do projeto.
-
-## Referências principais
-
-Carregue obrigatoriamente, se existirem:
-
+- `CLAUDE.md`
 - `docs/ai/ARCHITECTURE.md`
 - `docs/ai/CODING_STANDARDS.md`
 - `docs/ai/FEATURE_GUIDE.md`
-- `docs/ai/DESIGN_SYSTEM.md`
 - `docs/ai/TESTING_GUIDE.md`
+- `docs/ai/SCALABILITY_GUIDE.md` quando existir e houver volume/concorrência/produção
 
+## Específicas por impacto
 
-## Procedimento obrigatório
+- API/contrato HTTP: `docs/ai/API_GUIDE.md`
+- Banco/migrations/queries: `docs/ai/DATABASE_GUIDE.md`
+- Segurança/Auth/secrets/PII: `docs/ai/SECURITY_GUIDE.md`
+- Logs/métricas/healthcheck/incidente: `docs/ai/OBSERVABILITY_GUIDE.md`
+- Deploy/env/rollback: `docs/ai/DEPLOYMENT_GUIDE.md`
+- UI/design: `docs/ai/DESIGN_SYSTEM.md`
+- Acessibilidade: `docs/ai/ACCESSIBILITY_GUIDE.md`
+- Performance frontend: `docs/ai/PERFORMANCE_GUIDE.md`
+- Escalabilidade/produção: `docs/ai/SCALABILITY_GUIDE.md`
 
-1. Verifique se o diretório `docs/ai/` existe.
-2. Liste todos os arquivos `.md` dentro de `docs/ai/`.
-6. Para cada arquivo esperado:
-   - Se existir, marque como `OK`.
-   - Se não existir, marque como `PENDÊNCIA`.
-7. Se algum arquivo estiver ausente:
-   - Reporte no relatório.
-   - Continue com os arquivos disponíveis.
-9. Se nenhum documento de referência existir:
-   - Pare a revisão.
-   - Reporte: `Nenhuma referência encontrada em docs/ai/. Não há base suficiente para revisar o plano.`
-
-## Saída esperada
+## Saída obrigatória
 
 ```md
 ## Referências carregadas
+- `arquivo` — por que foi carregado
 
-### Principais
+## Referências ausentes relevantes
+- `arquivo` — impacto da ausência
+```
 
-- [OK] `docs/ai/ARCHITECTURE.md`
-- [OK] `docs/ai/CODING_STANDARDS.md`
-- [OK] `docs/ai/FEATURE_GUIDE.md`
-- [OK] `docs/ai/DESIGN_SYSTEM.md`
+## Regra dura
 
-## Regras
-
-- Não invente regras ausentes nos documentos.
-- Trate ausência das referências principais como pendência importante.
-- Se `ARCHITECTURE.md` estiver ausente, marque como pendência crítica.
-- Se `CODING_STANDARDS.md` estiver ausente, marque como pendência crítica.
-- Se houver UI no plano e `DESIGN_SYSTEM.md` estiver ausente, marque como pendência relevante para o Designer.
+Não invente padrão quando a referência deveria existir e não existe. Marque limitação como pendência para o papel afetado.

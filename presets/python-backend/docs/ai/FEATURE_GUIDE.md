@@ -200,24 +200,10 @@ async def get_order(
     return await service.get(order_id)
 ```
 
-### 7. Testes
-
-```python
-# tests/integration/test_orders_api.py
-async def test_create_order_returns_201(client, auth_headers):
-    response = await client.post("/api/v1/orders", json={
-        "items": [{"product_id": 1, "quantity": 2, "unit_price": 29.90}]
-    }, headers=auth_headers)
-    assert response.status_code == 201
-    data = response.json()
-    assert data["status"] == "pending"
-    assert data["total"] == 59.80
-```
-
 ## Regras duras
 
-- Sempre: migration → model → schema → repository → service → router → teste.
+- Sempre: migration → model → schema → repository → service → router.
 - Nunca pular camada.
 - Nunca criar endpoint sem schema de request e response.
 - Nunca criar tabela sem migration com downgrade.
-- Nunca criar feature sem teste.
+- Testes seguem `docs/ai/TESTING_GUIDE.md`.

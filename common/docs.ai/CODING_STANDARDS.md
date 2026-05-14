@@ -14,7 +14,7 @@ Documento comum dos bootstrap-ai. Cada stack pode ter regras mais específicas e
 
 ## Estrutura
 
-- Preserve boundaries definidos pelO preset.
+- Preserve boundaries definidos pelo preset.
 - Não crie arquitetura paralela.
 - Não espalhe acesso direto a infraestrutura em camada de apresentação/transporte.
 - Não crie diretórios vazios ou arquivos sem uso imediato.

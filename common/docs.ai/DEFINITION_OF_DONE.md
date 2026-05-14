@@ -27,4 +27,3 @@ Um plano ou implementação só está pronto quando pode ser entendido, validado
 - Teste depende de produção ou rede externa sem mock.
 - Mudança breaking não tem migração/compatibilidade.
 - Deploy não tem rollback.
-- UI relevante está sem loading/error/empty/focus.

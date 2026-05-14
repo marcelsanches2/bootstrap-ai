@@ -4,51 +4,32 @@
 
 Revisar o plano sob a ótica de testes ponta a ponta no Flutter e propor cenários E2E verificáveis.
 
-Você deve identificar se a feature é testável, se tem massa de dados e se cobre fluxos críticos.
-
 ## Fonte de referência
 
-Use exclusivamente as referências carregadas por:
-`product_roles/carregar-referencias.md`
+Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
 
-## Responsabilidades
+## Entrada esperada
 
-Validar e propor:
-
-- cenários E2E
-- pré-condições
-- massa de dados
-- mocks/fakes necessários
-- passos do teste
-- resultado esperado
-- cenários negativos
-- cenários de permissão
-- cenários offline/erro de API
-- pontos de automação em Flutter integration_test
-- comandos de execução local
+- plano localizado
+- referências carregadas
+- conteúdo do plano
+- contexto do projeto quando citado pelo plano
 
 ## Checklist obrigatório
 
 ### 1. Testabilidade da feature
 
-Verifique se o plano permite testar a feature sem depender de produção.
-
-Procure por:
-
-- datasource mock/fake
-- backend local
-- seed/massa de dados
-- flags de ambiente
-- controle de estado inicial
+Verifique se o plano permite testar a feature localmente sem depender de produção.
 
 Resultado:
 
-- `OK` se a feature é testável localmente.
+- `OK` se há datasource mock/fake, seed ou controle de estado.
+- `OK — não aplicável` se feature não depende de dados externos.
 - `PENDÊNCIA` se depende de backend real, usuário real ou dados externos sem controle.
 
 ### 2. Cenários E2E caminho feliz
 
-Crie pelo menos 1 cenário E2E de caminho feliz.
+Verifique se o plano permite criar cenário E2E de caminho feliz em Gherkin.
 
 Formato obrigatório:
 
@@ -58,55 +39,53 @@ Dado <pré-condição>
 E <massa/estado inicial>
 Quando <ação do usuário>
 Então <resultado esperado>
-E <validação adicional>
 ```
 
-### 3. Cenários E2E negativos
+Resultado:
 
-Crie cenários para:
+- `OK` se fluxo principal é testável.
+- `PENDÊNCIA` se fluxo não é determinístico ou depende de estado externo.
 
-- erro de API
-- retorno vazio
-- ausência de permissão
-- sem internet, se aplicável
-- input inválido, se aplicável
-- timeout, se aplicável
+### 3. Cenários negativos
+
+Verifique cobertura para erro de API, retorno vazio, ausência de permissão, sem internet e input inválido.
+
+Resultado:
+
+- `OK` se cenários negativos estão cobertos.
+- `OK — não aplicável` se não há erro esperado.
+- `PENDÊNCIA` se só existe caminho feliz.
 
 ### 4. Massa de dados
 
-Verifique se o plano define ou precisa definir massa determinística para os dados críticos da feature.
+Verifique se o plano define massa determinística para dados críticos.
 
 Resultado:
 
 - `OK` se massa está definida.
+- `OK — não aplicável` se não há dados críticos.
 - `PENDÊNCIA` se não há massa suficiente.
 
 ### 5. Automação Flutter
 
-Verifique se o plano menciona ou precisa mencionar:
-
-- integração com suíte E2E Flutter
-- uso de mocks/fakes
-- reset de estado entre testes
-- keys/ids nos widgets críticos
-- ambiente de teste determinístico
-- comando local para execução
+Verifique se o plano menciona integration_test, mocks/fakes, reset de estado, keys nos widgets e ambiente determinístico.
 
 Resultado:
 
-- `OK` se a automação é viável.
+- `OK` se automação é viável.
+- `OK — não aplicável` se feature não precisa E2E.
 - `PENDÊNCIA` se faltam hooks, keys ou controle de ambiente.
 
 ## Saída esperada
 
 ```md
-## Parecer QA E2E Flutter
+## Parecer Role: QA E2E Flutter
 
-- [OK/PENDÊNCIA] Testabilidade — ...
-- [OK/PENDÊNCIA] Caminho feliz — ...
-- [OK/PENDÊNCIA] Cenários negativos — ...
-- [OK/PENDÊNCIA] Massa de dados — ...
-- [OK/PENDÊNCIA] Automação Flutter — ...
+- [OK/PENDÊNCIA] Testabilidade — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Caminho feliz — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Cenários negativos — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Massa de dados — evidência objetiva e correção sugerida quando pendente.
+- [OK/PENDÊNCIA] Automação Flutter — evidência objetiva e correção sugerida quando pendente.
 
 ### Cenários E2E sugeridos
 
@@ -118,9 +97,11 @@ Quando ...
 Então ...
 ```
 
-### Pendências QA
+### Pendências
 
-1. ...
+| Severidade | Item | Evidência | Correção exigida |
+|---|---|---|---|
+| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
 ```
 
 ## Regra dura

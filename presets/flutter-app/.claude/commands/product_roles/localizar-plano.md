@@ -1,46 +1,23 @@
 # Skill filha: localizar-plano
 
-## Objetivo
+Localize o plano técnico em `plans/` sem alterar arquivos.
 
-Encontrar o plano técnico que será revisado.
+## Ordem de busca
 
-## Relação com referências
+1. Se o usuário informou arquivo, valide que existe e está em `plans/` ou foi explicitamente permitido.
+2. Se não informou, tente o último plano tocado pelo git:
+   `git log -1 --name-only -- plans/`
+3. Fallback: arquivo mais recente por mtime em `plans/*.md`.
+4. Se houver empate ou ambiguidade, liste candidatos e pare pedindo escolha.
+5. Se nenhum plano existir, reporte e pare.
 
-Esta filha não valida conteúdo do plano e não depende diretamente dos documentos carregados por `product_roles/carregar-referencias.md`.
-
-Mesmo assim, sua saída deve ser usada por todos os filhos posteriores junto com o conjunto de referências carregadas.
-
-## Entrada
-
-- Argumento opcional do usuário com caminho do plano, sempre busque pelo arquivo de plano mais recente.
-- Diretório padrão: `~/.claude/plans/*.md`.
-
-## Procedimento
-
-1. Verifique se o diretório `plans/` existe.
-2. Liste os arquivos dentro de `plans/`.
-3. Se o usuário informou um arquivo:
-   - Verifique se ele existe.
-   - Se existir, use-o.
-   - Se não existir, reporte erro e pare.
-4. Se o usuário não informou arquivo:
-   - Tente localizar o arquivo mais recente via Git:
-     - `git log -1 --name-only -- plans/`
-   - Se isso não retornar um plano válido, use:
-     - `ls -t plans/ | head -1`
-5. Se nenhum arquivo for encontrado:
-   - Reporte: `Nenhum plano encontrado em plans/.`
-   - Pare a execução.
-
-## Saída esperada
+## Saída obrigatória
 
 ```md
-Plano localizado: `<caminho-do-plano>`
-Método usado: `<argumento | git log | ls -t>`
+Plano localizado: `<arquivo>`
+Método usado: usuário | git | mtime
 ```
 
-## Regras
+## Regra dura
 
-- Não escolha arquivo fora de `plans/` sem argumento explícito.
-- Não invente nome de plano.
-- Não continue se o plano não existir.
+Não revise código solto como se fosse plano. Se não há plano, a revisão deve falhar cedo.
