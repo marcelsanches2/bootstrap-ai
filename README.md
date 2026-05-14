@@ -11,7 +11,7 @@
 [![Presets](https://img.shields.io/badge/presets-4-blueviolet)](./presets)
 [![CLI](https://img.shields.io/badge/cli-bootstrap--ai-orange)](./bin/bootstrap-ai)
 
-*CLI + sistema de presets que transforma pastas vazias em projetos prontos para produção — e traz estrutura para projetos existentes. Feito para [Claude Code](https://docs.anthropic.com/en/docs/claude-code) e [Hermes Agent](https://hermes-agent.nousresearch.com).*
+*CLI + sistema de presets que transforma pastas vazias em projetos prontos para produção — e traz estrutura para projetos existentes. Feito para [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
 
 </div>
 
