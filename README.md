@@ -133,11 +133,102 @@ Use este caminho para a maioria dos casos.
 
 ---
 
-## 4. Importar kit em projeto novo
+## 4. Projeto do zero — Greenfield Flow
 
-Projeto novo aqui significa: repo recém-criado ou pasta ainda sem os arquivos de lifecycle (`CLAUDE.md`, `.claude/commands`, `docs/ai`).
+Para quando a pasta está **vazia** (ou só tem `.git`) e você quer criar um projeto inteiro: ideia → stack → design → kit aplicado → pronto pra codar.
 
-### 4.1 Preparar o projeto alvo
+### Fluxo
+
+```
+PASTA VAZIA
+  → /kickoff
+     ├─ 7 perguntas estruturadas (problema, usuários, features V1, escopo, stack, plataforma, sucesso)
+     ├─ PRODUCT_BRIEF.md + .hermes/requirements.json
+     ├─ Decide stack → mapeia pra kit existente ou cria novo
+     └─ Tem interface visual?
+        ├─ SIM → /design-phase
+        │     ├─ "Tenho Figma Make" → extrai tokens do link
+        │     ├─ "Crie pra mim" → gera design system do zero
+        │     └─ "Pula" → sem design por agora
+        └─ NÃO → pula
+  → kit apply
+  → PROJETO INICIALIZADO
+```
+
+### 4.1 Rodar o kickoff
+
+No Claude Code, dentro da pasta vazia do projeto:
+
+```txt
+/kickoff
+```
+
+O comando faz 7 perguntas uma por vez, gera o product brief, decide a stack e pergunta se quer design system. Ao final, aplica o kit automaticamente.
+
+### 4.2 Design Phase (opcional)
+
+Se o projeto tem interface visual, o kickoff pergunta se você quer definir o design system. Se sim:
+
+```txt
+/design-phase
+```
+
+Três modos:
+
+| Modo | Quando usar | O que gera |
+|---|---|---|
+| **Figma Make** | Você tem um link de design system no Figma | `docs/ai/DESIGN_SYSTEM.md` + `design/tokens.json` com tokens reais extraídos |
+| **Criar do zero** | Quer que o AI gere baseado no product brief | Design system completo (paleta, tipografia, espaçamento, componentes) |
+| **Pular** | Sem design por agora | Nada — pode rodar `/design-phase` depois |
+
+### 4.3 Resultado
+
+Após o greenfield flow, o projeto terá:
+
+```txt
+PRODUCT_BRIEF.md                      # Requisitos do produto
+.hermes/requirements.json              # Respostas estruturadas
+CLAUDE.md                              # Contrato do projeto
+.claude/settings.json                  # Hooks automáticos
+.claude/commands/*                     # Comandos de lifecycle
+docs/ai/ARCHITECTURE.md                # Estrutura do projeto
+docs/ai/CODING_STANDARDS.md            # Padrões de código
+docs/ai/TESTING_GUIDE.md              # Padrões de teste
+docs/ai/DESIGN_SYSTEM.md              # Design system (se não pulou)
+design/tokens.json                    # Tokens visuais consumíveis (se não pulou)
+plans/.gitkeep
+.project-kit.lock
+```
+
+Próximos passos no Claude Code:
+
+```txt
+/plan                    → cria primeiro plano técnico
+/jarvis-plan-revisor     → revisa plano (dispara automático)
+(implementa)             → hooks rodam lint/typecheck a cada edição
+/jarvis-test-flow        → validação antes de commit (dispara automático)
+/ship                    → checklist de entrega
+```
+
+### 4.4 Projetos existentes vs. do zero
+
+| Cenário | Comando |
+|---|---|
+| Pasta vazia, sem nada | `/import-project-kit` (detecta vazio → redireciona pra `/kickoff` automaticamente) |
+| Projeto com código, sem kit | `/import-project-kit` (seção 6) |
+| Projeto com kit, quer atualizar | `./bin/kit apply auto /path --refresh` (seção 6) |
+
+> **Nota:** Você não precisa lembrar de rodar `/kickoff` direto. Basta rodar `/import-project-kit` em qualquer pasta — se estiver vazia, ele redireciona pro flow completo automaticamente.
+
+> **Nota:** O `/kickoff` está disponível nos kits `flutter-app`, `react-web`, `node-backend` e `python-backend`. Para stacks não cobertas, o kickoff propõe criar um novo kit via `skill-creator`.
+
+---
+
+## 5. Importar kit em projeto novo
+
+Projeto novo aqui significa: repo recém-criado que já tem arquivos de stack (`package.json`, `pyproject.toml`, `pubspec.yaml`) mas ainda sem os arquivos de lifecycle (`CLAUDE.md`, `.claude/commands`, `docs/ai`). Se a pasta está completamente vazia, use o **Greenfield Flow** (seção 4).
+
+### 5.1 Preparar o projeto alvo
 
 Exemplo Python:
 
@@ -159,7 +250,7 @@ printf '{"scripts":{"test":"echo test"}}\n' > package.json
 
 O detector usa arquivos como `pubspec.yaml`, `pyproject.toml`, `requirements.txt`, `package.json`, `vite.config.*`, `next.config.*`, `tsconfig.json` e conteúdo desses arquivos para escolher o kit.
 
-### 4.2 Ver o que seria aplicado
+### 5.2 Ver o que seria aplicado
 
 Execute dentro do `ai-project-kits`:
 
@@ -171,13 +262,13 @@ cd /path/para/ai-project-kits
 ./bin/kit diff auto /path/do/projeto-alvo
 ```
 
-### 4.3 Aplicar o kit
+### 5.3 Aplicar o kit
 
 ```bash
 ./bin/kit apply auto /path/do/projeto-alvo --refresh
 ```
 
-### 4.4 Verificar no projeto alvo
+### 5.4 Verificar no projeto alvo
 
 ```bash
 cd /path/do/projeto-alvo
@@ -207,13 +298,13 @@ Se aparecer `*.kit-new`, existe conflito com arquivo já existente. Revise manua
 
 ---
 
-## 5. Importar kit em projeto existente
+## 6. Importar kit em projeto existente
 
 Projeto existente aqui significa: já tem código, histórico, talvez docs próprias, talvez `.claude/` parcial.
 
 Regra: **nunca comece com `--force`**.
 
-### 5.1 Criar uma branch
+### 6.1 Criar uma branch
 
 No projeto alvo:
 
@@ -225,7 +316,7 @@ git switch -c chore/import-project-kit
 
 Se houver mudanças locais, commit ou stash antes. O kit não foi feito para misturar bootstrap com trabalho solto.
 
-### 5.2 Inspecionar detecção
+### 6.2 Inspecionar detecção
 
 No `ai-project-kits`:
 
@@ -236,7 +327,7 @@ git pull --ff-only
 ./bin/kit select /path/do/projeto-existente --create-missing
 ```
 
-### 5.3 Ver diff sem aplicar
+### 6.3 Ver diff sem aplicar
 
 ```bash
 ./bin/kit diff auto /path/do/projeto-existente
@@ -244,13 +335,13 @@ git pull --ff-only
 
 Leia o diff. Ele mostra o que será criado e onde pode haver conflito.
 
-### 5.4 Aplicar sem sobrescrever
+### 6.4 Aplicar sem sobrescrever
 
 ```bash
 ./bin/kit apply auto /path/do/projeto-existente --refresh
 ```
 
-### 5.5 Resolver conflitos
+### 6.5 Resolver conflitos
 
 No projeto alvo:
 
@@ -269,7 +360,7 @@ Para cada `*.kit-new`:
 
 Não use `--force` para resolver conflito em lote. Isso pode substituir documentação ou comandos já customizados.
 
-### 5.6 Commitar o bootstrap
+### 6.6 Commitar o bootstrap
 
 ```bash
 git add CLAUDE.md .claude docs/ai plans .project-kit.lock
@@ -278,7 +369,7 @@ git commit -m "chore: import project lifecycle kit"
 
 ---
 
-## 6. Usar depois de importar
+## 7. Usar depois de importar
 
 Depois que o kit estiver no projeto alvo, o fluxo normal é dentro do Claude Code, na raiz do projeto alvo:
 
@@ -313,7 +404,7 @@ Regra: sem big-bang refactor, sem feature nova misturada, sem sobrescrever compo
 
 ---
 
-## 7. Lista de comandos do CLI
+## 8. Lista de comandos do CLI
 
 Execute estes comandos dentro do repo `ai-project-kits`.
 
@@ -417,7 +508,7 @@ Use `--force` apenas para substituir um importer antigo.
 
 ---
 
-## 8. Comandos disponíveis no projeto alvo
+## 9. Comandos disponíveis no projeto alvo
 
 Depois de aplicar um kit, estes comandos passam a existir no Claude Code do projeto alvo.
 
@@ -459,7 +550,7 @@ Só existe se você instalou o importer. Serve para puxar o kit correto para den
 
 ---
 
-## 9. Bibliotecas estruturais
+## 10. Bibliotecas estruturais
 
 O `analyze` considera também bibliotecas que definem arquitetura, não só linguagem/framework.
 
@@ -478,7 +569,7 @@ Regra: biblioteca auxiliar comum não cria kit novo sozinha. Biblioteca estrutur
 
 ---
 
-## 10. Fluxos prontos
+## 11. Fluxos prontos
 
 ### Novo backend Python
 
@@ -537,7 +628,7 @@ Dentro do Claude Code:
 
 ---
 
-## 11. Troubleshooting
+## 12. Troubleshooting
 
 ### O kit errado foi detectado
 
@@ -595,7 +686,7 @@ git clone https://github.com/marcelsanches2/ai-project-kits.git ~/workspace/ai-p
 
 ---
 
-## 12. Manutenção do repo
+## 13. Manutenção do repo
 
 Esta seção é para quem for editar o `ai-project-kits`, não para quem só vai importar um kit em um projeto.
 
