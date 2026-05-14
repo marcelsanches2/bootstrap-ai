@@ -10,12 +10,12 @@ Gere os guias em `docs/ai/` específicos para a stack descrita.
 
 ## Referência
 
-Leia os docs/ai dos kits existentes antes de gerar:
+Leia os docs/ai dos presets existentes antes de gerar:
 
-- `kits/python-backend/docs/ai/` — backend com API, DB, security, observability, scalability
-- `kits/react-web/docs/ai/` — frontend com design system, accessibility, performance
-- `kits/node-backend/docs/ai/` — mesmo padrão python-backend adaptado para Node/TypeScript
-- `kits/flutter-app/docs/ai/` — mobile com feature guide, design system
+- `presets/python-backend/docs/ai/` — backend com API, DB, security, observability, scalability
+- `presets/react-web/docs/ai/` — frontend com design system, accessibility, performance
+- `presets/node-backend/docs/ai/` — mesmo padrão python-backend adaptado para Node/TypeScript
+- `presets/flutter-app/docs/ai/` — mobile com feature guide, design system
 
 ## Guias obrigatórios (toda stack)
 

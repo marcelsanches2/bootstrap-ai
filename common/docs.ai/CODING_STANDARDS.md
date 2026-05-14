@@ -1,6 +1,6 @@
 # Coding Standards
 
-Documento comum dos bootstrap-ai. Cada stack pode ter regras mais específicas em `kits/<preset>/docs/ai/CODING_STANDARDS.md`.
+Documento comum dos bootstrap-ai. Cada stack pode ter regras mais específicas em `presets/<preset>/docs/ai/CODING_STANDARDS.md`.
 
 ## Regras universais
 

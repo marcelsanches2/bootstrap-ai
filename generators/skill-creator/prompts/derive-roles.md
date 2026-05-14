@@ -10,12 +10,12 @@ Gere os roles de revisão em `.claude/commands/product_roles/` específicos para
 
 ## Referência
 
-Leia os roles dos kits existentes antes de gerar:
+Leia os roles dos presets existentes antes de gerar:
 
-- `kits/python-backend/.claude/commands/product_roles/role-*.md` — backend completo
-- `kits/react-web/.claude/commands/product_roles/role-*.md` — frontend completo
-- `kits/node-backend/.claude/commands/product_roles/role-*.md` — backend Node
-- `kits/flutter-app/.claude/commands/product_roles/role-*.md` — mobile Flutter
+- `presets/python-backend/.claude/commands/product_roles/role-*.md` — backend completo
+- `presets/react-web/.claude/commands/product_roles/role-*.md` — frontend completo
+- `presets/node-backend/.claude/commands/product_roles/role-*.md` — backend Node
+- `presets/flutter-app/.claude/commands/product_roles/role-*.md` — mobile Flutter
 - `common/roles/role-*.md` — roles genéricos como fallback
 
 ## Roles obrigatórios (toda stack)

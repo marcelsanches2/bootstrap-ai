@@ -1,6 +1,6 @@
 # Skill Creator
 
-Gerador de novos kits de projeto por tecnologia.
+Gerador de novos presets de projeto por tecnologia.
 
 ## Uso
 
@@ -14,10 +14,10 @@ Gerador de novos kits de projeto por tecnologia.
 
 ## O que ele gera
 
-Um diretório `kits/<nome>/` com lifecycle completo:
+Um diretório `presets/<nome>/` com lifecycle completo:
 
 ```
-kits/<nome>/
+presets/<nome>/
 ├── CLAUDE.md                              # Contrato principal do projeto
 ├── manifest.yaml                          # Metadados, roles, required_files, library_tags
 ├── plans/.gitkeep

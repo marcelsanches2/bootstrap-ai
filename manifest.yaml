@@ -2,7 +2,7 @@ version: 1
 
 repo:
   name: bootstrap-ai
-  description: Project lifecycle kits for Claude Code and Hermes
+  description: Project lifecycle presets for Claude Code and Hermes
 
 defaults:
   conflict_policy: keep-existing-create-new
@@ -10,9 +10,9 @@ defaults:
   plans_dir: plans
   docs_dir: docs/ai
 
-kits:
+presets:
   flutter-app:
-    path: kits/flutter-app
+    path: presets/flutter-app
     detects:
       any: [pubspec.yaml]
       contains:
@@ -29,7 +29,7 @@ kits:
       - docs/ai/TESTING_GUIDE.md
 
   python-backend:
-    path: kits/python-backend
+    path: presets/python-backend
     detects:
       any: [pyproject.toml, requirements.txt, setup.py]
       prefer_if: [alembic.ini, app/main.py, src]
@@ -46,7 +46,7 @@ kits:
       - docs/ai/TESTING_GUIDE.md
 
   react-web:
-    path: kits/react-web
+    path: presets/react-web
     detects:
       any: [package.json]
       contains:
@@ -64,7 +64,7 @@ kits:
 
 
   node-backend:
-    path: kits/node-backend
+    path: presets/node-backend
     detects:
       any: [package.json]
       prefer_if: [src, tsconfig.json]

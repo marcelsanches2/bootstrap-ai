@@ -10,12 +10,12 @@ O usuário forneceu:
 
 ## Referência
 
-Antes de gerar, leia os kits existentes para entender o padrão:
+Antes de gerar, leia os presets existentes para entender o padrão:
 
-1. `kits/flutter-app/` — preset mobile com Figma comparison, design system, E2E
-2. `kits/python-backend/` — preset backend com API, DB, security, scalability
-3. `kits/react-web/` — preset frontend com design system, accessibility, performance
-4. `kits/node-backend/` — preset backend com TypeScript, tipagem, migrations
+1. `presets/flutter-app/` — preset mobile com Figma comparison, design system, E2E
+2. `presets/python-backend/` — preset backend com API, DB, security, scalability
+3. `presets/react-web/` — preset frontend com design system, accessibility, performance
+4. `presets/node-backend/` — preset backend com TypeScript, tipagem, migrations
 
 Use o preset mais similar à stack descrita como base primária. Adapte de lá.
 
@@ -67,7 +67,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 
 9. **`ship.md`** — Copiar de `templates/commands/ship.md` (genérico).
 
-10. **`jarvis-test-flow.md`** — Use `prompts/derive-jarvis-test-flow.md` para gerar. Deve ter o mesmo nível de detalhe dos kits existentes (~9000+ chars).
+10. **`jarvis-test-flow.md`** — Use `prompts/derive-jarvis-test-flow.md` para gerar. Deve ter o mesmo nível de detalhe dos presets existentes (~9000+ chars).
 
 ### .claude/commands/product_roles/ (helpers + roles)
 
@@ -109,7 +109,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 ## Qualidade mínima
 
 - Nenhum arquivo pode ter apenas título ou "TODO".
-- Cada arquivo deve ter conteúdo substancial comparável aos kits existentes.
+- Cada arquivo deve ter conteúdo substancial comparável aos presets existentes.
 - Roles devem ter pelo menos 80 linhas cada.
 - Docs AI devem ter pelo menos 100 linhas cada.
 - jarvis-test-flow deve ter pelo menos 200 linhas.

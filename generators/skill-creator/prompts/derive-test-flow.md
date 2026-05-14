@@ -10,16 +10,16 @@ Gere o `jarvis-test-flow.md` específico para a stack.
 
 ## Referência
 
-Leia os jarvis-test-flow dos kits existentes antes de gerar:
+Leia os jarvis-test-flow dos presets existentes antes de gerar:
 
-- `kits/flutter-app/.claude/commands/jarvis-test-flow.md` (~11k chars, mobile com Figma validation)
-- `kits/python-backend/.claude/commands/jarvis-test-flow.md` (~9k chars, backend com pytest/ruff/mypy/alembic)
-- `kits/react-web/.claude/commands/jarvis-test-flow.md` (~9.5k chars, frontend com testing-library/MSW/tsc)
-- `kits/node-backend/.claude/commands/jarvis-test-flow.md` (~9.6k chars, backend com jest|vitest/tsc/prisma)
+- `presets/flutter-app/.claude/commands/jarvis-test-flow.md` (~11k chars, mobile com Figma validation)
+- `presets/python-backend/.claude/commands/jarvis-test-flow.md` (~9k chars, backend com pytest/ruff/mypy/alembic)
+- `presets/react-web/.claude/commands/jarvis-test-flow.md` (~9.5k chars, frontend com testing-library/MSW/tsc)
+- `presets/node-backend/.claude/commands/jarvis-test-flow.md` (~9.6k chars, backend com jest|vitest/tsc/prisma)
 
 ## Estrutura obrigatória
 
-O jarvis-test-flow DEVE seguir esta estrutura (mesma dos kits existentes):
+O jarvis-test-flow DEVE seguir esta estrutura (mesma dos presets existentes):
 
 ```
 0. Avaliar tamanho da task (GRANDE/PEQUENA)
@@ -85,5 +85,5 @@ Diretórios monitorados: `lib/`, `integration_test/`, `pubspec.yaml`, etc.
 - Mínimo 200 linhas (~9000+ chars).
 - Pipeline com comandos reais da stack (não genéricos).
 - Loop de diagnóstico com causas específicas da stack.
-- Commit/push com as mesmas regras duras dos kits existentes.
+- Commit/push com as mesmas regras duras dos presets existentes.
 - Restrições obrigatórias completas.

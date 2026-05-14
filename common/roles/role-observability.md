@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Revisar qualquer plano técnico sob a perspectiva de logs, métricas, tracing, healthcheck, alertas e diagnósticos 2AM. Este papel é genérico e serve como base para kits que ainda não têm role específico.
+Revisar qualquer plano técnico sob a perspectiva de logs, métricas, tracing, healthcheck, alertas e diagnósticos 2AM. Este papel é genérico e serve como base para presets que ainda não têm role específico.
 
 ## Entrada esperada
 

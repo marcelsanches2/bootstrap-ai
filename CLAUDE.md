@@ -2,7 +2,7 @@
 
 ## Projeto
 
-Repositório de kits de lifecycle para projetos com Claude Code e Hermes.
+Repositório de presets de lifecycle para projetos com Claude Code e Hermes.
 
 Cada preset é um pacote autocontido que instala processo operacional em um projeto alvo:
 
@@ -10,7 +10,7 @@ Cada preset é um pacote autocontido que instala processo operacional em um proj
 /plan → /jarvis-plan-revisor → implementação → /jarvis-test-flow → /ship
 ```
 
-Os kits NÃO são bibliotecas. São conjuntos de arquivos que vivem dentro do projeto consumidor em `.claude/commands/` e `docs/ai/`.
+Os presets NÃO são bibliotecas. São conjuntos de arquivos que vivem dentro do projeto consumidor em `.claude/commands/` e `docs/ai/`.
 
 ## Estrutura do repositório
 
@@ -18,18 +18,18 @@ Os kits NÃO são bibliotecas. São conjuntos de arquivos que vivem dentro do pr
 bootstrap-ai/
 ├── CLAUDE.md                    # Este arquivo — contrato do próprio bootstrap-ai
 ├── README.md                    # Documentação pública
-├── manifest.yaml                # Configuração central: kits, detecção, defaults
+├── manifest.yaml                # Configuração central: presets, detecção, defaults
 ├── bin/bootstrap-ai                      # CLI Python (556 linhas) — detect, diff, apply, validate, create, analyze, select
-├── kits/                        # Kits por tecnologia
+├── presets/                        # Presets por tecnologia
 │   ├── flutter-app/             # Mobile Flutter — baseado no pacebattle_app@master
 │   ├── python-backend/          # FastAPI/Python backend
 │   ├── react-web/               # React web frontend
 │   └── node-backend/            # Node/TypeScript backend
-├── common/                      # Recursos compartilhados entre kits
+├── common/                      # Recursos compartilhados entre presets
 │   ├── commands/                # Comandos genéricos (jarvis-plan-revisor, jarvis-revisor, plan, ship, refactor)
 │   ├── docs.ai/                 # Docs AI genéricos (AI_OPERATING_MODEL, CODING_STANDARDS, etc.)
 │   └── roles/                   # Roles genéricos (arquiteto, designer, pm, test, security, etc.)
-├── generators/skill-creator/    # Gerador de novos kits
+├── generators/skill-creator/    # Gerador de novos presets
 │   ├── prompts/                 # Instruções para criação de preset, docs, roles, jarvis-test-flow
 │   └── templates/               # Templates com placeholders para gerar arquivos
 ├── bootstrap/                   # Importer de arquivo único
@@ -40,10 +40,10 @@ bootstrap-ai/
 
 ## Anatomia de um preset
 
-Cada preset em `kits/<nome>/` contém:
+Cada preset em `presets/<nome>/` contém:
 
 ```
-kits/<nome>/
+presets/<nome>/
 ├── CLAUDE.md                              # Contrato do projeto consumidor (não deste repo)
 ├── manifest.yaml                          # Metadados: detecção, required_files, roles, library_tags
 ├── plans/.gitkeep
@@ -110,7 +110,7 @@ Cada preset tem regras de detecção no `manifest.yaml`:
 
 - `detects.any`: presença de qualquer arquivo listado
 - `detects.contains`: conteúdo obrigatório em arquivo específico
-- `detects.prefer_if`: desempate entre kits conflitantes (ex: node-backend vs react-web ambos têm package.json)
+- `detects.prefer_if`: desempate entre presets conflitantes (ex: node-backend vs react-web ambos têm package.json)
 
 ## Bibliotecas estruturais
 
@@ -123,7 +123,7 @@ Além da stack principal, o `analyze` detecta bibliotecas que definem arquitetur
 
 Biblioteca estrutural não coberta pelo preset selecionado → cria kit novo automaticamente via `skill-creator`.
 
-## Regras de qualidade para kits
+## Regras de qualidade para presets
 
 - `jarvis-plan-revisor.md`: mínimo 200 linhas
 - `jarvis-test-flow.md`: mínimo 200 linhas
