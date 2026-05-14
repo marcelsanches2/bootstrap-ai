@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d1117; display: flex; justify-content: center; padding: 40px 20px; }
+  .diagram { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; max-width: 800px; width: 100%; }
+  .title { text-align: center; color: #e6edf3; font-size: 22px; font-weight: 700; margin-bottom: 32px; letter-spacing: -0.5px; }
+  .title span { color: #8b949e; font-weight: 400; font-size: 15px; display: block; margin-top: 6px; }
+
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+  .step {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 16px 24px;
+    text-align: center;
+    color: #e6edf3;
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+  }
+  .step .cmd { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 14px; color: #79c0ff; margin-bottom: 4px; }
+  .step .desc { font-size: 13px; color: #8b949e; }
+
+  .step.primary { border-color: #58a6ff; background: linear-gradient(135deg, #161b22 0%, #0d1d32 100%); }
+  .step.primary .cmd { color: #58a6ff; font-weight: 600; }
+
+  .step.decision {
+    border-color: #d2a8ff;
+    background: linear-gradient(135deg, #161b22 0%, #1e1430 100%);
+    border-radius: 4px;
+    transform: rotate(0deg);
+    max-width: 480px;
+  }
+  .step.decision .cmd { color: #d2a8ff; }
+
+  .step.action-green { border-color: #3fb950; background: linear-gradient(135deg, #161b22 0%, #0f2518 100%); }
+  .step.action-green .cmd { color: #3fb950; }
+
+  .step.action-orange { border-color: #d29922; background: linear-gradient(135deg, #161b22 0%, #261e0e 100%); }
+  .step.action-orange .cmd { color: #d29922; }
+
+  .step.action-red { border-color: #f85149; background: linear-gradient(135deg, #161b22 0%, #2a1215 100%); }
+  .step.action-red .cmd { color: #f85149; }
+
+  .step.result { border-color: #58a6ff; border-style: dashed; }
+  .step.result .desc { color: #e6edf3; }
+
+  .arrow {
+    display: flex;
+    justify-content: center;
+    padding: 6px 0;
+    color: #484f58;
+    font-size: 20px;
+  }
+  .arrow svg { width: 24px; height: 24px; }
+
+  .branch-container {
+    display: flex;
+    width: 100%;
+    max-width: 640px;
+    gap: 16px;
+    position: relative;
+  }
+  .branch-container .step { max-width: none; flex: 1; }
+  .branch-label {
+    text-align: center;
+    color: #8b949e;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .branch-label span { background: #161b22; padding: 2px 8px; border-radius: 3px; border: 1px solid #30363d; }
+
+  .merge-arrow {
+    display: flex;
+    justify-content: center;
+    padding: 6px 0;
+    color: #484f58;
+  }
+  .merge-arrow svg { width: 24px; height: 30px; }
+
+  .end-state {
+    background: linear-gradient(135deg, #238636 0%, #1a7f37 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 18px 24px;
+    text-align: center;
+    color: #ffffff;
+    width: 100%;
+    max-width: 520px;
+  }
+  .end-state .cmd { color: #ffffff; font-family: 'SF Mono', monospace; font-size: 14px; font-weight: 700; }
+  .end-state .desc { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px; }
+
+  .note {
+    text-align: center;
+    color: #484f58;
+    font-size: 11px;
+    margin-top: 24px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="diagram">
+  <div class="title">
+    /import-project-preset Flow
+    <span>What happens when you run the importer</span>
+  </div>
+
+  <div class="flow">
+    <!-- Step 1: Run command -->
+    <div class="step primary">
+      <div class="cmd">/import-project-preset</div>
+      <div class="desc">You run the command in Claude Code or Hermes Agent</div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Step 2: Detect -->
+    <div class="step">
+      <div class="cmd">bin/bootstrap-ai detect &amp;&amp; analyze</div>
+      <div class="desc">Scans the project folder for stack signatures and structural libraries</div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Step 3: Decision -->
+    <div class="step decision">
+      <div class="cmd">Folder is empty?</div>
+      <div class="desc">Checks for pubspec.yaml · package.json · pyproject.toml · etc.</div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- Branch -->
+    <div class="branch-container">
+      <div>
+        <div class="branch-label"><span>YES — Empty</span></div>
+        <div class="step action-green">
+          <div class="cmd">→ /kickoff</div>
+          <div class="desc">7 questions → PRODUCT_BRIEF.md → choose stack</div>
+        </div>
+        <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step action-green">
+          <div class="cmd">→ /design-phase</div>
+          <div class="desc">Figma Make link · AI-generated · or skip</div>
+        </div>
+        <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step action-green">
+          <div class="cmd">→ preset apply</div>
+          <div class="desc">Scaffolds project with chosen preset</div>
+        </div>
+      </div>
+      <div>
+        <div class="branch-label"><span>NO — Has code</span></div>
+        <div class="step action-orange">
+          <div class="cmd">→ select preset</div>
+          <div class="desc">Auto-detects stack and matches to a preset</div>
+        </div>
+        <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step action-orange">
+          <div class="cmd">→ diff preview</div>
+          <div class="desc">Shows what would change — no overwrite risk</div>
+        </div>
+        <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step action-orange">
+          <div class="cmd">→ preset apply</div>
+          <div class="desc">Missing files created · conflicts → .kit-new</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+    <!-- End state -->
+    <div class="end-state">
+      <div class="cmd">Project ready for lifecycle</div>
+      <div class="desc">/plan → /jarvis-plan-revisor → implement → /jarvis-test-flow → /ship</div>
+    </div>
+
+    <div class="note">
+      No preset found? bootstrap-ai create &lt;name&gt; --from "description" generates one from scratch.
+    </div>
+  </div>
+</div>
+</body>
+</html>

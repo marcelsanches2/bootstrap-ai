@@ -25,6 +25,37 @@ Formerly `ai-project-kits`.
 
 ---
 
+## Setup
+
+First, install the `/import-project-preset` command into your project:
+
+```bash
+# Clone Bootstrap AI
+git clone https://github.com/marcelsanches2/bootstrap-ai.git /tmp/bootstrap-ai
+
+# Install the importer skill into your project
+/tmp/bootstrap-ai/bin/bootstrap-ai install-importer /path/to/your/project
+```
+
+This creates `.claude/commands/import-project-preset.md` in your project, so the command is available inside Claude Code or Hermes Agent.
+
+---
+
+## How the importer works
+
+<img src="docs/flow-diagram.png" alt="Import Project Preset Flow" width="100%" />
+
+When you run `/import-project-preset`, the system:
+
+1. **Detects** your stack by scanning for signature files (`pubspec.yaml`, `package.json`, `pyproject.toml`, etc.)
+2. **Analyzes** structural libraries (Riverpod, TanStack Query, Prisma, SQLAlchemy, etc.)
+3. **Branches** based on folder state:
+   - **Empty folder** → redirects to `/kickoff` (7 questions → product brief → stack selection → `/design-phase` → preset apply)
+   - **Has code** → auto-selects matching preset → shows diff preview → applies with safe write policy
+4. **Result** — your project is scaffolded and ready for the development lifecycle
+
+---
+
 ## Quick Start — New Project
 
 Starting from an empty folder? Bootstrap AI runs you through a full greenfield flow: define your product, pick a stack, generate a design system, and apply the right preset.
