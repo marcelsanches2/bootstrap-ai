@@ -21,36 +21,30 @@
 
 Bootstrap AI gives your AI coding assistant a project-specific brain. Instead of starting every session from scratch, you apply a **preset** — a curated set of commands, configurations, documentation scaffolds, and hooks — that tells your AI assistant exactly how your project is structured, what conventions to follow, and which workflows to enforce.
 
-**Presets are built in [Claude Code](https://docs.anthropic.com/en/docs/claude-code) format** — they install into `.claude/commands/` and `.claude/settings.json`. Designed to run with:
-
-- **[Hermes Agent](https://hermes-agent.nousresearch.com)** — the engine. Full orchestration with cron, memory, multi-platform messaging, and autonomous workflows
-- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — slash commands, hooks, and project context
-- **Any tool** that reads `.claude/commands/` — Cursor, Copilot, and others adopting the format
+**Presets are built in [Claude Code](https://docs.anthropic.com/en/docs/claude-code) format** — they install into `.claude/commands/` and `.claude/settings.json`.
 
 
 ---
 
 ## Setup
 
-First, install the `/import-project-preset` command into your project:
+Install the `/import-project-preset` command into your project:
 
 ```bash
-# Clone Bootstrap AI
+# Clone Bootstrap AI (one-time)
 git clone https://github.com/marcelsanches2/bootstrap-ai.git /tmp/bootstrap-ai
 
-# Run the installer — it detects your stack and applies the right preset
-bash /tmp/bootstrap-ai/bootstrap/import-project-preset.sh /path/to/your/project
+# Install the importer command into your project
+/tmp/bootstrap-ai/bin/bootstrap-ai install-importer /path/to/your/project
 ```
 
-The installer script:
+This creates `.claude/commands/import-project-preset.md` in your project. Then run:
 
-1. **Finds or clones** Bootstrap AI automatically (checks common workspace directories)
-2. **Installs** the `/import-project-preset` command into `.claude/commands/`
-3. **Detects** your stack and selects the best matching preset
-4. **Shows a diff** preview of all changes
-5. **Applies** the preset with a safe write policy — no files overwritten
+```
+/import-project-preset
+```
 
-After setup, you can run `/import-project-preset` anytime inside Claude Code or Hermes Agent.
+The command detects your stack, selects the best matching preset, and applies it with a safe write policy — no files overwritten.
 
 ---
 
