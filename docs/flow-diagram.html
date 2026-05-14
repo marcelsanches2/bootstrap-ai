@@ -138,29 +138,29 @@
   .step.s1 .cmd { color: #818cf8; }
   .step.s1 .step-num { background: rgba(99,102,241,0.15); color: #818cf8; }
 
-  .step.s2 { border-color: rgba(56,189,248,0.3); background: linear-gradient(135deg, #141414 0%, #0a1a2a 100%); }
-  .step.s2 .cmd { color: #38bdf8; }
-  .step.s2 .step-num { background: rgba(56,189,248,0.15); color: #38bdf8; }
+  .step.s2 { border-color: rgba(192,132,252,0.3); background: linear-gradient(135deg, #141414 0%, #1a0f2a 100%); }
+  .step.s2 .cmd { color: #c084fc; }
+  .step.s2 .step-num { background: rgba(192,132,252,0.15); color: #c084fc; }
 
-  .step.s3 { border-color: rgba(192,132,252,0.3); background: linear-gradient(135deg, #141414 0%, #1a0f2a 100%); }
-  .step.s3 .cmd { color: #c084fc; }
-  .step.s3 .step-num { background: rgba(192,132,252,0.15); color: #c084fc; }
+  .step.s3 { border-color: rgba(52,211,153,0.3); background: linear-gradient(135deg, #141414 0%, #0a1f17 100%); }
+  .step.s3 .cmd { color: #34d399; }
+  .step.s3 .step-num { background: rgba(52,211,153,0.15); color: #34d399; }
 
-  .step.s4 { border-color: rgba(52,211,153,0.3); background: linear-gradient(135deg, #141414 0%, #0a1f17 100%); }
-  .step.s4 .cmd { color: #34d399; }
-  .step.s4 .step-num { background: rgba(52,211,153,0.15); color: #34d399; }
+  .step.s4 { border-color: rgba(251,191,36,0.3); background: linear-gradient(135deg, #141414 0%, #1f1a0a 100%); }
+  .step.s4 .cmd { color: #fbbf24; }
+  .step.s4 .step-num { background: rgba(251,191,36,0.15); color: #fbbf24; }
 
-  .step.s5 { border-color: rgba(251,191,36,0.3); background: linear-gradient(135deg, #141414 0%, #1f1a0a 100%); }
-  .step.s5 .cmd { color: #fbbf24; }
-  .step.s5 .step-num { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .step.s5 { border-color: rgba(244,114,182,0.3); background: linear-gradient(135deg, #141414 0%, #1f0a17 100%); }
+  .step.s5 .cmd { color: #f472b6; }
+  .step.s5 .step-num { background: rgba(244,114,182,0.15); color: #f472b6; }
 
-  .step.s6 { border-color: rgba(244,114,182,0.3); background: linear-gradient(135deg, #141414 0%, #1f0a17 100%); }
-  .step.s6 .cmd { color: #f472b6; }
-  .step.s6 .step-num { background: rgba(244,114,182,0.15); color: #f472b6; }
+  .step.s6 { border-color: rgba(251,146,60,0.3); background: linear-gradient(135deg, #141414 0%, #1f120a 100%); }
+  .step.s6 .cmd { color: #fb923c; }
+  .step.s6 .step-num { background: rgba(251,146,60,0.15); color: #fb923c; }
 
-  .step.s7 { border-color: rgba(251,146,60,0.3); background: linear-gradient(135deg, #141414 0%, #1f120a 100%); }
-  .step.s7 .cmd { color: #fb923c; }
-  .step.s7 .step-num { background: rgba(251,146,60,0.15); color: #fb923c; }
+  .step.s7 { border-color: rgba(56,189,248,0.3); background: linear-gradient(135deg, #141414 0%, #0a1a2a 100%); }
+  .step.s7 .cmd { color: #38bdf8; }
+  .step.s7 .step-num { background: rgba(56,189,248,0.15); color: #38bdf8; }
 
   .step.s8 { border-color: rgba(74,222,128,0.4); background: linear-gradient(135deg, #141414 0%, #0a1f0f 100%); }
   .step.s8 .cmd { color: #4ade80; }
@@ -235,8 +235,10 @@
   .sub-step.green .cmd { color: #34d399; }
   .sub-step.orange { border-color: rgba(251,191,36,0.15); }
   .sub-step.orange .cmd { color: #fbbf24; }
+  .sub-step.blue { border-color: rgba(56,189,248,0.15); }
+  .sub-step.blue .cmd { color: #38bdf8; }
 
-  /* ── Sub-branch (step 6) ── */
+  /* ── Sub-branch ── */
   .sub-branch {
     display: flex;
     flex-direction: column;
@@ -269,7 +271,7 @@
     color: #555;
   }
 
-  /* ── Library Mapping Grid (step 7) ── */
+  /* ── Library Mapping Grid ── */
   .lib-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -351,14 +353,6 @@
   }
   .merge-connector svg { width: 100%; height: 28px; }
 
-  /* ── Divider ── */
-  .section-divider {
-    width: 40px;
-    height: 1px;
-    background: #222;
-    margin: 4px auto;
-  }
-
   /* ── Footer ── */
   .footer {
     text-align: center;
@@ -383,12 +377,12 @@
 
   <div class="flow">
 
-    <!-- ════════ STEP 1: Detect Stack ════════ -->
+    <!-- ════════ STEP 1: Escaneia Projeto ════════ -->
     <div class="step s1">
       <div class="step-num">1</div>
       <div class="step-content">
-        <div class="cmd">Detecta Stack</div>
-        <div class="desc">Escaneia o projeto em busca de arquivos de configuração</div>
+        <div class="cmd">Escaneia Projeto</div>
+        <div class="desc">Verifica se a pasta tem arquivos de projeto e qual é a stack</div>
         <div class="tags">
           <span class="tag" style="color:#818cf8;background:rgba(99,102,241,0.1);">pubspec.yaml</span>
           <span class="tag" style="color:#818cf8;background:rgba(99,102,241,0.1);">package.json</span>
@@ -400,29 +394,11 @@
 
     <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
 
-    <!-- ════════ STEP 2: Analisa Libs ════════ -->
+    <!-- ════════ STEP 2: Branch ════════ -->
     <div class="step s2">
       <div class="step-num">2</div>
       <div class="step-content">
-        <div class="cmd">Analisa Libs Estruturais</div>
-        <div class="desc">Identifica bibliotecas que definem a arquitetura do projeto (state mgmt, ORM, routing, validation)</div>
-        <div class="tags">
-          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">riverpod</span>
-          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">prisma</span>
-          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">sqlalchemy</span>
-          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">tanstack-query</span>
-          <span class="tag" style="color:#38bdf8;background:rgba(56,189,248,0.08);">zod</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
-
-    <!-- ════════ STEP 3: Branch ════════ -->
-    <div class="step s3">
-      <div class="step-num">3</div>
-      <div class="step-content">
-        <div class="cmd">Branch: Pasta vazia ou tem código?</div>
+        <div class="cmd">Pasta vazia ou tem código?</div>
         <div class="desc">Decisão baseada na presença de arquivos de projeto</div>
       </div>
     </div>
@@ -462,22 +438,22 @@
         <!-- RIGHT: Has Code -->
         <div>
           <div class="branch-label code"><span>Tem código</span></div>
+          <div class="sub-step blue">
+            <div>
+              <div class="cmd">→ analisa libs estruturais</div>
+              <div class="desc">Identifica state mgmt, ORM, routing, validation</div>
+            </div>
+          </div>
           <div class="sub-step orange">
             <div>
               <div class="cmd">→ auto-select preset</div>
-              <div class="desc">Detecta stack e match com preset</div>
+              <div class="desc">Match stack detectada com preset</div>
             </div>
           </div>
           <div class="sub-step orange">
             <div>
-              <div class="cmd">→ diff preview</div>
-              <div class="desc">Mostra o que mudaria — sem risco</div>
-            </div>
-          </div>
-          <div class="sub-step orange">
-            <div>
-              <div class="cmd">→ apply</div>
-              <div class="desc">Arquivos novos criados · conflitos → .kit-new</div>
+              <div class="cmd">→ diff preview → apply</div>
+              <div class="desc">Mostra o que mudaria · conflitos → .kit-new</div>
             </div>
           </div>
         </div>
@@ -492,9 +468,9 @@
       </div>
     </div>
 
-    <!-- ════════ STEP 4: Apply ════════ -->
-    <div class="step s4">
-      <div class="step-num">4</div>
+    <!-- ════════ STEP 3: Apply ════════ -->
+    <div class="step s3">
+      <div class="step-num">3</div>
       <div class="step-content">
         <div class="cmd">Apply Preset</div>
         <div class="desc">Safe write: cria arquivos ausentes · ignora iguais · conflitos → <code style="font-family:'SF Mono',monospace;font-size:11px;color:#34d399;background:rgba(52,211,153,0.08);padding:1px 4px;border-radius:3px;">.kit-new</code></div>
@@ -503,9 +479,9 @@
 
     <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
 
-    <!-- ════════ STEP 5: Verify ════════ -->
-    <div class="step s5">
-      <div class="step-num">5</div>
+    <!-- ════════ STEP 4: Verify ════════ -->
+    <div class="step s4">
+      <div class="step-num">4</div>
       <div class="step-content">
         <div class="cmd">Verify Import</div>
         <div class="desc">Valida que os arquivos essenciais foram aplicados</div>
@@ -520,9 +496,9 @@
 
     <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
 
-    <!-- ════════ STEP 6: Sync Design System ════════ -->
-    <div class="step s6">
-      <div class="step-num">6</div>
+    <!-- ════════ STEP 5: Sync Design System ════════ -->
+    <div class="step s5">
+      <div class="step-num">5</div>
       <div class="step-content">
         <div class="cmd">Sync Design System</div>
         <div class="desc">Escaneia tokens de design existentes e sincroniza com <code style="font-family:'SF Mono',monospace;font-size:11px;color:#f472b6;background:rgba(244,114,182,0.08);padding:1px 4px;border-radius:3px;">DESIGN_SYSTEM.md</code></div>
@@ -545,9 +521,9 @@
 
     <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
 
-    <!-- ════════ STEP 7: Customizar Guides ════════ -->
-    <div class="step s7">
-      <div class="step-num">7</div>
+    <!-- ════════ STEP 6: Customizar Guides ════════ -->
+    <div class="step s6">
+      <div class="step-num">6</div>
       <div class="step-content">
         <div class="cmd">Customizar Guides com Libs</div>
         <div class="desc">Injeta patterns das libs detectadas nos guides de documentação</div>
@@ -578,9 +554,9 @@
 
     <div class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m-7-7l7 7 7-7"/></svg></div>
 
-    <!-- ════════ STEP 8: Result ════════ -->
-    <div class="step s8" style="border-style:dashed;">
-      <div class="step-num">8</div>
+    <!-- ════════ STEP 7: Resposta Final ════════ -->
+    <div class="step s7" style="border-style:dashed;">
+      <div class="step-num">7</div>
       <div class="step-content">
         <div class="cmd">Resposta Final</div>
         <div class="desc">preset aplicado + libs detectadas + guides customizados + próximo passo sugerido</div>
