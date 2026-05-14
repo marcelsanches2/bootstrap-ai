@@ -76,18 +76,33 @@ Se nenhum documento existir, pare e reporte que não há base suficiente para re
 
 ---
 
-## 3. Rodar revisão por papéis
+## 3. Selecionar roles por tipo de impacto
 
-Depois de carregar o plano e referências, execute os revisores abaixo:
+Antes de chamar qualquer revisor, analise o conteúdo do plano para determinar quais roles são necessárias. Não carregue todas — selecione com base no tipo de mudança.
 
-1. `product_roles/role-architect.md`
-2. `product_roles/role-pm.md`
-3. `product_roles/role-designer.md`, se houver UI, tela, widget, design ou rota
-4. `product_roles/role-flutter-qa.md`, se houver fluxo, API, usecase, estado, tela, repository, datasource ou regra testável
-5. `product_roles/consolidar-parecer.md`
-6. `product_roles/gerar-relatorio.md`
-7. Interacao para sanar pendencias MAJOR (ver secao 7)
-8. Append da revisao no plano original (ver secao 8)
+**Sempre chame:**
+
+- `product_roles/role-architect.md` — toda mudança tem impacto arquitetural
+- `product_roles/role-pm.md` — toda mudança tem impacto de produto
+
+**Chame condicionalmente:**
+
+| Condição no plano | Role |
+|---|---|
+| UI, tela, widget, design, rota, componente visual, layout | `product_roles/role-designer.md` |
+| Fluxo, API, usecase, estado, tela, repository, datasource, regra testável | `product_roles/role-flutter-qa.md` |
+
+**Se nenhuma condição se aplica** (ex: plano puramente técnico de infra/config), apenas architect + PM.
+
+## 4. Rodar revisão por papéis
+
+Execute os revisores selecionados no passo 3, nesta ordem:
+
+1. Roles selecionadas (cada uma produz parecer independente)
+2. `product_roles/consolidar-parecer.md`
+3. `product_roles/gerar-relatorio.md`
+4. Interação para sanar pendências MAJOR (ver seção 7)
+5. Append da revisão no plano original (ver seção 8)
 
 Cada revisor deve produzir um parecer independente.
 
@@ -95,7 +110,7 @@ O relatório final deve consolidar os pareceres, não apenas colar tudo.
 
 ---
 
-## 4. Regras obrigatórias de bloqueio
+## 5. Regras obrigatórias de bloqueio
 
 Marque como pendência bloqueante quando houver:
 
@@ -111,7 +126,7 @@ Marque como pendência bloqueante quando houver:
 
 ---
 
-## 5. Formato final obrigatório
+## 6. Formato final obrigatório
 
 O relatório final deve seguir exatamente esta estrutura:
 
