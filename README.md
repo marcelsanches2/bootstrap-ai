@@ -21,7 +21,6 @@
 
 Bootstrap AI gives your AI coding assistant a project-specific brain. Instead of starting every session from scratch, you apply a **preset** — a curated set of commands, configurations, documentation scaffolds, and hooks — that tells Claude Code or Hermes Agent exactly how your project is structured, what conventions to follow, and which workflows to enforce.
 
-Formerly `ai-project-kits`.
 
 ---
 
