@@ -4,7 +4,7 @@
 
 Revisar qualquer plano técnico sob a perspectiva de escala em produção: volume, concorrência, banco, performance, limites, filas, cache, observabilidade e degradação.
 
-Este papel é genérico. Kits backend devem preferir `product_roles/role-scalability.md`, que é mais específico.
+Este papel é genérico. Kits backend devem preferir `product_roles/review-scalability.md`, que é mais específico.
 
 ## Entrada esperada
 

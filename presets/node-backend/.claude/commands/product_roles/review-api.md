@@ -1,46 +1,48 @@
-# role-observability
+# review-api
 
 ## Objetivo
-Validar logging, métricas, healthcheck e rastreabilidade.
+Validar contratos REST completos e consistentes.
 
 ## Fonte de referência
-- docs/ai/OBSERVABILITY_GUIDE.md
+- docs/ai/API_GUIDE.md
 
 ## Entrada esperada
 Plano técnico em `plans/*.md`.
 
 ## Método
-Verificar conformidade com as referências.
+Para cada mudança relevante, verificar conformidade com as referências.
 
 ## Checklist obrigatório
 
-- [ ] Eventos de negócio logados com pino structured logging\n- [ ] Erros logados com contexto (orderId, userId)\n- [ ] Nenhum dado sensível nos logs\n- [ ] Request ID propagado (X-Request-ID)\n- [ ] Latência monitorada em endpoints novos\n- [ ] Healthcheck atualizado com novas dependências\n- [ ] Métricas de negócio quando aplicável\n- [ ] External calls com timeout e log de falha\n- [ ] Graceful shutdown tratado
+- [ ] Verbo HTTP correto (GET leitura, POST criação, PUT/PATCH atualização, DELETE remoção)\n- [ ] Path segue convenção (plural, kebab-case, max 2 níveis)\n- [ ] Versionamento presente (/api/v1/)\n- [ ] Zod schema de request definido (tipos, validação)\n- [ ] Response tipada (sem campos sensíveis)\n- [ ] Status codes corretos (201 POST, 204 DELETE, 404/409/422)\n- [ ] Paginação em endpoints de lista (skip/limit)\n- [ ] Erro segue formato padronizado (code/message/field)\n- [ ] Auth especificada em endpoints protegidos\n- [ ] Rate limiting em endpoints sensíveis\n- [ ] Sem dados sensíveis em response\n- [ ] Sem campo booleano "success"\n- [ ] Sem lógica de negócio no controller
 
 ## Resultado esperado por item
 
-- **OK**: evidência.
+- **OK**: evidência de conformidade.
 - **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção.
+- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
 
 ### Severidade
-- BLOCKER: Dado sensível em log, healthcheck faltando com dependência nova.
+- BLOCKER: Endpoint sem schema, dados sensíveis expostos, auth faltando.
 - MAJOR: padrão violado sem impacto crítico.
-- MINOR: style.
+- MINOR: style/conveniência.
 
 ## Saída em Markdown
 
 ```md
-### role-observability
+### review-api
 - [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta. Correção: ação.
+- [PENDÊNCIA MAJOR] Item — o que falta.
+  Correção: ação concreta.
+...
 ```
 
 ## Regra dura
-Plano que viola BLOCKER não está pronto.
+Plano que viola as regras BLOCKER não está pronto para implementação.
 
 ## Checklist operacional aprofundado
 
-Use este bloco quando o plano tocar logs, métricas, traces, alertas, SLOs e diagnóstico de produção. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
+Use este bloco quando o plano tocar contratos HTTP, serialização, erros, versionamento e compatibilidade de clientes. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
 
 ### Entradas obrigatórias
 
@@ -91,7 +93,7 @@ Para cada achado, responda neste formato:
 Se não houver achados, registre explicitamente:
 
 ```md
-OK — revisei logs, métricas, traces, alertas, SLOs e diagnóstico de produção contra o plano e não encontrei bloqueios.
+OK — revisei contratos HTTP, serialização, erros, versionamento e compatibilidade de clientes contra o plano e não encontrei bloqueios.
 ```
 
 ## Regra dura

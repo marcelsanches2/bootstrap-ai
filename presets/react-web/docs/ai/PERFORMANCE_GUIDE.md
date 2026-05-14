@@ -48,7 +48,7 @@ Quando a aplicação cresce, revise também:
 - assets e dependências compartilhadas sem duplicação
 - observabilidade frontend: erro, rota, versão e Web Vitals quando aplicável
 
-Plano de frontend grande que só fala em componente visual e ignora dados/cache/renderização deve virar pendência em `role-performance`.
+Plano de frontend grande que só fala em componente visual e ignora dados/cache/renderização deve virar pendência em `review-performance`.
 
 ---
 

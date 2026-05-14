@@ -1,62 +1,48 @@
-# role-security
+# review-database
 
 ## Objetivo
-Validar que o plano trata autenticação, autorização, dados sensíveis e proteção contra ataques comuns.
+Validar banco, migrations, queries, índices e integridade.
 
 ## Fonte de referência
-- `docs/ai/SECURITY_GUIDE.md`
+- docs/ai/DATABASE_GUIDE.md, docs/ai/SCALABILITY_GUIDE.md
 
 ## Entrada esperada
 Plano técnico em `plans/*.md`.
 
 ## Método
-Para cada endpoint, fluxo ou mudança que envolve auth, dados ou entrada externa, verificar se segurança está tratada.
+Para cada mudança relevante, verificar conformidade com as referências.
 
 ## Checklist obrigatório
 
-- [ ] Autenticação especificada em endpoints protegidos (Depends(get_current_user))
-- [ ] Autorização verificada (role ou ownership check)
-- [ ] Input validado com Pydantic (tipos, ranges, tamanhos)
-- [ ] Senha hasheada com bcrypt/argon2 (nunca texto plano)
-- [ ] JWT com expiração (access 15min, refresh 7d)
-- [ ] Nenhum dado sensível em log (senha, token, PII)
-- [ ] Nenhum dado sensível em response (password_hash, secret interno)
-- [ ] CORS configurado com origins explícitos (nunca * em produção)
-- [ ] Rate limiting em endpoints sensíveis (login, reset password, registro)
-- [ ] Headers de segurança presentes (X-Content-Type-Options, HSTS, X-Frame-Options)
-- [ ] SQL parametrizado (SQLAlchemy já faz, mas verificar raw queries)
-- [ ] Nenhum eval/exec com input externo
-- [ ] Secrets via env vars, nunca hardcoded
-- [ ] HTTPS obrigatório em produção
+- [ ] Migration criada e testada (prisma migrate)\n- [ ] Índice em toda foreign key (@@index)\n- [ ] Índice em colunas de busca frequente\n- [ ] Sem SELECT * — sempre select explícito\n- [ ] Sem N+1 — usar include no Prisma\n- [ ] Paginação em queries de lista\n- [ ] Transação ($transaction) em operações multi-step\n- [ ] Interactive transaction para operações concorrentes (saldo, estoque)\n- [ ] Tipos corretos (Decimal para dinheiro, DateTime com timezone)\n- [ ] Sem dado sensível em texto plano\n- [ ] Seed para dados iniciais
 
 ## Resultado esperado por item
 
 - **OK**: evidência de conformidade.
 - **OK — não aplicável**: explique.
-- **PENDÊNCIA**: severidade + risco + correção.
+- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
 
 ### Severidade
-- BLOCKER: auth faltando em endpoint protegido, senha em texto plano, PII em log, SQL injection.
-- MAJOR: rate limiting ausente em login, CORS wildcard, input sem validação.
-- MINOR: header de segurança faltando.
+- BLOCKER: Migration sem rollback, N+1 em lista, saldo sem lock, dado sensível texto plano.
+- MAJOR: padrão violado sem impacto crítico.
+- MINOR: style/conveniência.
 
 ## Saída em Markdown
 
 ```md
-### role-security
-
-- [OK] Auth — POST /api/v1/orders usa Depends(get_current_user). ✓
-- [PENDÊNCIA BLOCKER] Login sem rate limiting — vulnerável a brute force.
-  Correção: adicionar @limiter.limit("5/minute") em POST /api/v1/auth/login.
+### review-database
+- [OK] Item — evidência. ✓
+- [PENDÊNCIA MAJOR] Item — o que falta.
+  Correção: ação concreta.
 ...
 ```
 
 ## Regra dura
-Plano com endpoint protegido sem auth, ou com dado sensível em log/response, ou com input não validado, não está pronto.
+Plano que viola as regras BLOCKER não está pronto para implementação.
 
 ## Checklist operacional aprofundado
 
-Use este bloco quando o plano tocar autenticação, autorização, validação de entrada, secrets e abuso operacional. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
+Use este bloco quando o plano tocar modelagem, migrações, índices, transações, rollback e integridade de dados. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
 
 ### Entradas obrigatórias
 
@@ -68,11 +54,11 @@ Use este bloco quando o plano tocar autenticação, autorização, validação d
 
 ### Perguntas de revisão
 
-- [ ] O plano preserva as invariantes arquiteturais do preset `python-backend`?
+- [ ] O plano preserva as invariantes arquiteturais do preset `node-backend`?
 - [ ] O desenho evita acoplamento novo desnecessário entre camadas?
 - [ ] Existe caminho incremental que reduza risco de mudança grande?
 - [ ] As dependências novas são justificadas por necessidade real, não conveniência?
-- [ ] A estratégia funciona no stack esperado: Python, FastAPI, Pydantic, SQLAlchemy/Alembic quando presentes?
+- [ ] A estratégia funciona no stack esperado: Node.js, TypeScript, Express/Fastify/Nest quando presentes, Prisma/Drizzle quando presentes?
 - [ ] Há tratamento explícito para erro, timeout, retry e estado parcial?
 - [ ] O plano descreve como observar falha em produção sem debugger local?
 - [ ] O plano define rollback ou mitigação se o deploy quebrar?
@@ -101,13 +87,13 @@ Para cada achado, responda neste formato:
 - Evidência: `<arquivo ou seção>`
 - Risco: <efeito concreto se ignorar>
 - Correção: <mudança específica no plano>
-- Validação: `ruff check && mypy/pyright quando configurado && pytest` ou verificação equivalente
+- Validação: `npm run typecheck && npm test && npm run lint quando configurado` ou verificação equivalente
 ```
 
 Se não houver achados, registre explicitamente:
 
 ```md
-OK — revisei autenticação, autorização, validação de entrada, secrets e abuso operacional contra o plano e não encontrei bloqueios.
+OK — revisei modelagem, migrações, índices, transações, rollback e integridade de dados contra o plano e não encontrei bloqueios.
 ```
 
 ## Regra dura

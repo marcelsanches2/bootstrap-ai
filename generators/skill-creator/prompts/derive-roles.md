@@ -38,7 +38,7 @@ Perspectiva de entrega:
 
 ### Backend (gerar TODOS)
 
-#### role-api.md (~80+ linhas)
+#### review-api.md (~80+ linhas)
 - Contrato HTTP (verbo, path, payload, response, status codes)
 - Validação de input
 - Paginação e ordenação
@@ -54,7 +54,7 @@ Perspectiva de entrega:
 - Tipagem/contratos entre camadas
 - Anti-patterns específicos da stack
 
-#### role-database.md (~80+ linhas)
+#### review-database.md (~80+ linhas)
 - Migrations (up/down, rollback)
 - Índices em colunas de busca
 - N+1, SELECT *, query optimization
@@ -62,7 +62,7 @@ Perspectiva de entrega:
 - Conexões, pool, timeouts
 - Seeds e dados iniciais
 
-#### role-security.md (~80+ linhas)
+#### review-security.md (~80+ linhas)
 - Auth e autorização
 - Dados sensíveis (PII, secrets, tokens)
 - Input validation e sanitização
@@ -70,14 +70,14 @@ Perspectiva de entrega:
 - Headers de segurança
 - Logs sem dados sensíveis
 
-#### role-observability.md (~80+ linhas)
+#### review-observability.md (~80+ linhas)
 - Structured logging
 - Métricas (latência, throughput, erro rate)
 - Healthcheck endpoints
 - Tracing e correlation IDs
 - Alertas e thresholds
 
-#### role-scalability.md (~100+ linhas)
+#### review-scalability.md (~100+ linhas)
 - Concorrência e race conditions
 - Cache e invalidação
 - Filas e jobs (retry, DLQ, backpressure)
@@ -85,7 +85,7 @@ Perspectiva de entrega:
 - Pool de conexões
 - Graceful shutdown
 
-#### role-api-qa.md (~80+ linhas)
+#### review-api-qa.md (~80+ linhas)
 - Testabilidade do plano
 - Caminho feliz
 - Cenários negativos (erro 400, 401, 403, 404, 500)
@@ -110,14 +110,14 @@ Perspectiva de entrega:
 - Responsividade
 - Componentização visual
 
-#### role-accessibility.md (~80+ linhas)
+#### review-accessibility.md (~80+ linhas)
 - Semântica HTML
 - Navegação por teclado
 - Contraste e cores
 - Formulários (labels, association, errors)
 - ARIA attributes
 
-#### role-performance.md (~80+ linhas)
+#### review-performance.md (~80+ linhas)
 - Bundle size e code splitting
 - Renderização (memo, virtualização, rerenders)
 - Imagens e assets

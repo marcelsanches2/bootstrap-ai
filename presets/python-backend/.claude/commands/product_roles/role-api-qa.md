@@ -1,4 +1,4 @@
-# role-api-qa
+# review-api-qa
 
 ## Objetivo
 Validar que o plano é testável e cobre cenários suficientes de teste (positivos, negativos, edge cases).
@@ -40,7 +40,7 @@ Para cada endpoint ou fluxo, inventariar cenários de teste e verificar cobertur
 ## Saída em Markdown
 
 ```md
-### role-api-qa
+### review-api-qa
 
 - [OK] Caminho feliz — POST /api/v1/orders com items válidos retorna 201. ✓
 - [PENDÊNCIA MAJOR] Auth — GET /api/v1/orders sem token não testado.

@@ -38,8 +38,8 @@ presets:
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
-      - .claude/commands/product_roles/role-database.md
-      - .claude/commands/product_roles/role-api.md
+      - .claude/commands/product_roles/review-database.md
+      - .claude/commands/product_roles/review-api.md
       - docs/ai/ARCHITECTURE.md
       - docs/ai/API_GUIDE.md
       - docs/ai/DATABASE_GUIDE.md
@@ -56,8 +56,8 @@ presets:
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
-      - .claude/commands/product_roles/role-accessibility.md
-      - .claude/commands/product_roles/role-performance.md
+      - .claude/commands/product_roles/review-accessibility.md
+      - .claude/commands/product_roles/review-performance.md
       - docs/ai/ARCHITECTURE.md
       - docs/ai/DESIGN_SYSTEM.md
       - docs/ai/TESTING_GUIDE.md
@@ -73,8 +73,8 @@ presets:
       - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
-      - .claude/commands/product_roles/role-database.md
-      - .claude/commands/product_roles/role-api.md
+      - .claude/commands/product_roles/review-database.md
+      - .claude/commands/product_roles/review-api.md
       - docs/ai/API_GUIDE.md
       - docs/ai/DATABASE_GUIDE.md
       - docs/ai/TESTING_GUIDE.md

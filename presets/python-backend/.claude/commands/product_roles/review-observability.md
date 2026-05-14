@@ -1,48 +1,58 @@
-# role-security
+# review-observability
 
 ## Objetivo
-Validar auth, autorização, dados sensíveis e proteção contra ataques.
+Validar que o plano inclui logging estruturado, métricas, healthcheck e rastreabilidade suficientes para operar em produção.
 
 ## Fonte de referência
-- docs/ai/SECURITY_GUIDE.md
+- `docs/ai/OBSERVABILITY_GUIDE.md`
 
 ## Entrada esperada
 Plano técnico em `plans/*.md`.
 
 ## Método
-Para cada mudança relevante, verificar conformidade com as referências.
+Verificar se cada fluxo novo ou alterado tem logging, métricas e healthcheck adequados.
 
 ## Checklist obrigatório
 
-- [ ] Autenticação em endpoints protegidos (authMiddleware)\n- [ ] Autorização verificada (role ou ownership)\n- [ ] Input validado com Zod\n- [ ] Senha hasheada com bcrypt\n- [ ] JWT com expiração (15min access, 7d refresh)\n- [ ] Nenhum dado sensível em log\n- [ ] Nenhum dado sensível em response (passwordHash, token)\n- [ ] CORS com origins explícitos (nunca *)\n- [ ] Rate limiting em login/reset\n- [ ] Helmet para security headers\n- [ ] SQL parametrizado (Prisma já faz)\n- [ ] Sem eval/Function com input\n- [ ] Secrets via env vars\n- [ ] HTTPS em produção
+- [ ] Eventos de negócio logados com structured logging (structlog)
+- [ ] Erros logados com contexto (order_id, user_id, etc.)
+- [ ] Nenhum dado sensível nos logs (senha, token, PII)
+- [ ] Request ID propagado em todas as chamadas (X-Request-ID)
+- [ ] Latência monitorada em endpoints novos (P50, P95, P99)
+- [ ] Healthcheck atualizado se nova dependência adicionada (Redis, fila, serviço externo)
+- [ ] Métricas de negócio quando aplicável (orders/min, signups/min)
+- [ ] Alertas configurados para thresholds críticos (5xx rate, latência, pool)
+- [ ] External calls com timeout e log de falha
+- [ ] Graceful shutdown tratado para conexões e workers
 
 ## Resultado esperado por item
 
-- **OK**: evidência de conformidade.
+- **OK**: evidência.
 - **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
+- **PENDÊNCIA**: severidade + impacto operacional + correção.
 
 ### Severidade
-- BLOCKER: Auth faltando em endpoint protegido, senha texto plano, PII em log.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style/conveniência.
+- BLOCKER: dado sensível em log, healthcheck faltando com dependência nova.
+- MAJOR: evento de negócio sem log, external call sem timeout.
+- MINOR: métrica de negócio ausente.
 
 ## Saída em Markdown
 
 ```md
-### role-security
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta.
-  Correção: ação concreta.
+### review-observability
+
+- [OK] Logging — service usa structlog com user_id e order_id. ✓
+- [PENDÊNCIA MAJOR] External call sem timeout — gateway de pagamento.
+  Correção: adicionar timeout=30 no httpx.AsyncClient e logar falhas.
 ...
 ```
 
 ## Regra dura
-Plano que viola as regras BLOCKER não está pronto para implementação.
+Plano que adiciona dependência sem healthcheck, ou loga dados sensíveis, ou faz external call sem timeout, não está pronto.
 
 ## Checklist operacional aprofundado
 
-Use este bloco quando o plano tocar autenticação, autorização, validação de entrada, secrets e abuso operacional. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
+Use este bloco quando o plano tocar logs, métricas, traces, alertas, SLOs e diagnóstico de produção. A revisão deve apontar arquivo, seção ou decisão do plano; comentário genérico não serve.
 
 ### Entradas obrigatórias
 
@@ -54,11 +64,11 @@ Use este bloco quando o plano tocar autenticação, autorização, validação d
 
 ### Perguntas de revisão
 
-- [ ] O plano preserva as invariantes arquiteturais do preset `node-backend`?
+- [ ] O plano preserva as invariantes arquiteturais do preset `python-backend`?
 - [ ] O desenho evita acoplamento novo desnecessário entre camadas?
 - [ ] Existe caminho incremental que reduza risco de mudança grande?
 - [ ] As dependências novas são justificadas por necessidade real, não conveniência?
-- [ ] A estratégia funciona no stack esperado: Node.js, TypeScript, Express/Fastify/Nest quando presentes, Prisma/Drizzle quando presentes?
+- [ ] A estratégia funciona no stack esperado: Python, FastAPI, Pydantic, SQLAlchemy/Alembic quando presentes?
 - [ ] Há tratamento explícito para erro, timeout, retry e estado parcial?
 - [ ] O plano descreve como observar falha em produção sem debugger local?
 - [ ] O plano define rollback ou mitigação se o deploy quebrar?
@@ -87,13 +97,13 @@ Para cada achado, responda neste formato:
 - Evidência: `<arquivo ou seção>`
 - Risco: <efeito concreto se ignorar>
 - Correção: <mudança específica no plano>
-- Validação: `npm run typecheck && npm test && npm run lint quando configurado` ou verificação equivalente
+- Validação: `ruff check && mypy/pyright quando configurado && pytest` ou verificação equivalente
 ```
 
 Se não houver achados, registre explicitamente:
 
 ```md
-OK — revisei autenticação, autorização, validação de entrada, secrets e abuso operacional contra o plano e não encontrei bloqueios.
+OK — revisei logs, métricas, traces, alertas, SLOs e diagnóstico de produção contra o plano e não encontrei bloqueios.
 ```
 
 ## Regra dura

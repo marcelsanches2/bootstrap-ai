@@ -1,4 +1,4 @@
-# role-api-qa
+# review-api-qa
 
 ## Objetivo
 Validar que o plano é testável com cenários suficientes.
@@ -30,7 +30,7 @@ Verificar conformidade com as referências.
 ## Saída em Markdown
 
 ```md
-### role-api-qa
+### review-api-qa
 - [OK] Item — evidência. ✓
 - [PENDÊNCIA MAJOR] Item — o que falta. Correção: ação.
 ```

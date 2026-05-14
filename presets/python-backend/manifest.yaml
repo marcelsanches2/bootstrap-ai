@@ -6,9 +6,9 @@ required_files:
   - .claude/commands/jarvis-plan-revisor.md
   - .claude/commands/jarvis-test-flow.md
   - .claude/commands/refactor.md
-  - .claude/commands/product_roles/role-database.md
-  - .claude/commands/product_roles/role-api.md
-  - .claude/commands/product_roles/role-scalability.md
+  - .claude/commands/product_roles/review-database.md
+  - .claude/commands/product_roles/review-api.md
+  - .claude/commands/product_roles/review-scalability.md
   - docs/ai/API_GUIDE.md
   - docs/ai/DATABASE_GUIDE.md
   - docs/ai/SCALABILITY_GUIDE.md
