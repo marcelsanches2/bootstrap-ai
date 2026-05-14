@@ -33,9 +33,10 @@ Install the `/import-project-preset` command into your project:
 ```bash
 # Clone Bootstrap AI (one-time)
 git clone https://github.com/marcelsanches2/bootstrap-ai.git /tmp/bootstrap-ai
+cd /tmp/bootstrap-ai
 
-# Install the importer command into your project
-/tmp/bootstrap-ai/bin/bootstrap-ai install-importer /path/to/your/project
+# Install the importer into your project
+./bin/bootstrap-ai install-importer /path/to/your/project
 ```
 
 This creates `.claude/commands/import-project-preset.md` in your project. Then run:
