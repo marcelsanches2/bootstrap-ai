@@ -39,7 +39,7 @@ cd /tmp/bootstrap-ai
 ./bin/bootstrap-ai install-importer /path/to/your/project
 ```
 
-This creates `.claude/commands/import-project-preset.md` in your project. Then run:
+This creates `.claude/commands/import-project-preset.md` in yourproject. Then run inside claude code:
 
 ```
 /import-project-preset
