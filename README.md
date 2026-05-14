@@ -4,287 +4,287 @@
 
 # Bootstrap AI
 
-**Ship AI-powered projects with structure, not chaos.**
+**Entregue projetos com IA usando estrutura, não caos.**
 
 [![GitHub stars](https://img.shields.io/github/stars/marcelsanches2/bootstrap-ai?style=social)](https://github.com/marcelsanches2/bootstrap-ai/stargazers)
 [![License](https://img.shields.io/github/license/marcelsanches2/bootstrap-ai?color=blue)](./LICENSE)
-[![Presets](https://img.shields.io/badge/presets-4-blueviolet)](./kits)
+[![Presets](https://img.shields.io/badge/presets-4-blueviolet)](./presets)
 [![CLI](https://img.shields.io/badge/cli-bootstrap--ai-orange)](./bin/bootstrap-ai)
 
-*A CLI + preset system that turns empty folders into production-ready projects — and brings structure to existing ones. Designed for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [Hermes Agent](https://hermes-agent.nousresearch.com).*
+*CLI + sistema de presets que transforma pastas vazias em projetos prontos para produção — e traz estrutura para projetos existentes. Feito para [Claude Code](https://docs.anthropic.com/en/docs/claude-code) e [Hermes Agent](https://hermes-agent.nousresearch.com).*
 
 </div>
 
 ---
 
-## What is it?
+## O que é?
 
-Bootstrap AI gives your AI coding assistant a project-specific brain. Instead of starting every session from scratch, you apply a **preset** — a curated set of commands, configurations, documentation scaffolds, and hooks — that tells your AI assistant exactly how your project is structured, what conventions to follow, and which workflows to enforce.
+Bootstrap AI dá ao seu assistente de IA um cérebro específico por projeto. Em vez de começar toda sessão do zero, você aplica um **preset** — um conjunto curado de comandos, configurações, documentação e hooks — que diz ao seu assistente exatamente como o projeto é estruturado, quais convenções seguir e quais workflows enforce.
 
-**Presets are built in [Claude Code](https://docs.anthropic.com/en/docs/claude-code) format** — they install into `.claude/commands/` and `.claude/settings.json`.
+**Presets são no formato [Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — instalam em `.claude/commands/` e `.claude/settings.json`.
 
 
 ---
 
 ## Setup
 
-Install the `/import-project-preset` command into your project:
+Instale o comando `/import-project-preset` no seu projeto:
 
 ```bash
-# Clone Bootstrap AI (one-time)
+# Clone o Bootstrap AI (uma vez)
 git clone https://github.com/marcelsanches2/bootstrap-ai.git /tmp/bootstrap-ai
 cd /tmp/bootstrap-ai
 
-# Install the importer into your project
-./bin/bootstrap-ai install-importer /path/to/your/project
+# Instale o importer no seu projeto
+./bin/bootstrap-ai install-importer /caminho/do/seu/projeto
 ```
 
-This creates `.claude/commands/import-project-preset.md` in yourproject. Then run inside claude code:
+Isso cria `.claude/commands/import-project-preset.md` no seu projeto. Depois execute dentro do Claude Code:
 
 ```
 /import-project-preset
 ```
 
-The command detects your stack, selects the best matching preset, and applies it with a safe write policy — no files overwritten.
+O comando detecta sua stack, seleciona o preset mais adequado e aplica com política de escrita segura — nenhum arquivo é sobrescrito.
 
 ---
 
-## How the importer works
+## Como o importer funciona
 
-<img src="docs/flow-diagram.png" alt="Import Project Preset Flow" width="100%" />
+<img src="docs/flow-diagram.png" alt="Fluxo do Import Project Preset" width="100%" />
 
-When you run `/import-project-preset`, the system:
+Quando você roda `/import-project-preset`, o sistema:
 
-1. **Detects** your stack by scanning for signature files (`pubspec.yaml`, `package.json`, `pyproject.toml`, etc.)
-2. **Analyzes** structural libraries (Riverpod, TanStack Query, Prisma, SQLAlchemy, etc.)
-3. **Branches** based on folder state:
-   - **Empty folder** → redirects to `/kickoff` (7 questions → product brief → stack selection → `/design-phase` → preset apply)
-   - **Has code** → auto-selects matching preset → shows diff preview → applies with safe write policy
-4. **Syncs Design System** — if your project already has color tokens, typography, or spacing defined, the `DESIGN_SYSTEM.md` is rewritten to match your real identity instead of using the generic template
-5. **Result** — your project is scaffolded and ready for the development lifecycle
+1. **Detecta** sua stack escaneando arquivos assinatura (`pubspec.yaml`, `package.json`, `pyproject.toml`, etc.)
+2. **Analisa** bibliotecas estruturais (Riverpod, TanStack Query, Prisma, SQLAlchemy, etc.)
+3. **Direciona** baseado no estado da pasta:
+   - **Pasta vazia** → redireciona para `/kickoff` (7 perguntas → product brief → seleção de stack → `/design-phase` → apply do preset)
+   - **Tem código** → auto-seleciona o preset correspondente → mostra preview do diff → aplica com política de escrita segura
+4. **Sincroniza Design System** — se o projeto já tem tokens de cor, tipografia ou espaçamento, o `DESIGN_SYSTEM.md` é reescrito com a identidade real do projeto em vez do template genérico
+5. **Resultado** — projeto scaffolded e pronto para o ciclo de desenvolvimento
 
 ---
 
-## Quick Start — New Project
+## Quick Start — Projeto Novo
 
-Starting from an empty folder? Bootstrap AI runs you through a full greenfield flow: define your product, pick a stack, generate a design system, and apply the right preset.
+Começando de uma pasta vazia? Bootstrap AI te guia por um fluxo completo de greenfield: defina o produto, escolha a stack, gere um design system e aplique o preset correto.
 
 ```bash
-mkdir my-project && cd my-project
+mkdir meu-projeto && cd meu-projeto
 git init
 ```
 
-Then, inside Claude Code or Hermes Agent, run:
+Depois, dentro do Claude Code ou Hermes Agent, execute:
 
 ```
 /import-project-preset
 ```
 
-Bootstrap AI detects an empty folder and redirects you to `/kickoff`, which walks through:
+Bootstrap AI detecta a pasta vazia e te redireciona para `/kickoff`, que passa por:
 
-1. **7 questions** about your product → generates `PRODUCT_BRIEF.md`
-2. **Stack selection** → choose from supported presets
-3. **`/design-phase`** → extract from a Figma Make link or generate an AI design system
-4. **Preset apply** → your project is scaffolded and ready
+1. **7 perguntas** sobre seu produto → gera `PRODUCT_BRIEF.md`
+2. **Seleção de stack** → escolha entre os presets suportados
+3. **`/design-phase`** → extraia de um link Figma Make ou gere um design system via IA
+4. **Apply do preset** → projeto scaffolded e pronto
 
-Now you're in the lifecycle loop:
+Agora você está no loop de lifecycle:
 
 ```
-/plan → /jarvis-plan-revisor → implement → /jarvis-test-flow → /ship
+/plan → /jarvis-plan-revisor → implementar → /jarvis-test-flow → /ship
 ```
 
 ---
 
-## Quick Start — Existing Project
+## Quick Start — Projeto Existente
 
-Already have a codebase? Bootstrap AI detects your stack and applies a preset non-destructively.
+Já tem um codebase? Bootstrap AI detecta sua stack e aplica um preset sem destruir nada.
 
 ```
 /import-project-preset
 ```
 
-That's it. The CLI:
+Só isso. O CLI:
 
-1. **Detects** your stack via `manifest.yaml` rules
-2. **Analyzes** structural libraries (Riverpod, TanStack Query, Prisma, etc.)
-3. **Selects** the best matching preset
-4. **Applies** files using a safe write policy (see below)
+1. **Detecta** sua stack via regras do `manifest.yaml`
+2. **Analisa** bibliotecas estruturais (Riverpod, TanStack Query, Prisma, etc.)
+3. **Seleciona** o preset mais adequado
+4. **Aplica** arquivos usando política de escrita segura (veja abaixo)
 
-No files are overwritten. If a file differs from the preset, a `.kit-new` copy is created for you to review.
+Nenhum arquivo é sobrescrito. Se um arquivo difere do preset, uma cópia `.kit-new` é criada para você revisar.
 
 ---
 
 ## Presets
 
-| Preset | Stack | Description |
-|--------|-------|-------------|
-| `flutter-app` | Flutter / Dart | Mobile app with state management, routing, and testing conventions |
-| `react-web` | React / TypeScript / Vite | Frontend SPA with component architecture and design system integration |
-| `node-backend` | Node / TypeScript / Express | REST API backend with middleware patterns, validation, and error handling |
-| `python-backend` | Python / FastAPI | Async API backend with dependency injection, schemas, and testing |
+| Preset | Stack | Descrição |
+|--------|-------|-----------|
+| `flutter-app` | Flutter / Dart | App mobile com gerenciamento de estado, rotas e convenções de teste |
+| `react-web` | React / TypeScript / Vite | SPA frontend com arquitetura de componentes e integração de design system |
+| `node-backend` | Node / TypeScript / Express | API REST backend com padrões de middleware, validação e tratamento de erros |
+| `python-backend` | Python / FastAPI | API async backend com injeção de dependência, schemas e testes |
 
-Each preset installs:
+Cada preset instala:
 
 ```
-CLAUDE.md                      # Project context & AI instructions
-.claude/settings.json          # Claude Code configuration
-.claude/commands/*             # Slash commands for workflows
-docs/ai/*                      # AI workflow documentation
-plans/.gitkeep                 # Plan tracking directory
-.bootstrap-ai.lock             # Applied preset lockfile
+CLAUDE.md                      # Contexto do projeto & instruções para IA
+.claude/settings.json          # Configuração do Claude Code
+.claude/commands/*             # Slash commands para workflows
+docs/ai/*                      # Documentação de workflows com IA
+plans/.gitkeep                 # Diretório de tracking de planos
+.bootstrap-ai.lock             # Lockfile do preset aplicado
 ```
 
-Template variables like `{{PROJECT_NAME}}` are substituted automatically during apply.
+Variáveis de template como `{{PROJECT_NAME}}` são substituídas automaticamente durante o apply.
 
 ---
 
-## Commands & Skills
+## Comandos & Skills
 
-### Lifecycle Workflow
+### Workflow de Lifecycle
 
-The core development loop — run these in sequence:
+O loop de desenvolvimento principal — execute em sequência:
 
-| Command | Purpose |
-|---------|---------|
-| `/plan` | Generate an implementation plan for the current task |
-| `/jarvis-plan-revisor` | Review and improve the plan before implementation |
-| *(implement)* | Code against the plan using normal Claude Code editing |
-| `/jarvis-test-flow` | Run the full test suite and fix failures |
-| `/ship` | Finalize: review, commit, and push |
+| Comando | Finalidade |
+|---------|------------|
+| `/plan` | Gera um plano de implementação para a tarefa atual |
+| `/jarvis-plan-revisor` | Revisa e melhora o plano antes da implementação |
+| *(implementar)* | Codifica seguindo o plano usando edição normal do Claude Code |
+| `/jarvis-test-flow` | Executa a suite de testes completa e corrige falhas |
+| `/ship` | Finaliza: revisa, committa e faz push |
 
-### Manual Commands
+### Comandos Manuais
 
-| Command | Purpose |
-|---------|---------|
-| `/jarvis-revisor` | Review code quality and suggest improvements |
-| `/jarvis-full-test` | Run comprehensive test suite outside the lifecycle |
-| `/refactor` | Structured refactoring workflow |
-| `/import-project-preset` | Detect stack and apply or create a preset |
-| `/kickoff` | Greenfield flow: 7 questions → product brief → stack selection |
-| `/design-phase` | Design system generation (Figma import or AI-generated) |
+| Comando | Finalidade |
+|---------|------------|
+| `/jarvis-revisor` | Revisa qualidade do código e sugere melhorias |
+| `/jarvis-full-test` | Executa suite de testes completa fora do lifecycle |
+| `/refactor` | Workflow estruturado de refatoração |
+| `/import-project-preset` | Detecta stack e aplica ou cria um preset |
+| `/kickoff` | Fluxo greenfield: 7 perguntas → product brief → seleção de stack |
+| `/design-phase` | Geração de design system (import Figma ou gerado por IA) |
 
-### Hooks (Automatic)
+### Hooks (Automáticos)
 
-Hooks run at specific points during your AI session without manual invocation:
+Hooks rodam em pontos específicos durante sua sessão de IA sem invocação manual:
 
-| Hook | Trigger | Behavior |
-|------|---------|----------|
-| `PostToolUse` | After any tool call | Runs linting checks |
-| `ExitPlanMode` | When leaving plan mode | Auto-triggers `/jarvis-plan-revisor` |
-| `Stop` | When the agent stops | Auto-triggers `/jarvis-test-flow` |
+| Hook | Trigger | Comportamento |
+|------|---------|---------------|
+| `PostToolUse` | Após qualquer tool call | Executa checks de lint |
+| `ExitPlanMode` | Ao sair do modo de plano | Auto-dispara `/jarvis-plan-revisor` |
+| `Stop` | Quando o agent para | Auto-dispara `/jarvis-test-flow` |
 
 ---
 
-## CLI Reference
+## Referência do CLI
 
-The `bin/bootstrap-ai` CLI provides direct access to all operations:
+O CLI `bin/bootstrap-ai` dá acesso direto a todas as operações:
 
 ```bash
-# Detect the project's stack
+# Detecta a stack do projeto
 bin/bootstrap-ai detect
 
-# Analyze structural libraries and patterns
+# Analisa bibliotecas estruturais e padrões
 bin/bootstrap-ai analyze
 
-# Select the best matching preset
+# Seleciona o preset mais adequado
 bin/bootstrap-ai select
 
-# Preview changes without applying
+# Preview das mudanças sem aplicar
 bin/bootstrap-ai diff
 
-# Apply a preset to the current project
+# Aplica um preset ao projeto atual
 bin/bootstrap-ai apply
 
-# Validate an applied preset
+# Valida um preset aplicado
 bin/bootstrap-ai validate
 
-# Create a new preset from a description
-bin/bootstrap-ai create <name> --from "description"
+# Cria um novo preset a partir de uma descrição
+bin/bootstrap-ai create <nome> --from "descrição"
 
-# Install the /import-project-preset command globally
+# Instala o comando /import-project-preset globalmente
 bin/bootstrap-ai install-importer
 ```
 
-### Creating Custom Presets
+### Criando Presets Customizados
 
-Build your own preset from scratch using the skill-creator:
+Crie seu próprio preset do zero usando o skill-creator:
 
 ```bash
-bin/bootstrap-ai create my-preset --from "A SvelteKit app with Tailwind CSS and Drizzle ORM"
+bin/bootstrap-ai create meu-preset --from "App SvelteKit com Tailwind CSS e Drizzle ORM"
 ```
 
-This generates a new preset directory with all required files, ready to customize and apply.
+Isso gera um novo diretório de preset com todos os arquivos necessários, pronto para customizar e aplicar.
 
 ---
 
-## How It Works
+## Como Funciona
 
-### Stack Detection
+### Detecção de Stack
 
-Each preset ships a `manifest.yaml` with detection rules:
+Cada preset inclui um `manifest.yaml` com regras de detecção:
 
 ```yaml
 detects:
-  any: ["pubspec.yaml"]           # Any of these files → match
+  any: ["pubspec.yaml"]           # Qualquer um destes arquivos → match
   contains:
-    pubspec.yaml: "flutter"       # File must contain this string
-  prefer_if: ["lib/main.dart"]   # Boost confidence if these exist
+    pubspec.yaml: "flutter"       # Arquivo deve conter esta string
+  prefer_if: ["lib/main.dart"]   # Boost de confiança se existirem
 ```
 
-The CLI scores each preset against your project and selects the best match.
+O CLI pontua cada preset contra seu projeto e seleciona o melhor match.
 
-### Structural Library Detection
+### Detecção de Bibliotecas Estruturais
 
-The `analyze` command goes deeper — it detects libraries and patterns that affect project structure:
+O comando `analyze` vai mais fundo — detecta bibliotecas e padrões que afetam a estrutura do projeto:
 
 - **Flutter**: Riverpod, BLoC, GetX
 - **React**: TanStack Query, Zustand, React Router
 - **Node**: Prisma, TypeORM, Mongoose
 - **Python**: SQLAlchemy, Alembic, Pydantic
 
-This analysis feeds into which commands and conventions the preset enables.
+Esta análise alimenta quais comandos e convenções o preset habilita.
 
-### Write Policy
+### Política de Escrita
 
-When applying a preset, Bootstrap AI never overwrites your work:
+Ao aplicar um preset, Bootstrap AI nunca sobrescreve seu trabalho:
 
-| Condition | Action |
-|-----------|--------|
-| File missing | Create it |
-| File identical to preset | Skip (no-op) |
-| File differs from preset | Create `.kit-new` copy for review |
+| Condição | Ação |
+|----------|------|
+| Arquivo não existe | Cria |
+| Arquivo idêntico ao preset | Skip (no-op) |
+| Arquivo difere do preset | Cria cópia `.kit-new` para revisão |
 
-This makes it safe to re-apply presets or update to newer versions.
-
----
-
-## Contributing
-
-Contributions are welcome. To add a new preset or improve an existing one:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/my-preset`)
-3. Build your preset using `bin/bootstrap-ai create <name> --from "description"` or manually
-4. Test with `bin/bootstrap-ai validate`
-5. Open a pull request
-
-Please ensure presets include:
-- A complete `manifest.yaml` with detection rules
-- All required files (`CLAUDE.md`, `.claude/settings.json`, commands, docs)
-- Template variables where appropriate (`{{PROJECT_NAME}}`)
+Isso torna seguro reaplicar presets ou atualizar para versões mais recentes.
 
 ---
 
-## License
+## Contribuindo
 
-This project is licensed under the [AGPLv3 License](./LICENSE).
+Contribuições são bem-vindas. Para adicionar um novo preset ou melhorar um existente:
+
+1. Faça fork do repositório
+2. Crie uma branch de feature (`git checkout -b feature/meu-preset`)
+3. Construa seu preset usando `bin/bootstrap-ai create <nome> --from "descrição"` ou manualmente
+4. Teste com `bin/bootstrap-ai validate`
+5. Abra um pull request
+
+Certifique-se que os presets incluem:
+- Um `manifest.yaml` completo com regras de detecção
+- Todos os arquivos necessários (`CLAUDE.md`, `.claude/settings.json`, commands, docs)
+- Variáveis de template onde apropriado (`{{PROJECT_NAME}}`)
+
+---
+
+## Licença
+
+Este projeto está licenciado sob a [Licença AGPLv3](./LICENSE).
 
 ---
 
 <div align="center">
 
-**[⬆ Star this repo](https://github.com/marcelsanches2/bootstrap-ai/stargazers)** if you find it useful.
+**[⬆ Dê uma star neste repo](https://github.com/marcelsanches2/bootstrap-ai/stargazers)** se achou útil.
 
-Built for the AI-assisted development workflow. Not a framework — a foundation.
+Feito para o workflow de desenvolvimento assistido por IA. Não é um framework — é uma fundação.
 
 </div>
