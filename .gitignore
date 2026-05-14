@@ -3,5 +3,5 @@ __pycache__/
 .env
 .refresh-reports/
 .DS_Store
-.project-kit.lock
+.bootstrap-ai.lock
 *.kit-new

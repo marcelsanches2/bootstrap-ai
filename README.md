@@ -32,11 +32,19 @@ First, install the `/import-project-preset` command into your project:
 # Clone Bootstrap AI
 git clone https://github.com/marcelsanches2/bootstrap-ai.git /tmp/bootstrap-ai
 
-# Install the importer skill into your project
-/tmp/bootstrap-ai/bin/bootstrap-ai install-importer /path/to/your/project
+# Run the installer — it detects your stack and applies the right preset
+bash /tmp/bootstrap-ai/bootstrap/import-project-preset.sh /path/to/your/project
 ```
 
-This creates `.claude/commands/import-project-preset.md` in your project, so the command is available inside Claude Code or Hermes Agent.
+The installer script:
+
+1. **Finds or clones** Bootstrap AI automatically (checks common workspace directories)
+2. **Installs** the `/import-project-preset` command into `.claude/commands/`
+3. **Detects** your stack and selects the best matching preset
+4. **Shows a diff** preview of all changes
+5. **Applies** the preset with a safe write policy — no files overwritten
+
+After setup, you can run `/import-project-preset` anytime inside Claude Code or Hermes Agent.
 
 ---
 
