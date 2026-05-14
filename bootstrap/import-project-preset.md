@@ -308,6 +308,92 @@ test -f "$ROOT/.claude/commands/refactor.md" && echo "refactor OK"
 test -f "$ROOT/.bootstrap-ai.lock" && echo "lock OK"
 ```
 
+### 8.5. Sincronizar Design System com o projeto
+
+**Objetivo:** Se o projeto já tem tokens visuais (cores, tipografia, espaçamento), reescrever `docs/ai/DESIGN_SYSTEM.md` para refletir a identidade real do projeto em vez do template genérico.
+
+**Quando executar:** Sempre que o preset aplicar um `DESIGN_SYSTEM.md`. Não executar para backends (node-backend, python-backend) pois não têm UI.
+
+#### 8.5.1. Detectar tokens existentes por stack
+
+Escanee os arquivos abaixo na raiz do projeto. Se encontrar valores reais, extraia.
+
+**Flutter** — procure em:
+
+```
+lib/app/theme/app_colors.dart
+lib/app/theme/app_theme.dart
+lib/app/theme/app_text_styles.dart
+lib/app/theme/app_spacing.dart
+pubspec.yaml (google_fonts dependency)
+```
+
+Extraia:
+
+- **Cores:** valores `Color(0xFF...)`, `ColorScheme(…)` com `primary`, `secondary`, `surface`, `error`, `onPrimary`, etc.
+- **Tipografia:** fontes via `GoogleFonts.*`, `TextStyle(fontFamily: ...)`
+- **Espaçamento:** constantes numéricas em classes de spacing/radius
+
+**React/Web** — procure em:
+
+```
+tailwind.config.ts / tailwind.config.js
+src/theme/colors.ts / src/styles/theme.ts
+src/theme/typography.ts
+src/styles/tokens.ts
+src/app/globals.css (CSS custom properties: --color-*, --font-*, --space-*)
+```
+
+Extraia:
+
+- **Cores:** valores do `theme.colors` no Tailwind, ou `var(--color-*)` em CSS
+- **Tipografia:** `theme.fontFamily`, Google Fonts imports, CSS `font-family`
+- **Espaçamento:** `theme.spacing`, `theme.borderRadius`
+
+**Outras stacks:** pule este passo.
+
+#### 8.5.2. Decisão baseada no resultado do scan
+
+| Resultado | Ação |
+|---|---|
+| **Encontrou tokens completos** (cores + tipografia + espaçamento) | Reescreva `docs/ai/DESIGN_SYSTEM.md` substituindo as seções genéricas pelos valores reais do projeto. Mantenha a estrutura do documento (seções, regras, componentes), apenas troque os valores. Adicione nota: "Tokens sincronizados do design system existente em `[arquivo_fonte]`". |
+| **Encontrou parcial** (ex: tem cores mas sem tipografia) | Reescreva apenas as seções onde encontrou valores. Deixe genérico onde não achou. Adicione nota indicando o que foi sincronizado e o que ainda é template. |
+| **Não encontrou nada** | Mantenha o `DESIGN_SYSTEM.md` genérico do preset. Pergunte ao usuário: "Seu projeto não tem design system definido. Quer personalizar as cores e tipografia agora? (s/n)". Se sim, rode `/design-phase` no modo "extract". |
+
+#### 8.5.3. Formato da reescrita
+
+Ao reescrever, mantenha:
+
+- A mesma estrutura de seções do template original
+- Os mesmos nomes de tokens semânticos (primary, secondary, surface, etc.)
+- As regras e boas práticas do template
+- A linguagem (pt-BR ou en) do template original
+
+Substitua apenas:
+
+- Valores hex/RGB de cores pelos valores reais
+- Nomes de fontes pelas fontes reais
+- Valores de espaçamento/radius pelos valores reais
+- Exemplos de código que referenciam cores/fontes específicas
+
+#### 8.5.4. Exemplo de saída
+
+```txt
+🎨 Design System sincronizado:
+   Cores: 12 tokens extraídos de lib/app/theme/app_colors.dart
+   Tipografia: 3 fontes de GoogleFonts (Inter, Saira, Tourney)
+   Espaçamento: 6 tokens de app_spacing.dart
+   Arquivo reescrito: docs/ai/DESIGN_SYSTEM.md
+```
+
+Ou:
+
+```txt
+🎨 Design System: nenhum token encontrado no projeto.
+   Template genérico mantido em docs/ai/DESIGN_SYSTEM.md.
+   Para personalizar, rode /design-phase.
+```
+
 ### 9. Resposta final
 
 Reporte:

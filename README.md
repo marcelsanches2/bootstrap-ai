@@ -60,7 +60,8 @@ When you run `/import-project-preset`, the system:
 3. **Branches** based on folder state:
    - **Empty folder** → redirects to `/kickoff` (7 questions → product brief → stack selection → `/design-phase` → preset apply)
    - **Has code** → auto-selects matching preset → shows diff preview → applies with safe write policy
-4. **Result** — your project is scaffolded and ready for the development lifecycle
+4. **Syncs Design System** — if your project already has color tokens, typography, or spacing defined, the `DESIGN_SYSTEM.md` is rewritten to match your real identity instead of using the generic template
+5. **Result** — your project is scaffolded and ready for the development lifecycle
 
 ---
 
