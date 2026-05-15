@@ -114,7 +114,7 @@ vitest run --reporter=verbose
 
 ## Estratégia de testes — checklist de produção
 
-Este guia existe para orientar implementação real em `node-backend`. Ele deve ser usado por `/plan`, `/jarvis-plan-revisor`, `/refactor` e `/jarvis-test-flow` antes de qualquer mudança relevante.
+Este guia define os padrões de `node-backend` para esta disciplina. Ele é referência durante implementação, revisão de código e troubleshooting.
 
 ### Princípios
 

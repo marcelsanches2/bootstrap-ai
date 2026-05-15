@@ -6,10 +6,7 @@ Como desenvolver features novas no Python backend.
 
 1. Ler docs relevantes em `docs/ai/`.
 2. Criar plano em `plans/YYYY-MM-DD-<slug>.md`.
-3. Revisar com `/jarvis-plan-revisor`.
-4. Implementar incrementalmente.
-5. Validar com `/jarvis-test-flow`.
-6. Checklist final com `/ship`.
+3. Implementar seguindo as convenções deste guide.
 
 ## Nova feature passo a passo
 
