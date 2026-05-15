@@ -11,7 +11,7 @@
 [![Presets](https://img.shields.io/badge/presets-4-blueviolet)](./presets)
 [![CLI](https://img.shields.io/badge/cli-bootstrap--ai-orange)](./bin/bootstrap-ai)
 
-*CLI + sistema de presets que transforma pastas vazias em projetos prontos para produção — e traz estrutura para projetos existentes. Feito para [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+*CLI + sistema de presets que transforma pastas vazias em projetos prontos para produção — e traz estrutura para projetos existentes. Feito para [Claude Code](https://docs.anthropic.com/en/docs/claude-code)*
 
 </div>
 
@@ -23,12 +23,9 @@ Bootstrap AI dá ao seu assistente de IA um cérebro específico por projeto. Em
 
 **Presets são no formato [Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — instalam em `.claude/commands/` e `.claude/settings.json`.
 
-
 ---
 
-## Setup
-
-Instale o comando `/import-project-preset` no seu projeto:
+## Primeiros Passos
 
 ```bash
 # Clone o Bootstrap AI (uma vez)
@@ -39,13 +36,26 @@ cd /tmp/bootstrap-ai
 ./bin/bootstrap-ai install-importer /caminho/do/seu/projeto
 ```
 
-Isso cria `.claude/commands/import-project-preset.md` no seu projeto. Depois execute dentro do Claude Code:
+Depois, dentro do Claude Code:
 
 ```
 /import-project-preset
 ```
 
-O comando detecta sua stack, seleciona o preset mais adequado e aplica com política de escrita segura — nenhum arquivo é sobrescrito.
+**É isso.** O sistema detecta sua stack e aplica o preset correto automaticamente.
+
+| Situação | O que acontece |
+|----------|---------------|
+| **Pasta vazia** | Redireciona para `/kickoff` — 7 perguntas → product brief → seleção de stack → design system → preset aplicado |
+| **Projeto existente** | Detecta stack + libs → seleciona preset → aplica com política de escrita segura → customiza guides com as libs do projeto |
+
+Depois de aplicar, você entra no ciclo de desenvolvimento:
+
+```
+/plan → /jarvis-plan-revisor → implementar → /jarvis-test-flow → /ship
+```
+
+> **💡 Projeto existente?** Depois de importar, rode `/refactor` para alinhar o código real com os padrões do preset.
 
 ---
 
@@ -56,64 +66,11 @@ O comando detecta sua stack, seleciona o preset mais adequado e aplica com polí
 Quando você roda `/import-project-preset`, o sistema:
 
 1. **Detecta** sua stack escaneando arquivos assinatura (`pubspec.yaml`, `package.json`, `pyproject.toml`, etc.)
-2. **Analisa** bibliotecas estruturais (Riverpod, TanStack Query, Prisma, SQLAlchemy, etc.)
-3. **Direciona** baseado no estado da pasta:
+2. **Direciona** baseado no estado da pasta:
    - **Pasta vazia** → redireciona para `/kickoff` (7 perguntas → product brief → seleção de stack → `/design-phase` → apply do preset)
-   - **Tem código** → auto-seleciona o preset correspondente → mostra preview do diff → aplica com política de escrita segura
-4. **Sincroniza Design System** — se o projeto já tem tokens de cor, tipografia ou espaçamento, o `DESIGN_SYSTEM.md` é reescrito com a identidade real do projeto em vez do template genérico
-5. **Customiza guides com libs detectadas** — ARCHITECTURE.md, CODING_STANDARDS.md, DATABASE_GUIDE.md etc. são enriquecidos com padrões específicos das bibliotecas que o projeto realmente usa (convenções Riverpod, query patterns Prisma, cache strategies TanStack Query, etc.)
-6. **Resultado** — projeto scaffolded e pronto para o ciclo de desenvolvimento
-
----
-
-## Quick Start — Projeto Novo
-
-Começando de uma pasta vazia? Bootstrap AI te guia por um fluxo completo de greenfield: defina o produto, escolha a stack, gere um design system e aplique o preset correto.
-
-```bash
-mkdir meu-projeto && cd meu-projeto
-git init
-```
-
-Depois, dentro do Claude Code, execute:
-
-```
-/import-project-preset
-```
-
-Bootstrap AI detecta a pasta vazia e te redireciona para `/kickoff`, que passa por:
-
-1. **7 perguntas** sobre seu produto → gera `PRODUCT_BRIEF.md`
-2. **Seleção de stack** → escolha entre os presets suportados
-3. **`/design-phase`** → extraia de um link Figma Make ou gere um design system via IA
-4. **Apply do preset** → projeto scaffolded e pronto
-
-Agora você está no loop de lifecycle:
-
-```
-/plan → /jarvis-plan-revisor → implementar → /jarvis-test-flow → /ship
-```
-
----
-
-## Quick Start — Projeto Existente
-
-Já tem um codebase? Bootstrap AI detecta sua stack e aplica um preset sem destruir nada.
-
-```
-/import-project-preset
-```
-
-Só isso. O CLI:
-
-1. **Detecta** sua stack via regras do `manifest.yaml`
-2. **Analisa** bibliotecas estruturais (Riverpod, TanStack Query, Prisma, etc.)
-3. **Seleciona** o preset mais adequado
-4. **Aplica** arquivos usando política de escrita segura (veja abaixo)
-
-Nenhum arquivo é sobrescrito. Se um arquivo difere do preset, uma cópia `.kit-new` é criada para você revisar.
-
-> **💡 Dica:** Depois de importar o preset num projeto existente, rode `/refactor` para alinhar o código com os padrões definidos pelo preset. O `/refactor` usa as guides customizadas (ARCHITECTURE.md, CODING_STANDARDS.md, etc.) como base e ajusta a estrutura real do projeto — renomeia arquivos, reorganiza pastas, corrige imports e padroniza convenções. É o passo que transforma "preset aplicado" em "projeto realmente consistente".
+   - **Tem código** → analisa libs estruturais → auto-seleciona o preset → aplica com política de escrita segura
+3. **Sincroniza Design System** — se o projeto já tem tokens de cor, tipografia ou espaçamento, o `DESIGN_SYSTEM.md` é reescrito com a identidade real do projeto
+4. **Customiza guides com libs detectadas** — ARCHITECTURE.md, CODING_STANDARDS.md, DATABASE_GUIDE.md etc. são enriquecidos com padrões específicos das bibliotecas que o projeto realmente usa
 
 ---
 
@@ -159,8 +116,8 @@ O loop de desenvolvimento principal — execute em sequência:
 
 | Comando | Finalidade |
 |---------|------------|
-| `/jarvis-revisor` | Revisa qualidade do código e sugere melhorias |
-| `/jarvis-full-test` | Executa suite de testes completa fora do lifecycle |
+| `/jarvis-revisor` | Auditoria global do projeto — revisa qualidade e sugere melhorias |
+| `/jarvis-full-test` | Regressão completa — executa suite de testes fora do lifecycle |
 | `/refactor` | Workflow estruturado de refatoração |
 | `/import-project-preset` | Detecta stack e aplica ou cria um preset |
 | `/kickoff` | Fluxo greenfield: 7 perguntas → product brief → seleção de stack |
