@@ -2,12 +2,6 @@
 
 Como desenvolver features novas no Python backend.
 
-## Processo
-
-1. Ler docs relevantes em `docs/ai/`.
-2. Criar plano em `plans/YYYY-MM-DD-<slug>.md`.
-3. Implementar seguindo as convenções deste guide.
-
 ## Nova feature passo a passo
 
 ### 1. Criar migration
@@ -203,4 +197,3 @@ async def get_order(
 - Nunca pular camada.
 - Nunca criar endpoint sem schema de request e response.
 - Nunca criar tabela sem migration com downgrade.
-- Testes seguem `docs/ai/TESTING_GUIDE.md`.

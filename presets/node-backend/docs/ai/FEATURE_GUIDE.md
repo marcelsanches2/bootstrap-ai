@@ -2,12 +2,6 @@
 
 Como desenvolver features novas no Node.js backend.
 
-## Processo
-
-1. Ler docs relevantes em `docs/ai/`.
-2. Criar plano em `plans/YYYY-MM-DD-<slug>.md`.
-3. Implementar seguindo as convenções deste guide.
-
 ## Nova feature passo a passo
 
 ### 1. Atualizar Prisma schema

@@ -6,22 +6,6 @@ Este documento força a revisão dos pontos que normalmente quebram quando uma a
 
 Escalabilidade aqui não significa microservices por padrão. Significa saber onde o sistema vai falhar primeiro e deixar o plano preparado para diagnosticar, limitar e recuperar.
 
-## Quando carregar
-
-Leia este guia quando a tarefa envolver:
-
-- endpoint ou job de alto volume
-- operação de escrita concorrente
-- tabela que pode crescer muito
-- listagem, busca, feed, relatório ou exportação
-- processamento assíncrono/fila
-- cache
-- upload/download
-- integração externa crítica
-- mudança em banco, índice, query ou transação
-- feature que será exposta para muitos usuários
-- qualquer plano que fale em produção, escala, performance ou grande volume
-
 ## Banco de dados
 
 ### Queries

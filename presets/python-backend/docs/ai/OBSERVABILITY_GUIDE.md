@@ -181,8 +181,6 @@ Monitorar quando volume cresce:
 - External calls acumulando timeout.
 - Queue depth crescendo sem consumir.
 
-Quando detectar: consultar `docs/ai/SCALABILITY_GUIDE.md`.
-
 ## Regras duras
 
 - Nunca logar dados sensíveis (senha, token, PII).
