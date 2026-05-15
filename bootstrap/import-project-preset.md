@@ -241,14 +241,20 @@ Isso detecta tecnologias centrais e bibliotecas estruturais por arquivos reais d
 
 ```bash
 KIT="$( $BOOTSTRAP_AI_DIR/bin/bootstrap-ai select "$ROOT" --create-missing --print-kit )"
-printf 'Kit selecionado: %s\n' "$KIT"
+printf 'Preset selecionado: %s\n' "$KIT"
 ```
 
 Regra:
 
-- se um preset existente cobre a stack e as bibliotecas estruturais → use esse kit
-- se a stack ou biblioteca estrutural não for coberta → crie novo preset via `kit create`
+- se um preset existente cobre a stack e as bibliotecas estruturais → use esse preset
+- se a stack ou biblioteca estrutural não for coberta → crie novo preset via `generators/skill-creator/prompts/create-new-preset.md`
 - exemplos que criam preset novo: Rails, Go, Python+React no mesmo repo, React+Node API no mesmo repo, stack híbrida sem cobertura
+
+Ao criar um preset novo, siga rigorosamente os padrões de nomenclatura:
+- **Roles** (pessoas): `role-<disciplina>.md` ou `role-<stack>-<disciplina>.md`
+- **Reviews** (óticas técnicas): `review-<dominio>.md`
+- **Docs**: `UPPER_SNAKE_CASE.md` — guias com `_GUIDE`, referências sem sufixo
+- **Separação de responsabilidades**: cada arquivo faz UMA coisa
 
 ### 6. Mostrar diff
 

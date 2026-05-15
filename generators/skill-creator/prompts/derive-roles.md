@@ -16,18 +16,31 @@ Leia os roles dos presets existentes antes de gerar:
 - `presets/react-web/.claude/commands/product_roles/role-*.md` — frontend completo
 - `presets/node-backend/.claude/commands/product_roles/role-*.md` — backend Node
 - `presets/flutter-app/.claude/commands/product_roles/role-*.md` — mobile Flutter
-- `common/roles/role-*.md` — roles genéricos como fallback
+- `common/roles/` — roles genéricos (copiar diretamente)
 
-## Roles obrigatórios (toda stack)
+## Padrão de nomenclatura
 
-### role-pm.md (~80+ linhas)
+| Tipo | Prefixo | Exemplos |
+|---|---|---|
+| Pessoa que revisa | `role-` | `role-architect.md`, `role-pm.md`, `role-designer.md`, `role-delivery.md` |
+| Pessoa + stack | `role-<stack>-` | `role-flutter-qa.md`, `role-web-qa.md`, `role-api-qa.md` |
+| Ótica técnica | `review-` | `review-database.md`, `review-api.md`, `review-security.md` |
 
-Perspectiva de produto:
-- Objetivo: validar que o plano descreve comportamento, não só arquitetura
-- Checklist: objetivo claro, fluxo principal, fluxos alternativos, error states, loading states, empty states, critérios de aceite
-- Regra dura: plano sem comportamento não está pronto
+Sempre em inglês. Sempre kebab-case. Cada arquivo ~40-50 linhas (objetivo + checklist + regra dura, SEM boilerplate de Entrada/Método/Saída).
 
-### role-delivery.md (~60+ linhas)
+## Roles genéricos (copiar de common/roles/, não reescrever)
+
+- `role-architect.md`
+- `role-pm.md`
+- `role-delivery.md`
+
+## Reviews genéricos (copiar de common/roles/ quando aplicável)
+
+- Backend: `review-api.md`, `review-database.md`, `review-security.md`, `review-observability.md`, `review-scalability.md`
+- Frontend: `review-accessibility.md`, `review-performance.md`
+- Todos: `review-testing.md`
+
+## Roles específicos (criar para a stack)
 
 Perspectiva de entrega:
 - Objetivo: validar que o plano é implementável sem surpresas
