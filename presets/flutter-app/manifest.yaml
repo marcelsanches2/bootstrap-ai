@@ -10,7 +10,7 @@ required_files:
   - .claude/commands/refactor.md
   - .claude/commands/kickoff.md
   - .claude/commands/design-phase.md
-  - .claude/commands/carregar-contexto-projeto.md
+
   - .claude/commands/jarvis-plan-revisor.md
   - .claude/commands/jarvis-test-flow.md
   - .claude/commands/product_roles/role-architect.md
