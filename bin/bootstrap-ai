@@ -529,7 +529,7 @@ def validate(args):
         if len(lines)<5: warnings.append(f'{rel_f}: too short ({len(lines)} non-empty lines, min 5)')
         # specific minimums
         if f.name=='CLAUDE.md' and len(lines)<40: warnings.append(f'{rel_f}: CLAUDE.md too short ({len(lines)} lines, min 40)')
-        if 'product_roles' in str(f) and len(lines)<15: warnings.append(f'{rel_f}: role/review too short ({len(lines)} lines, min 15)')
+        if 'product_roles' in str(f) and not f.name.startswith(('carregar-','consolidar-','gerar-','localizar-','checklist-')) and len(lines)<15: warnings.append(f'{rel_f}: role/review too short ({len(lines)} lines, min 15)')
         if f.parent.name=='ai' and len(lines)<30: warnings.append(f'{rel_f}: doc too short ({len(lines)} lines, min 30)')
         if f.name.startswith('jarvis-test-flow') and len(lines)<50: warnings.append(f'{rel_f}: test flow too short ({len(lines)} lines, min 50)')
         if f.name.startswith('jarvis-plan-revisor') and len(lines)<30: warnings.append(f'{rel_f}: revisor too short ({len(lines)} lines, min 30)')
