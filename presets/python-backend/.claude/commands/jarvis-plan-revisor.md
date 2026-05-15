@@ -63,10 +63,6 @@ Use a lógica da skill filha:
 
 `product_roles/carregar-referencias.md`
 
-Carregue também o checklist operacional compartilhado (uma vez, não por role):
-
-`product_roles/checklist-operacional.md`
-
 Carregue, se existirem:
 
 - `docs/ai/ARCHITECTURE.md`

@@ -536,7 +536,7 @@ def validate(args):
     # naming convention checks
     for f in sorted((kp/'.claude/commands/product_roles').glob('*.md')):
         # helpers (carregar-*, consolidar-*, gerar-*, localizar-*, checklist-*) are not roles/reviews
-        if any(f.name.startswith(p) for p in ['carregar-','consolidar-','gerar-','localizar-','checklist-']): continue
+        if any(f.name.startswith(p) for p in ['carregar-','consolidar-','gerar-','localizar-']): continue
         if f.name.startswith('role-') or f.name.startswith('review-'): continue
         warnings.append(f'product_roles/{f.name}: must start with role- or review-')
     for f in sorted((kp/'docs/ai').glob('*.md')):
