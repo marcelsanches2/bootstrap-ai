@@ -135,7 +135,7 @@ Baseado nas respostas (especialmente pergunta 5 e 6), decida a stack:
 
 ### Tabela de mapeamento
 
-| Plataforma | Stack sugerida | Kit correspondente |
+| Plataforma | Stack sugerida | Preset correspondente |
 |---|---|---|
 | Mobile iOS/Android | Flutter + Dart | `flutter-app` |
 | Web app (frontend) | React + TypeScript + Vite | `react-web` |

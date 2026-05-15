@@ -5,7 +5,7 @@ Gere os guias em `docs/ai/` com conteúdo **específico para a stack** — não 
 ## Input
 
 - **Stack**: `{{DESCRIPTION}}`
-- **Nome do preset**: `{{KIT_NAME}}`
+- **Nome do preset**: `{{PRESET_NAME}}`
 - **Tipo**: backend / frontend / mobile (inferir pela descrição)
 
 ## Referência OBRIGATÓRIA

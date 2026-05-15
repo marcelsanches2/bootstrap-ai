@@ -5,7 +5,7 @@ Gere os roles de revisão em `.claude/commands/product_roles/` específicos para
 ## Input
 
 - **Stack**: `{{DESCRIPTION}}`
-- **Nome dO preset**: `{{KIT_NAME}}`
+- **Nome dO preset**: `{{PRESET_NAME}}`
 - **Tipo**: backend / frontend / mobile (inferir pela descrição)
 
 ## Referência

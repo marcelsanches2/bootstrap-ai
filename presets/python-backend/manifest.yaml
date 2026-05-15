@@ -1,17 +1,41 @@
 name: python-backend
 version: 1
 description: "Python backend lifecycle preset"
+
 required_files:
   - CLAUDE.md
+  - .claude/settings.json
+  - .claude/commands/plan.md
+  - .claude/commands/ship.md
+  - .claude/commands/refactor.md
+  - .claude/commands/kickoff.md
+  - .claude/commands/design-phase.md
   - .claude/commands/jarvis-plan-revisor.md
   - .claude/commands/jarvis-test-flow.md
-  - .claude/commands/refactor.md
-  - .claude/commands/product_roles/review-database.md
+  - .claude/commands/product_roles/role-architect.md
+  - .claude/commands/product_roles/role-backend-architect.md
+  - .claude/commands/product_roles/role-api-qa.md
+  - .claude/commands/product_roles/role-pm.md
+  - .claude/commands/product_roles/role-delivery.md
   - .claude/commands/product_roles/review-api.md
+  - .claude/commands/product_roles/review-database.md
   - .claude/commands/product_roles/review-scalability.md
+  - .claude/commands/product_roles/review-security.md
+  - .claude/commands/product_roles/review-observability.md
+  - .claude/commands/product_roles/carregar-referencias.md
+  - .claude/commands/product_roles/consolidar-parecer.md
+  - .claude/commands/product_roles/gerar-relatorio.md
+  - .claude/commands/product_roles/localizar-plano.md
+  - docs/ai/ARCHITECTURE.md
+  - docs/ai/CODING_STANDARDS.md
   - docs/ai/API_GUIDE.md
   - docs/ai/DATABASE_GUIDE.md
   - docs/ai/SCALABILITY_GUIDE.md
+  - docs/ai/SECURITY_GUIDE.md
+  - docs/ai/OBSERVABILITY_GUIDE.md
+  - docs/ai/DEPLOYMENT_GUIDE.md
+  - docs/ai/TESTING_GUIDE.md
+  - docs/ai/FEATURE_GUIDE.md
 
 tech_tags:
   - python

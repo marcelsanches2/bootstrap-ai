@@ -57,10 +57,10 @@ presets/<nome>/
 
 ## Estrutura dos prompts
 
-- `prompts/create-new-kit.md` — Instrução principal para gerar o preset completo
+- `prompts/create-new-preset.md` — Instrução principal para gerar o preset completo
 - `prompts/derive-docs-ai.md` — Deriva guias `docs/ai/` específicos da stack
 - `prompts/derive-roles.md` — Deriva roles de revisão específicos da stack
-- `prompts/derive-jarvis-test-flow.md` — Deriva pipeline de teste específico da stack
+- `prompts/derive-test-flow.md` — Deriva pipeline de teste específico da stack
 
 ## Estrutura dos templates
 

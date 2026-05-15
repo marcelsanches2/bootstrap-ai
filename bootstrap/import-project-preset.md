@@ -240,7 +240,7 @@ Isso detecta tecnologias centrais e bibliotecas estruturais por arquivos reais d
 ### 5. Selecionar ou criar preset específico
 
 ```bash
-KIT="$( $BOOTSTRAP_AI_DIR/bin/bootstrap-ai select "$ROOT" --create-missing --print-kit )"
+KIT="$( $BOOTSTRAP_AI_DIR/bin/bootstrap-ai select "$ROOT" --create-missing --print-preset )"
 printf 'Preset selecionado: %s\n' "$KIT"
 ```
 
@@ -268,7 +268,7 @@ Explique que:
 - `Would skip identical` = já iguais
 - `Would conflict` = serão criados como `.kit-new`
 
-### 7. Aplicar kit com substituição de placeholders
+### 7. Aplicar preset com substituição de placeholders
 
 Detecte o nome do projeto antes de aplicar:
 

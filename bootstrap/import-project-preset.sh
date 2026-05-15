@@ -124,7 +124,7 @@ git -C "$BOOTSTRAP_AI_DIR" pull --ff-only
 
 log "analisando stack e cobertura do kit"
 "$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" analyze "$ROOT"
-KIT="$($BOOTSTRAP_AI_DIR/bin/bootstrap-ai select "$ROOT" --create-missing --print-kit)"
+KIT="$($BOOTSTRAP_AI_DIR/bin/bootstrap-ai select "$ROOT" --create-missing --print-preset)"
 log "kit selecionado: $KIT"
 
 log "diff não destrutivo"

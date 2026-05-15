@@ -5,7 +5,7 @@ Crie um preset completo para uma nova tecnologia seguindo os padrões do Bootstr
 ## Input
 
 O usuário forneceu:
-- **Nome do preset**: `{{KIT_NAME}}`
+- **Nome do preset**: `{{PRESET_NAME}}`
 - **Descrição da stack**: `{{DESCRIPTION}}`
 
 ## Referência

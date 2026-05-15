@@ -1,15 +1,37 @@
 name: react-web
 version: 1
 description: "React web lifecycle preset"
+
 required_files:
   - CLAUDE.md
+  - .claude/settings.json
+  - .claude/commands/plan.md
+  - .claude/commands/ship.md
+  - .claude/commands/refactor.md
+  - .claude/commands/kickoff.md
+  - .claude/commands/design-phase.md
   - .claude/commands/jarvis-plan-revisor.md
   - .claude/commands/jarvis-test-flow.md
-  - .claude/commands/refactor.md
+  - .claude/commands/product_roles/role-architect.md
+  - .claude/commands/product_roles/role-frontend-architect.md
+  - .claude/commands/product_roles/role-designer.md
+  - .claude/commands/product_roles/role-web-qa.md
+  - .claude/commands/product_roles/role-pm.md
+  - .claude/commands/product_roles/role-delivery.md
   - .claude/commands/product_roles/review-accessibility.md
   - .claude/commands/product_roles/review-performance.md
+  - .claude/commands/product_roles/carregar-referencias.md
+  - .claude/commands/product_roles/consolidar-parecer.md
+  - .claude/commands/product_roles/gerar-relatorio.md
+  - .claude/commands/product_roles/localizar-plano.md
+  - docs/ai/ARCHITECTURE.md
+  - docs/ai/CODING_STANDARDS.md
   - docs/ai/DESIGN_SYSTEM.md
   - docs/ai/ACCESSIBILITY_GUIDE.md
+  - docs/ai/PERFORMANCE_GUIDE.md
+  - docs/ai/DEPLOYMENT_GUIDE.md
+  - docs/ai/TESTING_GUIDE.md
+  - docs/ai/FEATURE_GUIDE.md
 
 tech_tags:
   - node

@@ -33,7 +33,7 @@ bootstrap-ai/
 │   ├── prompts/                 # Instruções para criação de preset, docs, roles, jarvis-test-flow
 │   └── templates/               # Templates com placeholders para gerar arquivos
 ├── bootstrap/                   # Importer de arquivo único
-│   ├── import-project-preset.md    # Skill Claude Code para importar kit
+│   ├── import-project-preset.md    # Skill Claude Code para importar preset
 │   └── import-project-preset.sh    # Script shell alternativo
 └── refreshers/                  # Configs de refresh por stack (yaml)
 ```
@@ -121,7 +121,7 @@ Além da stack principal, o `analyze` detecta bibliotecas que definem arquitetur
 - **Python**: sqlalchemy, alembic, pydantic, celery, fastapi
 - **Node**: prisma, drizzle, zod
 
-Biblioteca estrutural não coberta pelo preset selecionado → cria kit novo automaticamente via `skill-creator`.
+Biblioteca estrutural não coberta pelo preset selecionado → cria preset novo automaticamente via `skill-creator`.
 
 ## Regras de qualidade para presets
 
