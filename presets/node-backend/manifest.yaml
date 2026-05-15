@@ -26,6 +26,7 @@ required_files:
   - .claude/commands/product_roles/consolidar-parecer.md
   - .claude/commands/product_roles/gerar-relatorio.md
   - .claude/commands/product_roles/localizar-plano.md
+  - .claude/commands/product_roles/checklist-operacional.md
   - docs/ai/ARCHITECTURE.md
   - docs/ai/CODING_STANDARDS.md
   - docs/ai/API_GUIDE.md
