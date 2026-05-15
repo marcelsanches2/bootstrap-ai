@@ -57,15 +57,6 @@ Os arquivos em `docs/ai/` devem ser lidos conforme o tipo da tarefa. Não leia t
 - Não criar abstração antes de existir pelo menos um uso real.
 - Plano que toca caminho crítico, banco crescente, fila ou integração externa precisa tratar escala, limites e diagnóstico.
 
-## Processo obrigatório para mudanças não triviais
-
-1. Criar plano em `plans/` com escopo, arquivos, riscos e testes.
-2. Rodar `/jarvis-plan-revisor`.
-3. Sanar `BLOCKER` e `MAJOR`.
-4. Implementar somente o plano revisado, em passos pequenos.
-5. Rodar `/jarvis-test-flow`.
-6. Rodar `/ship`.
-
 ## Depois de alterar
 
 - Rode `npm run lint` quando existir.
