@@ -82,8 +82,39 @@ Diretórios monitorados: `lib/`, `integration_test/`, `pubspec.yaml`, etc.
 
 ## Qualidade mínima
 
-- Mínimo 200 linhas (~9000+ chars).
-- Pipeline com comandos reais da stack (não genéricos).
-- Loop de diagnóstico com causas específicas da stack.
-- Commit/push com as mesmas regras duras dos presets existentes.
-- Restrições obrigatórias completas.
+- **Barra de qualidade = presets existentes** (~9000+ chars). Se ficou mais curto, está incompleto.
+- Pipeline com **comandos reais da stack** (ex: `ruff check . --fix`, `flutter test --coverage`, `npx prisma migrate status`) — nunca genéricos
+- Loop de diagnóstico com causas específicas da stack e exemplos concretos de correção
+- Commit/push com as mesmas regras duras dos presets existentes
+- Restrições obrigatórias completas
+- Incluir tabela de classificação de causas com ação para cada tipo
+
+## Exemplo de conteúdo stack-specific
+
+**RUIM:**
+```
+4. Execute test runner
+   Se falhar, verifique o erro e corrija.
+```
+
+**BOM:**
+```
+4. Executar pipeline
+
+```bash
+cd $ROOT
+# 1. Lint
+ruff check . --fix --unsafe-fixes
+# 2. Typecheck  
+mypy src/ --strict
+# 3. Tests
+pytest tests/ -x --tb=short --cov=src --cov-report=term-missing
+# 4. Migration check
+alembic check
+alembic upgrade head
+# 5. Build
+docker build -t $PROJECT_NAME:test .
+# 6. Healthcheck
+curl -sf http://localhost:8000/health || echo "FAIL"
+```
+```
