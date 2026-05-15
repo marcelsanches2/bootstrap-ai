@@ -6,6 +6,7 @@
 
 **Entregue projetos com IA usando estrutura, não caos.**
 
+[![GitHub stars](https://img.shields.io/github/stars/marcelsanches2/bootstrap-ai?style=social)](https://github.com/marcelsanches2/bootstrap-ai/stargazers)
 [![License: AGPLv3](https://img.shields.io/badge/license-AGPLv3-blue)](./LICENSE)
 [![Presets](https://img.shields.io/badge/presets-4-blueviolet)](./presets)
 [![CLI](https://img.shields.io/badge/cli-bootstrap--ai-orange)](./bin/bootstrap-ai)
