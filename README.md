@@ -74,7 +74,7 @@ mkdir meu-projeto && cd meu-projeto
 git init
 ```
 
-Depois, dentro do Claude Code ou Hermes Agent, execute:
+Depois, dentro do Claude Code, execute:
 
 ```
 /import-project-preset

@@ -2,7 +2,7 @@ version: 1
 
 repo:
   name: bootstrap-ai
-  description: Project lifecycle presets for Claude Code and Hermes
+  description: Project lifecycle presets for Claude Code
 
 defaults:
   conflict_policy: keep-existing-create-new

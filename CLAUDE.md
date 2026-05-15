@@ -2,7 +2,7 @@
 
 ## Projeto
 
-Repositório de presets de lifecycle para projetos com Claude Code e Hermes.
+Repositório de presets de lifecycle para projetos com Claude Code.
 
 Cada preset é um pacote autocontido que instala processo operacional em um projeto alvo:
 
