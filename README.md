@@ -113,6 +113,8 @@ Só isso. O CLI:
 
 Nenhum arquivo é sobrescrito. Se um arquivo difere do preset, uma cópia `.kit-new` é criada para você revisar.
 
+> **💡 Dica:** Depois de importar o preset num projeto existente, rode `/refactor` para alinhar o código com os padrões definidos pelo preset. O `/refactor` usa as guides customizadas (ARCHITECTURE.md, CODING_STANDARDS.md, etc.) como base e ajusta a estrutura real do projeto — renomeia arquivos, reorganiza pastas, corrige imports e padroniza convenções. É o passo que transforma "preset aplicado" em "projeto realmente consistente".
+
 ---
 
 ## Presets

@@ -519,7 +519,9 @@ Conflitos .kit-new: <n>
 Design System: sincronizado / template genérico
 Libs detectadas: <lista>
 Guides customizados: <n> arquivos com <n> libs
-Próximo passo sugerido: /refactor, se o projeto já existe; /plan, se projeto novo.
+Próximo passo sugerido:
+  - Projeto existente: /refactor (alinha código real com os padrões do preset)
+  - Projeto novo: /plan (começa o ciclo de desenvolvimento)
 ```
 
 ## Próximos passos
