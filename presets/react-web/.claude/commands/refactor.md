@@ -91,6 +91,19 @@ Rode `/jarvis-plan-revisor` no plano criado.
 - Se houver MAJOR: sane com o usuário antes de executar.
 - Só implemente depois do plano revisado.
 
+### 4b. Approval Gate
+
+Após revisão aprovada (zero BLOCKER, zero MAJOR), apresente:
+
+- Resumo do plano de refatoração
+- Número de fases
+- Risco principal
+- Arquivos prováveis
+
+Pergunte: **"Aprovar execução da refatoração? (sim/não)"**
+
+Só execute após confirmação explícita.
+
 ### 5. Executar incrementalmente
 
 Para cada fase aprovada:
@@ -130,17 +143,3 @@ Conteúdo:
 - Não usar `--no-verify`.
 - Não fazer push force.
 - Se o projeto já tem padrão divergente dos docs, registre o conflito antes de mudar.
-
-
-## Regras específicas React Web
-
-Validar especialmente:
-
-- componentização e boundaries por feature
-- data fetching explícito
-- estado global só quando necessário
-- design system/tokens
-- loading/empty/error/success states
-- acessibilidade: foco, teclado, labels, contraste
-- performance: bundle, lazy loading, renderizações
-- lint, typecheck, testes e build production

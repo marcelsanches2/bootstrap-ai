@@ -91,6 +91,19 @@ Rode `/jarvis-plan-revisor` no plano criado.
 - Se houver MAJOR: sane com o usuário antes de executar.
 - Só implemente depois do plano revisado.
 
+### 4b. Approval Gate
+
+Após revisão aprovada (zero BLOCKER, zero MAJOR), apresente:
+
+- Resumo do plano de refatoração
+- Número de fases
+- Risco principal
+- Arquivos prováveis
+
+Pergunte: **"Aprovar execução da refatoração? (sim/não)"**
+
+Só execute após confirmação explícita.
+
 ### 5. Executar incrementalmente
 
 Para cada fase aprovada:

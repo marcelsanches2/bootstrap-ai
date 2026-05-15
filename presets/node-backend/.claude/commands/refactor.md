@@ -91,6 +91,19 @@ Rode `/jarvis-plan-revisor` no plano criado.
 - Se houver MAJOR: sane com o usuário antes de executar.
 - Só implemente depois do plano revisado.
 
+### 4b. Approval Gate
+
+Após revisão aprovada (zero BLOCKER, zero MAJOR), apresente:
+
+- Resumo do plano de refatoração
+- Número de fases
+- Risco principal
+- Arquivos prováveis
+
+Pergunte: **"Aprovar execução da refatoração? (sim/não)"**
+
+Só execute após confirmação explícita.
+
 ### 5. Executar incrementalmente
 
 Para cada fase aprovada:
@@ -130,17 +143,3 @@ Conteúdo:
 - Não usar `--no-verify`.
 - Não fazer push force.
 - Se o projeto já tem padrão divergente dos docs, registre o conflito antes de mudar.
-
-
-## Regras específicas Node backend
-
-Validar especialmente:
-
-- separação transport/application/domain/infrastructure
-- contratos HTTP e schemas
-- async error handling
-- migrations e transações
-- auth/autorização
-- logs sem dados sensíveis
-- lint, typecheck, testes e build
-- healthcheck e deploy systemd/nginx quando aplicável

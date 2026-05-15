@@ -8,3 +8,12 @@ Checklist final antes de encerrar uma mudança.
 4. Garantir que não há secrets, logs sensíveis ou arquivos temporários.
 5. Resumir arquivos alterados, comandos executados, riscos restantes e próximo passo.
 6. Não fazer push force.
+
+## Approval Gate
+
+Antes de concluir, apresente o resumo e pergunte:
+
+**"Ship aprovado? Tudo pronto para commit/push? (sim/não)"**
+
+- **Sim** → prosseguir com commit e push.
+- **Não** → parar, registrar o que falta, aguardar correção.

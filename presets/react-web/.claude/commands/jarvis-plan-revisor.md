@@ -248,41 +248,70 @@ Use exatamente um:
 
 ---
 
-## 7. Sanar pendências MAJOR (interativo)
+## 7. Loop Corretivo
 
-Após gerar o relatório e a consolidação:
+**Condição de entrada:** existem pendências BLOCKER ou MAJOR.
 
-- Se houver **qualquer BLOCKER**:
-  - Informe o usuário que o plano possui bloqueios estruturais que impedem aprovação.
-  - Pare aqui. Não inicie a interação de MAJOR enquanto existir BLOCKER não resolvido.
-  - O apend da revisão só ocorre quando zero BLOCKER existir.
-- Se houver **pendências MAJOR** e zero BLOCKER:
-  - Apresente **cada** pendência MAJOR como uma pergunta concreta ao usuário.
-  - Formato sugerido:  
-    `Pendência MAJOR #N: [descrição do problema]. Como você deseja sanar este ponto?`
-  - Aguarde a resposta do usuário antes de passar para a próxima pendência.
-  - Avalie se a resposta sanou completamente a pendência. Se não sanou, reformule e pergunte novamente.
-  - Só prossiga para a próxima MAJOR quando a atual estiver sanada.
-  - Repita até que **todas** as pendências MAJOR tenham sido sanadas.
-  - Durante esse processo, vá atualizando mentalmente o relatório com as respostas do usuário (elas serão refletidas no plano completo final).
+### 7a. Tratamento de BLOCKERs
+
+Se houver qualquer BLOCKER:
+
+1. Informe o usuário que o plano possui bloqueios estruturais.
+2. Para cada BLOCKER, apresente: problema + correção sugerida.
+3. Aguarde resposta do usuário com a correção.
+4. Revalide apenas o ponto corrigido.
+5. Repita até zero BLOCKER.
+
+O loop não avança para MAJOR enquanto existir BLOCKER.
+
+### 7b. Loop de MAJORs (máximo 3 iterações por pendência)
+
+Para cada pendência MAJOR:
+
+1. Apresente: `Pendência MAJOR #N: [descrição]. Como deseja sanar?`
+2. Aguarde resposta.
+3. Avalie: sanou completamente?
+   - **Sim** → remover da lista, registrar solução.
+   - **Não** → reformular e perguntar novamente.
+   - **3 iterações sem resolver** → escalar: informe que não convergiu e peça decisão.
+4. Só passe para a próxima MAJOR quando a atual estiver sanada.
+
+Durante o loop, atualize o relatório com as respostas.
+
+**Condição de saída:** zero BLOCKER + zero MAJOR pendentes.
+
+Se o loop diverge (mais pendências surgem do que resolvem), pare e escale.
 
 ---
 
-## 8. Apendar revisão no plano original
+## 8. Approval Gate — Aprovação Final
 
-Somente quando:
-- Zero BLOCKER
-- Zero MAJOR pendentes (todas sanadas na etapa 7 ou inexistentes)
+Somente quando zero BLOCKER e zero MAJOR pendentes.
 
-Ações:
+1. Apresente resumo executivo:
+   - Plano: `<arquivo>`
+   - Roles que revisaram
+   - Pendências sanadas (resumo)
+   - MINORs restantes (se houver)
+   - Veredito proposto
+2. Pergunte explicitamente: **"Aprovar revisão e apendar no plano? (sim/não)"**
+3. Aguarde resposta.
+   - **Sim** → execute o apend (seção 9).
+   - **Não** → pare, registre motivo, sugira próximos passos.
+   - Resposta ambígua → esclareça antes de prosseguir.
+
+---
+
+## 9. Apendar revisão no plano original
+
+Após aprovação no gate (seção 8):
+
 1. Leia o arquivo do plano original identificado na etapa 1.
-2. Localize o final do arquivo.
-3. Adicione uma separação `---` e, em seguida, o relatório final completo da revisão (referências, pareceres por papel, cenários de teste, pendências consolidadas — incluindo as MAJOR sanadas, próximas ações e veredito).
-4. Use `Write` para sobrescrever o arquivo do plano com a concatenação:  
-   `[conteúdo original do plano]\n\n---\n\n[relatório da revisão]`
-5. Informe o usuário que o plano completo foi salvo em `<arquivo>`.
+2. Adicione `---` seguido do relatório final completo (referências, pareceres, cenários de teste, pendências consolidadas, próximas ações, veredito).
+3. Use `Write` para sobrescrever: `[conteúdo original]\n\n---\n\n[relatório]`.
+4. Informe o usuário que o plano completo foi salvo em `<arquivo>`.
 
-Se o usuário explicitamente pedir para não sobrescrever, salve como `<arquivo-original>.revisado.md` ao lado do original.
+Se o usuário explicitamente pedir para não sobrescrever, salve como `<arquivo-original>.revisado.md`.
 
 ---
 
