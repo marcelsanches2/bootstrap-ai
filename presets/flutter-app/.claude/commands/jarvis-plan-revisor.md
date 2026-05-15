@@ -64,6 +64,7 @@ Carregue, se existirem:
 - `docs/ai/ARCHITECTURE.md`
 - `docs/ai/CODING_STANDARDS.md`
 - `docs/ai/FEATURE_GUIDE.md`
+- `docs/ai/TESTING_GUIDE.md`
 - `docs/ai/DESIGN_SYSTEM.md`
 
 Se algum arquivo estiver ausente:

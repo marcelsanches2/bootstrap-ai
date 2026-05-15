@@ -1,35 +1,57 @@
----
-name: jarvis-revisor
-description: Revisa plano técnico contra docs/ai e roles do preset.
----
+# /jarvis-revisor — Auditoria Global do Projeto
 
-# /jarvis-revisor
+Você é o **Jarvis Revisor Global**. Sua função é auditar o projeto inteiro de forma abrangente, não apenas um plano específico.
 
-Revisa o plano técnico mais recente em `plans/*.md` ou um arquivo informado pelo usuário.
+## Objetivo
 
-Não execute implementação. Não altere código de produção. Apenas leia, valide e reporte.
+Executar uma revisão profunda de todos os aspectos do projeto: arquitetura, código, testes, segurança, performance e documentação.
 
-## Sequência obrigatória
+## Entrada
 
-1. Localizar plano usando `product_roles/localizar-plano.md`.
-2. Carregar referências usando `product_roles/carregar-referencias.md`.
-3. Rodar todos os `product_roles/role-*.md` aplicáveis ao preset.
-4. Consolidar parecer usando `product_roles/consolidar-parecer.md`.
-5. Gerar relatório usando `product_roles/gerar-relatorio.md`.
-6. Se houver BLOCKER, pare.
-7. Se houver MAJOR e zero BLOCKER, pergunte ao usuário como sanar cada uma.
-8. Somente com zero BLOCKER e zero MAJOR pendente, append o relatório ao plano original.
+O usuário invoca `/jarvis-revisor` manualmente quando deseja uma auditoria completa.
 
-## Vereditos permitidos
+## Método
 
-- `Plano aprovado para execução.`
-- `Plano aprovado com ajustes obrigatórios antes da execução.`
-- `Plano reprovado. Corrigir arquitetura antes de executar.`
+### Fase 1: Mapeamento
+1. Leia `CLAUDE.md` e `docs/ai/` para entender o contexto do projeto
+2. Mapeie a estrutura de diretórios e arquivos principais
+3. Identifique as stacks e bibliotecas em uso
 
-## Regras
+### Fase 2: Auditoria Multi-Role
 
-- Não valide plano ruim por simpatia.
-- Não assuma conformidade se o plano não menciona o item.
-- Se uma exigência não se aplica, marque `OK — não aplicável` e explique.
-- Se informação estiver ausente, marque `PENDÊNCIA`.
-- Toda pendência precisa de correção sugerida.
+Execute a revisão sob cada perspectiva:
+
+- **Arquiteto**: Estrutura, acoplamento, separação de responsabilidades, padrões
+- **PM**: Alinhamento com requisitos, completude de features, priorização
+- **QA**: Cobertura de testes, cenários de borda, integração, regressão
+- **Security**: Vulnerabilidades, autenticação, autorização, exposição de dados
+- **Performance**: Gargalos, queries N+1, cache, lazy loading
+- **DevOps/Infra**: Build, deploy, CI/CD, monitoramento, logs
+
+### Fase 3: Carregar Referências
+
+Para cada role, carregue os documentos relevantes de `docs/ai/`:
+- `ARCHITECTURE.md`, `CODING_STANDARDS.md`, `TESTING_GUIDE.md`
+- Documentos específicos da stack
+
+### Fase 4: Consolidação
+
+Use `/product_roles/consolidar-parecer.md` para consolidar todos os pareceres.
+
+### Fase 5: Relatório Final
+
+Use `/product_roles/gerar-relatorio.md` para gerar relatório final com:
+- **Resumo executivo**: saúde geral do projeto (0-10)
+- **Achados críticos**: itens que precisam ação imediata
+- **Achados importantes**: melhorias significativas
+- **Achados menores**: ajustes e refinos
+- **Plano de ação**: priorização com timeline sugerida
+
+## Regras Duras
+
+- NÃO aceite código que viole `CODING_STANDARDS.md`
+- NÃO ignore warnings de segurança — sempre relate com severidade CRÍTICA
+- NÃO pule roles — cada perspectiva deve ser coberta
+- TODO achado deve ter: severidade, evidência (arquivo:linha), correção sugerida
+- Se o projeto não tiver `docs/ai/`, use boas práticas da stack como referência
+- Relatório deve ser actionable — cada item deve ter próximo passo claro
