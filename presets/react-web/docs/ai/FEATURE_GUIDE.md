@@ -87,7 +87,6 @@ Exemplo de fatia vertical para feature de pedidos:
 5. Criar página que compõe tudo (`OrdersPage.tsx`)
 6. Registrar rota
 7. Tratar loading/error/empty
-8. Testar componentes e hook
 
 ---
 
@@ -200,7 +199,6 @@ Critérios devem ser verificáveis por teste ou inspeção objetiva:
 - Responsividade verificada?
 - `npm run build` passa?
 - `npm run lint` passa?
-- Testes cobrem o caminho principal?
 
 ---
 

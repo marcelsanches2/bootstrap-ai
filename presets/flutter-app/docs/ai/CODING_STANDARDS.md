@@ -199,19 +199,6 @@ Melhore o código primeiro.
 
 ---
 
-## Testes
-
-Quando houver regra de negócio relevante, prefira testar:
-
-- usecases
-- repositories
-- mappers
-- controllers
-
-Não criar testes frágeis apenas para aumentar número de testes.
-
----
-
 ## Proibições
 
 Não fazer:

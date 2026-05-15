@@ -161,25 +161,11 @@ Use `@radix-ui/react-dialog` ou equivalente que resolve isso automaticamente:
 </nav>
 ```
 
-## Testes manuais mínimos
-
-Para cada tela/feature:
-
-1. Navegar toda a interface com Tab/Shift+Tab.
-2. Ativar ações com Enter/Espaço.
-3. Verificar foco após submit/erro/modal.
-4. Inspecionar labels e nomes acessíveis (DevTools → Accessibility).
-5. Testar com zoom a 200% sem quebra de layout.
-6. Testar leitor de tela (VoiceOver/NVDA) em fluxo principal.
-
 ## Ferramentas de verificação
 
 ```bash
 # Lint de acessibilidade com eslint-plugin-jsx-a11y
 npx eslint --rule 'jsx-a11y/*: error' src/
-
-# Teste automatizado com axe-core via Vitest
-# Instalar: @axe-core/react para dev, vitest-axe para testes
 ```
 
 ## Anti-patterns

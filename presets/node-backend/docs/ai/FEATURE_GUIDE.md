@@ -108,19 +108,6 @@ export const OrdersController = {
 router.post('/', authMiddleware, validate(createOrderSchema), OrdersController.create);
 ```
 
-### 8. Teste
-
-```typescript
-it('POST /api/v1/orders should return 201', async () => {
-  const res = await request(app)
-    .post('/api/v1/orders')
-    .set('Authorization', `Bearer ${token}`)
-    .send({ items: [{ productId: 1, quantity: 2, unitPrice: 29.90 }] });
-  expect(res.status).toBe(201);
-  expect(res.body.status).toBe('pending');
-});
-```
-
 ## Regras duras
 
 - Sempre: schema → migration → repository → service → controller → route → teste.

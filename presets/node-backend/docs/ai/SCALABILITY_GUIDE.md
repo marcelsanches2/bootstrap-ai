@@ -125,16 +125,6 @@ Verifique:
 - operações caras não rodam no request síncrono sem necessidade
 - endpoint quente tem métrica de latência p95/p99 quando aplicável
 
-## Teste de carga e validação
-
-Nem toda feature precisa de teste de carga. Mas feature de alto risco deve ter validação objetiva:
-
-- microbenchmark de função crítica
-- teste de query com volume representativo
-- teste concorrente para idempotência/lock
-- smoke de carga com `wrk`, `k6`, `locust` ou ferramenta do projeto
-- comparação antes/depois quando tarefa é performance
-
 ## Observabilidade para escala
 
 Escala sem observabilidade vira chute.
