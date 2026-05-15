@@ -168,7 +168,7 @@ Tem front-end? [SIM/NÃO]
 ### Se SIM → direcione para `/design-phase`
 
 Explique as opções:
-1. **"Tenho Figma Make"** → `/design-phase` vai extrair tokens do link
+1. **"Tenho Figma"** → `/design-phase` vai extrair tokens do link
 2. **"Quero que crie"** → `/design-phase` vai gerar design system do zero
 3. **"Depois"** → pula, pode rodar `/design-phase` a qualquer momento
 

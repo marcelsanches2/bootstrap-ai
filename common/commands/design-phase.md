@@ -1,6 +1,6 @@
 # /design-phase
 
-Define o design system visual do projeto. Três modos: extrair do Figma Make, gerar do zero, ou pular.
+Define o design system visual do projeto. Três modos: extrair do Figma, gerar do zero, ou pular.
 
 ## Quando usar
 
@@ -22,7 +22,7 @@ Pergunte:
 ```
 Como você quer definir o design system?
 
-1. "Tenho Figma Make" — vou extrair tokens e componentes do link
+1. "Tenho Figma" — vou extrair tokens e componentes do link
 2. "Crie pra mim" — vou gerar um design system baseado no product brief
 3. "Pula" — sem design system por agora (pode rodar depois)
 
@@ -31,12 +31,12 @@ Responda 1, 2 ou 3.
 
 ---
 
-## Modo 1 — Figma Make (link fornecido)
+## Modo 1 — Figma (link fornecido)
 
 ### Receber o link
 
 ```
-Cole o link do Figma Make (design system).
+Cole o link do Figma (design system).
 ```
 
 ### Extrair informações do link
@@ -60,7 +60,7 @@ Se o link não for diretamente acessível, peça ao usuário para colar o conte�
 ```markdown
 # Design System — {{PROJECT_NAME}}
 
-> Fonte: [Figma Make — link]
+> Fonte: [Figma — link]
 
 ## Tokens
 
@@ -265,8 +265,8 @@ Regras:
 
 ## Pitfalls
 
-- Não invente valores de cores/tipografia se tem Figma Make — use o que veio
-- Se o Figma Make link é inacessível, peça ao usuário para exportar os tokens
+- Não invente valores de cores/tipografia se tem Figma — use o que veio
+- Se o link do Figma é inacessível, peça ao usuário para exportar os tokens
 - Tokens devem ser compatíveis com a stack (CSS vars pra web, Flutter ThemeExtension pra mobile, etc.)
 - Não sobrescreva `DESIGN_SYSTEM.md` existente sem confirmar com o usuário
 - Dark mode é opcional — só gere se o product brief mencionar
