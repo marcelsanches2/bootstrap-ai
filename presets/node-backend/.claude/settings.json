@@ -9,7 +9,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "npx tsc --noEmit 2>&1 | tail -15"
+            "command": "if ! find src/ -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; npx tsc --noEmit 2>&1 | tail -15"
           }
         ]
       },
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"O usuário acabou de aceitar um plano. Invoque imediatamente a skill /jarvis-plan-revisor para revisar o plano aceito. Não execute o plano antes da revisão.\"}}'",
+            "command": "if ! find src/ -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"O usuário acabou de aceitar um plano. Invoque imediatamente a skill /jarvis-plan-revisor para revisar o plano aceito. Não execute o plano antes da revisão.\"}}'",
             "statusMessage": "Disparando revisão do plano..."
           }
         ]
@@ -30,7 +30,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if ! git diff --quiet HEAD -- src/ test/ package.json tsconfig.json 2>/dev/null || [ -n \"$(git ls-files --others --exclude-standard -- src/ test/ 2>/dev/null)\" ]; then echo 'Invoque /jarvis-test-flow agora' >&2; exit 2; fi"
+            "command": "if ! find src/ -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; if ! git diff --quiet HEAD -- src/ test/ package.json tsconfig.json 2>/dev/null || [ -n \"$(git ls-files --others --exclude-standard -- src/ test/ 2>/dev/null)\" ]; then echo 'Invoque /jarvis-test-flow agora' >&2; exit 2; fi"
           }
         ]
       }

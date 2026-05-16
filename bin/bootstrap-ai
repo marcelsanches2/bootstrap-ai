@@ -316,6 +316,18 @@ def score_kit(kname: str, target: Path) -> tuple[int, list[str]]:
         txt=pkg.read_text(errors='ignore') if pkg.exists() else ''
         if 'react' in txt.lower(): score+=50; signals.append('react dependency/string found')
         if any((target/f).exists() for f in ['vite.config.ts','vite.config.js','next.config.js','next.config.mjs']): score+=10; signals.append('web framework config found')
+    elif kname == 'fullstack-web':
+        pkg=target/'package.json'
+        if pkg.exists(): score+=30; signals.append('package.json found')
+        txt=pkg.read_text(errors='ignore') if pkg.exists() else ''
+        # Fullstack frameworks: must have Next/Remix/Nuxt/SvelteKit
+        for dep in ['next','remix','@remix-run/node','nuxt','@sveltejs/kit']:
+            if dep in txt: score+=50; signals.append(f'{dep} dependency found'); break
+        # Config files are strong signals
+        if any((target/f).exists() for f in ['next.config.js','next.config.mjs','next.config.ts','remix.config.js','nuxt.config.ts','svelte.config.js']): score+=30; signals.append('fullstack framework config found')
+        # Backend indicators in same repo boost score over react-web
+        if any((target/d).exists() for d in ['prisma','src/server','server','api','src/repositories','migrations']): score+=15; signals.append('backend layer found in repo')
+        if 'prisma' in txt or 'drizzle' in txt: score+=10; signals.append('ORM dependency found')
     else:
         # generic generated backend/service/frontend hints
         if (target/'go.mod').exists() and 'go' in kname: score+=80; signals.append('go.mod found')

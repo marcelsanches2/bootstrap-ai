@@ -24,7 +24,8 @@ bootstrap-ai/
 │   ├── flutter-app/             # Mobile Flutter — baseado no pacebattle_app@master
 │   ├── python-backend/          # FastAPI/Python backend
 │   ├── react-web/               # React web frontend
-│   └── node-backend/            # Node/TypeScript backend
+│   ├── node-backend/            # Node/TypeScript backend
+│   └── fullstack-web/           # Fullstack monolito (Next.js, Remix, Nuxt, SvelteKit)
 ├── common/                      # Recursos compartilhados entre presets
 │   ├── commands/                # Comandos genéricos (jarvis-plan-revisor, jarvis-revisor, plan, ship, refactor)
 │   ├── docs.ai/                 # Docs AI genéricos (OPERATING_MODEL, CODING_STANDARDS, etc.)

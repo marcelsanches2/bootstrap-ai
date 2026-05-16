@@ -1,0 +1,70 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git status:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npx prisma:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(wc:*)",
+      "Bash(node:*)",
+      "Bash(npx next:*)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$PROJECT_DIR\" && if ! find src/ -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; npx tsc --noEmit 2>&1 | head -30"
+          }
+        ]
+      }
+    ],
+    "ExitPlanMode": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$PROJECT_DIR\" && if ! find src/ -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; echo '{\"event\":\"plan_accepted\",\"action\":\"run_command\",\"command\":\"/jarvis-plan-revisor\"}'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$PROJECT_DIR\" && if ! find src/ -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; if git diff --stat -- src/ public/ test/ prisma/ migrations/ package.json tsconfig.json '*.config.*' 2>/dev/null | grep -q .; then echo '{\"event\":\"stop_with_changes\",\"action\":\"run_command\",\"command\":\"/jarvis-test-flow\"}'; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

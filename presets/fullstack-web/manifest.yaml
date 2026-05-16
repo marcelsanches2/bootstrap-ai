@@ -1,0 +1,89 @@
+name: fullstack-web
+version: 1
+description: "Fullstack web lifecycle preset (Next.js, Remix, Nuxt, SvelteKit)"
+
+required_files:
+  - CLAUDE.md
+  - .claude/settings.json
+  - .claude/commands/plan.md
+  - .claude/commands/ship.md
+  - .claude/commands/refactor.md
+  - .claude/commands/kickoff.md
+  - .claude/commands/design-phase.md
+  - .claude/commands/jarvis-plan-revisor.md
+  - .claude/commands/jarvis-test-flow.md
+  - .claude/commands/product_roles/role-architect.md
+  - .claude/commands/product_roles/role-frontend-architect.md
+  - .claude/commands/product_roles/role-node-architect.md
+  - .claude/commands/product_roles/role-designer.md
+  - .claude/commands/product_roles/role-web-qa.md
+  - .claude/commands/product_roles/role-api-qa.md
+  - .claude/commands/product_roles/role-pm.md
+  - .claude/commands/product_roles/role-delivery.md
+  - .claude/commands/product_roles/review-accessibility.md
+  - .claude/commands/product_roles/review-performance.md
+  - .claude/commands/product_roles/review-api.md
+  - .claude/commands/product_roles/review-database.md
+  - .claude/commands/product_roles/review-security.md
+  - .claude/commands/product_roles/review-observability.md
+  - .claude/commands/product_roles/review-scalability.md
+  - .claude/commands/product_roles/carregar-referencias.md
+  - .claude/commands/product_roles/consolidar-parecer.md
+  - .claude/commands/product_roles/gerar-relatorio.md
+  - .claude/commands/product_roles/localizar-plano.md
+  - docs/ai/ARCHITECTURE.md
+  - docs/ai/CODING_STANDARDS.md
+  - docs/ai/TESTING_GUIDE.md
+  - docs/ai/DEPLOYMENT_GUIDE.md
+  - docs/ai/FEATURE_GUIDE.md
+  - docs/ai/DESIGN_SYSTEM.md
+  - docs/ai/ACCESSIBILITY_GUIDE.md
+  - docs/ai/PERFORMANCE_GUIDE.md
+  - docs/ai/API_GUIDE.md
+  - docs/ai/DATABASE_GUIDE.md
+  - docs/ai/SECURITY_GUIDE.md
+  - docs/ai/OBSERVABILITY_GUIDE.md
+  - docs/ai/SCALABILITY_GUIDE.md
+
+detects:
+  any:
+    - next.config.js
+    - next.config.mjs
+    - next.config.ts
+    - remix.config.js
+    - nuxt.config.ts
+    - svelte.config.js
+  contains:
+    - file: package.json
+      any: ["next", "remix", "@remix-run/node", "nuxt", "@sveltejs/kit"]
+
+tech_tags:
+  - node
+  - typescript
+  - react
+  - next
+  - remix
+  - vite
+  - tailwind
+  - prisma
+  - drizzle
+  - postgres
+
+library_tags:
+  - axios
+  - tanstack-query
+  - react-query
+  - zustand
+  - redux
+  - react-router
+  - zod
+  - react-hook-form
+  - jest
+  - vitest
+  - playwright
+  - cypress
+  - prisma
+  - drizzle-orm
+  - trpc
+  - next-auth
+  - lucia

@@ -138,10 +138,10 @@ Baseado nas respostas (especialmente pergunta 5 e 6), decida a stack:
 | Plataforma | Stack sugerida | Preset correspondente |
 |---|---|---|
 | Mobile iOS/Android | Flutter + Dart | `flutter-app` |
-| Web app (frontend-only) | React + TypeScript + Vite | `react-web` |
-| Full-stack web (monolito) | Next.js / Remix / Nuxt / SvelteKit | `fullstack-web` |
+| Web app (frontend) | React + TypeScript + Vite | `react-web` |
 | API / Backend | Node + TypeScript + Express | `node-backend` |
 | API / Backend (Python) | Python + FastAPI | `python-backend` |
+| Full-stack web | React frontend + Node backend | `react-web` + `node-backend` |
 | Desktop | Electron (React) ou Flutter desktop | depende |
 | CLI | Go, Rust ou Python puro | criar novo |
 
