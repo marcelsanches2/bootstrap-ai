@@ -8,7 +8,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/marcelsanches2/bootstrap-ai?style=social)](https://github.com/marcelsanches2/bootstrap-ai/stargazers)
 [![License: AGPLv3](https://img.shields.io/badge/license-AGPLv3-blue)](./LICENSE)
-[![Presets](https://img.shields.io/badge/presets-4-blueviolet)](./presets)
+[![Presets](https://img.shields.io/badge/presets-5-blueviolet)](./presets)
 [![CLI](https://img.shields.io/badge/cli-bootstrap--ai-orange)](./bin/bootstrap-ai)
 
 *CLI + sistema de presets que transforma pastas vazias em projetos prontos para produção — e traz estrutura para projetos existentes. Feito para [Claude Code](https://docs.anthropic.com/en/docs/claude-code)*
@@ -82,6 +82,7 @@ Quando você roda `/import-project-preset`, o sistema:
 | `react-web` | React / TypeScript / Vite | SPA frontend com arquitetura de componentes e integração de design system |
 | `node-backend` | Node / TypeScript / Express | API REST backend com padrões de middleware, validação e tratamento de erros |
 | `python-backend` | Python / FastAPI | API async backend com injeção de dependência, schemas e testes |
+| `fullstack-web` | Next.js / Remix / Nuxt / SvelteKit | Fullstack monolito com SSR, API routes e frontend integrado |
 
 Cada preset instala:
 

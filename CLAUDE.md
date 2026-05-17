@@ -129,23 +129,19 @@ Biblioteca estrutural não coberta pelo preset selecionado → cria preset novo 
 
 ## Formato dos roles
 
-Cada role DEVE ter:
+Roles são contribuidores que geram seções do plano. Cada role DEVE ter:
 - Objetivo (1 frase)
-- Fonte de referência (docs/ai específicos)
-- Entrada esperada
-- Método
-- Checklist obrigatório (itens marcáveis)
-- Resultado esperado por item (OK / OK — não aplicável / PENDÊNCIA com severidade + evidência + correção)
-- Saída em Markdown
-- Regra dura
+- Referência (docs/ai específicos que consulta)
+- Entrada esperada (o que recebe da task/plano)
+- Formato de saída (template da seção que gera)
+- Regra dura (restrição absoluta)
 
 ## Hooks (settings.json)
 
-Todo preset tem 3 hooks:
+Todo preset tem 2 hooks:
 
-1. **PostToolUse (Edit|Write|MultiEdit)**: lint/typecheck rápido da stack
-2. **PostToolUse**: roda lint stack-specific a cada edição de arquivo
-3. **Stop**: se houver `git diff` em arquivos da stack, força `/jarvis-test-flow` antes de encerrar
+1. **PostToolUse (Edit|Write|MultiEdit)**: lint/typecheck rápido da stack a cada edição
+2. **Stop**: se houver `git diff` em arquivos da stack, força `/jarvis-test-flow` antes de encerrar
 
 ## Regras deste repositório
 
