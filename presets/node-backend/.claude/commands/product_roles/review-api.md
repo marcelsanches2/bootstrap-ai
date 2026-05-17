@@ -1,41 +1,96 @@
-# review-api
+# Role: API Designer
 
-## Objetivo
-Validar contratos REST completos e consistentes.
+## Sua contribuição
+Gera a seção "API" do plano, definindo endpoints, contratos, status codes, schemas de request/response e paginação.
 
-## Fonte de referência
+## Referência
 - docs/ai/API_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Endpoints**: para cada endpoint, defina verbo HTTP correto (GET leitura, POST criação, PUT/PATCH atualização, DELETE remoção), path seguindo convenção (plural, kebab-case, max 2 níveis) e versionamento (/api/v1/).
+- **Schemas de request**: Zod schema com tipos e validação para body, query params e path params.
+- **Schemas de response**: response tipada sem campos sensíveis. Sem campo booleano "success".
+- **Status codes**: corretos para cada cenário (200, 201 POST, 204 DELETE, 400, 401, 403, 404, 409, 422, 500).
+- **Paginação**: em endpoints de lista, use skip/limit ou cursor. Inclua metadados (total, page, hasMore).
+- **Formato de erro padronizado**: `{ code: string, message: string, field?: string }`.
+- **Auth**: qual middleware de autenticação em cada endpoint protegido.
+- **Rate limiting**: em endpoints sensíveis (login, reset, criação de recurso).
+- **Sem lógica de negócio no controller**: controller apenas orquestra service e retorna response.
 
-## Método
-Para cada mudança relevante, verificar conformidade com as referências.
+## Regras
+- Endpoint sem schema Zod é BLOCKER.
+- Dados sensíveis em response é BLOCKER.
+- Auth faltando em endpoint protegido é BLOCKER.
+- Nunca use campo booleano "success" no response.
+- Controller não contém lógica de negócio.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Verbo HTTP correto (GET leitura, POST criação, PUT/PATCH atualização, DELETE remoção)\n- [ ] Path segue convenção (plural, kebab-case, max 2 níveis)\n- [ ] Versionamento presente (/api/v1/)\n- [ ] Zod schema de request definido (tipos, validação)\n- [ ] Response tipada (sem campos sensíveis)\n- [ ] Status codes corretos (201 POST, 204 DELETE, 404/409/422)\n- [ ] Paginação em endpoints de lista (skip/limit)\n- [ ] Erro segue formato padronizado (code/message/field)\n- [ ] Auth especificada em endpoints protegidos\n- [ ] Rate limiting em endpoints sensíveis\n- [ ] Sem dados sensíveis em response\n- [ ] Sem campo booleano "success"\n- [ ] Sem lógica de negócio no controller
+```markdown
+## API
 
-## Resultado esperado por item
+### Endpoints
 
-- **OK**: evidência de conformidade.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
+#### `POST /api/v1/{resource}`
+- **Auth**: {requerida / não}
+- **Rate limit**: {sim — config / não}
+- **Request body**:
+  ```typescript
+  { // Zod schema ou tipo TypeScript
+    campo: tipo // validação
+  }
+  ```
+- **Response 201**:
+  ```typescript
+  {
+    campo: tipo
+  }
+  ```
+- **Erros**:
+  - `400` — {cenário}: `{ code, message }`
+  - `409` — {cenário}: `{ code, message }`
+  - `422` — {cenário}: `{ code, message, field }`
 
-### Severidade
-- BLOCKER: Endpoint sem schema, dados sensíveis expostos, auth faltando.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style/conveniência.
+#### `GET /api/v1/{resource}`
+- **Auth**: {requerida / não}
+- **Query params**:
+  ```typescript
+  {
+    skip: number // default 0
+    limit: number // default 20, max 100
+    // filtros adicionais
+  }
+  ```
+- **Response 200**:
+  ```typescript
+  {
+    data: { campo: tipo }[]
+    meta: { total: number, skip: number, limit: number, hasMore: boolean }
+  }
+  ```
+- **Erros**:
+  - `400` — {cenário}
+  - `401` — {cenário}
 
-## Saída em Markdown
+{... mais endpoints}
 
-```md
-### review-api
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta.
-  Correção: ação concreta.
-...
+### Formato de erro padrão
+```typescript
+{
+  code: string    // ex.: "VALIDATION_ERROR"
+  message: string // mensagem legível
+  field?: string  // campo inválido quando aplicável
+}
 ```
 
-## Regra dura
-Plano que viola as regras BLOCKER não está pronto para implementação.
+### Auth
+| Endpoint | Middleware | Observação |
+|----------|-----------|------------|
+| {path} | {middleware} | {observação} |
+
+### Rate limiting
+| Endpoint | Config |
+|----------|--------|
+| {path} | {limite / window} |
+```

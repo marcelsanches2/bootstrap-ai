@@ -1,90 +1,55 @@
 # Role: Delivery Web
 
-## Objetivo
+## Sua contribuição
+Gera a seção "Deploy e entrega" do plano, cobrindo variáveis de ambiente, CI/CD, build de produção, cache e estratégia de rollback.
 
-Revisar build, env, cache, deploy e rollback do frontend.
+## Referência
+- docs/ai/DEPLOYMENT_GUIDE.md
 
-## Fonte de referência
+## O que incluir
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+- **Variáveis de ambiente**: liste todas as env vars necessárias (apenas públicas para frontend). Documente nome, tipo, valor padrão e onde são usadas. Nunca inclua segredos.
+- **CI/CD**: pipeline de integração e entrega contínua — quais comandos rodam (lint, typecheck, test, build), em qual ordem, e o que dispara o deploy.
+- **Build de produção**: comando de build, diretório de saída, comando de start (se SSR). Confirme que o build passa antes de deploy.
+- **Cache/CDN**: estratégia de cache para assets estáticos (hash no nome) e HTML/entrypoint. Garanta que atualização não serve versão incompatível.
+- **Rollback**: como reverter para build anterior. Verifique compatibilidade com API e cache ao voltar versão.
+- **Hosting**: fallback SPA (todas rotas → index.html), headers relevantes (CSP, CORS), TLS quando aplicável.
 
-## Entrada esperada
+## Regras
 
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
+- Nunca proponha commit de `.env` real — apenas `.env.example` com valores de exemplo.
+- Todo segredo (API key, token) deve vir de env var injetada em runtime, nunca hardcoded no bundle.
+- Build de produção deve ser validado como passo explícito do pipeline.
+- Sempre defina estratégia de rollback — não assuma que deploy nunca falha.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
-
-### 1. Env/config
-
-Verifique env vars públicas e ausência de segredo.
-
-Resultado:
-
-- `OK` se config está documentada e segura.
-- `OK — não aplicável` se não há config nova.
-- `PENDÊNCIA` se env var/segredo está ambíguo.
-
-### 2. Build production
-
-Verifique build e comando de saída/start.
-
-Resultado:
-
-- `OK` se build production está previsto.
-- `OK — não aplicável` se mudança sem impacto de build.
-- `PENDÊNCIA` se não há validação de build.
-
-### 3. Rollback
-
-Verifique retorno para build anterior e compatibilidade API/cache.
-
-Resultado:
-
-- `OK` se rollback é claro.
-- `OK — não aplicável` se mudança não afeta deploy.
-- `PENDÊNCIA` se rollback não foi considerado.
-
-### 4. Cache/CDN
-
-Verifique cache de assets e HTML/entrypoint.
-
-Resultado:
-
-- `OK` se cache não quebra atualização.
-- `OK — não aplicável` se sem cache/CDN no escopo.
-- `PENDÊNCIA` se cache pode servir versão incompatível.
-
-### 5. Nginx/hosting
-
-Verifique fallback SPA, TLS e headers quando self-host.
-
-Resultado:
-
-- `OK` se hosting está coberto.
-- `OK — não aplicável` se não se aplica.
-- `PENDÊNCIA` se assume deploy sem detalhes operacionais.
-
-## Saída esperada
+## Formato de saída
 
 ```md
-## Parecer Role: Delivery Web
+## Deploy e entrega
 
-- [OK/PENDÊNCIA] Env/config — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Build production — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Rollback — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Cache/CDN — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Nginx/hosting — evidência objetiva e correção sugerida quando pendente.
+### Variáveis de ambiente
+| Nome | Tipo | Padrão | Uso |
+|------|------|--------|-----|
+| VITE_{NAME} | string | {valor} | {onde é usada} |
 
-### Pendências
+### CI/CD
+{Pipeline: comandos, ordem, triggers}
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+### Build de produção
+- **Build**: `{comando}`
+- **Output**: `{diretório}`
+- **Start** (se SSR): `{comando}`
+
+### Cache / CDN
+| Recurso | Estratégia | Headers |
+|---------|-----------|---------|
+| Assets (hash) | {longa duração} | Cache-Control: ... |
+| HTML/entrypoint | {curta duração / no-cache} | Cache-Control: ... |
+
+### Rollback
+{Como reverter + considerações de compatibilidade API/cache}
+
+### Hosting
+{Fallback SPA, headers, TLS — se aplicável}
 ```
-
-## Regra dura
-
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.

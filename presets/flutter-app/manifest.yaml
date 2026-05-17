@@ -5,22 +5,19 @@ description: "Flutter app lifecycle preset"
 required_files:
   - CLAUDE.md
   - .claude/settings.json
-  - .claude/commands/plan.md
+  - .claude/commands/jarvis-plan.md
   - .claude/commands/grill.md
   - .claude/commands/ship.md
   - .claude/commands/refactor.md
   - .claude/commands/kickoff.md
   - .claude/commands/design-phase.md
 
-  - .claude/commands/jarvis-plan-revisor.md
   - .claude/commands/jarvis-test-flow.md
   - .claude/commands/product_roles/role-architect.md
   - .claude/commands/product_roles/role-designer.md
   - .claude/commands/product_roles/role-flutter-qa.md
   - .claude/commands/product_roles/role-pm.md
   - .claude/commands/product_roles/carregar-referencias.md
-  - .claude/commands/product_roles/consolidar-parecer.md
-  - .claude/commands/product_roles/gerar-relatorio.md
   - .claude/commands/product_roles/localizar-plano.md
   - .claude/scripts/compare_design.py
   - docs/ai/ARCHITECTURE.md

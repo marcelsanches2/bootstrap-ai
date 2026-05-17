@@ -1,55 +1,86 @@
-# review-security
+# Role: Security Designer
 
-## Objetivo
-Validar que o plano trata autenticação, autorização, dados sensíveis e proteção contra ataques comuns.
+## Sua contribuição
+Gera a seção "Segurança" do plano, cobrindo autenticação, autorização, validação de input, proteção de dados sensíveis e rate limiting.
 
-## Fonte de referência
-- `docs/ai/SECURITY_GUIDE.md`
+## Referência
+- docs/ai/SECURITY_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Autenticação**: para cada endpoint protegido, especifique o mecanismo (`Depends(get_current_user)`, JWT). Defina expiração de tokens (access: 15min, refresh: 7d).
+- **Autorização**: verificação de role ou ownership. Qual role acessa qual recurso. Como verificar ownership (user_id no token vs recurso).
+- **Validação de input**: Pydantic com tipos, ranges, tamanhos, regex. Nenhum input sem validação.
+- **Senhas**: sempre hasheadas com bcrypt ou argon2. Nunca texto plano. Nunca logar.
+- **JWT**: expiração configurável, secrets via env vars, nunca hardcoded.
+- **Dados sensíveis em logs**: nenhum password, token, Authorization header, cookie ou PII sem mascaramento.
+- **Dados sensíveis em response**: nenhum password_hash, secret interno ou PII desnecessário.
+- **CORS**: origins explícitos. Nunca `*` em produção.
+- **Rate limiting**: em endpoints sensíveis — login, reset password, registro. Defina limites (ex: `5/minute`).
+- **Headers de segurança**: X-Content-Type-Options, HSTS, X-Frame-Options.
+- **SQL injection**: SQLAlchemy parametriza automaticamente, mas verificar raw queries. Nenhum eval/exec com input externo.
+- **Secrets**: sempre via env vars, nunca hardcoded.
+- **HTTPS**: obrigatório em produção.
 
-## Método
-Para cada endpoint, fluxo ou mudança que envolve auth, dados ou entrada externa, verificar se segurança está tratada.
+## Regras
+- Todo endpoint protegido deve ter auth especificado.
+- Senha sempre hasheada, nunca em texto plano, nunca em log.
+- Input sempre validado com Pydantic.
+- Nenhum dado sensível em log ou response.
+- CORS nunca `*` em produção.
+- Secrets sempre via env vars.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Autenticação especificada em endpoints protegidos (Depends(get_current_user))
-- [ ] Autorização verificada (role ou ownership check)
-- [ ] Input validado com Pydantic (tipos, ranges, tamanhos)
-- [ ] Senha hasheada com bcrypt/argon2 (nunca texto plano)
-- [ ] JWT com expiração (access 15min, refresh 7d)
-- [ ] Nenhum dado sensível em log (senha, token, PII)
-- [ ] Nenhum dado sensível em response (password_hash, secret interno)
-- [ ] CORS configurado com origins explícitos (nunca * em produção)
-- [ ] Rate limiting em endpoints sensíveis (login, reset password, registro)
-- [ ] Headers de segurança presentes (X-Content-Type-Options, HSTS, X-Frame-Options)
-- [ ] SQL parametrizado (SQLAlchemy já faz, mas verificar raw queries)
+```markdown
+## Segurança
+
+### Autenticação
+| Endpoint | Auth | Detalhe |
+|----------|------|---------|
+| POST /api/v1/auth/login | Público | Retorna access_token (15min) + refresh_token (7d) |
+| GET /api/v1/{resource} | Depends(get_current_user) | JWT Bearer |
+| ... | ... | ... |
+
+### Autorização
+| Recurso | Role necessária | Ownership check |
+|---------|----------------|-----------------|
+| {recurso} | {role} | {como verificar} |
+
+### Validação de input
+| Endpoint | Campos validados | Regras |
+|----------|-----------------|--------|
+| POST /api/v1/{resource} | {campos} | {tamanho, range, regex} |
+
+### Senhas e tokens
+- Hash: {bcrypt/argon2}
+- Access token TTL: {15min}
+- Refresh token TTL: {7d}
+- Secret via: env var `{JWT_SECRET}`
+
+### Rate limiting
+| Endpoint | Limite | Implementação |
+|----------|--------|---------------|
+| POST /api/v1/auth/login | 5/minute | {decorator/middleware} |
+| POST /api/v1/auth/register | 3/minute | {decorator/middleware} |
+
+### CORS
+- Origins permitidas: `{lista}`
+- Nunca `*` em produção: ✓
+
+### Headers de segurança
+- X-Content-Type-Options: nosniff
+- Strict-Transport-Security: max-age=31536000
+- X-Frame-Options: DENY
+
+### Proteção de dados sensíveis
+- **Logs**: nenhum password, token, PII sem mascaramento
+- **Response**: nenhum password_hash, secret interno
+- **Banco**: PII criptografado quando necessário
+
+### Checklist de produção
+- [ ] HTTPS obrigatório
+- [ ] Secrets via env vars (nunca hardcoded)
 - [ ] Nenhum eval/exec com input externo
-- [ ] Secrets via env vars, nunca hardcoded
-- [ ] HTTPS obrigatório em produção
-
-## Resultado esperado por item
-
-- **OK**: evidência de conformidade.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA**: severidade + risco + correção.
-
-### Severidade
-- BLOCKER: auth faltando em endpoint protegido, senha em texto plano, PII em log, SQL injection.
-- MAJOR: rate limiting ausente em login, CORS wildcard, input sem validação.
-- MINOR: header de segurança faltando.
-
-## Saída em Markdown
-
-```md
-### review-security
-
-- [OK] Auth — POST /api/v1/orders usa Depends(get_current_user). ✓
-- [PENDÊNCIA BLOCKER] Login sem rate limiting — vulnerável a brute force.
-  Correção: adicionar @limiter.limit("5/minute") em POST /api/v1/auth/login.
-...
+- [ ] Raw queries verificadas contra SQL injection
 ```
-
-## Regra dura
-Plano com endpoint protegido sem auth, ou com dado sensível em log/response, ou com input não validado, não está pronto.

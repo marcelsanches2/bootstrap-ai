@@ -1,54 +1,93 @@
-# role-delivery
+# Role: Delivery
 
-## Objetivo
-Validar que o plano é implementável sem surpresas: escopo claro, dependências mapeadas, rollback definido e deploy considerado.
+## Sua contribuição
+Gera a seção "Deploy e entrega" do plano, cobrindo env vars, CI/CD, rollback, configuração de infra e procedimentos de deploy.
 
-## Fonte de referência
-- `docs/ai/DEPLOYMENT_GUIDE.md`
-- `docs/ai/ARCHITECTURE.md`
+## Referência
+- docs/ai/DEPLOYMENT_GUIDE.md
+- docs/ai/ARCHITECTURE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Escopo da entrega**: o que entra e o que NÃO entra nesta entrega. Sem ambiguidade.
+- **Arquivos alterados**: lista com caminhos completos de todos os arquivos que serão criados ou modificados.
+- **Dependências externas**: novos pacotes, serviços, APIs ou integrações necessárias.
+- **Migrations**: migration incluída com upgrade() e downgrade() completos. Testada.
+- **Rollback**: procedimento concreto para reverter se der errado. Inclua comandos (ex: `alembic downgrade -1` + redeploy versão anterior).
+- **Procedure de deploy**: ordem de execução, variáveis novas, pré-requisitos.
+- **Env vars**: documente todas as variáveis de ambiente novas em `.env.example` com valor exemplo e descrição.
+- **Breaking changes**: se houver, versionamento de API obrigatório. Liste explicitamente.
+- **Configuração de infra**: alterações em nginx, systemd, docker, supervisor — o que muda e por quê.
+- **Critérios de aceite de entrega**: como saber que o deploy funcionou ( smoke test, healthcheck, verificação manual).
+- **Riscos e mitigações**: riscos identificados com ações mitigadoras.
+- **Comunicação necessária**: quando a API muda, quem precisa ser avisado (front, mobile, outro time).
 
-## Método
-Avaliar se o plano pode ser executado sem ambiguidade, com rollback seguro e deploy limpo.
+## Regras
+- Todo plano que toca banco deve ter migration com upgrade E downgrade.
+- Nenhum breaking change sem versionamento de API.
+- Toda env var nova documentada em `.env.example`.
+- Sem segredos hardcoded — tudo via env vars.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Escopo claro: o que entra e o que NÃO entra
-- [ ] Arquivos listados com caminho completo
-- [ ] Dependências externas identificadas (novos pacotes, serviços, APIs)
-- [ ] Migration incluída e testada (upgrade + downgrade)
-- [ ] Rollback definido: como reverter se der errado
-- [ ] Deploy procedure descrita (variáveis novas, ordem de execução)
-- [ ] Env vars novas documentadas em .env.example
-- [ ] Nenhum breaking change sem versionamento de API
-- [ ] Configuração nova documentada (nginx, systemd, docker)
-- [ ] Critérios de aceite explícitos (como saber que funcionou)
-- [ ] Riscos identificados com mitigações
-- [ ] Comunicação necessária (front, mobile, outro time) quando API muda
+```markdown
+## Deploy e entrega
 
-## Resultado esperado por item
+### Escopo da entrega
+**Inclui:**
+- {Item 1}
+- {Item 2}
 
-- **OK**: evidência.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA**: severidade + risco de entrega + correção.
+**Não inclui:**
+- {Item excluído 1}
 
-### Severidade
-- BLOCKER: sem rollback, breaking change sem versionamento, dependência não identificada.
-- MAJOR: escopo ambíguo, deploy sem procedure, env var não documentada.
-- MINOR: risco sem mitigação.
+### Arquivos alterados
+- `caminho/arquivo1.py` — {o que faz}
+- `caminho/arquivo2.py` — {o que faz}
 
-## Saída em Markdown
+### Dependências externas
+| Dependência | Versão | Uso |
+|-------------|--------|-----|
+| {pacote/serviço} | {versão} | {para quê} |
 
-```md
-### role-delivery
+### Migrations
+- `alembic/versions/xxx_descricao.py`
+  - upgrade(): {o que faz}
+  - downgrade(): {o que faz}
+  - Testado: {sim/não + como}
 
-- [OK] Escopo — feature de pedidos com criação e listagem. Fora: cancelamento e webhook. ✓
-- [PENDÊNCIA BLOCKER] Rollback — não há procedure para reverter migration em caso de erro.
-  Correção: documentar "alembic downgrade -1" + redeploy versão anterior.
-...
+### Rollback
+1. {Passo 1 — ex: `alembic downgrade -1`}
+2. {Passo 2 — ex: redeploy versão anterior}
+3. {Passo 3 — ex: verificar healthcheck}
+
+### Procedure de deploy
+1. {Passo 1}
+2. {Passo 2}
+3. ...
+
+### Env vars novas
+| Variável | Exemplo | Descrição | Obrigatória? |
+|----------|---------|-----------|-------------|
+| `VAR_NAME` | `valor_exemplo` | {o que controla} | sim/não |
+
+### Breaking changes
+{Nenhuma OU lista com detalhes e versionamento}
+
+### Configuração de infra
+- **nginx**: {mudança ou "nenhuma"}
+- **systemd**: {mudança ou "nenhuma"}
+- **docker**: {mudança ou "nenhuma"}
+
+### Critérios de aceite de entrega
+- [ ] {Critério verificável 1}
+- [ ] {Critério verificável 2}
+
+### Riscos e mitigações
+| Risco | Probabilidade | Mitigação |
+|-------|--------------|-----------|
+| {Risco} | {alta/média/baixa} | {Ação} |
+
+### Comunicação necessária
+- {Quem precisa ser avisado e do quê}
 ```
-
-## Regra dura
-Plano sem rollback, ou com breaking change sem versionamento, ou com dependência não mapeada, não está pronto para entrega.

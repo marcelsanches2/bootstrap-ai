@@ -1,39 +1,79 @@
-# review-observability
+# Role: Observability Engineer
 
-## Objetivo
-Validar logging, métricas, healthcheck e rastreabilidade.
+## Sua contribuição
+Gera a seção "Observabilidade" do plano, definindo logs estruturados, métricas, tracing, healthcheck e graceful shutdown.
 
-## Fonte de referência
+## Referência
 - docs/ai/OBSERVABILITY_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Logs estruturados**: eventos de negócio logados com pino (ou equivalente) em formato JSON. Inclua contexto relevante (orderId, userId, requestId).
+- **Erros com contexto**: todo erro logado com informações suficientes para diagnóstico (stack trace, parâmetros, id da entidade).
+- **Nenhum dado sensível nos logs**: password, token, Authorization header, cookie, PII — mascarados ou omitidos.
+- **Request ID propagado**: `X-Request-ID` gerado na entrada e propagado em toda a chain (logs, chamadas externas).
+- **Latência**: monitorada em endpoints novos. Defina p95/p99 aceitável quando relevante.
+- **Healthcheck**: endpoint `/health` atualizado com novas dependências. Cada dependência verificada (DB, Redis, fila, serviço externo).
+- **Métricas de negócio**: quando aplicável, defina métricas que importam para negócio (ex.: pedidos/minuto, tempo de processamento).
+- **Chamadas externas**: timeout configurado e log de falha com contexto.
+- **Graceful shutdown**: SIGTERM/SIGINT tratados — fechar server, drenar conexões, completar jobs em andamento.
 
-## Método
-Verificar conformidade com as referências.
+## Regras
+- Dado sensível em log é BLOCKER.
+- Healthcheck faltando com dependência nova é BLOCKER.
+- Toda chamada externa precisa de timeout.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Eventos de negócio logados com pino structured logging\n- [ ] Erros logados com contexto (orderId, userId)\n- [ ] Nenhum dado sensível nos logs\n- [ ] Request ID propagado (X-Request-ID)\n- [ ] Latência monitorada em endpoints novos\n- [ ] Healthcheck atualizado com novas dependências\n- [ ] Métricas de negócio quando aplicável\n- [ ] External calls com timeout e log de falha\n- [ ] Graceful shutdown tratado
+```markdown
+## Observabilidade
 
-## Resultado esperado por item
+### Logs estruturados
+| Evento | Campos obrigatórios | Nível |
+|--------|--------------------|-------|
+| {evento} | {requestId, userId, ...} | info/warn/error |
 
-- **OK**: evidência.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção.
+### Erros
+- Formato: `{ error, message, stack, requestId, {entidade}Id }`
+- Sem dado sensível no log.
 
-### Severidade
-- BLOCKER: Dado sensível em log, healthcheck faltando com dependência nova.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style.
+### Request ID
+- Header: `X-Request-ID`
+- Geração: {middleware/ferramenta}
+- Propagação: {logs, chamadas externas, contexto async}
 
-## Saída em Markdown
+### Latência
+| Endpoint | p95 aceitável | p99 aceitável |
+|----------|--------------|--------------|
+| {path} | {ms} | {ms} |
 
-```md
-### review-observability
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta. Correção: ação.
+### Healthcheck
+```
+GET /health
+Response 200:
+{
+  status: "ok",
+  checks: {
+    database: "ok",
+    {dependência}: "ok"
+  }
+}
 ```
 
-## Regra dura
-Plano que viola BLOCKER não está pronto.
+### Métricas de negócio
+| Métrica | Tipo | Fonte |
+|---------|------|-------|
+| {métrica} | {counter/gauge/histogram} | {onde coletar} |
+
+### Chamadas externas
+| Serviço | Timeout | Log de falha |
+|---------|---------|-------------|
+| {serviço} | {ms} | {campos logados} |
+
+### Graceful shutdown
+1. Receber SIGTERM/SIGINT
+2. Parar de aceitar novas conexões
+3. Completar requests em andamento (deadline: {ms})
+4. Fechar pool de conexões
+5. Log: "shutdown complete"
+```

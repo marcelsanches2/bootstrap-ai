@@ -10,15 +10,12 @@ LOCKFILE = '.bootstrap-ai.lock'
 
 REQUIRED_COMMON = [
     'CLAUDE.md',
-    '.claude/commands/plan.md',
-    '.claude/commands/jarvis-plan-revisor.md',
+    '.claude/commands/jarvis-plan.md',
     '.claude/commands/jarvis-test-flow.md',
     '.claude/commands/refactor.md',
     '.claude/commands/ship.md',
     '.claude/commands/product_roles/localizar-plano.md',
     '.claude/commands/product_roles/carregar-referencias.md',
-    '.claude/commands/product_roles/consolidar-parecer.md',
-    '.claude/commands/product_roles/gerar-relatorio.md',
     'docs/ai/ARCHITECTURE.md',
     'docs/ai/CODING_STANDARDS.md',
     'docs/ai/FEATURE_GUIDE.md',

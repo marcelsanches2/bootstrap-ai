@@ -1,102 +1,56 @@
-# Role: Performance Web
+# Role: Performance Frontend
 
-## Objetivo
+## Sua contribuição
+Gera a seção "Performance frontend" do plano, definindo estratégias de bundle, renderização, assets, lazy loading e medição de Web Vitals.
 
-Revisar bundle, renderização, assets e impacto em Web Vitals.
+## Referência
+- docs/ai/PERFORMANCE_GUIDE.md
 
-## Fonte de referência
+## O que incluir
+- **Bundle**: impacto de dependências novas, imports otimizados (tree-shaking, barrel exports). Dependência pesada com justificativa e alternativa considerada.
+- **Lazy loading**: rotas/áreas pesadas com `React.lazy` ou dynamic import. Tela pesada não carrega no caminho crítico.
+- **Renderizações**: evitar estado duplicado, listas grandes virtualizadas quando necessário, efeitos otimizados. Identificar re-renders evitáveis.
+- **Imagens/assets**: tamanho, formato (WebP/AVIF), dimensões explícitas, lazy loading nativo. Asset sem otimização precisa de justificativa.
+- **Medição**: métrica antes/depois quando performance é objetivo (LCP, FID/INP, CLS). Otimização sem métrica precisa de justificativa de risco.
+- **Escala de frontend**: para features grandes, considere bundle growth, cache de server state, listas longas (virtualização), contexto global (split) e observabilidade frontend.
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+## Regras
+- Dependência pesada sem justificativa é pendência.
+- Tela pesada no caminho crítico sem lazy loading é pendência.
+- Otimização sem métrica ou risco identificado é pendência.
+- Performance sem otimização prematura — só otimize quando há risco ou métrica.
+- Se a mudança não afeta performance: escreva "Não se aplica" e explique por quê.
 
-## Entrada esperada
-
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
-
-## Checklist obrigatório
-
-### 1. Bundle
-
-Verifique dependências novas, imports e lazy loading.
-
-Resultado:
-
-- `OK` se bundle foi considerado.
-- `OK — não aplicável` se mudança não afeta bundle.
-- `PENDÊNCIA` se dependência pesada/import global sem justificativa.
-
-### 2. Lazy loading
-
-Verifique rotas/áreas pesadas.
-
-Resultado:
-
-- `OK` se lazy loading aplicado onde faz sentido.
-- `OK — não aplicável` se não há área pesada.
-- `PENDÊNCIA` se tela pesada carrega no caminho crítico.
-
-### 3. Renderizações
-
-Verifique estado duplicado, listas grandes e efeitos.
-
-Resultado:
-
-- `OK` se renderização é razoável.
-- `OK — não aplicável` se componente trivial.
-- `PENDÊNCIA` se há renderizações evitáveis com impacto provável.
-
-### 4. Imagens/assets
-
-Verifique tamanho, formato, dimensões e lazy.
-
-Resultado:
-
-- `OK` se assets estão otimizados.
-- `OK — não aplicável` se não há asset novo.
-- `PENDÊNCIA` se asset pesado/quebrando layout.
-
-### 5. Medição
-
-Verifique métrica antes/depois quando performance é objetivo.
-
-Resultado:
-
-- `OK` se há validação objetiva.
-- `OK — não aplicável` se performance não é objetivo/risco.
-- `PENDÊNCIA` se otimização sem métrica ou risco sem validação.
-
-
-### 6. Escala de frontend
-
-Verifique rotas/features grandes, cache de server state, listas longas, contexto global, formulários grandes e observabilidade frontend.
-
-Resultado:
-
-- `OK` se o plano evita crescimento descontrolado de bundle/renderização/cache.
-- `OK — não aplicável` se a mudança é pequena e sem risco de escala.
-- `PENDÊNCIA` se uma tela/feature grande ignora bundle, cache, listas, rerenders ou Web Vitals.
-
-## Saída esperada
+## Formato de saída
 
 ```md
-## Parecer Role: Performance Web
+## Performance frontend
 
-- [OK/PENDÊNCIA] Bundle — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Lazy loading — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Renderizações — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Imagens/assets — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Medição — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Escala de frontend — evidência objetiva e correção sugerida quando pendente.
-
-### Pendências
-
-| Severidade | Item | Evidência | Correção exigida |
+### Bundle
+| Dep nova | Tamanho aprox. | Justificativa | Alternativa considerada |
 |---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+| {nome} | {KB} | {por quê} | {alternativa} |
+
+### Lazy loading
+| Rota/área | Estratégia | Condição |
+|---|---|---|
+| {nome} | {React.lazy / dynamic / suspense} | {quando carrega} |
+
+### Renderizações
+| Componente | Risco | Mitigação |
+|---|---|---|
+| {nome} | {re-render / lista grande / efeito} | {memo / virtualização / cleanup} |
+
+### Imagens/assets
+| Asset | Formato | Dimensões | Lazy | Otimização |
+|---|---|---|---|---|
+| {caminho} | {WebP/PNG/...} | {WxH} | {sim/não} | {compressão/responsive} |
+
+### Medição
+| Métrica | Antes (estimado) | Meta | Como medir |
+|---|---|---|---|
+| {LCP/FID/CLS} | {valor} | {valor} | {ferramenta} |
+
+### Escala de frontend
+{estratégias para features grandes: bundle, cache, listas, context split}
 ```
-
-## Regra dura
-
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.

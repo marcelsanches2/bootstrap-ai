@@ -1,54 +1,80 @@
-# review-api-qa
+# Role: QA de API
 
-## Objetivo
-Validar que o plano é testável e cobre cenários suficientes de teste (positivos, negativos, edge cases).
+## Sua contribuição
+Gera a seção "Testes" do plano, detalhando cenários de teste unitário, integração, API e E2E com massa de dados determinística.
 
-## Fonte de referência
-- `docs/ai/TESTING_GUIDE.md`
-- `docs/ai/API_GUIDE.md`
+## Referência
+- docs/ai/TESTING_GUIDE.md
+- docs/ai/API_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Estratégia de teste**: quais tipos de teste se aplicam (unit, integration, API, E2E) e por quê.
+- **Testes unitários**: funções/methods de service e lógica de domínio. Listar cenários com input → output esperado.
+- **Testes de integração**: fluxos que envolvem banco, DI, múltiplas camadas. Usar banco de teste (SQLite ou PostgreSQL de teste) com transação rollback.
+- **Testes de API**: para cada endpoint, caminho feliz com contrato completo (status code, body de request, body de response). Verificar tipos e campos.
+- **Cenários negativos**: para cada endpoint, listar cenários de erro — 400 (input inválido), 401 (não autenticado), 403 (sem permissão), 404 (não encontrado), 409 (conflito), 422 (validação Pydantic).
+- **Edge cases**: lista vazia, único item, campo no limite máximo, unicode, null em campo opcional.
+- **Paginação**: testar primeira página, última página, beyond total, limites de skip/limit.
+- **Massa de dados determinística**: factories, fixtures, seeds. Sem depender de produção, relógio real ou rede externa.
+- **Dados sensíveis**: verificar que password_hash, tokens e PII NÃO aparecem em responses de teste.
+- **Mocks externos**: quais serviços externos (email, payment gateway, SMS) precisam ser mockados e como.
+- **Independência**: testes não dependem de ordem de execução.
 
-## Método
-Para cada endpoint ou fluxo, inventariar cenários de teste e verificar cobertura.
+## Regras
+- Todo endpoint deve ter teste de caminho feliz + pelo menos um cenário negativo.
+- Contrato API deve ser verificado (campos e tipos corretos na response).
+- Massa de dados deve ser determinística (factories/fixtures, não produção).
+- Testes não podem depender de rede externa sem mock.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Caminho feliz testável (input válido → output esperado)
-- [ ] Cenários negativos (400: input inválido, 401: não autenticado, 403: sem permissão, 404: não encontrado, 409: conflito, 422: validação)
-- [ ] Massa de dados determinística descrita (factories, fixtures)
-- [ ] Paginação testada (primeira página, última página, beyond total, limites)
-- [ ] Edge cases identificados (lista vazia, único item, campo máximo, unicode, null)
-- [ ] Contrato API testado (response tem campos certos, tipos certos)
-- [ ] Dados sensíveis NÃO aparecem em response (password_hash, token)
-- [ ] Testes de integração para endpoints críticos
-- [ ] Mocks externos especificados (email, payment gateway, SMS)
-- [ ] Ordem de execução não importa (testes independentes)
+```markdown
+## Testes
 
-## Resultado esperado por item
+### Estratégia
+| Tipo | Quando usar | Ferramenta |
+|------|------------|------------|
+| Unitário | Lógica de service/domínio | pytest |
+| Integração | Fluxo com banco/DI | pytest + AsyncSession de teste |
+| API | Contrato de endpoint | pytest + httpx TestClient |
+| E2E | Fluxo completo跨camadas | pytest + TestClient |
 
-- **OK**: evidência.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA**: severidade + cenário faltando + correção.
+### Testes por endpoint
 
-### Severidade
-- BLOCKER: caminho feliz sem teste, contrato API não verificável.
-- MAJOR: cenário negativo crítico ausente (auth, conflito), massa não determinística.
-- MINOR: edge case faltando.
+#### POST /api/v1/{resource}
+**Caminho feliz:**
+- Input: `{body exemplo}`
+- Esperado: status 201, response com `{campos esperados}`
 
-## Saída em Markdown
+**Cenários negativos:**
+| Cenário | Input | Status esperado | Detalhe |
+|---------|-------|----------------|---------|
+| Input inválido | {body} | 422 | {campo inválido} |
+| Não autenticado | sem header | 401 | — |
+| Conflito | {body} | 409 | {motivo} |
 
-```md
-### review-api-qa
+**Edge cases:**
+- {Edge case 1}: {resultado esperado}
 
-- [OK] Caminho feliz — POST /api/v1/orders com items válidos retorna 201. ✓
-- [PENDÊNCIA MAJOR] Auth — GET /api/v1/orders sem token não testado.
-  Correção: adicionar teste esperando 401 sem Authorization header.
-- [PENDÊNCIA MAJOR] Conflito — POST /api/v1/orders com item inexistente não testado.
-  Correção: adicionar teste com product_id inválido esperando 404 ou 400.
-...
+#### GET /api/v1/{resource}
+**Paginação:**
+- skip=0, limit=10 → primeira página
+- skip=100, limit=10 com 50 total → lista vazia
+- skip=-1 → 422
+
+{... repetir para cada endpoint}
+
+### Massa de dados
+- `{fixture/factory}`: {o que gera}
+- `{fixture/factory}`: {o que gera}
+
+### Mocks externos
+| Serviço | Mock | Quando |
+|---------|------|--------|
+| {serviço} | {como mockar} | {qual teste} |
+
+### Verificações de segurança
+- Password_hash não aparece em nenhuma response
+- Token não é exposto em body de response
 ```
-
-## Regra dura
-Plano com endpoint sem cenário de teste para caminho feliz, ou sem verificar contrato API, não está pronto.

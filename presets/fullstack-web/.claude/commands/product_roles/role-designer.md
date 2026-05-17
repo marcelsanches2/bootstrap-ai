@@ -1,90 +1,54 @@
-# Role: Designer / UX Reviewer
+# Role: Designer
 
-## Objetivo
+## Sua contribuição
+Gera a seção "UI / Componentes / Design" do plano, definindo tokens, componentes visuais, estados de interface, responsividade e microcopy.
 
-Revisar qualidade visual, design system, estados de interface e usabilidade.
+## Referência
+- docs/ai/DESIGN_SYSTEM.md
 
-## Fonte de referência
+## O que incluir
+- **Tokens/componentes**: use tokens e componentes existentes do design system. Liste quais componentes são reutilizados e quais são novos.
+- **Fidelidade visual**: hierarquia, alinhamento, espaçamento e legibilidade coerentes com o sistema existente. Sem valor hardcoded de cor/espaçamento quando existir token.
+- **Estados visuais**: loading, empty, error, success, disabled, focus — todos definidos para cada componente interativo.
+- **Responsividade**: comportamento em larguras principais (mobile, tablet, desktop). Layout não deve depender de pixel perfeito em uma largura.
+- **Microcopy**: textos, labels, CTAs e mensagens de erro que ajudam o usuário. Textos claros, sem jargão técnico.
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+## Regras
+- Não usar cor/espaçamento hardcoded quando existir token/componente.
+- Não deixar loading/error/empty state sem decisão.
+- Não depender de layout só por pixel perfeito em uma largura.
+- Sem componente paralelo sem motivo (reutilize o existente).
+- Se a task não tem UI nova: escreva "Não se aplica" e explique por quê.
 
-## Entrada esperada
-
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
-
-## Checklist obrigatório
-
-### 1. Tokens/componentes
-
-Verifique uso de tokens e componentes existentes.
-
-Resultado:
-
-- `OK` se usa padrão visual existente.
-- `OK — não aplicável` se mudança sem UI.
-- `PENDÊNCIA` se usa valor hardcoded ou componente paralelo sem motivo.
-
-### 2. Fidelidade visual
-
-Verifique hierarquia, alinhamento, espaçamento e legibilidade.
-
-Resultado:
-
-- `OK` se interface tem acabamento coerente.
-- `OK — não aplicável` se não há visual novo.
-- `PENDÊNCIA` se UI parece improvisada ou inconsistente.
-
-### 3. Estados visuais
-
-Verifique loading, empty, error, success, disabled, focus.
-
-Resultado:
-
-- `OK` se estados estão definidos.
-- `OK — não aplicável` se estado não se aplica.
-- `PENDÊNCIA` se estado relevante está ausente.
-
-### 4. Responsividade
-
-Verifique comportamento em larguras principais.
-
-Resultado:
-
-- `OK` se layout responde sem quebrar.
-- `OK — não aplicável` se componente não é responsivo por natureza.
-- `PENDÊNCIA` se só funciona em uma largura.
-
-### 5. Microcopy
-
-Verifique textos, labels, CTA e mensagens de erro.
-
-Resultado:
-
-- `OK` se texto ajuda o usuário.
-- `OK — não aplicável` se não há texto novo.
-- `PENDÊNCIA` se texto é genérico/confuso.
-
-## Saída esperada
+## Formato de saída
 
 ```md
-## Parecer Role: Designer / UX Reviewer
+## UI / Componentes / Design
 
-- [OK/PENDÊNCIA] Tokens/componentes — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Fidelidade visual — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Estados visuais — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Responsividade — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Microcopy — evidência objetiva e correção sugerida quando pendente.
+### Componentes existentes reutilizados
+| Componente | Uso | Token/modificação |
+|---|---|---|
+| {nome} | {onde usa} | {nenhuma ou adaptação} |
 
-### Pendências
+### Componentes novos
+| Componente | Responsabilidade | Tokens usados |
+|---|---|---|
+| {nome} | {o que faz} | {colors, spacing, typography} |
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+### Estados visuais
+| Componente | Loading | Empty | Error | Success | Disabled | Focus |
+|---|---|---|---|---|---|---|
+| {nome} | {UI} | {UI} | {UI} | {UI} | {UI} | {UI} |
+
+### Responsividade
+| Breakpoint | Layout | Diferenças |
+|---|---|---|
+| mobile (<640px) | {descrição} | {adaptações} |
+| tablet (640-1024px) | {descrição} | {adaptações} |
+| desktop (>1024px) | {descrição} | {adaptações} |
+
+### Microcopy
+| Elemento | Texto |
+|---|---|
+| {label/botão/erro} | {texto final} |
 ```
-
-## Regra dura
-
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.

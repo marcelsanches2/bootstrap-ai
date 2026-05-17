@@ -33,7 +33,7 @@ Valida um fluxo end-to-end do backend Node.js/TypeScript {{PROJECT_NAME}}. Argum
 
 3. **Inventariar teste**
    - Procurar `test/**/{flow_id}*.test.ts` ou `test/**/{module}*.test.ts` que cubra o flow.
-   - Verificar se existe um relatorio de revisao (`plans/*_revisao.md`, `docs/revisao_*.md` ou similar) gerado pelo `/jarvis-plan-revisor` para o mesmo fluxo. Se existir, extrair os **Cenarios E2E sugeridos** da secao correspondente e considera-los como requisitos minimos de cobertura alem dos cenarios proprios do test-flow.
+   - Verificar se existe um relatorio de revisao (`plans/*_revisao.md`, `docs/revisao_*.md` ou similar) gerado pelo `/jarvis-plan` para o mesmo fluxo. Se existir, extrair os **Cenarios E2E sugeridos** da secao correspondente e considera-los como requisitos minimos de cobertura alem dos cenarios proprios do test-flow.
    - Se nao existir, prosseguir normalmente.
    - Se nao existir teste, criar seguindo `docs/ai/TESTING_GUIDE.md` com o runner configurado (jest, vitest, ou mocha). Usar fixtures deterministicas. Teste deve cobrir: caminho feliz, cenarios de erro, validacao de input, status codes corretos.
    - Validar que o teste cobre as etapas criticas e usa os dados deterministicos da massa.

@@ -1,6 +1,11 @@
 {
   "permissions": {
-    "deny": ["Read(.env)", "Read(.env.*)", "Bash(rm -rf *)", "Bash(git push --force*)"]
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)"
+    ]
   },
   "hooks": {
     "PostToolUse": [
@@ -10,16 +15,6 @@
           {
             "type": "command",
             "command": "if ! find src/ -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; npx tsc --noEmit 2>&1 | tail -15"
-          }
-        ]
-      },
-      {
-        "matcher": "ExitPlanMode",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if ! find src/ -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"O usuário acabou de aceitar um plano. Invoque imediatamente a skill /jarvis-plan-revisor para revisar o plano aceito. Não execute o plano antes da revisão.\"}}'",
-            "statusMessage": "Disparando revisão do plano..."
           }
         ]
       }

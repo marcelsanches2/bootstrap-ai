@@ -1,39 +1,61 @@
-# review-api-qa
+# Role: QA / Testes
 
-## Objetivo
-Validar que o plano é testável com cenários suficientes.
+## Sua contribuição
+Gera a seção "Testes" do plano, definindo cenários de teste unit, integration, API e E2E com massa determinística.
 
-## Fonte de referência
+## Referência
 - docs/ai/TESTING_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Testes unitários**: cenários de caminho feliz para lógica de negócio (input válido → output esperado). Liste funções/módulos a testar.
+- **Cenários negativos**: cubra status codes 400, 401, 403, 404, 409, 422 com inputs específicos que causam cada erro.
+- **Massa de dados determinística**: defina seeds, factories ou fixtures. Testes não dependem de produção, relógio real sem controle ou rede externa sem mock.
+- **Testes de paginação**: quando houver endpoint de lista, teste skip/limit, página vazia, limites.
+- **Edge cases**: lista vazia, campo no tamanho máximo, null, undefined, tipos incorretos.
+- **Contrato API**: verifique campos e tipos do response. Dados sensíveis (password, token) NÃO aparecem na resposta.
+- **Mocks para serviços externos**: defina quais serviços externos são mockados e como.
+- **Independência**: testes não dependem de ordem de execução.
+- **Estratégia de execução**: comando para rodar (ex.: `vitest`, `vitest --coverage`) e quando (pre-commit, CI).
 
-## Método
-Verificar conformidade com as referências.
+## Regras
+- Caminho feliz sem teste é BLOCKER.
+- Contrato API não verificável é BLOCKER.
+- Dados sensíveis em response é BLOCKER.
+- Testes não podem depender de produção, relógio real sem controle ou rede externa sem mock.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Caminho feliz testável (input válido → output esperado)\n- [ ] Cenários negativos (400, 401, 403, 404, 409, 422)\n- [ ] Massa de dados determinística\n- [ ] Paginação testada\n- [ ] Edge cases (lista vazia, campo máximo, null)\n- [ ] Contrato API verificado (campos e tipos)\n- [ ] Dados sensíveis NÃO em response\n- [ ] Mocks para serviços externos\n- [ ] Testes independentes (sem ordem)
+```markdown
+## Testes
 
-## Resultado esperado por item
+### Estratégia
+- **Runner**: {vitest/jest}
+- **Quando rodar**: {pre-commit / CI / manual}
 
-- **OK**: evidência.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção.
+### Testes unitários
+| Módulo | Cenário | Input | Output esperado |
+|--------|---------|-------|-----------------|
+| {módulo} | caminho feliz | {input} | {output} |
+| {módulo} | {cenário negativo} | {input} | {erro esperado} |
 
-### Severidade
-- BLOCKER: Caminho feliz sem teste, contrato API não verificável.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style.
+### Testes de integração / API
+| Endpoint | Método | Cenário | Status esperado | Validação |
+|----------|--------|---------|-----------------|-----------|
+| {path} | {verbo} | {cenário} | {status} | {o que verificar} |
 
-## Saída em Markdown
+### Edge cases
+- {edge case 1}: {comportamento esperado}
+- {edge case 2}: {comportamento esperado}
 
-```md
-### review-api-qa
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta. Correção: ação.
+### Massa de dados
+- {seed/factory/fixture}: {descrição}
+
+### Mocks
+| Serviço | Ferramenta | Comportamento mockado |
+|---------|-----------|----------------------|
+| {serviço} | {ferramenta} | {comportamento} |
+
+### Dados sensíveis
+- Campos que NÃO devem aparecer em response: {lista}
 ```
-
-## Regra dura
-Plano que viola BLOCKER não está pronto.

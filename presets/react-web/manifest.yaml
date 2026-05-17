@@ -5,13 +5,12 @@ description: "React web lifecycle preset"
 required_files:
   - CLAUDE.md
   - .claude/settings.json
-  - .claude/commands/plan.md
+  - .claude/commands/jarvis-plan.md
   - .claude/commands/grill.md
   - .claude/commands/ship.md
   - .claude/commands/refactor.md
   - .claude/commands/kickoff.md
   - .claude/commands/design-phase.md
-  - .claude/commands/jarvis-plan-revisor.md
   - .claude/commands/jarvis-test-flow.md
   - .claude/commands/product_roles/role-architect.md
   - .claude/commands/product_roles/role-frontend-architect.md
@@ -22,8 +21,6 @@ required_files:
   - .claude/commands/product_roles/review-accessibility.md
   - .claude/commands/product_roles/review-performance.md
   - .claude/commands/product_roles/carregar-referencias.md
-  - .claude/commands/product_roles/consolidar-parecer.md
-  - .claude/commands/product_roles/gerar-relatorio.md
   - .claude/commands/product_roles/localizar-plano.md
   - docs/ai/ARCHITECTURE.md
   - docs/ai/CODING_STANDARDS.md

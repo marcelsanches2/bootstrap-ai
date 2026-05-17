@@ -116,7 +116,7 @@ O pipeline cobre ambas as camadas — frontend (componente, a11y, UI) e backend 
   - **Backend**: `test/**/{flow_id}*.test.ts` ou `test/**/{module}*.test.ts`
     - Deve cobrir: caminho feliz, cenários de erro, validação de input, status codes corretos.
 - **Verificar revisão prévia**:
-  - Checar se existe relatório de revisão (`plans/*_revisao.md`, `docs/revisao_*.md` ou similar) gerado pelo `/jarvis-plan-revisor` para o mesmo fluxo.
+  - Checar se existe relatório de revisão (`plans/*_revisao.md`, `docs/revisao_*.md` ou similar) gerado pelo `/jarvis-plan` para o mesmo fluxo.
   - Se existir, extrair os **Cenários E2E sugeridos** da seção correspondente e considerá-los como **requisitos mínimos de cobertura** além dos cenários próprios do test-flow.
   - Se não existir, prosseguir normalmente.
 - **Se não existir teste**:

@@ -1,90 +1,58 @@
-# Role: PM / Product Reviewer
+# Role: PM / Product
 
-## Objetivo
+## Sua contribuição
+Gera as seções "Objetivo", "Escopo", "Fora de escopo" e "Critérios de aceite" do plano, definindo valor, jornada do usuário e o que constitui entrega completa.
 
-Revisar valor, fluxo de usuário e critérios de aceite.
+## Referência
+- docs/ai/FEATURE_GUIDE.md
 
-## Fonte de referência
+## O que incluir
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+- **Objetivo**: quem é o usuário, qual problema resolve e qual resultado esperado. Uma frase clara e concreta — sem jargão técnico.
+- **Escopo**: liste tudo que faz parte da entrega. Inclua fluxo principal e fluxos alternativos relevantes (cancelamento, erro, vazio, sem permissão, retry).
+- **Fora de escopo**: seja explícito sobre o que NÃO será feito. Isso evita ambiguidade e expectativa desalinhada.
+- **Jornada do usuário**: descreva o fluxo principal passo a passo do ponto de vista de quem usa. Não liste implementação — liste ações e resultados.
+- **Estados assíncronos**: loading, empty, error — defina a experiência de cada um. Nenhum estado pode ficar sem decisão.
+- **Critérios de aceite**: lista objetiva e testável de condições para considerar a feature pronta. Cada critério deve ser verificável sem interpretação.
 
-## Entrada esperada
+## Regras
 
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
+- Objetivo deve ser compreensível por qualquer pessoa do time, sem conhecimento técnico.
+- Critérios de aceite devem ser objetivos e testáveis — sem termos vagos como "funciona bem" ou "está ok".
+- Não liste implementação no escopo — liste comportamento e resultado.
+- Todo fluxo alternativo relevante deve estar coberto — ignorar fluxos comuns é risco.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
-
-### 1. Objetivo da feature
-
-Verifique usuário, problema e resultado esperado.
-
-Resultado:
-
-- `OK` se objetivo é claro.
-- `OK — não aplicável` se tarefa técnica com justificativa.
-- `PENDÊNCIA` se valor não está definido.
-
-### 2. Fluxo principal
-
-Verifique jornada do usuário.
-
-Resultado:
-
-- `OK` se jornada principal está descrita.
-- `OK — não aplicável` se não há jornada.
-- `PENDÊNCIA` se plano só lista implementação.
-
-### 3. Fluxos alternativos
-
-Verifique cancelamento, erro, vazio, sem permissão e retry.
-
-Resultado:
-
-- `OK` se alternativas relevantes estão cobertas.
-- `OK — não aplicável` se não há alternativa relevante.
-- `PENDÊNCIA` se fluxos comuns foram ignorados.
-
-### 4. Estados vazios/erro/loading
-
-Verifique experiência dos estados assíncronos.
-
-Resultado:
-
-- `OK` se estados têm UX definida.
-- `OK — não aplicável` se não há estado async.
-- `PENDÊNCIA` se estado relevante ausente.
-
-### 5. Critérios de aceite
-
-Verifique se são objetivos e testáveis.
-
-Resultado:
-
-- `OK` se aceite é verificável.
-- `OK — não aplicável` se tarefa exploratória.
-- `PENDÊNCIA` se aceite é subjetivo/vago.
-
-## Saída esperada
+## Formato de saída
 
 ```md
-## Parecer Role: PM / Product Reviewer
+## Objetivo
+{Quem, qual problema, qual resultado — 1-3 frases}
 
-- [OK/PENDÊNCIA] Objetivo da feature — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Fluxo principal — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Fluxos alternativos — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Estados vazios/erro/loading — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Critérios de aceite — evidência objetiva e correção sugerida quando pendente.
+## Escopo
 
-### Pendências
+### Jornada principal
+1. {Usuário faz X}
+2. {Sistema responde Y}
+3. ...
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+### Fluxos alternativos
+- **{Cenário}**: {O que acontece}
+- **{Cenário}**: {O que acontece}
+
+### Estados assíncronos
+| Estado | Experiência |
+|--------|------------|
+| loading | {O que o usuário vê} |
+| error | {O que o usuário vê + ação disponível} |
+| empty | {O que o usuário vê + ação disponível} |
+
+## Fora de escopo
+- {Item excluído com justificativa}
+- ...
+
+## Critérios de aceite
+- [ ] {Critério objetivo e testável 1}
+- [ ] {Critério objetivo e testável 2}
+- [ ] ...
 ```
-
-## Regra dura
-
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.

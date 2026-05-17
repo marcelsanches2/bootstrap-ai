@@ -1,102 +1,61 @@
 # Role: Performance Web
 
-## Objetivo
+## Sua contribuição
+Gera a seção "Performance" do plano, definindo estratégias de bundle size, lazy loading, Web Vitals, otimização de imagens e renderização eficiente.
 
-Revisar bundle, renderização, assets e impacto em Web Vitals.
+## Referência
+- docs/ai/PERFORMANCE_GUIDE.md
 
-## Fonte de referência
+## O que incluir
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+- **Bundle size**: analise dependências novas e impacto no bundle. Prefira imports nomeados, tree-shakeable. Dependência pesada sem justificativa é proibida.
+- **Lazy loading**: rotas, modais pesados e features grandes carregadas sob demanda. Defina pontos de `React.lazy` + `Suspense` ou dynamic imports. Telas pesadas não devem carregar no caminho crítico.
+- **Web Vitals**: defina métricas relevantes (LCP, FID/INP, CLS) e metas. Quando performance é objetivo explícito, proponha medição antes/depois.
+- **Imagens/assets**: formato otimizado (WebP/AVIF), dimensões explícitas (`width`/`height`), lazy loading nativo, srcset para responsividade. Assets pesados sem otimização são proibidos.
+- **Renderização**: evite re-renders desnecessários — memoização seletiva, listas virtualizadas quando grandes, estado no menor escopo possível. Identifique renderizações evitáveis.
+- **Escala frontend**: para features grandes — cache de server state (TanStack Query), listas longas com paginação/virtualização, contexto global com escopo mínimo, observabilidade de métricas frontend.
 
-## Entrada esperada
+## Regras
 
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
+- Dependência pesada nova (>50KB gzip) deve ser justificada — considere alternativas leves.
+- Tela pesada no caminho crítico sem lazy loading é proibida.
+- Imagens sem dimensões explícitas ou formato otimizado são proibidas.
+- Não proponha otimização prematura em componentes triviais — foque onde há impacto real.
+- Otimização sem métrica é especulação — quando performance é objetivo, proponha medição.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
-
-### 1. Bundle
-
-Verifique dependências novas, imports e lazy loading.
-
-Resultado:
-
-- `OK` se bundle foi considerado.
-- `OK — não aplicável` se mudança não afeta bundle.
-- `PENDÊNCIA` se dependência pesada/import global sem justificativa.
-
-### 2. Lazy loading
-
-Verifique rotas/áreas pesadas.
-
-Resultado:
-
-- `OK` se lazy loading aplicado onde faz sentido.
-- `OK — não aplicável` se não há área pesada.
-- `PENDÊNCIA` se tela pesada carrega no caminho crítico.
-
-### 3. Renderizações
-
-Verifique estado duplicado, listas grandes e efeitos.
-
-Resultado:
-
-- `OK` se renderização é razoável.
-- `OK — não aplicável` se componente trivial.
-- `PENDÊNCIA` se há renderizações evitáveis com impacto provável.
-
-### 4. Imagens/assets
-
-Verifique tamanho, formato, dimensões e lazy.
-
-Resultado:
-
-- `OK` se assets estão otimizados.
-- `OK — não aplicável` se não há asset novo.
-- `PENDÊNCIA` se asset pesado/quebrando layout.
-
-### 5. Medição
-
-Verifique métrica antes/depois quando performance é objetivo.
-
-Resultado:
-
-- `OK` se há validação objetiva.
-- `OK — não aplicável` se performance não é objetivo/risco.
-- `PENDÊNCIA` se otimização sem métrica ou risco sem validação.
-
-
-### 6. Escala de frontend
-
-Verifique rotas/features grandes, cache de server state, listas longas, contexto global, formulários grandes e observabilidade frontend.
-
-Resultado:
-
-- `OK` se o plano evita crescimento descontrolado de bundle/renderização/cache.
-- `OK — não aplicável` se a mudança é pequena e sem risco de escala.
-- `PENDÊNCIA` se uma tela/feature grande ignora bundle, cache, listas, rerenders ou Web Vitals.
-
-## Saída esperada
+## Formato de saída
 
 ```md
-## Parecer Role: Performance Web
+## Performance
 
-- [OK/PENDÊNCIA] Bundle — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Lazy loading — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Renderizações — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Imagens/assets — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Medição — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Escala de frontend — evidência objetiva e correção sugerida quando pendente.
+### Bundle
+| Item | Impacto | Estratégia |
+|------|---------|-----------|
+| {dependência/import} | {tamanho estimado ou risco} | {tree-shaking / alternativa / lazy} |
 
-### Pendências
+### Lazy loading
+| Ponto | Estratégia | Justificativa |
+|-------|-----------|---------------|
+| {rota/modal/feature} | {React.lazy / dynamic / Suspense} | {por quê} |
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+### Web Vitals
+| Métrica | Meta | Como medir |
+|---------|------|-----------|
+| LCP | {ex: <2.5s} | {ferramenta} |
+| INP | {ex: <200ms} | {ferramenta} |
+| CLS | {ex: <0.1} | {ferramenta} |
+
+### Imagens / Assets
+| Asset | Formato | Dimensões | Lazy | srcset |
+|-------|---------|-----------|------|--------|
+| {arquivo} | {WebP/AVIF/PNG} | {WxH} | {sim/não} | {sim/não} |
+
+### Renderização
+| Componente | Risco | Estratégia |
+|-----------|-------|-----------|
+| {componente} | {rerenders / lista grande / etc.} | {memo / virtualize / estado mínimo} |
+
+### Escala frontend
+{Cache strategy, listas longas, contexto global, observabilidade — se aplicável}
 ```
-
-## Regra dura
-
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.

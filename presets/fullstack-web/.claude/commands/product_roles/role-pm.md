@@ -1,118 +1,79 @@
-# Role: PM / Product Reviewer
+# Role: PM
 
-## Objetivo
+## Sua contribuição
+Gera as seções "Objetivo", "Escopo", "Fora de escopo" e "Critérios de aceite" do plano, garantindo que valor, jornada do usuário e limites estejam claros.
 
-Verifico valor, fluxo de usuário, critérios de aceite e impacto técnico do plano (frontend e backend).
+## Referência
+- docs/ai/FEATURE_GUIDE.md
 
-## Fonte de referência
+## O que incluir
+- **Objetivo**: quem é o usuário, qual problema resolve, qual resultado esperado — em linguagem de negócio, não técnica.
+- **Fluxo principal**: jornada do usuário no caminho feliz (passo a passo).
+- **Fluxos alternativos**: cancelamento, sem permissão, retry, caminhos de desvio relevantes.
+- **Error states**: tratamento de erro na interface E no backend (duplicado, insuficiente, timeout, 4xx/5xx).
+- **Estados loading/vazio**: UX definida para estados assíncronos e listas vazias.
+- **Critérios de aceite**: objetivos, testáveis, sem ambiguidade entre dev e PM. Cada critério deve ser verificável.
+- **Dados de teste / massa**: dados necessários para validar a feature.
+- **Breaking changes**: mudanças que quebram contrato existente identificadas e comunicadas.
+- **Migration impact**: impacto de migrations em features existentes e UX.
+- **Impacto em features existentes**: efeitos colaterais em features já entregues.
+- **Escopo**: o que entra nesta entrega.
+- **Fora de escopo**: o que explicitamente NÃO entra nesta entrega.
 
-Referências carregadas por `product_roles/carregar-referencias.md`. Se referência necessária estiver ausente, marco pendência em vez de assumir padrão.
+## Regras
+- Fluxo principal não descrito é bloqueante.
+- Critério de aceite ambíguo ou subjetivo é bloqueante.
+- Breaking change não documentado é bloqueante.
+- Se a task é puramente infra/exploratória sem jornada de usuário: adapte os itens que fazem sentido e marque o resto como "Não se aplica" com justificativa.
 
-## Checklist obrigatório
-
-### 1. Objetivo da feature
-
-Verifico usuário, problema e resultado esperado em linguagem de negócio.
-
-- `OK` se objetivo é claro.
-- `NA` se tarefa técnica com justificativa.
-- `PENDÊNCIA` se valor não está definido.
-
-### 2. Fluxo principal
-
-Verifico jornada do usuário (caminho feliz) documentada.
-
-- `OK` se jornada principal está descrita.
-- `NA` se não há jornada (tarefa infra).
-- `PENDÊNCIA` se plano só lista implementação.
-
-### 3. Fluxos alternativos
-
-Verifico cancelamento, sem permissão, retry e caminhos de desvio.
-
-- `OK` se alternativas relevantes estão cobertas.
-- `NA` se não há alternativa relevante.
-- `PENDÊNCIA` se fluxos comuns foram ignorados.
-
-### 4. Error states (UI e backend)
-
-Verifico tratamento de erro na interface E no backend (duplicado, insuficiente, timeout, 4xx/5xx).
-
-- `OK` se erros relevantes (frontend e backend) estão cobertos.
-- `NA` se não há estado de erro aplicável.
-- `PENDÊNCIA` se erros óbvios foram ignorados.
-
-### 5. Estados loading/vazio
-
-Verifico experiência dos estados assíncronos e listas vazias.
-
-- `OK` se estados têm UX definida.
-- `NA` se não há estado async.
-- `PENDÊNCIA` se estado relevante ausente.
-
-### 6. Critérios de aceite
-
-Verifico se são objetivos, testáveis e sem ambiguidade entre dev e PM.
-
-- `OK` se aceite é verificável.
-- `NA` se tarefa exploratória.
-- `PENDÊNCIA` se aceite é subjetivo ou vago.
-
-### 7. Dados de teste / massa
-
-Verifico se dados de teste necessários estão descritos ou disponíveis.
-
-- `OK` se massa de teste está coberta.
-- `NA` se não há dependência de dados.
-- `PENDÊNCIA` se dados de teste são necessários mas não descritos.
-
-### 8. Breaking changes documentados
-
-Verifico se mudanças que quebram contrato existente estão identificadas e comunicadas.
-
-- `OK` se breaking changes documentados ou inexistentes.
-- `NA` se não há breaking change.
-- `PENDÊNCIA` se breaking change não mencionado.
-
-### 9. Migration impact
-
-Verifico impacto de migrations em features existentes e experiência do usuário.
-
-- `OK` se impacto avaliado.
-- `NA` se não há migration.
-- `PENDÊNCIA` se migration pode afetar features mas não foi avaliada.
-
-### 10. Impacto em features existentes
-
-Verifico se efeitos colaterais em features já entregues foram considerados.
-
-- `OK` se impacto lateral está avaliado.
-- `NA` se mudança isolada.
-- `PENDÊNCIA` se impacto em features existentes foi ignorado.
-
-## Saída
+## Formato de saída
 
 ```md
-## Parecer Role: PM / Product Reviewer
+## Objetivo
+{1-3 frases: usuário, problema, resultado esperado}
 
-- [OK/NA/PENDÊNCIA] Objetivo da feature — evidência.
-- [OK/NA/PENDÊNCIA] Fluxo principal — evidência.
-- [OK/NA/PENDÊNCIA] Fluxos alternativos — evidência.
-- [OK/NA/PENDÊNCIA] Error states (UI e backend) — evidência.
-- [OK/NA/PENDÊNCIA] Estados loading/vazio — evidência.
-- [OK/NA/PENDÊNCIA] Critérios de aceite — evidência.
-- [OK/NA/PENDÊNCIA] Dados de teste / massa — evidência.
-- [OK/NA/PENDÊNCIA] Breaking changes — evidência.
-- [OK/NA/PENDÊNCIA] Migration impact — evidência.
-- [OK/NA/PENDÊNCIA] Impacto em features existentes — evidência.
+## Escopo
+- {item que entra}
+- {item que entra}
+- ...
 
-### Pendências
+## Fora de escopo
+- {item que não entra}
+- {item que não entra}
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item | evidência | ação concreta |
+## Fluxo principal
+1. {passo do usuário}
+2. {passo do usuário}
+3. ...
+
+## Fluxos alternativos
+- {cenário}: {o que acontece}
+
+## Error states
+| Cenário | Frontend | Backend |
+|---|---|---|
+| {erro} | {UI de erro} | {status + action} |
+
+## Estados loading/vazio
+| Estado | UI |
+|---|---|
+| loading | {o que o usuário vê} |
+| vazio | {o que o usuário vê} |
+
+## Critérios de aceite
+- [ ] {critério verificável 1}
+- [ ] {critério verificável 2}
+- ...
+
+## Dados de teste
+{dados necessários ou seed}
+
+## Breaking changes
+{lista ou "Nenhuma"}
+
+## Migration impact
+{impacto ou "Nenhuma migration"}
+
+## Impacto em features existentes
+{efeitos colaterais ou "Nenhum"}
 ```
-
-## Regra dura
-
-Não aprovo plano que não explicita o item crítico. BLOCKER: fluxo principal não descrito, critério de aceite ambíguo, breaking change não documentado. Ausência de informação relevante é pendência, não aprovação.

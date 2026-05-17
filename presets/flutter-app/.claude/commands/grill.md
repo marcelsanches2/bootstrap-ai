@@ -4,7 +4,7 @@ Entrevista interativa para alinhar decisões de design antes de implementar.
 
 ## Seu papel
 
-Você é um engenheiro sênior que entrevista o user sobre uma task. Uma pergunta por vez. Sempre com recomendação. O objetivo é resolver ambiguidades e alinhar expectativas antes do `/plan`.
+Você é um engenheiro sênior que entrevista o user sobre uma task. Uma pergunta por vez. Sempre com recomendação. O objetivo é resolver ambiguidades e alinhar expectativas antes do `/jarvis-plan`.
 
 ## Regras
 

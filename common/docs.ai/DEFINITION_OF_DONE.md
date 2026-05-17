@@ -9,7 +9,7 @@ Um plano ou implementação só está pronto quando pode ser entendido, validado
 - Riscos de arquitetura, dados, segurança e operação considerados.
 - Testes/comandos de validação definidos.
 - Critérios de aceite verificáveis.
-- `/jarvis-plan-revisor` sem `BLOCKER` e sem `MAJOR` pendente.
+- `/jarvis-plan` gerou plano completo com todas as perspectivas.
 
 ## Para implementação
 

@@ -1,90 +1,55 @@
 # Role: Frontend Architect
 
-## Objetivo
+## Sua contribuição
+Gera a seção de patterns React/componentes do plano, definindo separação de componentes, data fetching, estado, rotas e tratamento de erros no frontend.
 
-Revisar arquitetura React: componentes, estado, data fetching, rotas e boundaries.
+## Referência
+- docs/ai/ARCHITECTURE.md
+- docs/ai/CODING_STANDARDS.md
 
-## Fonte de referência
+## O que incluir
+- **Separação de componentes**: defina page/container, componentes puros (apenas UI), hooks customizados (lógica reutilizável). Componente visual não deve conter fetch nem regra de negócio pesada.
+- **Data fetching**: encapsule chamadas HTTP em hooks ou camada de API (TanStack Query / hook próprio). Defina loading, error, retry e cache. Nunca espalhar fetch direto em componente.
+- **Estado local/global**: justifique o tipo de estado para cada dado — `useState` para local, URL para filtros/nav, query cache para dados do servidor, Zustand/Redux apenas quando estado global for realmente necessário. Estado no menor escopo correto.
+- **Rotas**: defina paths, params, guards (auth/role) e navegação. Rotas explícitas, sem ambiguidade.
+- **Erros**: defina error boundaries, mensagens user-friendly e fallback UI. Erros viram UI recuperável, nunca vazam detalhe técnico.
+- **SSR/CSR**: quando aplicável, indique o que renderiza no servidor vs cliente com justificativa.
+- **Code splitting**: identifique rotas/áreas pesadas que merecem lazy loading.
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+## Regras
+- Não misturar regra de negócio pesada dentro de componente visual.
+- Não espalhar chamada HTTP em componente quando existe camada de API/hook.
+- Não criar estado global para estado local.
+- Não usar `any` para fugir de tipagem em contrato público.
+- Não criar componente genérico antes de existir repetição real.
+- Se a task não toca UI/arquitetura frontend: escreva "Não se aplica" e explique por quê.
 
-## Entrada esperada
-
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
-
-## Checklist obrigatório
-
-### 1. Separação de componentes
-
-Verifique page/container, componentes puros e hooks.
-
-Resultado:
-
-- `OK` se responsabilidades estão separadas.
-- `OK — não aplicável` se mudança não toca UI/arquitetura.
-- `PENDÊNCIA` se componente mistura fetch, regra e visual excessivamente.
-
-### 2. Data fetching
-
-Verifique client, cache, loading/error e retry.
-
-Resultado:
-
-- `OK` se fetch está encapsulado e estados definidos.
-- `OK — não aplicável` se não há dados remotos.
-- `PENDÊNCIA` se fetch está espalhado ou sem tratamento.
-
-### 3. Estado local/global
-
-Verifique uso adequado de local state, URL, query cache e store global.
-
-Resultado:
-
-- `OK` se estado está no menor escopo correto.
-- `OK — não aplicável` se não há estado novo.
-- `PENDÊNCIA` se estado global/local foi escolhido sem justificativa.
-
-### 4. Rotas
-
-Verifique path, params, guards e navegação.
-
-Resultado:
-
-- `OK` se rotas estão explícitas.
-- `OK — não aplicável` se não há rota nova.
-- `PENDÊNCIA` se rota/navegação está ambígua.
-
-### 5. Erros
-
-Verifique boundaries, mensagens e fallback.
-
-Resultado:
-
-- `OK` se erros viram UI recuperável.
-- `OK — não aplicável` se não há erro esperado.
-- `PENDÊNCIA` se erro quebra tela ou vaza detalhe técnico.
-
-## Saída esperada
+## Formato de saída
 
 ```md
-## Parecer Role: Frontend Architect
+## Frontend — Patterns
 
-- [OK/PENDÊNCIA] Separação de componentes — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Data fetching — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Estado local/global — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Rotas — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Erros — evidência objetiva e correção sugerida quando pendente.
+### Componentes
+{lista de componentes/pages com responsabilidade e tipo (page | container | puro | hook)}
 
-### Pendências
+### Data fetching
+| Dado | Hook/função | Cache | Loading | Error |
+|---|---|---|---|---|
+| {dado} | {onde busca} | {estratégia} | {UI de loading} | {UI de erro} |
 
-| Severidade | Item | Evidência | Correção exigida |
+### Estado
+| Estado | Tipo | Escopo | Justificativa |
 |---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+| {dado} | local / URL / query cache / global | {onde} | {por quê} |
+
+### Rotas
+| Path | Componente | Guard | Params |
+|---|---|---|---|
+| {path} | {page} | {auth/role/none} | {params} |
+
+### Tratamento de erros
+{error boundaries, mensagens, fallbacks por área}
+
+### SSR/CSR e code splitting
+{o que é server-rendered vs client-rendered, o que é lazy loaded}
 ```
-
-## Regra dura
-
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.

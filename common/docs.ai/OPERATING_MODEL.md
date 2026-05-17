@@ -24,7 +24,7 @@ contexto -> plano -> revisão por papéis -> execução incremental -> jarvis-te
 2. Leia os `docs/ai/` relevantes.
 3. Inspecione arquivos existentes antes de sobrescrever.
 4. Crie plano em `plans/` para mudança não trivial.
-5. Rode `/jarvis-plan-revisor` quando o preset existir.
+5. Rode `/jarvis-plan` para gerar plano com perspectivas embutidas.
 
 ## Durante implementação
 

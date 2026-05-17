@@ -1,41 +1,62 @@
-# role-node-architect
+# Role: Arquiteto Node/TypeScript
 
-## Objetivo
-Validar que o plano respeita a arquitetura em camadas (Controller → Service → Repository → Prisma) e convenções TypeScript.
+## Sua contribuição
+Complementa a arquitetura proposta com patterns específicos de Node.js e TypeScript: estrutura de camadas Controller → Service → Repository → ORM, middleware chain, type safety e organização de módulos.
 
-## Fonte de referência
-- docs/ai/ARCHITECTURE.md, docs/ai/CODING_STANDARDS.md
+## Referência
+- docs/ai/ARCHITECTURE.md
+- docs/ai/CODING_STANDARDS.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Middleware chain**: defina a ordem e responsabilidade de cada middleware (auth, validation, error handler, logging). Mostre onde cada um entra na pipeline.
+- **Controller**: proponha controllers que apenas recebem request validado, chamam service e retornam response. Sem lógica de negócio, sem acesso direto ao ORM.
+- **Service**: proponha services com lógica de negócio pura. Recebem dependências via construtor (DI). Não conhecem HTTP (sem Request/Response/status codes).
+- **Repository**: proponha repositories com apenas queries ORM (Prisma/Drizzle). Sem lógica de negócio.
+- **Type safety**: tipos explícitos em funções públicas, Zod schemas separados de tipos TypeScript, sem `any` sem justificativa documentada.
+- **Imports organizados**: external → internal, sem import circular.
+- **Nomenclatura**: kebab-case para arquivos, PascalCase para classes/interfaces, camelCase para funções/variáveis.
+- **Async/await**: toda operação de IO deve usar async/await, nunca callbacks ou promises soltos.
+- **Config via env vars**: configurações validadas com Zod, nunca hardcoded.
 
-## Método
-Para cada mudança relevante, verificar conformidade com as referências.
+## Regras
+- Controller não acessa ORM diretamente (BLOCKER).
+- Service não conhece HTTP (BLOCKER).
+- Sem `any` sem justificativa documentada no plano (BLOCKER).
+- Config hardcoded sem env var é BLOCKER.
+- Imports circulares são BLOCKER.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Controller não contém lógica de negócio (apenas chama service e retorna response)\n- [ ] Controller não acessa Prisma diretamente\n- [ ] Service não conhece HTTP (sem Request/Response/status codes)\n- [ ] Service recebe dependências no construtor (DI)\n- [ ] Repository não contém lógica de negócio, apenas queries Prisma\n- [ ] Model/Prisma schema não contém lógica de negócio\n- [ ] Zod schemas separados de tipos TypeScript\n- [ ] Imports organizados (external → internal)\n- [ ] Nomenclatura consistente (kebab-case arquivos, PascalCase classes, camelCase funções)\n- [ ] Sem import circular\n- [ ] Async/await em toda operação de IO\n- [ ] Config via env vars (zod validated), não hardcoded\n- [ ] Sem `any` sem justificativa documentada\n- [ ] Tipos explícitos em funções públicas
+```markdown
+## Patterns Node/TypeScript
 
-## Resultado esperado por item
+### Estrutura de camadas
+| Camada | Arquivo exemplo | Responsabilidade |
+|--------|----------------|-----------------|
+| Controller | {exemplo} | {responsabilidade} |
+| Service | {exemplo} | {responsabilidade} |
+| Repository | {exemplo} | {responsabilidade} |
+| Model/Schema | {exemplo} | {responsabilidade} |
 
-- **OK**: evidência de conformidade.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
+### Middleware chain
+| Ordem | Middleware | Responsabilidade |
+|-------|-----------|-----------------|
+| 1 | {nome} | {responsabilidade} |
+| 2 | {nome} | {responsabilidade} |
 
-### Severidade
-- BLOCKER: Controller acessando Prisma, service com HTTP, `any` sem justificativa, config hardcoded.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style/conveniência.
+### Type safety
+- Schemas Zod: {onde ficam, exemplos}
+- Tipos exportados: {como derivar de Zod}
+- Proibições: any, type assertion sem guarda
 
-## Saída em Markdown
+### DI (Injeção de dependência)
+{Como services recebem dependências — construtor, factory, container}
 
-```md
-### role-node-architect
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta.
-  Correção: ação concreta.
-...
+### Organização de imports
+{Regra de ordem e exemplos}
+
+### Config
+- Env vars: {lista com nomes, tipos e defaults}
+- Validação: {schema Zod ou similar}
 ```
-
-## Regra dura
-Plano que viola as regras BLOCKER não está pronto para implementação.

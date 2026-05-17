@@ -7,7 +7,7 @@ Repositório de presets de lifecycle para projetos com Claude Code.
 Cada preset é um pacote autocontido que instala processo operacional em um projeto alvo:
 
 ```txt
-/plan → /jarvis-plan-revisor → implementação → /jarvis-test-flow → /ship
+/jarvis-plan → implementação → /jarvis-test-flow → /ship
 ```
 
 Os presets NÃO são bibliotecas. São conjuntos de arquivos que vivem dentro do projeto consumidor em `.claude/commands/` e `docs/ai/`.
@@ -27,7 +27,7 @@ bootstrap-ai/
 │   ├── node-backend/            # Node/TypeScript backend
 │   └── fullstack-web/           # Fullstack monolito (Next.js, Remix, Nuxt, SvelteKit)
 ├── common/                      # Recursos compartilhados entre presets
-│   ├── commands/                # Comandos genéricos (jarvis-plan-revisor, jarvis-revisor, plan, ship, refactor)
+│   ├── commands/                # Comandos genéricos (jarvis-plan, jarvis-revisor, ship, refactor)
 │   ├── docs.ai/                 # Docs AI genéricos (OPERATING_MODEL, CODING_STANDARDS, etc.)
 │   └── roles/                   # Roles genéricos (arquiteto, designer, pm, test, security, etc.)
 ├── generators/skill-creator/    # Gerador de novos presets
@@ -49,9 +49,9 @@ presets/<nome>/
 ├── manifest.yaml                          # Metadados: detecção, required_files, roles, library_tags
 ├── plans/.gitkeep
 ├── .claude/
-│   ├── settings.json                      # Hooks: ExitPlanMode → jarvis-plan-revisor, Stop → jarvis-test-flow
+│   ├── settings.json                      # Hooks: PostToolUse → lint, Stop → jarvis-test-flow
 │   └── commands/
-│       ├── jarvis-plan-revisor.md              # Revisão multi-role de planos (~200+ linhas)
+│       ├── jarvis-plan.md                      # Planejamento unificado com perspectivas embutidas (~180+ linhas)
 │       ├── jarvis-test-flow.md                   # Pipeline de validação E2E (~200+ linhas)
 │       ├── jarvis-revisor.md                     # Auditoria global do projeto (manual)
 │       ├── jarvis-full-test.md                   # Regressão completa (manual)
@@ -75,14 +75,13 @@ presets/<nome>/
 ## Lifecycle de desenvolvimento (no projeto consumidor)
 
 ```
-/grill            → entrevista interativa para alinhar decisões antes de planejar (manual, opt-in)
-/plan             → cria plano em plans/YYYY-MM-DD-slug.md (sugere /grill quando detecta ambiguidade)
-/jarvis-plan-revisor → revisa plano contra docs/ai e roles (hook ExitPlanMode dispara automaticamente)
-(desenvolve)      → hook PostToolUse roda lint rápido a cada edição
-/jarvis-test-flow  → pipeline completo antes de commitar (hook Stop dispara se houver diff)
-/jarvis-revisor    → auditoria global do projeto (manual, sob demanda)
-/jarvis-full-test  → regressão completa do projeto (manual, sob demanda)
-/ship             → checklist final
+/grill (standalone, opt-in) → entrevista interativa sem plano
+/jarvis-plan                → explora, grilla se necessário, gera plano com perspectivas embutidas → user aprova
+(desenvolve)                → hook PostToolUse roda lint rápido a cada edição
+/jarvis-test-flow           → pipeline completo antes de commitar (hook Stop dispara se houver diff)
+/jarvis-revisor             → auditoria global do projeto (manual, sob demanda)
+/jarvis-full-test           → regressão completa do projeto (manual, sob demanda)
+/ship                       → checklist final
 ```
 
 ## CLI (bin/bootstrap-ai)
@@ -127,7 +126,7 @@ Biblioteca estrutural não coberta pelo preset selecionado → cria preset novo 
 
 ## Regras de qualidade para presets
 
-- `jarvis-plan-revisor.md`: mínimo 200 linhas
+- `jarvis-plan.md`: mínimo 180 linhas
 - `jarvis-test-flow.md`: mínimo 200 linhas
 - `jarvis-revisor.md`: mínimo 100 linhas
 - `jarvis-full-test.md`: mínimo 100 linhas
@@ -153,14 +152,14 @@ Cada role DEVE ter:
 Todo preset tem 3 hooks:
 
 1. **PostToolUse (Edit|Write|MultiEdit)**: lint/typecheck rápido da stack
-2. **ExitPlanMode**: dispara `/jarvis-plan-revisor` automaticamente quando plano é aceito
+2. **PostToolUse**: roda lint stack-specific a cada edição de arquivo
 3. **Stop**: se houver `git diff` em arquivos da stack, força `/jarvis-test-flow` antes de encerrar
 
 ## Regras deste repositório
 
 - Não commitar `.env`, `.bootstrap-ai.lock`, `.refresh-reports/` ou `*.kit-new`
 - Não usar `--force` em projetos existentes sem revisar diff
-- Não criar preset sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan-revisor.md`, `jarvis-test-flow.md`, `jarvis-revisor.md` e `jarvis-full-test.md`
+- Não criar preset sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan.md`, `jarvis-test-flow.md`, `jarvis-revisor.md` e `jarvis-full-test.md`
 - Manter `common/` como fallback genérico — preset específico sempre sobrepõe
 - Todo preset novo deve passar em `./bin/bootstrap-ai validate <nome>`
 - Templates do `skill-creator` devem ter conteúdo real, não placeholder vazio

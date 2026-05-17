@@ -1,39 +1,60 @@
-# review-observability
+# Role: Observabilidade
 
-## Objetivo
-Validar logging, métricas, healthcheck e rastreabilidade.
+## Sua contribuição
+Gera a seção "Observabilidade" do plano, definindo logging estruturado, métricas, healthcheck, tracing e rastreabilidade.
 
-## Fonte de referência
+## Referência
 - docs/ai/OBSERVABILITY_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Logging estruturado**: eventos de negócio logados com pino structured logging. Erros logados com contexto (orderId, userId, requestId). Nenhum dado sensível nos logs.
+- **Request ID**: propagado em toda cadeia (X-Request-ID). Correlação entre frontend e backend.
+- **Healthcheck**: atualizado com novas dependências. Endpoint `/health` reflete status real.
+- **Métricas de negócio**: quando aplicável, métricas que importam para o domínio (conversion, latency, error rate).
+- **Latência**: monitorada em endpoints novos. Alerta em degradação.
+- **External calls**: com timeout e log de falha. Timeout explícito, retry com backoff, circuit breaker quando necessário.
+- **Graceful shutdown**: tratado para não perder dados em trânsito.
 
-## Método
-Verificar conformidade com as referências.
+## Regras
+- Dado sensível em log é bloqueante.
+- Healthcheck faltando com dependência nova é bloqueante.
+- External call sem timeout é pendência.
+- Nenhum dado sensível em log (token, senha, Authorization header, cookie, PII sem mascaramento).
+- Se a task não afeta runtime/observabilidade: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
-
-- [ ] Eventos de negócio logados com pino structured logging\n- [ ] Erros logados com contexto (orderId, userId)\n- [ ] Nenhum dado sensível nos logs\n- [ ] Request ID propagado (X-Request-ID)\n- [ ] Latência monitorada em endpoints novos\n- [ ] Healthcheck atualizado com novas dependências\n- [ ] Métricas de negócio quando aplicável\n- [ ] External calls com timeout e log de falha\n- [ ] Graceful shutdown tratado
-
-## Resultado esperado por item
-
-- **OK**: evidência.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção.
-
-### Severidade
-- BLOCKER: Dado sensível em log, healthcheck faltando com dependência nova.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style.
-
-## Saída em Markdown
+## Formato de saída
 
 ```md
-### review-observability
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta. Correção: ação.
-```
+## Observabilidade
 
-## Regra dura
-Plano que viola BLOCKER não está pronto.
+### Logging estruturado
+| Evento | Campos | Nível | Arquivo |
+|---|---|---|---|
+| {evento de negócio} | {orderId, userId, ...} | {info/warn/error} | {onde loga} |
+
+### Request ID
+{como é gerado, propagado e correlacionado}
+
+### Healthcheck
+| Dependência | Verificação | Timeout |
+|---|---|---|
+| {serviço/banco} | {query/ping/tcp} | {ms} |
+
+### Métricas
+| Métrica | Tipo | Dimensões | Alerta |
+|---|---|---|---|
+| {nome} | {counter/histogram/gauge} | {labels} | {quando dispara} |
+
+### Latência
+| Endpoint | P95 esperado | P99 esperado | Como mede |
+|---|---|---|---|
+| {VERB /path} | {ms} | {ms} | {ferramenta} |
+
+### External calls
+| Serviço | Timeout | Retry | Circuit breaker | Log de falha |
+|---|---|---|---|---|
+| {nome} | {ms} | {tentativas + backoff} | {sim/não} | {campos} |
+
+### Graceful shutdown
+{como sinais SIGTERM/SIGINT são tratados}
+```

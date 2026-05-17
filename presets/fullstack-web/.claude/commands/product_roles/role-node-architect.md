@@ -1,41 +1,52 @@
-# role-node-architect
+# Role: Node Architect
 
-## Objetivo
-Validar que o plano respeita a arquitetura em camadas (Controller → Service → Repository → Prisma) e convenções TypeScript.
+## Sua contribuição
+Gera a seção de patterns Node/TypeScript backend do plano, definindo camadas, middleware, serviços, ORM, migrations e convenções de código.
 
-## Fonte de referência
-- docs/ai/ARCHITECTURE.md, docs/ai/CODING_STANDARDS.md
+## Referência
+- docs/ai/ARCHITECTURE.md
+- docs/ai/CODING_STANDARDS.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Camadas**: Controller → Service → Repository → Prisma. Cada camada com responsabilidade clara.
+  - Controller: recebe request, chama service, retorna response. Sem lógica de negócio, sem acesso direto ao Prisma.
+  - Service: lógica de negócio pura. Não conhece HTTP (sem Request/Response/status codes). Recebe dependências via construtor (DI).
+  - Repository: queries Prisma sem lógica de negócio. Apenas acesso a dados.
+- **Zod schemas**: separados de tipos TypeScript. Schemas validam input em boundaries (controller), tipos derivam dos schemas.
+- **Imports**: organizados (external → internal), sem import circular.
+- **Nomenclatura**: kebab-case para arquivos, PascalCase para classes, camelCase para funções.
+- **Async/await**: em toda operação de IO.
+- **Config**: via env vars validadas com Zod, nunca hardcoded.
+- **Tipos explícitos**: em funções públicas, sem `any` sem justificativa documentada.
 
-## Método
-Para cada mudança relevante, verificar conformidade com as referências.
+## Regras
+- Controller jamais acessa Prisma diretamente.
+- Service jamais conhece HTTP.
+- `any` sem justificativa documentada é bloqueante.
+- Config hardcoded é bloqueante.
+- Se a task não envolve backend Node: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
-
-- [ ] Controller não contém lógica de negócio (apenas chama service e retorna response)\n- [ ] Controller não acessa Prisma diretamente\n- [ ] Service não conhece HTTP (sem Request/Response/status codes)\n- [ ] Service recebe dependências no construtor (DI)\n- [ ] Repository não contém lógica de negócio, apenas queries Prisma\n- [ ] Model/Prisma schema não contém lógica de negócio\n- [ ] Zod schemas separados de tipos TypeScript\n- [ ] Imports organizados (external → internal)\n- [ ] Nomenclatura consistente (kebab-case arquivos, PascalCase classes, camelCase funções)\n- [ ] Sem import circular\n- [ ] Async/await em toda operação de IO\n- [ ] Config via env vars (zod validated), não hardcoded\n- [ ] Sem `any` sem justificativa documentada\n- [ ] Tipos explícitos em funções públicas
-
-## Resultado esperado por item
-
-- **OK**: evidência de conformidade.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
-
-### Severidade
-- BLOCKER: Controller acessando Prisma, service com HTTP, `any` sem justificativa, config hardcoded.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style/conveniência.
-
-## Saída em Markdown
+## Formato de saída
 
 ```md
-### role-node-architect
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta.
-  Correção: ação concreta.
-...
-```
+## Backend — Patterns
 
-## Regra dura
-Plano que viola as regras BLOCKER não está pronto para implementação.
+### Camadas
+| Camada | Arquivo | Responsabilidade |
+|---|---|---|
+| Controller | {path} | {o que faz} |
+| Service | {path} | {o que faz} |
+| Repository | {path} | {o que faz} |
+
+### Schemas (Zod)
+{lista de schemas com nome, arquivo e o que validam}
+
+### Dependências (DI)
+{quais serviços recebem quais dependências no construtor}
+
+### Config
+{env vars necessárias com validação Zod}
+
+### Convenções
+{nomenclatura, imports, async/await — diferenças do padrão se houver}
+```

@@ -1,41 +1,80 @@
-# review-security
+# Role: Security Engineer
 
-## Objetivo
-Validar auth, autorização, dados sensíveis e proteção contra ataques.
+## Sua contribuição
+Gera a seção "Segurança" do plano, definindo autenticação, autorização, validação de input, proteção de dados sensíveis e headers de segurança.
 
-## Fonte de referência
+## Referência
 - docs/ai/SECURITY_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Autenticação**: qual mecanismo (JWT, session), onde aplicar (`authMiddleware`), duração dos tokens (15min access, 7d refresh).
+- **Autorização**: verificação de role ou ownership em cada endpoint protegido. Defina quem pode acessar o quê.
+- **Validação de input**: todo input validado com Zod. Defina schemas para body, query e params.
+- **Senhas**: sempre hasheadas com bcrypt. Nunca texto plano.
+- **JWT**: expiração configurada, refresh token, revogação quando aplicável.
+- **PII em logs**: nenhum dado sensível em log (password, token, Authorization header, cookie, PII sem mascaramento).
+- **PII em responses**: nenhum dado sensível na resposta (passwordHash, token interno).
+- **CORS**: origins explícitos, nunca `*`.
+- **Rate limiting**: em login, reset de senha e endpoints sensíveis.
+- **Helmet**: security headers configurados.
+- **SQL injection**: parametrizado via ORM (Prisma já faz). Sem query raw com concatenação.
+- **Proibições**: sem `eval`, `Function` com input, secrets hardcoded, HTTP em produção.
+- **Secrets**: via env vars, nunca no código.
 
-## Método
-Para cada mudança relevante, verificar conformidade com as referências.
+## Regras
+- Auth faltando em endpoint protegido é BLOCKER.
+- Senha em texto plano é BLOCKER.
+- PII em log é BLOCKER.
+- CORS com `*` em produção é BLOCKER.
+- Nunca commitar secrets, tokens, `.env` real.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Autenticação em endpoints protegidos (authMiddleware)\n- [ ] Autorização verificada (role ou ownership)\n- [ ] Input validado com Zod\n- [ ] Senha hasheada com bcrypt\n- [ ] JWT com expiração (15min access, 7d refresh)\n- [ ] Nenhum dado sensível em log\n- [ ] Nenhum dado sensível em response (passwordHash, token)\n- [ ] CORS com origins explícitos (nunca *)\n- [ ] Rate limiting em login/reset\n- [ ] Helmet para security headers\n- [ ] SQL parametrizado (Prisma já faz)\n- [ ] Sem eval/Function com input\n- [ ] Secrets via env vars\n- [ ] HTTPS em produção
+```markdown
+## Segurança
 
-## Resultado esperado por item
+### Autenticação
+- **Mecanismo**: {JWT / session / API key}
+- **Access token**: {duração}
+- **Refresh token**: {duração}
+- **Middleware**: {nome e onde aplicar}
+- **Revogação**: {mecanismo quando aplicável}
 
-- **OK**: evidência de conformidade.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
+### Autorização
+| Endpoint | Role/Permissão | Verificação |
+|----------|---------------|-------------|
+| {path} | {role} | {como verificar ownership/role} |
 
-### Severidade
-- BLOCKER: Auth faltando em endpoint protegido, senha texto plano, PII em log.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style/conveniência.
+### Validação de input
+- Body: Zod schema `{exemplo}`
+- Query: Zod schema `{exemplo}`
+- Params: Zod schema `{exemplo}`
 
-## Saída em Markdown
+### Dados sensíveis
+| Dado | Armazenamento | Em log | Em response |
+|------|--------------|--------|-------------|
+| senha | bcrypt hash | ❌ mascarado | ❌ nunca |
+| token | env var | ❌ mascarado | ❌ nunca |
+| PII {tipo} | {proteção} | {mascaramento} | {policy} |
 
-```md
-### review-security
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta.
-  Correção: ação concreta.
-...
+### CORS
+- Origins permitidas: `{lista}`
+- Nunca `*` em produção.
+
+### Rate limiting
+| Endpoint | Limite | Window |
+|----------|--------|--------|
+| {path} | {n requests} | {tempo} |
+
+### Security headers
+- Helmet: {habilitado com config}
+- Headers adicionais: {lista se aplicável}
+
+### Checklist de segurança
+- [ ] Nenhum `eval` ou `Function` com input
+- [ ] Nenhum secret hardcoded
+- [ ] HTTPS em produção
+- [ ] SQL parametrizado (via ORM)
+- [ ] Secrets via env vars
 ```
-
-## Regra dura
-Plano que viola as regras BLOCKER não está pronto para implementação.

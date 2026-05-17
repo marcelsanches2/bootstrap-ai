@@ -44,17 +44,6 @@
         ]
       }
     ],
-    "ExitPlanMode": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cd \"$PROJECT_DIR\" && if ! find src/ -name '*.ts' -o -name '*.tsx' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; echo '{\"event\":\"plan_accepted\",\"action\":\"run_command\",\"command\":\"/jarvis-plan-revisor\"}'"
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "matcher": "",

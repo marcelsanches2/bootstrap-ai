@@ -1,39 +1,67 @@
-# role-pm
+# Role: Product Manager
 
-## Objetivo
-Validar que o plano descreve comportamento observável pelo usuário, não só arquitetura.
+## Sua contribuição
+Gera as seções "Objetivo", "Escopo", "Fora de escopo" e "Critérios de aceite" do plano, descrevendo comportamento observável pelo usuário em linguagem de negócio.
 
-## Fonte de referência
+## Referência
 - docs/ai/FEATURE_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Objetivo**: uma frase clara em linguagem de negócio sobre o que a feature resolve e para quem.
+- **Escopo**:
+  - Fluxo principal (caminho feliz) documentado passo a passo.
+  - Fluxos alternativos (ex.: cancelamento, edição, retry).
+  - Error states documentados (duplicado, insuficiente, timeout, não encontrado).
+  - Loading states considerados.
+  - Empty states considerados (lista vazia, sem resultado).
+- **Fora de escopo**: liste explicitamente tudo que NÃO será feito nesta entrega. Evite ambiguidade entre dev e PM.
+- **Impacto em features existentes**: avalie o que muda em funcionalidades já em produção.
+- **Critérios de aceite**: lista explícita e testável. Cada critério deve ser verificável por um humano ou teste automatizado. Inclua dados de teste / massa necessária.
 
-## Método
-Verificar conformidade com as referências.
+## Regras
+- Fluxo principal obrigatoriamente descrito. Sem ele o plano está incompleto (BLOCKER).
+- Critérios de aceite devem ser inequívocos — sem linguagem subjetiva (BLOCKER).
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Objetivo claro em linguagem de negócio\n- [ ] Fluxo principal documentado (caminho feliz)\n- [ ] Fluxos alternativos documentados\n- [ ] Error states documentados (duplicado, insuficiente, timeout)\n- [ ] Loading states considerados\n- [ ] Empty states considerados (lista vazia)\n- [ ] Critérios de aceite explícitos e testáveis\n- [ ] Sem ambiguidade entre dev e PM\n- [ ] Impacto em features existentes avaliado\n- [ ] Dados de teste / massa descritos
+```markdown
+## Objetivo
+{1–2 frases: o que resolve, para quem, qual valor}
 
-## Resultado esperado por item
+## Escopo
 
-- **OK**: evidência.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção.
+### Fluxo principal
+1. {passo}
+2. {passo}
+3. {passo}
 
-### Severidade
-- BLOCKER: Fluxo principal não descrito, critério de aceite ambíguo.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style.
+### Fluxos alternativos
+- {cenário}: {comportamento}
+- {cenário}: {comportamento}
 
-## Saída em Markdown
+### Error states
+- {erro}: {comportamento / mensagem}
+- {erro}: {comportamento / mensagem}
 
-```md
-### role-pm
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta. Correção: ação.
+### Loading states
+- {onde}: {comportamento}
+
+### Empty states
+- {onde}: {comportamento}
+
+### Impacto em features existentes
+- {feature}: {o que muda}
+
+## Fora de escopo
+- {item 1}
+- {item 2}
+
+## Critérios de aceite
+- [ ] {critério testável 1}
+- [ ] {critério testável 2}
+- [ ] {critério testável 3}
+
+### Dados de teste
+- {massa necessária para validar os critérios}
 ```
-
-## Regra dura
-Plano que viola BLOCKER não está pronto.

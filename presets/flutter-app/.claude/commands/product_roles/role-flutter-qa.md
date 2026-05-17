@@ -1,109 +1,93 @@
-# Role: QA E2E Flutter
+# Role: QA Flutter
 
-## Objetivo
+## Sua contribuição
 
-Revisar o plano sob a ótica de testes ponta a ponta no Flutter e propor cenários E2E verificáveis.
+Gera a seção "Testes" do plano, definindo unit tests, widget tests, integration tests, pipeline e cenários em Gherkin.
 
-## Fonte de referência
+## Referência
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+- docs/ai/CODING_STANDARDS.md
+- docs/ai/FEATURE_GUIDE.md
 
-## Entrada esperada
+## O que incluir
 
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
+- **Unit tests** — para cada camada:
+  - **Regra de negócio / usecase**: testar lógica de domínio com repository mock. Cobrir casos de sucesso e falha.
+  - **Repository**: testar mapeamento entre DTO e entity, chamadas ao datasource, tratamento de erro.
+  - **Datasource**: testar parsing de resposta, tratamento de status code, timeout e conexão.
+- **Widget tests** — testar cada widget novo ou alterado: renderização correta, interação (tap, scroll, input), estados visuais (loading, error, empty), e verificacao de Semantics.
+- **Integration tests** — testar o fluxo completo da feature ponta a ponta com `integration_test`. Incluir setup de ambiente determinístico (mock/fake datasource, seed de dados).
+- **Pipeline** — definir comandos que devem passar:
+  - `flutter test` — todos os testes unitários e widget
+  - `flutter analyze` — zero warnings
+  - Golden tests — quando aplicável (componentes visuais com estado determinístico)
+- **Cenários em Gherkin** — escrever cenários E2E em formato Gherkin para caminho feliz e cenários negativos. Cada cenário deve ser determinístico e não depender de ambiente externo.
 
-## Checklist obrigatório
+## Regras
 
-### 1. Testabilidade da feature
+- Toda feature que depende de API ou integração deve ter mock/fake/massa determinística. Sem exceção.
+- Cenários Gherkin devem ser autocontidos: o passo "Dado" prepara todo o estado necessário.
+- Widget tests devem usar `Key` nos widgets críticos para estabilidade.
+- Nenhum teste depende de backend real, usuário real ou dados de produção.
+- Golden tests apenas quando o componente tem layout estável e determinístico.
+- Se a task é puramente técnica sem lógica testável (ex.: config, build): escreva "Não se aplica" e explique por quê.
 
-Verifique se o plano permite testar a feature localmente sem depender de produção.
-
-Resultado:
-
-- `OK` se há datasource mock/fake, seed ou controle de estado.
-- `OK — não aplicável` se feature não depende de dados externos.
-- `PENDÊNCIA` se depende de backend real, usuário real ou dados externos sem controle.
-
-### 2. Cenários E2E caminho feliz
-
-Verifique se o plano permite criar cenário E2E de caminho feliz em Gherkin.
-
-Formato obrigatório:
-
-```gherkin
-Cenário: <nome>
-Dado <pré-condição>
-E <massa/estado inicial>
-Quando <ação do usuário>
-Então <resultado esperado>
-```
-
-Resultado:
-
-- `OK` se fluxo principal é testável.
-- `PENDÊNCIA` se fluxo não é determinístico ou depende de estado externo.
-
-### 3. Cenários negativos
-
-Verifique cobertura para erro de API, retorno vazio, ausência de permissão, sem internet e input inválido.
-
-Resultado:
-
-- `OK` se cenários negativos estão cobertos.
-- `OK — não aplicável` se não há erro esperado.
-- `PENDÊNCIA` se só existe caminho feliz.
-
-### 4. Massa de dados
-
-Verifique se o plano define massa determinística para dados críticos.
-
-Resultado:
-
-- `OK` se massa está definida.
-- `OK — não aplicável` se não há dados críticos.
-- `PENDÊNCIA` se não há massa suficiente.
-
-### 5. Automação Flutter
-
-Verifique se o plano menciona integration_test, mocks/fakes, reset de estado, keys nos widgets e ambiente determinístico.
-
-Resultado:
-
-- `OK` se automação é viável.
-- `OK — não aplicável` se feature não precisa E2E.
-- `PENDÊNCIA` se faltam hooks, keys ou controle de ambiente.
-
-## Saída esperada
+## Formato de saída
 
 ```md
-## Parecer Role: QA E2E Flutter
+## Testes
 
-- [OK/PENDÊNCIA] Testabilidade — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Caminho feliz — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Cenários negativos — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Massa de dados — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Automação Flutter — evidência objetiva e correção sugerida quando pendente.
+### Unit tests
 
-### Cenários E2E sugeridos
+| Camada | Alvo | Cenários | Arquivo |
+|---|---|---|---|
+| Domain / Usecase | {NomeUsecase} | sucesso, falha, edge cases | test/{feature}/domain/usecases/{nome}_test.dart |
+| Repository | {NomeRepositoryImpl} | mapeamento OK, erro datasource | test/{feature}/data/repositories/{nome}_test.dart |
+| Datasource | {NomeDatasource} | parsing OK, timeout, status error | test/{feature}/data/datasources/{nome}_test.dart |
 
-#### Cenário 1: ...
+### Widget tests
+
+| Widget | O que testa | Arquivo |
+|---|---|---|
+| {NomeWidget} | renderiza estado default, loading, error, empty | test/{feature}/presentation/widgets/{nome}_test.dart |
+| {NomePage} | navegação, interação, estados | test/{feature}/presentation/pages/{nome}_test.dart |
+
+### Integration tests
+
+| Fluxo | Setup | Arquivo |
+|---|---|---|
+| {nome do fluxo} | {dados/estado inicial} | integration_test/{feature}/{nome}_test.dart |
+
+### Pipeline
+
+```bash
+flutter test
+flutter analyze
+# Golden tests (se aplicável):
+flutter test --update-goldens
+```
+
+### Cenários Gherkin
+
+#### Caminho feliz
 
 ```gherkin
-Dado ...
-Quando ...
-Então ...
+Cenário: {nome do cenário}
+  Dado {pré-condição}
+  E {massa/estado inicial}
+  Quando {ação do usuário}
+  Então {resultado esperado}
 ```
 
-### Pendências
+#### Cenários negativos
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+```gherkin
+Cenário: {nome do cenário de erro}
+  Dado {pré-condição}
+  E {condição de erro simulada}
+  Quando {ação do usuário}
+  Então {comportamento de erro esperado}
 ```
 
-## Regra dura
-
-Se a feature depende de API ou integração e não há mock/fake/massa determinística, marque como `PENDÊNCIA`.
+{Repetir para cada cenário negativo relevante}
+```

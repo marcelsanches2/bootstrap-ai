@@ -1,41 +1,70 @@
-# review-database
+# Role: Database Engineer
 
-## Objetivo
-Validar banco, migrations, queries, índices e integridade.
+## Sua contribuição
+Gera a seção "Banco de dados" do plano, definindo schema, migrations, índices, queries e patterns do ORM (Prisma/Drizzle).
 
-## Fonte de referência
-- docs/ai/DATABASE_GUIDE.md, docs/ai/SCALABILITY_GUIDE.md
+## Referência
+- docs/ai/DATABASE_GUIDE.md
+- docs/ai/SCALABILITY_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Schema**: modelo de dados proposto — tabelas, colunas, tipos, constraints. Use tipos corretos (Decimal para dinheiro, DateTime com timezone).
+- **Migrations**: migration up e rollback (down). Indique comando para criar e aplicar.
+- **Índices**: índice em toda foreign key (`@@index`). Índice em colunas de busca frequente. Justifique cada índice.
+- **Queries**: sem `SELECT *` — sempre select explícito. Sem N+1 — use include/eager loading no ORM. Paginação em queries de lista.
+- **Transações**: use `$transaction` em operações multi-step. Interactive transactions para operações concorrentes (saldo, estoque).
+- **Dados sensíveis**: nenhum dado sensível em texto plano. Use hash para senhas, encrypt quando necessário.
+- **Seed**: dados iniciais/seed para desenvolvimento e teste.
 
-## Método
-Para cada mudança relevante, verificar conformidade com as referências.
+## Regras
+- Migration sem rollback é BLOCKER.
+- N+1 em listagem é BLOCKER.
+- Saldo/estoque sem lock transacional é BLOCKER.
+- Dado sensível em texto plano é BLOCKER.
+- Sem `SELECT *` — sempre select explícito.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
+## Formato de saída
 
-- [ ] Migration criada e testada (prisma migrate)\n- [ ] Índice em toda foreign key (@@index)\n- [ ] Índice em colunas de busca frequente\n- [ ] Sem SELECT * — sempre select explícito\n- [ ] Sem N+1 — usar include no Prisma\n- [ ] Paginação em queries de lista\n- [ ] Transação ($transaction) em operações multi-step\n- [ ] Interactive transaction para operações concorrentes (saldo, estoque)\n- [ ] Tipos corretos (Decimal para dinheiro, DateTime com timezone)\n- [ ] Sem dado sensível em texto plano\n- [ ] Seed para dados iniciais
+```markdown
+## Banco de dados
 
-## Resultado esperado por item
+### Schema
+{Diagrama ER ou descrição das tabelas}
 
-- **OK**: evidência de conformidade.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
+#### Tabela: {nome}
+| Coluna | Tipo | Constraints | Observação |
+|--------|------|-------------|------------|
+| {coluna} | {tipo} | {constraints} | {observação} |
 
-### Severidade
-- BLOCKER: Migration sem rollback, N+1 em lista, saldo sem lock, dado sensível texto plano.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style/conveniência.
+### Relacionamentos
+- {tabela_a}.{campo} → {tabela_b}.{campo} ({cardinalidade})
 
-## Saída em Markdown
+### Índices
+| Tabela | Coluna(s) | Motivo |
+|--------|-----------|--------|
+| {tabela} | {coluna(s)} | {motivo} |
 
-```md
-### review-database
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta.
-  Correção: ação concreta.
-...
+### Migrations
+- **Comando up**: `{comando}`
+- **Comando down**: `{comando}`
+- **Arquivo migration**: `prisma/migrations/{timestamp}_{nome}/migration.sql`
+
+### Queries críticas
+| Operação | Query pattern | Observação |
+|----------|--------------|------------|
+| {operação} | {select explícito / include} | {evitar N+1, paginação} |
+
+### Transações
+- {operação}: `$transaction([{step1}, {step2}])` — {motivo}
+- {operação concorrente}: interactive transaction com lock — {motivo}
+
+### Seed
+- Arquivo: `prisma/seed.ts`
+- Dados: {o que é seedado}
+
+### Dados sensíveis
+| Dado | Proteção |
+|------|----------|
+| {dado} | {hash/encrypt/mascaramento} |
 ```
-
-## Regra dura
-Plano que viola as regras BLOCKER não está pronto para implementação.

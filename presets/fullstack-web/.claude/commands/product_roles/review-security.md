@@ -1,41 +1,70 @@
-# review-security
+# Role: Segurança
 
-## Objetivo
-Validar auth, autorização, dados sensíveis e proteção contra ataques.
+## Sua contribuição
+Gera a seção "Segurança" do plano, definindo auth, autorização, validação, proteção de dados sensíveis e proteção contra ataques.
 
-## Fonte de referência
+## Referência
 - docs/ai/SECURITY_GUIDE.md
 
-## Entrada esperada
-Plano técnico em `plans/*.md`.
+## O que incluir
+- **Autenticação**: endpoints protegidos com middleware de auth. Fluxo de login/refresh/token.
+- **Autorização**: verificação de role ou ownership em cada operação sensível.
+- **Validação de input**: Zod em todas as entradas de boundary (controller, API route).
+- **Senhas**: hasheadas com bcrypt, nunca texto plano.
+- **JWT**: com expiração (access 15min, refresh 7d). Refresh token rotation.
+- **Dados sensíveis em logs**: nenhum token, senha, Authorization header, cookie ou PII sem mascaramento.
+- **Dados sensíveis em response**: nenhum passwordHash, token ou PII exposto.
+- **CORS**: origins explícitos, nunca `*`.
+- **Rate limiting**: em login, reset e endpoints sensíveis.
+- **Security headers**: Helmet configurado.
+- **SQL injection**: queries parametrizadas (Prisma já faz por padrão).
+- **Code injection**: sem `eval`/`Function` com input do usuário.
+- **Secrets**: via env vars, nunca hardcoded.
+- **HTTPS**: em produção.
 
-## Método
-Para cada mudança relevante, verificar conformidade com as referências.
+## Regras
+- Auth faltando em endpoint protegido é bloqueante.
+- Senha em texto plano é bloqueante.
+- PII em log é bloqueante.
+- CORS com `*` em produção é bloqueante.
+- Nunca commitar secrets, tokens, dumps, `.env` real ou credenciais.
+- Se a task não tem superfície de segurança nova: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
-
-- [ ] Autenticação em endpoints protegidos (authMiddleware)\n- [ ] Autorização verificada (role ou ownership)\n- [ ] Input validado com Zod\n- [ ] Senha hasheada com bcrypt\n- [ ] JWT com expiração (15min access, 7d refresh)\n- [ ] Nenhum dado sensível em log\n- [ ] Nenhum dado sensível em response (passwordHash, token)\n- [ ] CORS com origins explícitos (nunca *)\n- [ ] Rate limiting em login/reset\n- [ ] Helmet para security headers\n- [ ] SQL parametrizado (Prisma já faz)\n- [ ] Sem eval/Function com input\n- [ ] Secrets via env vars\n- [ ] HTTPS em produção
-
-## Resultado esperado por item
-
-- **OK**: evidência de conformidade.
-- **OK — não aplicável**: explique.
-- **PENDÊNCIA (MAJOR/BLOCKER)**: o que falta + correção concreta.
-
-### Severidade
-- BLOCKER: Auth faltando em endpoint protegido, senha texto plano, PII em log.
-- MAJOR: padrão violado sem impacto crítico.
-- MINOR: style/conveniência.
-
-## Saída em Markdown
+## Formato de saída
 
 ```md
-### review-security
-- [OK] Item — evidência. ✓
-- [PENDÊNCIA MAJOR] Item — o que falta.
-  Correção: ação concreta.
-...
-```
+## Segurança
 
-## Regra dura
-Plano que viola as regras BLOCKER não está pronto para implementação.
+### Autenticação e autorização
+| Endpoint | Auth | Role/Ownership | Middleware |
+|---|---|---|---|
+| {VERB /path} | {público/protegido} | {regra} | {nome do middleware} |
+
+### Validação de input
+| Endpoint | Schema | Campos validados |
+|---|---|---|
+| {VERB /path} | {Zod schema} | {campos + regras} |
+
+### Dados sensíveis
+| Dado | Armazenamento | Em log | Em response |
+|---|---|---|---|
+| {senha/token/PII} | {hash/encrypt} | {mascarado/não loga} | {não retorna} |
+
+### CORS
+| Ambiente | Origins | Methods | Headers |
+|---|---|---|---|
+| {dev/prod} | {URLs} | {métodos} | {headers} |
+
+### Rate limiting
+| Endpoint | Limite | Janela | Estratégia |
+|---|---|---|---|
+| {path} | {N requests} | {tempo} | {IP/user} |
+
+### Security headers
+{headers configurados via Helmet ou manual}
+
+### Secrets
+| Variável | Uso | Nunca hardcoded |
+|---|---|---|
+| {NOME} | {para quê} | {confirmado} |
+```

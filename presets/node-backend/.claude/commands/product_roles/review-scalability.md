@@ -1,137 +1,87 @@
-# Role: Scalability / Production Readiness
+# Role: Scalability Engineer
 
-## Objetivo
+## Sua contribuição
+Gera a seção "Escala" do plano, definindo estratégias de concorrência, filas, cache, pool de conexões e validação de carga para produção.
 
-Revisar se o plano aguenta produção real: volume, concorrência, banco, filas, cache, limites, performance e degradação. Este papel não busca overengineering; busca evitar as falhas previsíveis que aparecem quando a aplicação cresce.
+## Referência
+- docs/ai/SCALABILITY_GUIDE.md
+- docs/ai/DATABASE_GUIDE.md
+- docs/ai/OBSERVABILITY_GUIDE.md
 
-## Fonte de referência
+## O que incluir
+- **Volume e caminho quente**: identifique endpoints, jobs ou queries que podem receber alto volume. Defina expectativa de carga e estratégia para cada um.
+- **Banco e queries**: paginação, filtros, ordenação, índices, constraints e custo de queries críticas. Sem N+1, sem tabela crescente sem estratégia.
+- **Concorrência e idempotência**: verifique read-modify-write, retries, webhooks, jobs paralelos, criação duplicada, saldo/estoque/crédito. Use transação, constraint, lock ou idempotency key.
+- **Limites e backpressure**: payload máximo, paginação, rate limit, pool de conexões, timeouts, fila, workers e consumo de memória. Limite explícito para cada recurso compartilhado.
+- **Cache e invalidação**: se houver cache, defina chave, TTL, escopo, estratégia de invalidação e tratamento de stale data. Escopo por usuário/tenant quando necessário.
+- **Filas e jobs**: idempotência, retry/backoff, dead-letter, concorrência máxima, backlog e logging por job id.
+- **Integrações externas**: timeout, retry seguro, degradação, circuit breaker quando necessário, métrica e teste de falha.
+- **Observabilidade de escala**: latência p95/p99, taxa de erro, throughput, pool/conexões, backlog e logs com request/job id.
+- **Validação de performance/carga**: feature crítica precisa de teste concorrente, teste de query com volume, benchmark ou smoke de carga — proporcional ao risco.
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`, especialmente `docs/ai/SCALABILITY_GUIDE.md`, `DATABASE_GUIDE.md`, `OBSERVABILITY_GUIDE.md`, `DEPLOYMENT_GUIDE.md` e `SECURITY_GUIDE.md` quando aplicáveis.
+## Regras
+- Plano que toca caminho crítico, banco crescente, concorrência, fila ou integração externa sem tratar limites, falhas e diagnóstico é BLOCKER.
+- Retry/request duplicado causando efeito duplicado ou estado inconsistente é BLOCKER.
+- Consumo ilimitado de CPU, memória, conexão ou fila é BLOCKER.
+- Cache sem invalidação é BLOCKER.
+- Job que pode duplicar efeito, travar backlog ou falhar sem diagnóstico é BLOCKER.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-Se `SCALABILITY_GUIDE.md` estiver ausente em um plano que envolve volume, concorrência ou produção, marque pendência crítica de referência.
+## Formato de saída
 
-## Entrada esperada
+```markdown
+## Escala
 
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- endpoints/jobs/tabelas/queries citados
-- expectativa de uso, volume ou risco quando o plano trouxer essa informação
+### Volume e caminhos quentes
+| Recurso | Volume esperado | Estratégia |
+|---------|----------------|------------|
+| {endpoint/job/query} | {RPS / volume} | {como suportar} |
 
-## Checklist obrigatório
+### Banco e queries
+| Query | Risco | Índice | Paginação | Observação |
+|-------|-------|--------|-----------|------------|
+| {query} | {N+1 / full scan / crescente} | {índice proposto} | {skip/limit ou cursor} | {otimização} |
 
-### 1. Volume e caminho quente
+### Concorrência e idempotência
+| Operação | Risco | Mitigação |
+|----------|-------|-----------|
+| {operação} | {race condition / duplicidade} | {transação / lock / idempotency key / constraint} |
 
-Verifique se o plano identifica endpoints, jobs, queries ou telas que podem receber alto volume.
+### Limites e backpressure
+| Recurso | Limite | Config |
+|---------|--------|--------|
+| Payload | {KB/MB} | {onde configurar} |
+| Paginação | {max limit} | {default/max} |
+| Rate limit | {n/time} | {por endpoint} |
+| Pool de conexões | {n conexões} | {config ORM} |
+| Timeout request | {ms} | {server config} |
+| Fila backlog | {max jobs} | {worker config} |
+| Memória | {estimativa} | {monitoramento} |
 
-Resultado:
+### Cache
+| Chave | TTL | Escopo | Invalidação | Stale handling |
+|-------|-----|--------|-------------|----------------|
+| {pattern} | {tempo} | {global / por usuário / por tenant} | {evento / TTL / manual} | {revalidar / servir stale} |
 
-- `OK` se o plano identifica caminho quente ou justifica baixo volume.
-- `OK — não aplicável` se a mudança é interna/documental e não afeta runtime.
-- `PENDÊNCIA` se uma operação potencialmente quente é tratada como caso pequeno sem justificativa.
+### Filas e jobs
+| Job | Concorrência máxima | Retry / Backoff | Dead-letter | Idempotência |
+|-----|---------------------|-----------------|-------------|-------------|
+| {job} | {n workers} | {n retries, backoff {ms}} | {fila DLQ} | {idempotency key / constraint} |
 
-### 2. Banco e queries
+### Integrações externas
+| Serviço | Timeout | Retry | Circuit breaker | Degradação |
+|---------|---------|-------|-----------------|------------|
+| {serviço} | {ms} | {n, backoff} | {sim — config / não} | {fallback} |
 
-Verifique paginação, filtros, ordenação, N+1, índices, constraints e custo de queries críticas.
+### Observabilidade de escala
+| Métrica | Alerta | Ferramenta |
+|---------|--------|------------|
+| {latência p95} | {threshold} | {onde monitorar} |
+| {taxa de erro} | {threshold} | {onde monitorar} |
+| {pool ativo} | {threshold} | {onde monitorar} |
 
-Resultado:
-
-- `OK` se queries e índices foram considerados conforme volume esperado.
-- `OK — não aplicável` se não há banco/query/listagem.
-- `PENDÊNCIA` se há tabela crescente, listagem, busca ou join sem estratégia clara.
-
-### 3. Concorrência e idempotência
-
-Verifique read-modify-write, retries, webhooks, jobs paralelos, criação duplicada, saldo/estoque/crédito e constraints transacionais.
-
-Resultado:
-
-- `OK` se corrida e duplicidade foram mitigadas por transação, constraint, lock ou idempotency key.
-- `OK — não aplicável` se a operação não escreve nem pode ser repetida.
-- `PENDÊNCIA` se retry/request duplicado pode causar efeito duplicado ou estado inconsistente.
-
-### 4. Limites e backpressure
-
-Verifique payload máximo, paginação, rate limit, pool de conexões, timeouts, fila, workers e consumo de memória.
-
-Resultado:
-
-- `OK` se limites estão explícitos e coerentes.
-- `OK — não aplicável` se não há recurso compartilhado ou entrada variável.
-- `PENDÊNCIA` se o plano permite consumo ilimitado de CPU, memória, conexão, fila ou rede.
-
-### 5. Cache e invalidação
-
-Se houver cache, verifique chave, TTL, escopo, invalidação, stale data e métricas.
-
-Resultado:
-
-- `OK` se cache tem estratégia completa.
-- `OK — não aplicável` se não há cache.
-- `PENDÊNCIA` se cache é proposto sem invalidação ou sem escopo por usuário/tenant quando necessário.
-
-### 6. Filas e jobs
-
-Verifique idempotência, retry/backoff, dead-letter, concorrência máxima, backlog e logging por job id.
-
-Resultado:
-
-- `OK` se job/fila é operável e seguro.
-- `OK — não aplicável` se não há processamento assíncrono.
-- `PENDÊNCIA` se job pode duplicar efeito, travar backlog ou falhar sem diagnóstico.
-
-### 7. Integrações externas
-
-Verifique timeout, retry seguro, degradação, circuit breaker quando necessário, métrica e teste de falha.
-
-Resultado:
-
-- `OK` se dependência externa tem comportamento definido em lentidão/falha.
-- `OK — não aplicável` se não há integração externa.
-- `PENDÊNCIA` se chamada externa pode pendurar request/job ou falhar sem controle.
-
-### 8. Observabilidade de escala
-
-Verifique latência p95/p99 quando relevante, taxa de erro, throughput, pool/conexões, backlog e logs com request/job id.
-
-Resultado:
-
-- `OK` se o plano permite diagnosticar degradação em produção.
-- `OK — não aplicável` se a mudança não afeta runtime.
-- `PENDÊNCIA` se problema de escala só seria percebido por reclamação de usuário.
-
-### 9. Validação de performance/carga
-
-Verifique se feature crítica tem teste concorrente, teste de query com volume, benchmark ou smoke de carga.
-
-Resultado:
-
-- `OK` se validação é proporcional ao risco.
-- `OK — não aplicável` se a mudança não tem risco de escala.
-- `PENDÊNCIA` se há risco de escala sem validação objetiva.
-
-## Saída esperada
-
-```md
-## Parecer Scalability / Production Readiness
-
-- [OK/PENDÊNCIA] Volume e caminho quente — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Banco e queries — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Concorrência e idempotência — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Limites e backpressure — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Cache e invalidação — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Filas e jobs — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Integrações externas — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Observabilidade de escala — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Validação de performance/carga — evidência objetiva e correção sugerida quando pendente.
-
-### Pendências
-
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | trecho/ausência no plano | ação concreta |
+### Validação de performance
+| Teste | Ferramenta | Volume | Critério de aprovação |
+|-------|-----------|--------|-----------------------|
+| {tipo de teste} | {ferramenta} | {n requests / concorrência} | {latência < X, erro < Y%} |
 ```
-
-## Regra dura
-
-Plano que toca caminho crítico, banco crescente, concorrência, fila, integração externa ou produção sem tratar limites, falhas e diagnóstico não está pronto. Marque `BLOCKER` quando o risco puder causar corrupção de dados, indisponibilidade, duplicidade financeira/operacional ou incidente sem rollback claro.

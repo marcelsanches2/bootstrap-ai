@@ -1,90 +1,63 @@
 # Role: QA Web
 
-## Objetivo
+## Sua contribuição
+Gera a seção "Testes" do plano, definindo testes unitários, de componente e E2E necessários com ferramentas específicas (Vitest/Jest, Playwright/Cypress).
 
-Revisar testes de frontend: unit, component, integration e E2E.
+## Referência
+- docs/ai/TESTING_GUIDE.md
 
-## Fonte de referência
+## O que incluir
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+- **Testes unitários**: funções puras, hooks customizados e utilitários. Defina o que testar e o comportamento esperado. Use Vitest ou Jest conforme o projeto.
+- **Testes de componente**: componentes React com comportamento — renderização condicional, interações, props. Use Testing Library (RTL) para testar comportamento visível ao usuário, não detalhes de implementação.
+- **Testes E2E**: jornadas críticas do usuário com Playwright ou Cypress. Defina o fluxo, pré-condições e asserções. Todo fluxo crítico deve ter E2E ou justificativa explícita.
+- **Mocks determinísticos**: APIs mockadas de forma estável com MSW ou equivalente. Testes não devem depender de rede real.
+- **Cenários negativos**: erro de API, dados vazios, permissão negada, validação de form — além do caminho feliz.
+- **Validação de build**: lint, typecheck e build como gate de qualidade antes/depois da implementação.
 
-## Entrada esperada
+## Regras
 
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
+- Teste comportamento visível ao usuário, não detalhes internos do componente.
+- Todo fluxo crítico deve ter E2E — se não tem, justifique.
+- Mocks devem ser determinísticos — sem depender de API real ou timing.
+- Não ignore cenários negativos — erro, vazio e validação são obrigatórios quando relevantes.
+- Scripts de validação (lint, typecheck, build) devem ser comandos explícitos.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
-
-### 1. Unit/component
-
-Verifique funções, hooks e componentes com comportamento.
-
-Resultado:
-
-- `OK` se lógica/UI relevante tem teste.
-- `OK — não aplicável` se não há lógica/UI testável nova.
-- `PENDÊNCIA` se não há teste para comportamento novo.
-
-### 2. E2E
-
-Verifique jornadas críticas.
-
-Resultado:
-
-- `OK` se fluxo crítico tem E2E ou justificativa.
-- `OK — não aplicável` se mudança não é crítica.
-- `PENDÊNCIA` se jornada crítica depende só de teste manual.
-
-### 3. Mocks determinísticos
-
-Verifique API mockada de forma estável.
-
-Resultado:
-
-- `OK` se mocks são determinísticos.
-- `OK — não aplicável` se não há API.
-- `PENDÊNCIA` se teste depende de rede real.
-
-### 4. Cenários negativos
-
-Verifique erro, vazio, permissão e validação.
-
-Resultado:
-
-- `OK` se negativos relevantes estão cobertos.
-- `OK — não aplicável` se não há cenário negativo.
-- `PENDÊNCIA` se só caminho feliz foi considerado.
-
-### 5. Build/typecheck
-
-Verifique scripts reais de validação.
-
-Resultado:
-
-- `OK` se lint/typecheck/build estão previstos.
-- `OK — não aplicável` se mudança documental.
-- `PENDÊNCIA` se validação de build ausente.
-
-## Saída esperada
+## Formato de saída
 
 ```md
-## Parecer Role: QA Web
+## Testes
 
-- [OK/PENDÊNCIA] Unit/component — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] E2E — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Mocks determinísticos — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Cenários negativos — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Build/typecheck — evidência objetiva e correção sugerida quando pendente.
+### Validação de build
+- Lint: `{comando}`
+- Typecheck: `{comando}`
+- Build: `{comando}`
 
-### Pendências
+### Testes unitários
+| Arquivo | O que testa | Casos |
+|---------|------------|-------|
+| {name}.test.ts | {responsabilidade} | {casos: happy path, edge cases} |
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+### Testes de componente
+| Arquivo | Componente | Comportamentos testados |
+|---------|-----------|------------------------|
+| {Name}.test.tsx | {Componente} | {renderização, interações, estados} |
+
+### Testes E2E
+| Fluxo | Pré-condição | Passos | Asserções |
+|-------|-------------|--------|-----------|
+| {nome do fluxo} | {estado inicial} | {passos do usuário} | {o que verifica} |
+
+### Mocks
+| API/Recurso | Ferramenta | Comportamento mockado |
+|-------------|-----------|----------------------|
+| {endpoint} | {MSW / handler} | {resposta simulada} |
+
+### Cenários negativos
+| Cenário | Onde testa | Resultado esperado |
+|---------|-----------|-------------------|
+| erro de API | {teste} | {UI de erro + retry} |
+| dados vazios | {teste} | {empty state} |
+| validação | {teste} | {mensagem de erro} |
 ```
-
-## Regra dura
-
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.

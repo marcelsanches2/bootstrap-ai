@@ -33,7 +33,7 @@ Valida um fluxo end-to-end do app React Web {{PROJECT_NAME}}. Argumento opcional
 
 3. **Inventariar teste**
    - Procurar `src/**/{flow_id}*.test.{ts,tsx}` ou `test/**/{flow_id}*.test.{ts,tsx}` que cubra o flow.
-   - Verificar se existe um relatorio de revisao (`plans/*_revisao.md`, `docs/revisao_*.md` ou similar) gerado pelo `/jarvis-plan-revisor` para o mesmo fluxo. Se existir, extrair os **Cenarios E2E sugeridos** da secao correspondente e considera-los como requisitos minimos de cobertura alem dos cenarios proprios do test-flow.
+   - Verificar se existe um relatorio de revisao (`plans/*_revisao.md`, `docs/revisao_*.md` ou similar) gerado pelo `/jarvis-plan` para o mesmo fluxo. Se existir, extrair os **Cenarios E2E sugeridos** da secao correspondente e considera-los como requisitos minimos de cobertura alem dos cenarios proprios do test-flow.
    - Se nao existir, prosseguir normalmente.
    - Se nao existir teste, criar seguindo `docs/ai/TESTING_GUIDE.md` com o runner configurado (jest, vitest) e Testing Library. Usar mocks deterministicos. Teste deve cobrir: caminho feliz, loading states, error states, empty states, validacao de formulario, navegacao.
    - Validar que o teste cobre as etapas criticas e usa os dados deterministicos da massa.

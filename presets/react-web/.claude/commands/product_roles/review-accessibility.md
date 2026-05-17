@@ -1,90 +1,59 @@
-# Role: Accessibility Reviewer
+# Role: Acessibilidade
 
-## Objetivo
+## Sua contribuição
+Gera a seção "Acessibilidade" do plano, definindo navegação por teclado, ARIA, gestão de foco, HTML semântico e suporte a leitores de tela.
 
-Revisar acessibilidade prática: semântica, teclado, foco, labels e contraste.
+## Referência
+- docs/ai/ACCESSIBILITY_GUIDE.md
 
-## Fonte de referência
+## O que incluir
 
-Use as referências carregadas por `product_roles/carregar-referencias.md`. Se uma referência necessária estiver ausente, marque pendência em vez de assumir padrão.
+- **HTML semântico**: elementos corretos para cada ação, navegação e estrutura — `<button>` para ações, `<nav>` para navegação, `<main>` para conteúdo, headings hierárquicos. Nunca use `div`/`span` onde um elemento semântico é mais apropriado.
+- **Navegação por teclado**: Tab order lógico, Enter/Space ativam controles, Escape fecha modais/drawers. Defina o fluxo completo por teclado — nenhuma ação pode depender só de mouse.
+- **Labels acessíveis**: todo input, botão e ícone deve ter nome acessível (`aria-label`, `aria-labelledby`, `<label>` associado, `alt` em imagens). Nenhum controle pode ser invisível para leitor de tela.
+- **Gestão de foco**: para modais, toasts, erro inline e conteúdo dinâmico — onde o foco vai ao abrir/fechar, como retornar ao trigger.
+- **ARIA dinâmico**: `aria-live`, `role="alert"`, `aria-expanded`, `aria-hidden` — quando e como usar para anunciar mudanças de estado.
+- **Contraste e visibilidade**: estados de foco visíveis, contraste mínimo de texto e bordas funcionais. Defina como o foco é indicado visualmente.
 
-## Entrada esperada
+## Regras
 
-- plano localizado
-- referências carregadas
-- conteúdo do plano
-- contexto do projeto quando citado pelo plano
+- Toda ação interativa deve funcionar por teclado — sem exceção.
+- Nunca substitua elemento semântico por `div` com click handler.
+- Controles sem label acessível são proibidos.
+- Modal/dialog sem gestão de foco e trap são proibidos.
+- Estados dinâmicos (erro, toast, loading) devem ser anunciados via ARIA live regions.
+- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
 
-## Checklist obrigatório
-
-### 1. Semântica HTML
-
-Verifique elementos corretos para ações, navegação e estrutura.
-
-Resultado:
-
-- `OK` se HTML semântico foi usado.
-- `OK — não aplicável` se não há HTML novo.
-- `PENDÊNCIA` se div/span substitui controle sem motivo.
-
-### 2. Navegação por teclado
-
-Verifique Tab, Enter/Espaço, Escape e ordem de foco.
-
-Resultado:
-
-- `OK` se fluxo funciona por teclado.
-- `OK — não aplicável` se elemento não é interativo.
-- `PENDÊNCIA` se ação só funciona com mouse.
-
-### 3. Labels
-
-Verifique nomes acessíveis de inputs, botões e ícones.
-
-Resultado:
-
-- `OK` se controles têm nome acessível.
-- `OK — não aplicável` se não há controle novo.
-- `PENDÊNCIA` se controle é invisível para leitor de tela.
-
-### 4. Contraste
-
-Verifique texto, bordas funcionais e estado de foco.
-
-Resultado:
-
-- `OK` se contraste é adequado.
-- `OK — não aplicável` se sem alteração visual.
-- `PENDÊNCIA` se contraste/foco insuficiente.
-
-### 5. ARIA/foco dinâmico
-
-Verifique modal, toast, erro e live region quando aplicável.
-
-Resultado:
-
-- `OK` se ARIA/foco complementam corretamente.
-- `OK — não aplicável` se não há UI dinâmica relevante.
-- `PENDÊNCIA` se estado dinâmico não é anunciado/gerenciado.
-
-## Saída esperada
+## Formato de saída
 
 ```md
-## Parecer Role: Accessibility Reviewer
+## Acessibilidade
 
-- [OK/PENDÊNCIA] Semântica HTML — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Navegação por teclado — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Labels — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] Contraste — evidência objetiva e correção sugerida quando pendente.
-- [OK/PENDÊNCIA] ARIA/foco dinâmico — evidência objetiva e correção sugerida quando pendente.
+### HTML semântico
+| Elemento | Uso | Justificativa |
+|----------|-----|---------------|
+| {tag} | {onde} | {por quê} |
 
-### Pendências
+### Navegação por teclado
+| Ação | Tecla | Comportamento |
+|------|-------|---------------|
+| {ação} | {Tab/Enter/Escape/Space} | {o que acontece} |
 
-| Severidade | Item | Evidência | Correção exigida |
-|---|---|---|---|
-| BLOCKER/MAJOR/MINOR | item revisado | evidência do plano | ação concreta |
+### Labels acessíveis
+| Controle | Nome acessível | Método |
+|----------|---------------|--------|
+| {elemento} | {texto visível ou descritivo} | {aria-label / label / alt} |
+
+### Gestão de foco
+| Contexto | Foco ao abrir | Foco ao fechar |
+|----------|--------------|----------------|
+| {modal/drawer/erro} | {para onde vai} | {onde retorna} |
+
+### ARIA dinâmico
+| Elemento | Atributo | Valor | Quando |
+|----------|----------|-------|--------|
+| {elemento} | aria-live / role / aria-expanded | {valor} | {trigger} |
+
+### Contraste e foco visual
+{Como o foco é indicado, contraste mínimo garantido}
 ```
-
-## Regra dura
-
-Não aprove plano que não explicita o item crítico. Ausência de informação relevante é pendência, não aprovação.
