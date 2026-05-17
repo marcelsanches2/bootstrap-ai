@@ -61,15 +61,12 @@ Ative SOMENTE quando a task tiver:
 
 Analise a task para determinar quais roles contribuem para o plano. Não carregue todas — selecione com base no tipo de mudança.
 
-**Sempre carregue:**
-
-- `product_roles/role-architect.md` — toda mudança tem impacto arquitetural
-- `product_roles/role-pm.md` — toda mudança tem impacto de produto
-
-**Carregue condicionalmente:**
+Analise a task e selecione as roles relevantes. Nenhuma é obrigatória — carregue apenas o que a task demandar.
 
 | Condição na task | Role |
 |---|---|
+| Escopo, requisitos, critérios de aceite, impacto em produto | `product_roles/role-pm.md` |
+| Estrutura, camadas, dependências, decisão arquitetural | `product_roles/role-architect.md` |
 | Endpoint, contrato HTTP, status code, schema, OpenAPI | `product_roles/review-api.md` |
 | Schema, migration, índice, query, ORM, constraint | `product_roles/review-database.md` |
 | Auth, autorização, secrets, PII, validação sensível, rate limit | `product_roles/review-security.md` |
@@ -79,7 +76,7 @@ Analise a task para determinar quais roles contribuem para o plano. Não carregu
 | Módulo, service, handler, middleware, plugin, camada Node | `product_roles/role-node-architect.md` |
 | Deploy, env, CI/CD, release, rollback, infra | `product_roles/role-delivery.md` |
 
-**Se nenhuma condição se aplica** (ex: task puramente técnica de infra/config), apenas architect + PM.
+**Se nenhuma condição se aplica** (ex: task de infra/config simples), gere o plano sem roles.
 
 ---
 
