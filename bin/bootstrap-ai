@@ -14,8 +14,6 @@ REQUIRED_COMMON = [
     '.claude/commands/jarvis-test-flow.md',
     '.claude/commands/refactor.md',
     '.claude/commands/ship.md',
-    '.claude/commands/product_roles/localizar-plano.md',
-    '.claude/commands/product_roles/carregar-referencias.md',
     'docs/ai/ARCHITECTURE.md',
     'docs/ai/CODING_STANDARDS.md',
     'docs/ai/FEATURE_GUIDE.md',

@@ -60,10 +60,8 @@ presets/<nome>/
 │       ├── ship.md                        # Checklist final
 │       ├── carregar-contexto-projeto.md   # Context loader automático
 │       └── product_roles/
-│           ├── carregar-referencias.md    # Helper: carrega docs por relevância
-│           ├── consolidar-parecer.md      # Helper: consolida pareceres com severidade
-│           ├── gerar-relatorio.md         # Helper: gera relatório final
-│           ├── localizar-plano.md         # Helper: localiza plano em plans/
+│           ├── role-*.md              # Contribuidores: geram seções do plano
+│           └── review-*.md            # Contribuidores: geram seções de domínio
 │           └── role-<stack-specific>.md   # Roles de revisão específicos (~80+ linhas cada)
 └── docs/ai/
     ├── ARCHITECTURE.md                    # Estrutura e camadas

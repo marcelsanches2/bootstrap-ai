@@ -17,8 +17,6 @@ required_files:
   - .claude/commands/product_roles/role-designer.md
   - .claude/commands/product_roles/role-flutter-qa.md
   - .claude/commands/product_roles/role-pm.md
-  - .claude/commands/product_roles/carregar-referencias.md
-  - .claude/commands/product_roles/localizar-plano.md
   - .claude/scripts/compare_design.py
   - docs/ai/ARCHITECTURE.md
   - docs/ai/CODING_STANDARDS.md

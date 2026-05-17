@@ -20,8 +20,6 @@ required_files:
   - .claude/commands/product_roles/role-delivery.md
   - .claude/commands/product_roles/review-accessibility.md
   - .claude/commands/product_roles/review-performance.md
-  - .claude/commands/product_roles/carregar-referencias.md
-  - .claude/commands/product_roles/localizar-plano.md
   - docs/ai/ARCHITECTURE.md
   - docs/ai/CODING_STANDARDS.md
   - docs/ai/DESIGN_SYSTEM.md

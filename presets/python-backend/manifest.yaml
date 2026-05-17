@@ -22,8 +22,6 @@ required_files:
   - .claude/commands/product_roles/review-scalability.md
   - .claude/commands/product_roles/review-security.md
   - .claude/commands/product_roles/review-observability.md
-  - .claude/commands/product_roles/carregar-referencias.md
-  - .claude/commands/product_roles/localizar-plano.md
   - docs/ai/ARCHITECTURE.md
   - docs/ai/CODING_STANDARDS.md
   - docs/ai/API_GUIDE.md

@@ -57,26 +57,7 @@ Ative SOMENTE quando a task tiver:
 
 ---
 
-## 3. Carregar documentos de referência
-
-Use a lógica de `product_roles/carregar-referencias.md`.
-
-Carregue, se existirem:
-
-- `docs/ai/ARCHITECTURE.md`
-- `docs/ai/CODING_STANDARDS.md`
-- `docs/ai/FEATURE_GUIDE.md`
-- `docs/ai/TESTING_GUIDE.md`
-- `docs/ai/DESIGN_SYSTEM.md`
-- `docs/ai/ACCESSIBILITY_GUIDE.md`
-- `docs/ai/PERFORMANCE_GUIDE.md`
-
-Se algum estiver ausente: reporte como referência ausente, continue com os disponíveis.
-Não invente padrões que não estejam nos documentos.
-
----
-
-## 4. Selecionar contribuidores
+## 3. Selecionar contribuidores
 
 Analise a task para determinar quais roles contribuem para o plano. Não carregue todas — selecione com base no tipo de mudança.
 
@@ -87,7 +68,7 @@ Analise a task para determinar quais roles contribuem para o plano. Não carregu
 
 **Carregue condicionalmente:**
 
-|| Condição na task | Role |
+| Condição na task | Role |
 |---|---|
 | UI, tela, componente visual, layout, design system, token, cor, tipografia | `product_roles/role-designer.md` |
 | Componente, hook, contexto, provider, store, estado, rota, página | `product_roles/role-frontend-architect.md` |
@@ -97,6 +78,29 @@ Analise a task para determinar quais roles contribuem para o plano. Não carregu
 | Deploy, env, build, cache, CI/CD, release, rollback | `product_roles/role-delivery.md` |
 
 **Se nenhuma condição se aplica** (ex: task puramente técnica de infra/config), apenas architect + PM.
+
+---
+
+## 4. Carregar referências (lazy loading)
+
+Não carregue tudo de uma vez. Carregue em duas fases:
+
+### Fase 1 — Baseline (sempre, antes de gerar)
+
+- `docs/ai/ARCHITECTURE.md` — estrutura do projeto
+- `docs/ai/CODING_STANDARDS.md` — padrões de código
+
+### Fase 2 — Sob demanda (após selecionar roles)
+
+Para cada role selecionada, carregue **apenas** as referências listadas na seção "Referência" da role.
+
+Exemplo: se só `role-architect` e `role-pm` foram selecionados, carregue só o que eles pedem. Não carregue `DESIGN_SYSTEM.md` se nenhuma role de UI foi selecionada.
+
+**Regras:**
+
+- Se um doc referenciado não existe: reporte como referência ausente, continue.
+- Não invente padrões que não estejam nos documentos.
+- Se nenhum doc existe em `docs/ai/`, continue só com CLAUDE.md + exploração do codebase.
 
 ---
 
