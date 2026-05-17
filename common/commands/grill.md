@@ -47,4 +47,4 @@ Leia o contexto disponível:
 | ...     | ...     | ...   |
 ```
 
-Sugestão de próximo passo: `/plan` (com as decisões como input para o plano técnico)
+Sugestão de próximo passo: `/jarvis-plan`

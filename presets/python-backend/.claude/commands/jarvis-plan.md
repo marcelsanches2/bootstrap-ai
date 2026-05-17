@@ -5,13 +5,11 @@ description: Planejamento unificado — explora codebase, grilla se necessário,
 
 # /jarvis-plan
 
-Você é um engenheiro sênior responsável por criar o plano técnico definitivo para uma task. Diferente de um revisor, você **gera** o plano com todas as perspectivas embutidas de primeira — sem loop corretivo.
+Gere o plano técnico definitivo para a task, com todas as perspectivas embutidas de primeira.
 
 Não execute implementação. Não altere código de produção. Apenas planeje.
 
-## Sequência obrigatória
-
-Execute as etapas abaixo nesta ordem.
+## Sequência
 
 ---
 
@@ -59,9 +57,7 @@ Ative SOMENTE quando a task tiver:
 
 ## 3. Selecionar contribuidores
 
-Analise a task para determinar quais roles contribuem para o plano. Não carregue todas — selecione com base no tipo de mudança.
-
-Analise a task e selecione as roles relevantes. Nenhuma é obrigatória — carregue apenas o que a task demandar.
+Selecione as roles relevantes para a task. Nenhuma é obrigatória.
 
 | Condição na task | Role |
 |---|---|
@@ -110,48 +106,32 @@ Se alguma regra for violada, corrija o plano antes de apresentar.
 ## 6. Formato final obrigatório
 
 ```md
-# Plano: {título da task}
+# Plano: {título}
 
 Data: {YYYY-MM-DD}
 
 ## Objetivo
+{O que resolve, para quem, comportamento esperado}
 
-{O que esta task resolve, para quem, comportamento esperado}
-
-## Escopo
-
-- {Incluído 1}
-- {Incluído 2}
-
-## Fora de escopo
-
-- {Excluído 1}
-- {Excluído 2}
+## Escopo / Fora de escopo
+{Incluído} / {Excluído}
 
 ## Critérios de aceite
+- [ ] {verificável}
 
-- [ ] {critério 1 — verificável}
-- [ ] {critério 2 — verificável}
+## Arquitetura
+{Seção do architect}
 
-## Arquitetura proposta
-
-{Seção gerada pelo architect + backend architect — camadas Python, dependências, transações, type hints}
-
-## {Seções de domain reviews conforme roles selecionadas (API, Database, Security, Observability, Scalability)}
+## {Seções das roles selecionadas}
 
 ## Testes
-
-{Seção gerada pelo API QA}
+{Seção do QA}
 
 ## Plano incremental
-
-1. **Passo 1 — {título}**: {descrição}. Arquivos: {lista}. Validação: {como verificar}.
-2. **Passo 2 — {título}**: {descrição}. Arquivos: {lista}. Validação: {como verificar}.
-3. ...
+1. **Passo N — {título}**: {descrição}. Arquivos: {lista}. Validação: {como verificar}.
 
 ## Referências
-
-- `docs/ai/{arquivo}` — {por que foi consultado}
+- `docs/ai/{arquivo}` — {por que}
 ```
 
 ---
@@ -165,12 +145,8 @@ Data: {YYYY-MM-DD}
 
 ---
 
-## Regras de comportamento
+## Regras
 
-- Seja direto.
-- Um pass de LLM — não gere plano rascunho seguido de revisão.
-- Cada seção já nasce com a qualidade que um revisor exigiria.
-- Não proponha plano que viole as regras de bloqueio.
+- Um pass de LLM — sem rascunho seguido de revisão.
 - Se a informação estiver ausente, pergunte (grill) antes de assumir.
-- Não faça implementação.
-- Não crie arquivos de produção.
+- Não implemente. Não crie arquivos de produção.
