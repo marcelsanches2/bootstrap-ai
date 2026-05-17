@@ -75,7 +75,8 @@ presets/<nome>/
 ## Lifecycle de desenvolvimento (no projeto consumidor)
 
 ```
-/plan             → cria plano em plans/YYYY-MM-DD-slug.md
+/grill            → entrevista interativa para alinhar decisões antes de planejar (manual, opt-in)
+/plan             → cria plano em plans/YYYY-MM-DD-slug.md (sugere /grill quando detecta ambiguidade)
 /jarvis-plan-revisor → revisa plano contra docs/ai e roles (hook ExitPlanMode dispara automaticamente)
 (desenvolve)      → hook PostToolUse roda lint rápido a cada edição
 /jarvis-test-flow  → pipeline completo antes de commitar (hook Stop dispara se houver diff)

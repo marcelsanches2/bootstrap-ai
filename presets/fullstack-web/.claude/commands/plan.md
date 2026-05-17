@@ -2,6 +2,19 @@
 
 Crie um plano técnico para a tarefa solicitada.
 
+## Pré-check: /grill necessário?
+
+Analise a task antes de planejar. Se encontrar UMA destas condições, sugira `/grill`:
+
+- Feature nova sem especificação clara
+- Múltiplas abordagens viáveis com trade-offs reais
+- Termos ambíguos que o agente não consegue resolver lendo o codebase
+- Decisão de arquitetura potencialmente irreversível
+
+Resposta sugerida: "Essa task tem decisões de design abertas. Quer fazer um `/grill` antes de alinhar os detalhes?"
+
+Se o user disser não, segue o fluxo normalmente.
+
 ## Obrigatório
 
 1. Identificar escopo.
