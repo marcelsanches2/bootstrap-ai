@@ -78,30 +78,7 @@ Analise a task e selecione as roles relevantes. Nenhuma é obrigatória — carr
 
 ---
 
-## 4. Carregar referências (lazy loading)
-
-Não carregue tudo de uma vez. Carregue em duas fases:
-
-### Fase 1 — Baseline (sempre, antes de gerar)
-
-- `docs/ai/ARCHITECTURE.md` — estrutura do projeto
-- `docs/ai/CODING_STANDARDS.md` — padrões de código
-
-### Fase 2 — Sob demanda (após selecionar roles)
-
-Para cada role selecionada, carregue **apenas** as referências listadas na seção "Referência" da role.
-
-Exemplo: se só `role-architect` e `role-pm` foram selecionados, carregue só o que eles pedem. Não carregue `DESIGN_SYSTEM.md` se nenhuma role de UI foi selecionada.
-
-**Regras:**
-
-- Se um doc referenciado não existe: reporte como referência ausente, continue.
-- Não invente padrões que não estejam nos documentos.
-- Se nenhum doc existe em `docs/ai/`, continue só com CLAUDE.md + exploração do codebase.
-
----
-
-## 5. Gerar plano com contribuições
+## 4. Gerar plano com contribuições
 
 Para cada role selecionada:
 
@@ -118,7 +95,7 @@ Para cada role selecionada:
 
 ---
 
-## 6. Regras obrigatórias de bloqueio
+## 5. Regras obrigatórias de bloqueio
 
 O plano NÃO pode ser proposto se houver:
 
@@ -139,7 +116,7 @@ Se alguma regra for violada, corrija o plano antes de apresentar.
 
 ---
 
-## 7. Formato final obrigatório
+## 6. Formato final obrigatório
 
 ```md
 # Plano: {título da task}
@@ -188,7 +165,7 @@ Data: {YYYY-MM-DD}
 
 ---
 
-## 8. Salvar e aguardar aprovação
+## 7. Salvar e aguardar aprovação
 
 1. Salve o plano em `plans/YYYY-MM-DD-{slug}.md`
 2. Apresente o plano ao usuário
