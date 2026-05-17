@@ -60,7 +60,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
    - **Tabela de leitura sob demanda** — cada tipo de tarefa mapeia para os docs/ai relevantes (NÃO leia todos automaticamente)
    - Prioridade atual (lista numerada)
    - Regras obrigatórias específicas da stack
-   - Processo obrigatório para mudanças não triviais (plan → revisor → implementar → test-flow → ship)
+   - Processo obrigatório para mudanças não triviais (plan → jarvis-plan → implementar → test-flow → ship)
    - Princípio de decisão
 
 2. **`manifest.yaml`** — Metadata do preset:
@@ -75,15 +75,12 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 
 4. Use o template `templates/settings.json` e adapte:
    - `PostToolUse` (Edit|Write|MultiEdit): comando de lint/typecheck da stack
-   - `PostToolUse` (ExitPlanMode): trigger do jarvis-plan-revisor
    - `Stop`: detecta mudanças em arquivos da stack e força /jarvis-test-flow
    - `permissions.deny`: manter padrão (.env, rm -rf, git push --force)
 
 ### .claude/commands/ (comandos do lifecycle)
 
-5. **`carregar-contexto-projeto.md`** — Copiar de `templates/commands/carregar-contexto-projeto.md` (genérico, não muda por stack).
-
-6. **`jarvis-plan-revisor.md`** — Use o preset mais similar como base. Deve ter **smart role selection**:
+5. **`jarvis-plan.md`** — Use o preset mais similar como base. Deve ter **smart role selection**:
    - Passo de análise do plano → seleção condicional de roles
    - Sempre carrega: architect + PM
    - Condicionais: mapeia condições do plano para roles/reviews relevantes
@@ -91,13 +88,12 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
    - Vereditos, regras de bloqueio, formato de relatório, sanar pendências MAJOR
    - ~60-100 linhas
 
-7. **`plan.md`** — Copiar de `templates/commands/plan.md` (genérico).
 
-8. **`refactor.md`** — Use o preset mais similar como base. Adapte seções de regras específicas da stack.
+7. **`refactor.md`** — Use o preset mais similar como base. Adapte seções de regras específicas da stack.
 
-9. **`ship.md`** — Copiar de `templates/commands/ship.md` (genérico).
+8. **`ship.md`** — Copiar de `templates/commands/ship.md` (genérico).
 
-10. **`jarvis-test-flow.md`** — Use o preset mais similar como base. Deve ter:
+9. **`jarvis-test-flow.md`** — Use o preset mais similar como base. Deve ter:
     - Fluxo completo de testes específico da stack
     - Comandos de execução (ex: `flutter test`, `pytest`, `npm test`)
     - Critérios de aprovação/reprovação
@@ -106,24 +102,22 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 
 ### .claude/commands/product_roles/ (helpers + roles)
 
-11. **Helpers** (copiar diretamente de qualquer preset existente — são idênticos para toda stack):
+10. **Helpers** (copiar diretamente de qualquer preset existente — são idênticos para toda stack):
     - `carregar-referencias.md`
-    - `consolidar-parecer.md`
-    - `gerar-relatorio.md`
     - `localizar-plano.md`
 
-12. **Roles genéricas** (copiar de `common/roles/` — são idênticas para toda stack):
+11. **Roles genéricas** (copiar de `common/roles/` — são idênticas para toda stack):
     - `role-architect.md`
     - `role-pm.md`
     - `role-delivery.md`
 
-13. **Roles específicas da stack** (criar seguindo o padrão):
+12. **Roles específicas da stack** (criar seguindo o padrão):
     - Frontend: `role-designer.md`
     - Mobile: `role-designer.md`, `role-<stack>-qa.md` (ex: `role-flutter-qa.md`)
     - Web: `role-web-qa.md`
     - Backend: `role-api-qa.md`
 
-14. **Reviews genéricos** (copiar de `common/roles/` quando aplicável):
+13. **Reviews genéricos** (copiar de `common/roles/` quando aplicável):
     - Backend: `review-api.md`, `review-database.md`, `review-security.md`, `review-observability.md`, `review-scalability.md`
     - Frontend: `review-accessibility.md`, `review-performance.md`
     - Todos: `review-testing.md`
@@ -136,7 +130,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 
 ### docs/ai/ (guias AI)
 
-15. Gere todos os guias relevantes para a stack.
+14. Gere todos os guias relevantes para a stack.
 
     **Mínimo obrigatório (todo preset):**
     - `ARCHITECTURE.md` — estrutura, boundaries, padrões de organização
@@ -161,7 +155,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
 - Roles/reviews: ~40-50 linhas cada (objetivo + checklist + regra dura).
 - Docs AI: ~80-150 linhas cada.
 - jarvis-test-flow: ~150-300 linhas.
-- jarvis-plan-revisor: ~60-100 linhas (com smart role selection).
+- jarvis-plan: ~60-100 linhas (com smart role selection).
 - CLAUDE.md: ~80-120 linhas.
 - Todos os arquivos seguem os padrões de nomenclatura definidos acima.
 - Separação de responsabilidades: cada arquivo faz UMA coisa.
@@ -172,6 +166,6 @@ Após gerar todos os arquivos:
 
 1. Valide que todos os nomes seguem os padrões (role-*, review-*, *_GUIDE.md, UPPER_SNAKE_CASE.md)
 2. Valide que não há conteúdo de testing fora de TESTING_GUIDE
-3. Valide que jarvis-plan-revisor tem smart role selection
+3. Valide que jarvis-plan tem smart role selection
 4. Valide que CLAUDE.md tem tabela de leitura sob demanda
 5. Reporte: arquivos criados, roles, reviews, guides, linhas por arquivo

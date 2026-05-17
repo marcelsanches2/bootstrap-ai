@@ -27,7 +27,7 @@ bootstrap-ai/
 │   ├── node-backend/            # Node/TypeScript backend
 │   └── fullstack-web/           # Fullstack monolito (Next.js, Remix, Nuxt, SvelteKit)
 ├── common/                      # Recursos compartilhados entre presets
-│   ├── commands/                # Comandos genéricos (jarvis-plan, jarvis-revisor, ship, refactor)
+│   ├── commands/                # Comandos genéricos (jarvis-plan, grill, ship, refactor)
 │   ├── docs.ai/                 # Docs AI genéricos (OPERATING_MODEL, CODING_STANDARDS, etc.)
 │   └── roles/                   # Roles genéricos (arquiteto, designer, pm, test, security, etc.)
 ├── generators/skill-creator/    # Gerador de novos presets
@@ -51,18 +51,16 @@ presets/<nome>/
 ├── .claude/
 │   ├── settings.json                      # Hooks: PostToolUse → lint, Stop → jarvis-test-flow
 │   └── commands/
-│       ├── jarvis-plan.md                      # Planejamento unificado com perspectivas embutidas (~180+ linhas)
-│       ├── jarvis-test-flow.md                   # Pipeline de validação E2E (~200+ linhas)
-│       ├── jarvis-revisor.md                     # Auditoria global do projeto (manual)
-│       ├── jarvis-full-test.md                   # Regressão completa (manual)
-│       ├── plan.md                        # Criação de planos técnicos
-│       ├── refactor.md                    # Refatoração segura incremental
-│       ├── ship.md                        # Checklist final
-│       ├── carregar-contexto-projeto.md   # Context loader automático
+│       ├── jarvis-plan.md          # Planejamento unificado (1 pass de LLM)
+│       ├── jarvis-test-flow.md     # Validação E2E incremental
+│       ├── design-phase.md         # Setup do design system visual
+│       ├── grill.md                # Entrevista interativa de alinhamento
+│       ├── kickoff.md              # Inicialização do projeto
+│       ├── refactor.md             # Refatoração segura incremental
+│       ├── ship.md                 # Checklist final
 │       └── product_roles/
-│           ├── role-*.md              # Contribuidores: geram seções do plano
-│           └── review-*.md            # Contribuidores: geram seções de domínio
-│           └── role-<stack-specific>.md   # Roles de revisão específicos (~80+ linhas cada)
+│           ├── role-*.md           # Contribuidores: geram seções do plano
+│           └── review-*.md         # Contribuidores: geram seções de domínio
 └── docs/ai/
     ├── ARCHITECTURE.md                    # Estrutura e camadas
     ├── CODING_STANDARDS.md                # Padrões de código
@@ -73,13 +71,11 @@ presets/<nome>/
 ## Lifecycle de desenvolvimento (no projeto consumidor)
 
 ```
-/grill (standalone, opt-in) → entrevista interativa sem plano
-/jarvis-plan                → explora, grilla se necessário, gera plano com perspectivas embutidas → user aprova
+/grill                      → entrevista interativa (standalone, opt-in)
+/jarvis-plan                → planejamento unificado (grill integrado condicional)
 (desenvolve)                → hook PostToolUse roda lint rápido a cada edição
-/jarvis-test-flow           → pipeline completo antes de commitar (hook Stop dispara se houver diff)
-/jarvis-revisor             → auditoria global do projeto (manual, sob demanda)
-/jarvis-full-test           → regressão completa do projeto (manual, sob demanda)
-/ship                       → checklist final
+/jarvis-test-flow           → validação E2E incremental (automático via hook Stop)
+/ship                       → checklist final (manual)
 ```
 
 ## CLI (bin/bootstrap-ai)
@@ -126,8 +122,6 @@ Biblioteca estrutural não coberta pelo preset selecionado → cria preset novo 
 
 - `jarvis-plan.md`: mínimo 180 linhas
 - `jarvis-test-flow.md`: mínimo 200 linhas
-- `jarvis-revisor.md`: mínimo 100 linhas
-- `jarvis-full-test.md`: mínimo 100 linhas
 - Cada `role-*.md`: mínimo 80 linhas
 - Cada `docs/ai/*.md`: mínimo 100 linhas
 - `CLAUDE.md`: mínimo 80 linhas
@@ -157,7 +151,7 @@ Todo preset tem 3 hooks:
 
 - Não commitar `.env`, `.bootstrap-ai.lock`, `.refresh-reports/` ou `*.kit-new`
 - Não usar `--force` em projetos existentes sem revisar diff
-- Não criar preset sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan.md`, `jarvis-test-flow.md`, `jarvis-revisor.md` e `jarvis-full-test.md`
+- Não criar preset sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan.md` e `jarvis-test-flow.md`
 - Manter `common/` como fallback genérico — preset específico sempre sobrepõe
 - Todo preset novo deve passar em `./bin/bootstrap-ai validate <nome>`
 - Templates do `skill-creator` devem ter conteúdo real, não placeholder vazio

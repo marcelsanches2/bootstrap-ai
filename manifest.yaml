@@ -19,7 +19,6 @@ presets:
         pubspec.yaml: ["flutter:"]
     required_files:
       - CLAUDE.md
-      - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
       - .claude/commands/product_roles/role-flutter-qa.md
@@ -35,7 +34,6 @@ presets:
       prefer_if: [alembic.ini, app/main.py, src]
     required_files:
       - CLAUDE.md
-      - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
       - .claude/commands/product_roles/review-database.md
@@ -53,7 +51,6 @@ presets:
         package.json: ["react"]
     required_files:
       - CLAUDE.md
-      - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
       - .claude/commands/product_roles/review-accessibility.md
@@ -62,7 +59,6 @@ presets:
       - docs/ai/DESIGN_SYSTEM.md
       - docs/ai/TESTING_GUIDE.md
 
-
   node-backend:
     path: presets/node-backend
     detects:
@@ -70,7 +66,6 @@ presets:
       prefer_if: [src, tsconfig.json]
     required_files:
       - CLAUDE.md
-      - .claude/commands/jarvis-revisor.md
       - .claude/commands/jarvis-test-flow.md
       - .claude/commands/refactor.md
       - .claude/commands/product_roles/review-database.md

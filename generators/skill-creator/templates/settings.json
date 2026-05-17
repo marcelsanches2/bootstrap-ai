@@ -12,16 +12,6 @@
             "command": "{{LINT_COMMAND}} 2>&1 | tail -15"
           }
         ]
-      },
-      {
-        "matcher": "ExitPlanMode",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PostToolUse\", \"additionalContext\": \"O usuário acabou de aceitar um plano. Invoque imediatamente a skill /jarvis-plan-revisor para revisar o plano aceito. Não execute o plano antes da revisão.\"}}'",
-            "statusMessage": "Disparando revisão do plano..."
-          }
-        ]
       }
     ],
     "Stop": [

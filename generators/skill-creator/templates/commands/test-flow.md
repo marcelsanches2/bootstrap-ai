@@ -16,7 +16,7 @@ Este arquivo deve ser gerado usando `prompts/derive-jarvis-test-flow.md` com bas
 0. Avaliar tamanho da task (GRANDE/PEQUENA)
 1. Determinar flow_id
 2. Inventariar massa (fixtures/mocks deterministicos)
-3. Inventariar teste (com cross-ref ao jarvis-plan-revisor)
+3. Inventariar teste (com cross-ref ao jarvis-plan)
 4. Executar pipeline (lint → typecheck → test → migration → build → healthcheck)
 4a. Loop de diagnóstico e correcao (max 3 tentativas)
 5. Gerar relatório em docs/test_report_{flow_id}.md

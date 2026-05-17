@@ -22,18 +22,14 @@ presets/<nome>/
 ├── manifest.yaml                          # Metadados, roles, required_files, library_tags
 ├── plans/.gitkeep
 ├── .claude/
-│   ├── settings.json                      # Hooks: ExitPlanMode → jarvis-plan-revisor, Stop → jarvis-test-flow
+│   ├── settings.json                      # Hooks: PostToolUse → lint, Stop → jarvis-test-flow
 │   ├── commands/
-│   │   ├── carregar-contexto-projeto.md   # Context loader automático
-│   │   ├── jarvis-plan-revisor.md         # Revisão multi-role de planos
-│   │   ├── plan.md                        # Criação de planos técnicos
+│   │   ├── jarvis-plan.md                 # Planejamento unificado (1 pass de LLM)
 │   │   ├── refactor.md                    # Refatoração segura incremental
 │   │   ├── ship.md                        # Checklist final de entrega
-│   │   ├── jarvis-test-flow.md             # Pipeline de validação E2E
+│   │   ├── jarvis-test-flow.md            # Pipeline de validação E2E
 │   │   └── product_roles/
 │   │       ├── carregar-referencias.md    # Helper: carrega docs por relevância
-│   │       ├── consolidar-parecer.md      # Helper: consolida pareceres
-│   │       ├── gerar-relatorio.md         # Helper: gera relatório final
 │   │       ├── localizar-plano.md         # Helper: localiza plano em plans/
 │   │       ├── role-<stack-specific>.md   # Roles derivados da stack
 │   │       └── ...
@@ -49,7 +45,7 @@ presets/<nome>/
 
 ```
 /plan          → cria plano técnico
-/jarvis-plan-revisor → revisa plano contra docs/ai e roles (via hook ExitPlanMode)
+/jarvis-plan   → planejamento unificado (com smart role selection)
 (desenvolve)
 /jarvis-test-flow  → valida tudo antes de commitar (via hook Stop)
 /ship          → checklist final

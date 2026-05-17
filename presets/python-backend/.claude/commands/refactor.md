@@ -89,7 +89,7 @@ Rode `/jarvis-plan` para gerar plano com perspectivas embutidas.
 
 - Se houver BLOCKER: pare.
 - Se houver MAJOR: sane com o usuário antes de executar.
-- Só implemente depois do plano revisado.
+- Só implemente depois do plano aprovado.
 
 ### 4b. Approval Gate
 

@@ -298,8 +298,7 @@ Verifique se existem:
 
 ```txt
 $ROOT/CLAUDE.md
-$ROOT/.claude/commands/plan.md
-$ROOT/.claude/commands/jarvis-plan-revisor.md
+$ROOT/.claude/commands/jarvis-plan.md
 $ROOT/.claude/commands/refactor.md
 $ROOT/.claude/commands/jarvis-test-flow.md
 $ROOT/docs/ai/

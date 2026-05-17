@@ -205,7 +205,7 @@ Design system: [SIM - docs/ai/DESIGN_SYSTEM.md | NÃO]
 
 Próximos passos:
 1. /plan — criar primeiro plano técnico
-2. /jarvis-plan-revisor — revisar plano (automático)
+2. /jarvis-plan — planejamento unificado
 3. Implementar plano
 4. /ship — checklist de entrega
 ```

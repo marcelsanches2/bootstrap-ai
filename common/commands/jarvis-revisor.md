@@ -36,11 +36,11 @@ Para cada role, carregue os documentos relevantes de `docs/ai/`:
 
 ### Fase 4: Consolidação
 
-Use `/product_roles/consolidar-parecer.md` para consolidar todos os pareceres.
+Consolide todos os pareceres em linha.
 
 ### Fase 5: Relatório Final
 
-Use `/product_roles/gerar-relatorio.md` para gerar relatório final com:
+Gere o relatório final com:
 - **Resumo executivo**: saúde geral do projeto (0-10)
 - **Achados críticos**: itens que precisam ação imediata
 - **Achados importantes**: melhorias significativas

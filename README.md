@@ -52,7 +52,7 @@ Depois, dentro do Claude Code:
 Depois de aplicar, você entra no ciclo de desenvolvimento:
 
 ```
-/plan → /jarvis-plan-revisor → implementar → /jarvis-test-flow → /ship
+/jarvis-plan → implementar → /jarvis-test-flow → /ship
 ```
 
 > **💡 Projeto existente?** Depois de importar, rode `/refactor` para alinhar o código real com os padrões do preset.
@@ -106,8 +106,7 @@ O loop de desenvolvimento principal — execute em sequência:
 
 | Comando | Finalidade |
 |---------|------------|
-| `/plan` | Gera um plano de implementação para a tarefa atual |
-| `/jarvis-plan-revisor` | Revisa e melhora o plano antes da implementação |
+| `/jarvis-plan` | Gera um plano de implementação para a tarefa atual |
 | *(implementar)* | Codifica seguindo o plano usando edição normal do Claude Code |
 | `/jarvis-test-flow` | Executa a suite de testes completa e corrige falhas |
 | `/ship` | Finaliza: revisa, committa e faz push |
@@ -130,7 +129,6 @@ Hooks rodam em pontos específicos durante sua sessão de IA sem invocação man
 | Hook | Trigger | Comportamento |
 |------|---------|---------------|
 | `PostToolUse` | Após qualquer tool call | Executa checks de lint |
-| `ExitPlanMode` | Ao sair do modo de plano | Auto-dispara `/jarvis-plan-revisor` |
 | `Stop` | Quando o agent para | Auto-dispara `/jarvis-test-flow` |
 
 ---

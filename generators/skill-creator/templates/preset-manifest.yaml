@@ -5,15 +5,11 @@ required_files:
   - CLAUDE.md
   - manifest.yaml
   - .claude/settings.json
-  - .claude/commands/jarvis-plan-revisor.md
+  - .claude/commands/jarvis-plan.md
   - .claude/commands/jarvis-test-flow.md
-  - .claude/commands/plan.md
   - .claude/commands/refactor.md
   - .claude/commands/ship.md
-  - .claude/commands/carregar-contexto-projeto.md
   - .claude/commands/product_roles/carregar-referencias.md
-  - .claude/commands/product_roles/consolidar-parecer.md
-  - .claude/commands/product_roles/gerar-relatorio.md
   - .claude/commands/product_roles/localizar-plano.md
   # Adicionar role-*.md e docs/ai/*.md específicos da stack
 roles:

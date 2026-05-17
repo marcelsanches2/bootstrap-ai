@@ -1,9 +1,9 @@
 ---
-name: jarvis-plan-revisor
-description: Revisa um plano técnico em plans/ contra docs/ai e roles do preset.
+name: jarvis-revisor
+description: Auditoria global do projeto — revisa qualidade e sugere melhorias.
 ---
 
-# Skill: jarvis-plan-revisor
+# /jarvis-revisor
 
 Você é uma banca de revisão técnica rigorosa do projeto. Sua função é revisar o plano técnico mais recente em `plans/*.md` ou um arquivo indicado pelo usuário, validando contra os documentos em `docs/ai/` e contra as perspectivas dos roles do preset.
 
