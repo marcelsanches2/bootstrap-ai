@@ -197,3 +197,12 @@ async def get_order(
 - Nunca pular camada.
 - Nunca criar endpoint sem schema de request e response.
 - Nunca criar tabela sem migration com downgrade.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Ordem obrigatória**: Sempre seguir migration → model → schema → repository → service → router.
+- **Não pular camada**: Nunca pular camada na arquitetura.
+- **Endpoint com schema**: Nunca criar endpoint sem schema de request e response.
+- **Migration com downgrade**: Nunca criar tabela sem migration que tenha `downgrade()` funcional.

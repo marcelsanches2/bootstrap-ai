@@ -269,3 +269,22 @@ export default defineConfig({
 - **Deploy sem build check:** rode `npm run build` (e `npm run lint` + `npx tsc --noEmit`) antes de deploy.
 - **Fallback SPA em app com SSR:** quebra rotas server-rendered.
 - **Sem rollback planejado:** todo deploy deve ter forma de voltar.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### Segurança
+- **Nunca colocar segredo em `NEXT_PUBLIC_*` ou `VITE_*`**: variáveis públicas são embarcadas no bundle e visíveis no browser.
+- **Nunca commitar `.env` real**: `.env` deve estar no `.gitignore`; só commitar `.env.example` sem valores sensíveis.
+- **Headers de segurança obrigatórios**: X-Frame-Options, X-Content-Type-Options, Referrer-Policy devem estar configurados.
+
+### Build e deploy
+- **Build production deve passar antes de entrega relevante**: rode `npm run build` (e `npm run lint` + `npx tsc --noEmit`) antes de deploy.
+- **Todo deploy deve ter rollback planejado**: manter artefato/imagem da versão anterior acessível.
+- **Não aplicar fallback SPA em app Next.js com SSR**: quebra rotas server-rendered.
+
+### Cache e env
+- **Cache agressivo só para assets com hash**: HTML e entrypoint devem ter cache curto ou no-cache.
+- **Sourcemap em produção deve ser gerado, mas não servido publicamente**: dificulta debug se ausente.
+- **`.env.example` deve ter todas as chaves necessárias**: sem valores sensíveis, documentando cada variável.

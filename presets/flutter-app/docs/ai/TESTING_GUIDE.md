@@ -142,3 +142,15 @@ Prioridade:
 3. Testes de repository e mapper para conversão e tratamento de erros.
 4. Testes de widget quando houver comportamento visual relevante.
 5. Testes E2E para fluxos críticos do usuário.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Teste obrigatório quando há regra de negócio / usecase / cálculo / validação / autenticação / permissão / tratamento de erro / conversão DTO→Entity / repository com datasource / controller com loading-error-success / fluxo crítico**: não entregar sem teste para estes casos
+- **Não criar testes frágeis apenas para aumentar cobertura**: cobertura artificial é proibida
+- **Não testar detalhe interno sem valor**: testes devem ser orientados a comportamento
+- **Não depender de produção**: usar mocks e fixtures determinísticos
+- **Não depender de ordem de execução**: testes devem ser independentes
+- **Não mockar o alvo do teste**: mockar apenas dependências
+- **Mudança grande precisa de build**: teste unitário não substitui build real

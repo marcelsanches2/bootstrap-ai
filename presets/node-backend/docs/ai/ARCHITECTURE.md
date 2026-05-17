@@ -221,3 +221,19 @@ export const config = envSchema.parse(process.env);
 - Não criar endpoint sem Zod schema de request e response.
 - Não hardcodar config — usar env vars via zod.
 - Não usar `require()` — sempre ES modules ou import.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não pular camadas**: Controller → Service → Repository → Prisma — respeitar sempre o fluxo.
+- **Não usar `any` sem justificativa documentada**: Usar tipo específico ou `unknown`.
+- **Não commitar sem `tsc --noEmit` passando**: Type checking deve estar limpo antes de commit.
+- **Não criar endpoint sem Zod schema**: Todo endpoint precisa de schema de request e response.
+- **Não hardcodar config**: Usar env vars via Zod validação.
+- **Não usar `require()`**: Sempre ES modules ou import.
+- **Controller não deve ter lógica de negócio**: Lógica pertence ao service.
+- **Service não deve conhecer req/res**: Não importar nada de HTTP no service.
+- **Não usar raw SQL quando Prisma resolve**: Só raw para performance crítica.
+- **Não usar import circular**: Usar dependency injection.
+- **Não usar `console.log` em produção**: Usar logger estruturado.

@@ -139,14 +139,27 @@ Mínimo para fluxo crítico:
 - tempo de dependência externa
 - logs com request id/job id
 
-## Anti-patterns bloqueantes
+## Regras bloqueantes
 
-- Listar tabela crescente sem paginação.
-- Fazer `SELECT *` em endpoint público quente.
-- Usar offset profundo para feed grande sem reconhecer custo.
-- Criar job não idempotente com retry.
-- Fazer chamada externa sem timeout.
-- Resolver concorrência só “checando antes” sem constraint/transação.
-- Cache sem invalidação.
-- Exportação carregando tudo em memória.
-- Plano “vamos escalar depois” para fluxo já crítico.
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### Banco de dados
+- **Tabela crescente sem paginação**: listagens de tabelas que crescem devem ter paginação obrigatória.
+- **`SELECT *` em endpoint quente**: use `select` explícito em endpoints públicos com volume.
+- **Offset profundo sem reconhecer custo**: use cursor quando o volume justificar.
+- **Exportação carregando tudo em memória**: use streaming ou paginação para exports grandes.
+
+### Concorrência
+- **Checagem antes sem constraint/transação**: resolver concorrência apenas com "checar antes" é insuficiente — use constraint, lock ou transação.
+- **Job não idempotente com retry**: jobs com retry precisam ser idempotentes.
+- **Duplicação com efeito duplicado**: se duplicar a request causa efeito duplicado, o plano precisa tratar idempotência.
+
+### Cache
+- **Cache sem invalidação**: todo cache deve ter estratégia de invalidação definida.
+- **Não usar cache para esconder query ruim**: entenda a query antes de adicionar cache.
+
+### Integrações
+- **Chamada externa sem timeout**: toda chamada externa crítica precisa de timeout explícito.
+
+### Planejamento
+- **Plano "vamos escalar depois" para fluxo já crítico**: fluxo crítico precisa de plano de escala no momento da implementação.

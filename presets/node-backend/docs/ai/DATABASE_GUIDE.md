@@ -162,3 +162,17 @@ main().finally(() => prisma.$disconnect());
 - Não criar tabela sem índice em FK.
 - Não usar offset em tabela grande — cursor.
 - Não logar dados sensíveis.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não usar `SELECT *`**: Sempre usar `select` explícito em endpoints.
+- **Não fazer N+1**: Usar `include` para eager loading.
+- **Não commitar migration sem testar**: Migration deve ser testada antes de deploy.
+- **Não criar tabela sem índice em FK**: Toda foreign key precisa de índice.
+- **Não usar offset em tabela grande**: Usar cursor-based pagination quando volume for alto.
+- **Não logar dados sensíveis**: Nunca logar senhas, tokens, PII.
+- **Sempre revisar migration gerada antes de aplicar**: Validar SQL gerado pelo Prisma.
+- **Não editar migration aplicada**: Criar nova migration para alterações.
+- **Testar rollback antes de deploy**: Toda migration deve ter caminho de revert validado.

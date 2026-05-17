@@ -46,3 +46,12 @@ Toda tela/fluxo assíncrono precisa decidir:
 ## Regra visual
 
 Não aceite UI "funcional mas feia" em entrega de produto. Se o plano não define visual suficiente para implementar com qualidade, marque pendência.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Usar tokens centralizados**: não usar valor hardcoded quando token correspondente existe no projeto.
+- **Não assumir uma única largura**: layout deve considerar mobile, tablet e desktop quando aplicável.
+- **Estados de UI obrigatórios**: toda tela/fluxo assíncrono deve tratar loading, empty, error e success.
+- **Não entregar UI "funcional mas feia"**: se o plano não define visual suficiente, marque pendência.

@@ -197,3 +197,20 @@ npm run build
 - **Não** chamar serviço externo real (API, email, pagamento).
 - **Não** commitar mudança sem pelo menos testes da alteração.
 - **Sempre** rode build production para mudanças relevantes de rotas/deps.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### Integridade dos testes
+- **Não remover assertion para fazer teste passar**: se o teste falha, corrija o código.
+- **Não usar `any` em testes**: use tipos específicos ou fixtures tipadas.
+- **Não depender de ordem de execução dos testes**: cada teste deve ser isolado e independente.
+
+### Isolamento
+- **Não chamar serviço externo real (API, email, pagamento)**: use mocks (MSW, vi.mock).
+- **Testes não podem depender de produção, relógio real sem controle ou rede externa sem mock**.
+
+### Commit
+- **Não commitar mudança sem pelo menos testes da alteração**: toda mudança precisa cobertura de teste.
+- **Sempre rode build production para mudanças relevantes de rotas/deps**.

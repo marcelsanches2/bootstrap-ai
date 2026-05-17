@@ -345,3 +345,27 @@ O frontend deve:
 - Nunca criar endpoint sem Zod schema de validação.
 - Nunca criar tabela sem migration.
 - Nunca criar feature sem testes.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### Ordem e camadas
+- **Seguir a ordem obrigatória**: types → schema → migration → Zod → repository → service → route → API client → hook → components → page → testes.
+- **Nunca pular camada**: cada etapa depende da anterior.
+
+### Validação e banco
+- **Nunca criar endpoint sem Zod schema de validação**: todo input precisa ser validado.
+- **Nunca criar tabela sem migration**: migration com caminho de rollback documentado é obrigatória.
+
+### Testes
+- **Nunca criar feature sem testes**: toda feature precisa testes das camadas alteradas.
+
+### Frontend
+- **Não inventar regra de negócio no frontend**: comportamento ambíguo deve ser exposto como decisão pendente.
+- **Feature sem estados de UI (loading, error, empty) é anti-pattern**: toda feature assíncrona deve tratar esses estados.
+
+### Backend
+- **Service não depende de HTTP request/response diretamente**: service é lógica de negócio pura.
+- **Endpoint sem validação Zod é proibido**: inclui body, query e params.
+- **Migration sem caminho de rollback documentado é proibido**.

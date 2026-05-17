@@ -69,3 +69,16 @@ Adapte ao framework. Em Next.js, respeite `app/`/`pages/`, mas preserve boundari
 - `useEffect` para derivar estado que poderia ser calculado.
 - Context global para evitar passar duas props.
 - API client duplicado por feature sem motivo.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Componentes puros não chamam API**: componentes de UI recebem props; data fetching fica em hooks.
+- **Não confundir server state com estado global**: dados remotos pertencem ao TanStack Query, não a Zustand/Redux.
+- **Não usar strings soltas para rotas**: quando houver mapa de rotas, use-o em vez de strings repetidas.
+- **Mensagem técnica não pode vazar para o usuário**: erros de API devem virar estado renderizável, sem stack trace.
+- **Erro boundary em áreas críticas**: áreas críticas da UI devem ter error boundary.
+- **Evitar componente monolítico**: componente de 500+ linhas com fetch + regra + layout + formatação é anti-pattern.
+- **Não usar useEffect para derivar estado**: estado derivável de props/state deve ser calculado diretamente.
+- **Não usar Context global para evitar prop drilling leve**: Context global só quando realmente necessário.

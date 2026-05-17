@@ -305,3 +305,33 @@ static async create(req: Request, res: Response) {
 - **Não hardcodar config**: usar env vars validadas via Zod.
 - **Não commitar `.env` real**, secrets, tokens ou credenciais.
 - **Não criar abstração antes de existir pelo menos um uso real**.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### Camadas e separação
+- **Não pular camadas**: Controller → Service → Repository → Prisma, sem atalhos.
+- **Service não conhece HTTP**: service nunca importa Express ou recebe req/res.
+- **Repository não valida input**: validação é responsabilidade do schema/controller.
+- **Controller não faz query direta**: acesso a dados passa pelo repository ou service.
+
+### Tipagem e validação
+- **Não usar `any`**: use tipo específico ou `unknown` com type guard.
+- **Não criar endpoint sem Zod schema**: todo endpoint precisa schema de request e response.
+
+### Banco de dados
+- **Não alterar schema sem migration**: toda mudança no banco precisa migration com caminho de rollback documentado.
+
+### Configuração e segurança
+- **Não hardcodar config**: usar env vars validadas via Zod.
+- **Não commitar `.env` real**, secrets, tokens ou credenciais.
+- **Não commitar sem `tsc --noEmit`** passando.
+
+### Abstração
+- **Não criar abstração antes de uso real**: pelo menos um uso real deve existir antes de extrair.
+
+### Frontend
+- **Mensagem técnica nunca vaza para o usuário final**: erros de API viram estado renderizável amigável.
+- **Mapa de rotas centralizado**: nunca strings soltas repetidas para rotas.
+- **API client centralizado em `shared/api/`**: não duplicar client HTTP por feature.

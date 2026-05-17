@@ -82,3 +82,15 @@ app.use('/api/v1/auth', rateLimit({ windowMs: 60_000, max: 5 }));
 - Nunca commitar `.env`.
 - Nunca usar `eval()`.
 - Nunca expor stack trace em produção.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Nunca logar senha, token, PII**: dados sensíveis nunca aparecem em logs.
+- **Nunca armazenar senha em texto plano**: sempre hash com bcrypt.
+- **Nunca `origin: '*'` em produção**: CORS deve ter origens explícitas.
+- **Nunca commitar `.env`**: secrets não entram no repositório.
+- **Nunca usar `eval()`**: proibido em qualquer circunstância.
+- **Nunca expor stack trace em produção**: capture internamente, retorne erro genérico.
+- **Nunca confiar em `req.body` diretamente**: sempre validar input com Zod.

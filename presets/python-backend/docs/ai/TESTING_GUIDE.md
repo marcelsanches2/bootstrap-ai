@@ -236,3 +236,19 @@ pytest --cov=app --cov-report=html  # Coverage com HTML
 - Não chamar serviço externo real em teste.
 - Não depender de ordem de execução.
 - Não commitar sem pelo menos testes unitários da mudança.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não weaken assertions**: Não remover assertion para fazer teste passar.
+- **Sem teste vazio**: Não usar `assert True` ou `pass` como corpo de teste.
+- **Dados determinísticos**: Não usar dados aleatórios (`random`, `faker`) em teste determinístico.
+- **Sem serviço externo real**: Não chamar serviço externo real em teste; usar mock.
+- **Independência de ordem**: Testes não podem depender de ordem de execução.
+- **Testes unitários obrigatórios**: Não commitar sem pelo menos testes unitários da mudança.
+- **Não mockar DB**: Banco de dados em teste deve ser real (DB de teste), não mockado.
+- **Não mockar validação Pydantic**: Testar Pydantic com input real, não com mock.
+- **Não usar `sleep` para async**: Usar `await`, nunca `sleep` para esperar operação assíncrona.
+- **Cleanup de arquivos temporários**: Não criar arquivo temporário sem cleanup.
+- **Skip com issue**: Não pular teste com `@pytest.skip` sem issue registrada.

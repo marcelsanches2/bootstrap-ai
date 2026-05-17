@@ -348,3 +348,21 @@ Nunca hardcodar configuração. Nunca acessar `os.environ` diretamente — passe
 - Não importar models em routers — use schemas.
 - Não usar sync SQLAlchemy em projeto async — use `AsyncSession`.
 - Não criar dependência circular entre módulos.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não pular camadas**: Router → Service → Repository → Model, sempre nesta ordem.
+- **Migration obrigatória com model**: Não commitar alteração em model sem migration correspondente.
+- **Service é dono do commit**: Não usar `session.commit()` em repository.
+- **Config via Settings**: Não hardcodar configuração; não acessar `os.environ` diretamente.
+- **Schemas em routers**: Não importar models em routers — use schemas Pydantic.
+- **AsyncSession obrigatório**: Não usar sync SQLAlchemy em projeto async.
+- **Sem dependência circular**: Não criar dependência circular entre módulos; use `TYPE_CHECKING`.
+- **Router sem lógica de negócio**: Router não contém lógica de negócio nem acessa banco diretamente.
+- **Service sem HTTP**: Service não importa `Request`/`Response` do FastAPI.
+- **Model sem comportamento**: Model define tabela/colunas, não contém lógica de negócio.
+- **Repository sem validação**: Repository não faz validação Pydantic.
+- **Evitar N+1**: Query em loop deve usar eager load ou select_related.
+- **Não commitar `.env`**: Arquivo `.env` nunca entra no versionamento.

@@ -177,3 +177,31 @@ npx eslint --rule 'jsx-a11y/*: error' src/
 - **aria-hidden em elemento focável:** se tem `aria-hidden`, não pode receber foco.
 - **Imagem sem alt:** alt vazio para decorativa, alt descritivo para informativa. Nunca omitir o atributo.
 - **Lista infinita sem anúncio:** paginação/scroll infinito precisa anunciar novos itens via `aria-live`.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### Mínimo obrigatório
+- **Acessibilidade não é opcional**: todo componente entregue deve ser navegável por teclado e compreensível por leitor de tela.
+- **HTML semântico antes de ARIA**: usar elementos nativos (`<button>`, `<a>`, `<nav>`) no lugar de divs genéricas.
+- **Toda ação via mouse deve ser possível por teclado**: sem exceção.
+- **Foco visível e ordem lógica**: foco não pode desaparecer ou ficar em ordem confusa.
+- **Inputs com `<label>` associado**: placeholder não substitui label.
+- **Contraste mínimo 4.5:1 (texto normal), 3:1 (texto grande)**: contraste insuficiente é bloqueante.
+
+### Modais e overlays
+- **Trap de foco no modal**: tab não pode sair para conteúdo invisível.
+- **Escape fecha o modal**: quando seguro (sem dados não salvos).
+- **Foco move ao abrir e retorna ao fechar**: obrigatório.
+- **Clique fora não destrói dados sem confirmação**: obrigatório.
+
+### Imagens e ícones
+- **Imagem informativa precisa de `alt` descritivo**: nunca omitir o atributo alt.
+- **Ícone clicável precisa de `aria-label` ou label visível**: sem exceção.
+
+### Proibições
+- **Nunca usar `<div onClick>` para ações**: use `<button>`.
+- **Nunca usar cor como única indicação de estado**: combinar com ícone ou texto.
+- **Nunca usar `aria-hidden` em elemento focável**: se tem aria-hidden, não pode receber foco.
+- **Não reinventar padrão WAI-ARIA**: use biblioteca consolidada (Radix, Headless UI, react-aria).

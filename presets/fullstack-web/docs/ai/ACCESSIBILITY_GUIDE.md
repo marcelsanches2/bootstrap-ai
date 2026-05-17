@@ -177,3 +177,28 @@ npx eslint --rule 'jsx-a11y/*: error' src/
 - **aria-hidden em elemento focável:** se tem `aria-hidden`, não pode receber foco.
 - **Imagem sem alt:** alt vazio para decorativa, alt descritivo para informativa. Nunca omitir o atributo.
 - **Lista infinita sem anúncio:** paginação/scroll infinito precisa anunciar novos itens via `aria-live`.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### Semântica e navegação
+- **Acessibilidade não é opcional nem fase final**: todo componente entregue deve ser navegável por teclado e compreensível por leitor de tela.
+- **Div como botão é proibido**: ações usam `<button>`, links usam `<a>`.
+- **Toda ação via mouse deve ser possível por teclado**: sem exceções.
+
+### Formulários
+- **Inputs com `<label>` associado**: nunca usar apenas placeholder como label.
+- **Erros de formulário devem ser anunciáveis e próximos do campo**: use `aria-invalid` e `aria-describedby`.
+
+### Visual
+- **Contraste mínimo 4.5:1 para texto normal, 3:1 para texto grande**: nunca usar apenas cor para indicar erro/estado.
+- **Imagem informativa precisa `alt` descritivo**: decorativa usa `alt=""` + `aria-hidden="true"`. Nunca omitir o atributo.
+
+### Modais e overlays
+- **Overlay sem trap de foco é proibido**: tab não pode sair do modal para conteúdo invisível.
+
+### ARIA
+- **Não reinventar padrão WAI-ARIA se biblioteca consolidada resolve**: use Radix, Headless UI ou react-aria.
+- **`aria-hidden` em elemento focável é proibido**: se tem `aria-hidden`, não pode receber foco.
+- **Lista infinita sem anúncio**: paginação/scroll infinito precisa anunciar novos itens via `aria-live`.

@@ -103,3 +103,15 @@ process.on('SIGTERM', async () => {
 - Nunca servir sem HTTPS.
 - Nunca hardcodar env vars.
 - Sempre ter rollback testado.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Nunca deployar sem migration com downgrade**: Toda migration precisa de caminho de rollback documentado.
+- **Nunca `NODE_ENV=development` em produção**: Ambiente de produção deve ter `NODE_ENV=production`.
+- **Nunca servir sem HTTPS**: TLS é obrigatório em produção.
+- **Nunca hardcodar env vars**: Usar env vars via Zod validation.
+- **Sempre ter rollback testado**: Rollback deve ser validado antes de deploy.
+- **Sempre `.env.example` atualizado**: Nunca commitar `.env` real.
+- **Sempre graceful shutdown**: Tratar SIGTERM para fechar conexões corretamente.

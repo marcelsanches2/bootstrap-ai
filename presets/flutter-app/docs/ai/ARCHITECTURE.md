@@ -264,3 +264,21 @@ A estrutura deve apenas estar preparada.
 - Dependências não justificadas.
 - Overengineering prematuro.
 - Arquitetura por camada global para tudo.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Presentation não faz chamada direta a API/Dio/datasource**: camada de presentation deve conversar apenas com controllers/providers/usecases
+- **Presentation não faz parsing de DTO**: DTOs são responsabilidade exclusiva da camada data
+- **Presentation não contém regra de negócio complexa**: regras de domínio ficam nas camadas internas
+- **Domínio não depende de Flutter, Dio ou detalhes externos**: camada de domain deve ser pura Dart
+- **DTOs não vazam para fora da camada data**: DTOs ficam em data/dtos/ e são convertidos para entidades antes de sair
+- **Widgets não usam Dio**: widgets apenas renderizam UI e delegam ações
+- **Controllers não usam Dio diretamente**: controllers chamam usecases, nunca Dio
+- **Usecases não usam Dio diretamente**: usecases conversam com repositories
+- **Erros devem ser convertidos para Failure ou ApiResult**: erros externos não chegam crus à aplicação
+- **Mensagens técnicas não vazam para a UI sem tratamento**: erros devem ser tratados antes de exibir
+- **Não concentrar todos os providers em um único arquivo**: separar providers por feature quando crescer
+- **Pages não devem conhecer strings soltas de rota**: usar constantes ou helpers centralizados
+- **Não criar arquivos vazios sem necessidade**: criar apenas o necessário para a tarefa atual

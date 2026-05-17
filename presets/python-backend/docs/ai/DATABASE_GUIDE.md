@@ -266,3 +266,18 @@ engine.pool.status()  # "Pool size: 5  Connections in pool: 3  Current Overflow:
 - Não usar offset em tabela com >1M linhas — usar cursor.
 - Não executar query sem timeout em produção.
 - Não logar dados sensíveis do banco.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Colunas explícitas**: Não usar `SELECT *`; sempre colunas explícitas.
+- **Sem N+1**: Não fazer N+1; usar eager loading (`selectinload`, `joinedload`).
+- **Migration com downgrade**: Não commitar migration sem `downgrade()` funcional.
+- **Migration imutável em produção**: Não alterar migration já aplicada; criar nova.
+- **Índice em FK**: Não criar tabela sem índice em foreign key.
+- **Cursor para tabelas grandes**: Não usar offset em tabela com >1M linhas; usar cursor-based.
+- **Query com timeout**: Não executar query sem timeout em produção.
+- **Não logar dados sensíveis**: Não logar dados sensíveis do banco.
+- **Constraint no banco**: Deixar constraint no banco, não só na aplicação.
+- **Testar downgrade**: Testar downgrade de migration antes de deploy.

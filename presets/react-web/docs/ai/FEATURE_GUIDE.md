@@ -234,3 +234,26 @@ O frontend deve:
 - **Teste que testa implementação (métodos internos):** teste comportamento e output.
 - **Commit de feature sem build passing:** rode `npm run build` antes.
 - **Feature com estado global desnecessário:** se o dado é da página, use estado local ou TanStack Query.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### Feature obrigatórios
+- **Loading/error/empty não são opcionais**: toda feature deve tratar esses estados de UI.
+- **Hook de fetch usa TanStack Query**: nunca `useEffect` + `useState` para data fetching.
+- **Componente não chama API diretamente**: use hook + camada de API.
+- **Build deve passar antes de commit de feature**: rode `npm run build` antes.
+
+### Escopo
+- **Não inventar regra de negócio no frontend**: se ambíguo, pare e exponha decisão pendente.
+- **Frontend não cria regras que o backend não confirma**: refletir estado do backend, não inventar.
+- **Tarefa de estrutura não vira feature**: respeitar o escopo pedido.
+- **Tarefa de refatoração não adiciona comportamento novo**: só refatorar.
+
+### Feature cross-boundaries
+- **Feature não importa de outra feature diretamente**: use `shared/` como ponte.
+- **Tipos duplicados entre features**: extrair para `shared/types/`.
+
+### Testes
+- **Testar comportamento e output, não implementação**: não testar métodos internos.

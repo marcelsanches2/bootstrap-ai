@@ -109,3 +109,13 @@ vitest run --reporter=verbose
 - Não depender de ordem de execução.
 - Não chamar serviço externo real.
 - Não commitar sem pelo menos testes da mudança.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não remover assertion para fazer passar**: Teste deve validar comportamento real.
+- **Não usar `any` em testes**: Usar tipos específicos ou `unknown`.
+- **Não depender de ordem de execução**: Cada teste deve ser independente e isolado.
+- **Não chamar serviço externo real**: Usar mocks para dependências externas.
+- **Não commitar sem testes da mudança**: Pelo menos testes unitários do código alterado.

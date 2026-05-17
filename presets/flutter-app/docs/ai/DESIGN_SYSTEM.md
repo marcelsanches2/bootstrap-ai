@@ -295,3 +295,16 @@ Uma implementação visual só é aceitável se:
 - não espalha estilos duplicados
 - não compromete performance
 - passa no `flutter analyze`
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não usar cores hardcoded diretamente em telas, widgets ou componentes**: usar tokens centralizados de AppColors
+- **Não fazer styling final dentro de pages**: estilos ficam no tema centralizado
+- **Não criar estilos hardcoded espalhados**: usar tokens de espaçamento, raio, sombra e tipografia
+- **Não criar componente novo se já existir componente reutilizável adequado**: reaproveitar antes de criar
+- **Não implementar fonte customizada sem garantir dependência/configuração**: fonte requer setup completo
+- **Não criar componentes antes da necessidade real**: implementar sob demanda
+- **Separar componente visual de regra de negócio**: UI não contém lógica de domínio
+- **Preservar performance mobile**: evitar blur excessivo, sombras em excesso e componentes pesados em listas longas

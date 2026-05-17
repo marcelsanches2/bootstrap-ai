@@ -292,3 +292,18 @@ Em produção: `allow_origins` com lista explícita, nunca `["*"]`.
 - Não criar endpoint sem schema de request e response.
 - Não usar `str` para datas — use `datetime` ou `date`.
 - Não retornar trace de erro em produção.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Status code correto**: Não usar status code 200 para tudo; use o código HTTP correto.
+- **Schema de erro consistente**: Não retornar `{"success": true}`; use status code + ErrorResponse.
+- **Não expor campos sensíveis**: Nunca retornar password_hash, tokens internos ou campos sensíveis.
+- **Validação no schema**: Não validar input no router com `if/else`; use Pydantic.
+- **URLs não hardcoded**: Não hardcodar URLs; use path params e named routes.
+- **Endpoint com schema**: Não criar endpoint sem schema de request e response.
+- **Tipos corretos para datas**: Não usar `str` para datas; use `datetime` ou `date`.
+- **Sem trace em produção**: Não retornar stack trace de erro em produção.
+- **CORS restrito em produção**: `allow_origins` com lista explícita em produção, nunca `["*"]`.
+- **Paginação com limites**: `limit` mínimo 1, máximo 100, default 20; rejeitar fora do range.

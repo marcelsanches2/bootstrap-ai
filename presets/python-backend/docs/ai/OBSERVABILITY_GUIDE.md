@@ -189,3 +189,15 @@ Monitorar quando volume cresce:
 - Sempre logar com structured logging.
 - Nunca usar `print()` para logging.
 - Sempre configurar alertas em produção.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não logar dados sensíveis**: Nunca logar senha, token, PII sem mascaramento.
+- **Healthcheck obrigatório**: Sempre ter endpoint `/health` funcional.
+- **Request ID obrigatório**: Sempre propagar `X-Request-ID` em logs, chamadas externas e responses.
+- **Structured logging**: Sempre usar structlog (JSON), nunca `print()`.
+- **Alertas em produção**: Sempre configurar alertas para métricas críticas em produção.
+- **Healthcheck sem auth**: Healthcheck não deve requerer autenticação.
+- **503 em dependência down**: Retornar 503 se qualquer dependência crítica está down.

@@ -313,3 +313,38 @@ Não usar comentários para explicar código ruim — melhore o código.
 - **Duplicação de lógica entre componentes:** extraia para hook ou utilitário.
 - **Import barrel sem tree-shaking:** evite `index.ts` que re-exporta tudo em library code.
 - **Re-renderização sem memoização em lista grande:** use `key` estável e `React.memo` quando medido.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### TypeScript
+- **Tipar props, responses e eventos**: contratos públicos devem ter tipos explícitos, nunca `any` sem isolamento e validação.
+- **Evitar `any`**: se inevitável, isolar na borda e validar com Zod.
+- **Validar dados de API com Zod na borda**: sempre valide dados externos na camada de API, nunca confie cegamente.
+
+### React
+- **Não misturar regra de negócio com renderização**: componentes visuais não contêm lógica de negócio.
+- **Hook de fetch usa TanStack Query**: nunca `useEffect` + `useState` para data fetching.
+- **Não esconder side effects em hook genérico**: hooks devem ter nome e comportamento claros.
+- **Não usar useEffect para derivar estado do próprio componente**: calcule diretamente.
+- **Não usar useEffect para reagir a mudanças de state local**: useEffect é para sincronização com sistemas externos.
+
+### Estado
+- **Não criar store global para estado local**: Zustand/Redux apenas para estado global real e raro.
+
+### Estilo
+- **Usar tokens do design system**: não usar valores hardcoded quando token/componente existe.
+- **Não misturar design system com workaround local**: se necessário, documentar o motivo.
+
+### Dependências
+- **Não adicionar lib para função resolvida com stdlib/browser API**: avalie alternativas antes.
+
+### Código
+- **Não usar comentários para explicar código ruim**: melhore o código.
+- **Arquivo não deve ultrapassar 200-300 linhas sem justificativa**: arquivo grande é sinal de responsabilidade mista.
+- **Não duplicar lógica de fetch em componentes**: use hooks centralizados.
+- **Não criar abstrações antes de repetição real**: aguardar necessidade concreta.
+- **`any` em contrato público é proibido**: use Zod ou tipo explícito.
+- **Chamada HTTP em componente é proibida**: use hook + TanStack Query.
+- **Store global para estado local é proibido**: use estado local ou TanStack Query.

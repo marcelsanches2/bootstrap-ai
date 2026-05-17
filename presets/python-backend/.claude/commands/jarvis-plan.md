@@ -97,23 +97,11 @@ Para cada role selecionada:
 
 ---
 
-## 5. Regras obrigatórias de bloqueio
+## 5. Regras bloqueantes
 
-O plano NÃO pode ser proposto se houver:
+Consulte a seção `## Regras bloqueantes` dos guides referenciados pelas roles selecionadas (etapa 3). O plano NÃO pode ser proposto se violar qualquer regra listada como bloqueante nesses guides.
 
-- Violação clara de camadas (domínio dependendo de FastAPI, SQLAlchemy, requests/httpx, boto ou SDK externo).
-- Transporte (route/controller) misturado com regra de domínio.
-- DTO/schema de API (Pydantic) usado como entidade de domínio.
-- ORM query vazando para camada de serviço ou controller sem repository.
-- Alteração de modelo sem migration Alembic correspondente e caminho de downgrade documentado.
-- Função pública sem type hints em assinatura.
-- Endpoint sem contrato de erro previsível (códigos de status, schema de resposta).
-- Lógica crítica sem tratamento de erro explícito (try/except com exceção específica).
-- Endpoint ou fluxo sem log/métrica/tracing mínimo para diagnóstico em produção.
-- Transação sem fronteira explícita (session/context manager).
-- Plano sem comportamento de produto, apenas lista de arquivos/classes.
-- Teste que depende de produção, relógio real sem controle ou rede externa sem mock.
-- Regra crítica sem teste previsto.
+**Regra universal:** o plano deve ter comportamento de produto, não apenas lista de arquivos/classes.
 
 Se alguma regra for violada, corrija o plano antes de apresentar.
 

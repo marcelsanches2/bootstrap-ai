@@ -81,3 +81,12 @@ app.get('/metrics', async (req, res) => {
 - Sempre ter healthcheck.
 - Sempre propagar request ID.
 - Nunca usar `console.log` em produção.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Nunca logar dados sensíveis**: Senhas, tokens, PII nunca aparecem em logs.
+- **Sempre ter healthcheck**: Endpoint `/health` verificando dependências críticas.
+- **Sempre propagar request ID**: Todo request deve ter ID rastreável end-to-end.
+- **Nunca usar `console.log` em produção**: Usar logger estruturado (pino).

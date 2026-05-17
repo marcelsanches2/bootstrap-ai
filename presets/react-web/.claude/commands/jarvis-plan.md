@@ -95,22 +95,11 @@ Para cada role selecionada:
 
 ---
 
-## 5. Regras obrigatórias de bloqueio
+## 5. Regras bloqueantes
 
-O plano NÃO pode ser proposto se houver:
+Consulte a seção `## Regras bloqueantes` dos guides referenciados pelas roles selecionadas (etapa 3). O plano NÃO pode ser proposto se violar qualquer regra listada como bloqueante nesses guides.
 
-- Violação clara de camadas (lógica de negócio dentro de componente React).
-- Componente visual acessando API diretamente sem hook ou camada de service.
-- Estado global (Zustand/Redux/Context) usado para estado local de componente.
-- Rota nova não centralizada no router configurado do projeto.
-- UI sem referência ao design system/tokens quando houver tela relevante.
-- Plano sem comportamento de produto, apenas lista de arquivos/classes.
-- Componente interativo sem label, role semântico ou suporte a teclado.
-- Imagem/ícone sem texto alternativo quando carrega informação relevante.
-- Formulário sem associação label-input ou tratamento de erro acessível.
-- Renderização em lista sem `key` estável.
-- Efeito colateral (fetch, subscription, timer) fora de hook ou camada adequada.
-- Regra crítica sem teste previsto.
+**Regra universal:** o plano deve ter comportamento de produto, não apenas lista de arquivos/classes.
 
 Se alguma regra for violada, corrija o plano antes de apresentar.
 

@@ -369,3 +369,26 @@ docker run -d --name app-container -p 3000:3000 app:backup
 - **Servir sem HTTPS:** nunca em produção.
 - **Hardcodar env vars:** use sempre variáveis de ambiente.
 - **Sem rollback planejado:** todo deploy deve ter forma de voltar.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### Segredos e env vars
+- **Segredo em `NEXT_PUBLIC_*` ou `VITE_*`**: variáveis públicas são embarcadas no bundle — nunca coloque segredo nelas.
+- **`.env` commitado**: `.env` real sempre no `.gitignore`.
+- **Hardcodar env vars**: use sempre variáveis de ambiente, nunca valores fixos no código.
+
+### Build e deploy
+- **Deploy sem build check**: rode `npm run build` + `npm run lint` + `npx tsc --noEmit` antes de deploy.
+- **Sem rollback planejado**: todo deploy deve ter forma de voltar (imagem anterior, migration rollback).
+- **Deploy sem migration com downgrade**: toda migration precisa de caminho de rollback documentado.
+
+### Produção
+- **`NODE_ENV=development` em produção**: muda comportamento de frameworks, erros e performance — proibido.
+- **Servir sem HTTPS**: nunca em produção.
+- **Fallback SPA em app com SSR**: quebra rotas server-rendered (Next.js/Remix).
+
+### Cache e assets
+- **Cache agressivo em HTML**: impede atualização. Reserve cache longo para assets com hash.
+- **Sem sourcemap em produção**: dificulta debug. Gere, mas não sirva publicamente.

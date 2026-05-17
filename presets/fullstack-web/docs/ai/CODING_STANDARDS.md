@@ -331,3 +331,32 @@ prisma.user.findUnique({ where: { id } }).then(user => { ... }).catch(err => { .
 - **Não** commitar sem `tsc --noEmit` passando.
 - **Não** criar abstração antes de existir pelo menos um uso real.
 - **Não** misturar regra de negócio pesada dentro de componente visual.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+### TypeScript
+- **Nunca usar `eval()` ou `new Function()`**: proibido em qualquer circunstância.
+- **Nunca usar `// @ts-ignore` ou `// @ts-expect-error` sem justificativa documentada**: se precisar, documente o motivo.
+- **Nunca usar `require()`**: sempre `import`.
+- **Nunca usar `any` sem documentar o motivo**: prefira `unknown` + Zod na borda.
+- **Não commitar sem `tsc --noEmit`** passando.
+
+### Logging e segurança
+- **Nunca usar `console.log` em produção**: use logger estruturado (pino).
+- **Nunca logar senhas, tokens, PII ou dados sensíveis**: incluir Authorization header, cookies.
+- **Nunca commitar `.env` real, secrets, tokens ou credenciais**.
+
+### Configuração
+- **Nunca hardcodar configuração**: use variáveis de ambiente.
+- **Não criar abstração antes de existir pelo menos um uso real**.
+
+### React/Frontend
+- **Não misturar regra de negócio pesada dentro de componente visual**: extraia para hook ou service.
+- **Hook que faz fetch deve usar TanStack Query**: nunca `useEffect` + `useState` para data fetching.
+- **Nunca usar inline styles quando existirem tokens/componentes do design system**.
+
+### Backend
+- **Sempre `async/await`**: nunca callbacks ou `.then().catch()` encadeados.
+- **Erros inesperados retornam 500 genérico**: nunca vazar stack trace ao cliente.

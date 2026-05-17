@@ -49,3 +49,14 @@ Quando a aplicação cresce, revise também:
 - observabilidade frontend: erro, rota, versão e Web Vitals quando aplicável
 
 Plano de frontend grande que só fala em componente visual e ignora dados/cache/renderização deve virar pendência em `review-performance`.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não subir asset gigante sem compressão**: imagens/assets grandes devem ser comprimidos antes.
+- **Não transformar código simples em labirinto por micro-otimização**: otimizar só o que afeta experiência ou custo real.
+- **Plano que ignora dados/cache/renderização é pendência**: plano de frontend grande deve cobrir bundle, cache, renderização e Web Vitals.
+- **Medição obrigatória quando performance é objetivo**: indicar métrica antes/depois ou ferramenta de validação.
+- **Lazy loading para rotas/áreas pesadas**: não carregar tudo no bundle inicial.
+- **Virtualizar listas grandes**: listas grandes não podem renderizar todos os itens de uma vez.

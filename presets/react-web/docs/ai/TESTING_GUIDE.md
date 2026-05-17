@@ -41,3 +41,12 @@ npx playwright test  # quando houver E2E
 ```
 
 Use os scripts reais do projeto.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não mockar o alvo do teste**: nunca mockar o componente/função que é justamente o que está sendo testado.
+- **Build production obrigatório para mudança grande**: teste unitário não substitui build; rode `npm run build`.
+- **Mocks determinísticos**: testes não devem depender de rede real; use MSW ou equivalente.
+- **Cobrir estados de UI**: render, loading, empty, error, success e interação principal devem ser testados.

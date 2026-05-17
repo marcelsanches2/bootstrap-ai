@@ -223,3 +223,20 @@ Nunca `allow_origins=["*"]` em produção.
 - Nunca servir HTTP em produção sem HTTPS.
 - Nunca expor stack trace em produção.
 - Nunca usar secret fraco ou default.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não logar dados sensíveis**: Nunca logar senha, token, PII ou Authorization header.
+- **Senha sempre hasheada**: Nunca armazenar senha em texto plano; usar bcrypt ou argon2.
+- **CORS restrito em produção**: Nunca usar `allow_origins=["*"]` em produção.
+- **Não commitar `.env`**: Nunca commitar `.env` real; usar `.env.example`.
+- **SQL parametrizado**: Nunca concatenar input em SQL; sempre parametrizado.
+- **HTTPS obrigatório em produção**: Nunca servir HTTP em produção sem HTTPS.
+- **Sem stack trace em produção**: Nunca expor stack trace em resposta de produção.
+- **Secret forte e rotacionável**: Nunca usar secret fraco, default ou hardcodado.
+- **Não retornar PII em endpoint público**: Nunca retornar PII em endpoint sem autenticação/autorização.
+- **Não logar senha original**: Nunca logar senha original mesmo durante hashing.
+- **Não concatenar input em command**: Nunca concatenar input em command do sistema; usar lista.
+- **Não servir credentials sem HTTPS**: Nunca enviar credentials em conexão não-HTTPS.

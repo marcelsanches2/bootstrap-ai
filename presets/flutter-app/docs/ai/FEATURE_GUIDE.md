@@ -187,3 +187,18 @@ Se a tarefa pedir "refatoração", não adicione comportamento novo.
 - Providers estão no lugar certo?
 - `flutter analyze` passa?
 - Existem testes quando há regra relevante?
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não inventar regra de negócio**: comportamento ambíguo deve ser exposto como decisão pendente, nunca assumido
+- **Tarefa pedir "estrutura" → não implementar feature**: respeitar o escopo da tarefa
+- **Tarefa pedir "feature" → implementar somente aquela feature**: não expandir escopo sem pedido
+- **Tarefa pedir "design" → não mexer em regra de negócio**: separar UI de lógica
+- **Tarefa pedir "refatoração" → não adicionar comportamento novo**: refatorar é reestruturar, não criar
+- **Page não pode acessar Dio diretamente**: dependência errada (Page → Dio)
+- **Widget não pode acessar Datasource diretamente**: dependência errada (Widget → Datasource)
+- **Domain não pode depender de Flutter**: dependência errada (Domain → Flutter)
+- **DTO não pode chegar ao Controller**: evitar (Controller → DTO)
+- **Toda feature deve definir fluxo principal, estados e testes**: plano mínimo obrigatório

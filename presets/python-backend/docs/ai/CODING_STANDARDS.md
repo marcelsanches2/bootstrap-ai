@@ -190,3 +190,20 @@ engine = create_async_engine("postgresql+asyncpg://...")
 - Não importar com `*`.
 - Não deixar `except: pass`.
 - Não hardcodar configuração.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Lint obrigatório pré-commit**: Não commitar sem passar `ruff check` + `ruff format` + `mypy`.
+- **`Any` documentado**: Não usar `Any` sem justificativa documentada.
+- **Não logar dados sensíveis**: Nunca logar senhas, tokens, PII ou bodies completos em produção.
+- **Async sem bloqueio**: Não usar sync IO (`requests`, `time.sleep`) em código async.
+- **Sem import curinga**: Não usar `from ... import *`.
+- **Sem `except: pass`**: Nunca usar `except Exception: pass`.
+- **Config via Settings**: Não usar `os.environ["KEY"]` diretamente; use Settings.
+- **Sem `eval`/`exec`**: Proibido `eval()`, `exec()`.
+- **Sem `pickle` para serialização**: Proibido `pickle` para serialização.
+- **Sem `subprocess` com input do usuário**: Proibido `subprocess` com input não sanitizado.
+- **Sem `# noqa` sem justificativa**: Todo `# noqa` deve ter motivo documentado.
+- **Sem código morto comentado**: Delete e use git; não comente código morto.

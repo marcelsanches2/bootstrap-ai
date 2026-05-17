@@ -121,3 +121,19 @@ prisma.user.findUnique({ where: { id } }).then(user => { ... }).catch(err => { .
 - Não logar dados sensíveis.
 - Não usar `console.log` em produção.
 - Não hardcodar configuração.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não usar `any` sem documentar**: Usar `unknown` ou tipo específico; se `any`, justificar em comentário.
+- **Não commitar sem `tsc --noEmit` passando**: Type checking deve estar limpo antes de commit.
+- **Não logar dados sensíveis**: Nunca logar senhas, tokens, PII.
+- **Não usar `console.log` em produção**: Usar logger estruturado (pino).
+- **Não hardcodar configuração**: Usar env vars via Zod.
+- **Não usar `require()`**: Usar import/ES modules.
+- **Não usar `eval()` nem `Function()`**: Proibido em qualquer contexto.
+- **Não usar `// @ts-ignore` sem justificativa**: Justificar se necessário.
+- **Não usar callbacks**: Sempre async/await.
+- **Não usar `ts-ignore` / `ts-expect-error` sem justificativa**: Justificar se necessário.
+- **Sempre async/await, nunca callbacks**: Callbacks são proibidos; usar async/await.

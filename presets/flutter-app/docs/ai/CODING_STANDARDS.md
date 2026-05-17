@@ -211,3 +211,26 @@ Não fazer:
 - imports relativos confusos
 - dependência circular
 - regra de negócio em widgets
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Não criar abstrações desnecessárias**: criar abstração apenas quando houver necessidade real
+- **Não antecipar problemas que ainda não existem**: código deve ser incremental
+- **Widgets não chamam API / não montam regra de negócio / não convertem DTO / não acessam datasource**: widgets apenas renderizam UI e delegam para controllers
+- **Controllers não usam Dio diretamente / não acessam datasource / não conhecem detalhes de API / não contêm regra de domínio pesada**: controllers controlam estado e chamam usecases
+- **DTOs ficam apenas em data/dtos/**: DTOs nunca saem da camada data
+- **UI nunca deve receber DTO**: converter para entidade/view model antes de sair do data
+- **Exceções técnicas não vazam para a UI sem tratamento**: sempre converter para Failure/ApiResult
+- **Não criar modelos Freezed vazios apenas para preencher estrutura**: modelos devem ter dados reais
+- **Não adicionar dependência por conveniência pequena**: justificar toda dependência nova
+- **Não usar comentários para explicar código ruim**: melhorar o código primeiro
+- **Proibido: arquivos gigantes**: manter arquivos pequenos e focados
+- **Proibido: métodos longos**: métodos devem ser objetivos
+- **Proibido: providers globais demais**: distribuir por feature
+- **Proibido: lógica duplicada**: extrair e reaproveitar
+- **Proibido: strings mágicas espalhadas**: centralizar constantes
+- **Proibido: imports relativos confusos**: organizar imports
+- **Proibido: dependência circular**: manter dependências unidirecionais
+- **Proibido: regra de negócio em widgets**: separar UI de lógica

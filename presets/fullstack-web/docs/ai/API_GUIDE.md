@@ -104,3 +104,14 @@ Nunca `origin: '*'` em produção.
 - Não expor passwordHash, tokens internos.
 - Não validar com if/else — usar Zod.
 - Não criar endpoint sem schema de request e response.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Nunca `origin: '*'` em produção**: CORS deve ter origens explícitas.
+- **Não usar status 200 para tudo**: cada cenário deve usar o status code correto (201, 400, 401, 404, etc.).
+- **Não retornar `{ success: true }`**: response deve ter formato padronizado de erro ou dados.
+- **Não expor passwordHash, tokens internos**: dados sensíveis nunca vazam na response.
+- **Não validar com if/else**: usar Zod para validação de input.
+- **Não criar endpoint sem schema de request e response**: todo endpoint precisa contrato definido.

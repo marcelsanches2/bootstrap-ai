@@ -115,3 +115,13 @@ router.post('/', authMiddleware, validate(createOrderSchema), OrdersController.c
 - Nunca criar endpoint sem Zod schema.
 - Nunca criar tabela sem migration.
 - Nunca criar feature sem teste.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Ordem obrigatória**: schema → migration → repository → service → controller → route → teste — nunca pular.
+- **Nunca pular camada**: Cada camada tem responsabilidade própria; não combinar.
+- **Nunca criar endpoint sem Zod schema**: Todo endpoint precisa de validação com Zod.
+- **Nunca criar tabela sem migration**: Toda mudança no banco passa por migration.
+- **Nunca criar feature sem teste**: Toda feature deve ter pelo menos teste da mudança.

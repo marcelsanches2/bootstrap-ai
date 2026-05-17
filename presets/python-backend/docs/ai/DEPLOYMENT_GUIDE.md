@@ -200,3 +200,18 @@ uvicorn já lida com SIGTERM graceful. Workers terminam requests em andamento.
 - Nunca hardcodar env vars.
 - Nunca deployar sem verificar healthcheck.
 - Sempre ter rollback testado antes de deploy.
+
+## Regras bloqueantes
+
+Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+
+- **Migration com downgrade**: Nunca deployar sem migration com downgrade testado.
+- **DEBUG=false em produção**: Nunca usar `DEBUG=true` em produção.
+- **HTTPS obrigatório**: Nunca servir API em produção sem HTTPS.
+- **Sem hardcode de env vars**: Nunca hardcodar variáveis de ambiente; usar Settings.
+- **Healthcheck pós-deploy**: Nunca deployar sem verificar healthcheck.
+- **Rollback testado**: Sempre ter rollback testado antes de deploy.
+- **Não commitar `.env`**: Nunca commitar `.env` real.
+- **Sem valores default em produção**: Nunca usar valores default para secrets em produção.
+- **Rollback de migration com backup**: Nunca fazer rollback de migration sem backup.
+- **Reverter código e migration juntos**: Nunca reverter código sem reverter migration correspondente.

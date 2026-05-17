@@ -91,19 +91,11 @@ Para cada role selecionada:
 
 ---
 
-## 5. Regras obrigatórias de bloqueio
+## 5. Regras bloqueantes
 
-O plano NÃO pode ser proposto se houver:
+Consulte a seção `## Regras bloqueantes` dos guides referenciados pelas roles selecionadas (etapa 3). O plano NÃO pode ser proposto se violar qualquer regra listada como bloqueante nesses guides.
 
-- Violação clara de camadas.
-- `presentation` dependendo diretamente de `data`.
-- `domain` dependendo de Flutter, Dio, Supabase ou qualquer framework externo.
-- DTO vazando para `presentation` ou `domain`.
-- Feature com API sem datasource mock/fake ou massa determinística.
-- Nova tela sem rota centralizada em `lib/app/router/`.
-- Plano sem comportamento de produto, apenas lista de arquivos/classes.
-- UI sem referência ao design system/tokens quando houver tela relevante.
-- Regra crítica sem teste previsto.
+**Regra universal:** o plano deve ter comportamento de produto, não apenas lista de arquivos/classes.
 
 Se alguma regra for violada, corrija o plano antes de apresentar.
 
