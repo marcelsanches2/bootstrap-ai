@@ -106,7 +106,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
     - `carregar-referencias.md`
     - `localizar-plano.md`
 
-11. **Roles genéricas** (copiar de `common/roles/` — são idênticas para toda stack):
+11. **Roles genéricas** (copiar do preset mais similar — são idênticas para toda stack):
     - `role-architect.md`
     - `role-pm.md`
     - `role-delivery.md`
@@ -117,7 +117,7 @@ Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
     - Web: `role-web-qa.md`
     - Backend: `role-api-qa.md`
 
-13. **Reviews genéricos** (copiar de `common/roles/` quando aplicável):
+13. **Reviews genéricos** (copiar do preset mais similar quando aplicável):
     - Backend: `review-api.md`, `review-database.md`, `review-security.md`, `review-observability.md`, `review-scalability.md`
     - Frontend: `review-accessibility.md`, `review-performance.md`
     - Todos: `review-testing.md`

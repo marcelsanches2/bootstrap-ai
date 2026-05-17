@@ -27,16 +27,14 @@ bootstrap-ai/
 │   ├── node-backend/            # Node/TypeScript backend
 │   └── fullstack-web/           # Fullstack monolito (Next.js, Remix, Nuxt, SvelteKit)
 ├── common/                      # Recursos compartilhados entre presets
-│   ├── commands/                # Comandos genéricos (jarvis-plan, grill, ship, refactor)
-│   ├── docs.ai/                 # Docs AI genéricos (OPERATING_MODEL, CODING_STANDARDS, etc.)
-│   └── roles/                   # Roles genéricos (arquiteto, designer, pm, test, security, etc.)
+│   └── commands/                # Comandos genéricos (grill, ship, refactor, kickoff, etc.)
 ├── generators/skill-creator/    # Gerador de novos presets
 │   ├── prompts/                 # Instruções para criação de preset, docs, roles, jarvis-test-flow
 │   └── templates/               # Templates com placeholders para gerar arquivos
 ├── bootstrap/                   # Importer de arquivo único
 │   ├── import-project-preset.md    # Skill Claude Code para importar preset
 │   └── import-project-preset.sh    # Script shell alternativo
-└── refreshers/                  # Configs de refresh por stack (yaml)
+└── docs/                        # Diagramas e assets visuais
 ```
 
 ## Anatomia de um preset

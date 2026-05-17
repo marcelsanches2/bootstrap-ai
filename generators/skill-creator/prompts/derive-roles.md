@@ -16,7 +16,7 @@ Leia os roles dos presets existentes antes de gerar:
 - `presets/react-web/.claude/commands/product_roles/role-*.md` — frontend completo
 - `presets/node-backend/.claude/commands/product_roles/role-*.md` — backend Node
 - `presets/flutter-app/.claude/commands/product_roles/role-*.md` — mobile Flutter
-- `common/roles/` — roles genéricos (copiar diretamente)
+- Preset mais similar — roles genéricos (copiar diretamente do preset)
 
 ## Padrão de nomenclatura
 
@@ -28,13 +28,13 @@ Leia os roles dos presets existentes antes de gerar:
 
 Sempre em inglês. Sempre kebab-case. Cada arquivo ~40-50 linhas (objetivo + checklist + regra dura, SEM boilerplate de Entrada/Método/Saída).
 
-## Roles genéricos (copiar de common/roles/, não reescrever)
+## Roles genéricos (copiar do preset mais similar, não reescrever)
 
 - `role-architect.md`
 - `role-pm.md`
 - `role-delivery.md`
 
-## Reviews genéricos (copiar de common/roles/ quando aplicável)
+## Reviews genéricos (copiar do preset mais similar quando aplicável)
 
 - Backend: `review-api.md`, `review-database.md`, `review-security.md`, `review-observability.md`, `review-scalability.md`
 - Frontend: `review-accessibility.md`, `review-performance.md`

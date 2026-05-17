@@ -23,17 +23,19 @@ presets/<nome>/
 ├── plans/.gitkeep
 ├── .claude/
 │   ├── settings.json                      # Hooks: PostToolUse → lint, Stop → jarvis-test-flow
-│   ├── commands/
-│   │   ├── jarvis-plan.md                 # Planejamento unificado (1 pass de LLM)
-│   │   ├── refactor.md                    # Refatoração segura incremental
-│   │   ├── ship.md                        # Checklist final de entrega
-│   │   ├── jarvis-test-flow.md            # Pipeline de validação E2E
-│   │   └── product_roles/
-│   │       ├── carregar-referencias.md    # Helper: carrega docs por relevância
-│   │       ├── localizar-plano.md         # Helper: localiza plano em plans/
-│   │       ├── role-<stack-specific>.md   # Roles derivados da stack
-│   │       └── ...
-│   └── scripts/                           # Scripts auxiliares (se aplicável)
+│   └── commands/
+│       ├── jarvis-plan.md                 # Planejamento unificado (1 pass de LLM)
+│       ├── jarvis-test-flow.md            # Pipeline de validação E2E
+│       ├── grill.md                       # Entrevista interativa
+│       ├── ship.md                        # Checklist final de entrega
+│       ├── refactor.md                    # Refatoração segura incremental
+│       ├── kickoff.md                     # Greenfield: 7 perguntas → brief → stack
+│       ├── design-phase.md                # Design system generation
+│       └── product_roles/
+│           ├── role-architect.md          # Contribuidores do plano (gerativos)
+│           ├── role-pm.md
+│           ├── review-*.md                # Reviews por perspectiva
+│           └── role-<stack-specific>.md   # Roles específicos da stack
 └── docs/ai/
     ├── ARCHITECTURE.md                    # Arquitetura e estrutura de pastas
     ├── CODING_STANDARDS.md                # Padrões de código
@@ -44,10 +46,9 @@ presets/<nome>/
 ## Lifecycle de desenvolvimento
 
 ```
-/plan          → cria plano técnico
-/jarvis-plan   → planejamento unificado (com smart role selection)
-(desenvolve)
-/jarvis-test-flow  → valida tudo antes de commitar (via hook Stop)
+/jarvis-plan   → planejamento unificado (grill integrado, smart role selection)
+(desenvolve)   → hook PostToolUse roda lint a cada edição
+/jarvis-test-flow → valida tudo (via hook Stop)
 /ship          → checklist final
 ```
 
@@ -55,7 +56,7 @@ presets/<nome>/
 
 - `prompts/create-new-preset.md` — Instrução principal para gerar o preset completo
 - `prompts/derive-docs-ai.md` — Deriva guias `docs/ai/` específicos da stack
-- `prompts/derive-roles.md` — Deriva roles de revisão específicos da stack
+- `prompts/derive-roles.md` — Deriva roles contribuidores específicos da stack
 - `prompts/derive-test-flow.md` — Deriva pipeline de teste específico da stack
 
 ## Estrutura dos templates
@@ -63,6 +64,5 @@ presets/<nome>/
 - `templates/CLAUDE.md` — Template do contrato principal
 - `templates/settings.json` — Template dos hooks
 - `templates/preset-manifest.yaml` — Template do manifest
-- `templates/commands/*.md` — Templates dos comandos
-- `templates/commands/product_roles/*.md` — Templates dos helpers
+- `templates/commands/*.md` — Templates dos comandos (jarvis-plan, test-flow, grill, etc.)
 - `templates/docs-ai/*.md` — Templates dos guias AI
