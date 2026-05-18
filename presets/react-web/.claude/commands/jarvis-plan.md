@@ -38,7 +38,7 @@ Ative SOMENTE quando a task tiver:
 
 **Regras do grill:**
 
-- **UMA pergunta por vez. Faça a pergunta e PARE. Não continue até o usuário responder.**
+- **UMA pergunta por vez. Faça a pergunta e PARE. Sua resposta deve ser SOMENTE a pergunta — sem prólogo, sem explicação adicional. Espere o usuário responder antes de continuar.**
 - Cada pergunta com: recomendação + por quê + alternativa.
 - Máximo 7 perguntas. Se precisar de mais, a task é grande demais — sugira quebrar.
 - Se a resposta está no codebase, busque ao invés de perguntar.
@@ -134,12 +134,13 @@ Data: {YYYY-MM-DD}
 
 ---
 
-## 7. Salvar e aguardar aprovação
+## 7. Salvar e aguardar aprovação — MODO INTERATIVO
 
 1. Salve o plano em `plans/YYYY-MM-DD-{slug}.md`
 2. Apresente o plano ao usuário
-3. **PARE.** Apresente o plano e aguarde o usuário responder "aprovado" ou pedir ajustes. Não continue para implementação sem aprovação explícita.
-4. Se o usuário pedir ajustes, atualize o plano e reapresente
+3. **PARE.** Sua última linha deve ser EXATAMENTE uma pergunta: **"Plano aprovado? Responda 'sim' para implementar ou peça ajustes."**
+4. Não continue para implementação. Não gere código. Não faça mais nada até o usuário responder.
+5. Se o usuário pedir ajustes, atualize o plano, salve e faça a pergunta novamente.
 
 ---
 

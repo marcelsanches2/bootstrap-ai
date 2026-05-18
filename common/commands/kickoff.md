@@ -14,11 +14,12 @@ Inicializa um projeto do zero: coleta requisitos, gera product brief, decide sta
 
 ## Fase 1 — Clarify Requirements
 
-**MODO INTERATIVO OBRIGATÓRIO:**
-- Faça a pergunta 1. **PARE.** Não escreva mais nada. Aguarde o usuário responder.
-- Só depois da resposta, faça a pergunta 2. **PARE.** E assim por vez.
-- NUNCA faça 2+ perguntas na mesma mensagem.
-- Se o usuário respondeu, confirme brevemente e faça a próxima.
+**MODO INTERATIVO OBRIGATÓRIO — VIOLAÇÃO = BUG:**
+- Sua resposta deve ser SOMENTE a pergunta 1, nada mais. Sem texto adicional, sem prólogo.
+- **PARE após cada pergunta.** Não escreva mais nada até o usuário responder.
+- Só depois da resposta do usuário, confirme em 1 linha e faça a próxima pergunta.
+- **NUNCA** faça 2+ perguntas na mesma mensagem.
+- **NUNCA** continue para a Fase 2 sem o usuário confirmar todas as respostas.
 
 Faça **uma pergunta por vez**. Espere a resposta antes de seguir. Não proponha implementação durante esta fase.
 

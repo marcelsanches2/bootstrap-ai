@@ -42,26 +42,38 @@ Depois rode no Claude Code:
 
 ## Procedimento obrigatório
 
-### 0. Usar source embutido (se existir) — PRIORIDADE MÁXIMA
+### 0. Encontrar o diretório local do bootstrap-ai — EXECUTE PRIMEIRO
 
-**PARE. Antes de qualquer outro passo, execute isto:**
+**Antes de QUALQUER outro passo**, leia a última linha deste arquivo. Ela contém um comentário HTML com o path absoluto do repo bootstrap-ai de onde este importer foi instalado:
 
-Este arquivo contém um path embutido na última linha, no formato `<!-- BOOTSTRAP_AI_SOURCE: /caminho/absoluto -->`. Este é o diretório local onde o bootstrap-ai foi clonado quando você instalou o importer.
+```
+<!-- BOOTSTRAP_AI_SOURCE: /caminho/absoluto/para/bootstrap-ai -->
+```
 
-Execute no terminal para extrair:
+**Ação imediata:**
+
+1. Leia o conteúdo da última linha deste arquivo
+2. Extraia o path após `BOOTSTRAP_AI_SOURCE: `
+3. Verifique se o diretório existe e tem `bin/bootstrap-ai` executável:
 
 ```bash
-EMBEDDED_SOURCE=$(tail -5 "$(pwd)/.claude/commands/import-project-preset.md" | grep -oP '<!-- BOOTSTRAP_AI_SOURCE: \K[^>]+')
-if [ -n "$EMBEDDED_SOURCE" ] && [ -x "$EMBEDDED_SOURCE/bin/bootstrap-ai" ]; then
-  echo "SOURCE_ENCONTRADO=$EMBEDDED_SOURCE"
+BOOTSTRAP_AI_DIR=$(grep -oP 'BOOTSTRAP_AI_SOURCE: \K[^\s>-]+' "$(dirname "$0")/import-project-preset.md" 2>/dev/null || echo "")
+if [ -z "$BOOTSTRAP_AI_DIR" ]; then
+  # Fallback: o próprio arquivo que estamos executando
+  BOOTSTRAP_AI_DIR=$(grep -oP 'BOOTSTRAP_AI_SOURCE: \K[^\s>-]+' "$0" 2>/dev/null || echo "")
+fi
+if [ -n "$BOOTSTRAP_AI_DIR" ] && [ -x "$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" ]; then
+  echo "✅ Bootstrap-ai local encontrado: $BOOTSTRAP_AI_DIR"
+  echo "   Pulando busca em workspaces — usando diretório local."
 else
-  echo "SOURCE_INVALIDO"
+  echo "❌ Source embutido inválido ou ausente. Prosseguindo com busca."
+  BOOTSTRAP_AI_DIR=""
 fi
 ```
 
-**Se `SOURCE_ENCONTRADO` apareceu:** set `BOOTSTRAP_AI_DIR` para esse path e pule direto para o passo 3 (atualizar). NÃO procure em workspaces, NÃO clone. O repo já existe localmente no path embutido.
+**Se `BOOTSTRAP_AI_DIR` foi setado:** pule direto para o passo 3 (atualizar). O repo já existe localmente — **NÃO busque em workspaces, NÃO clone do GitHub.**
 
-**Se `SOURCE_INVALIDO` apareceu:** continue no passo 2.
+**Se `BOOTSTRAP_AI_DIR` ficou vazio:** continue no passo 2.
 
 ### 1. Resolver raiz do projeto e detectar estado
 
