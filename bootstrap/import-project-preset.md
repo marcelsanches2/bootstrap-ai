@@ -42,22 +42,26 @@ Depois rode no Claude Code:
 
 ## Procedimento obrigatório
 
-### 0. Usar source embutido (se existir)
+### 0. Usar source embutido (se existir) — PRIORIDADE MÁXIMA
 
-Este arquivo pode conter o path absoluto do repo `bootstrap-ai` de onde foi instalado. Procure por `<!-- BOOTSTRAP_AI_SOURCE:` no final deste arquivo.
+**PARE. Antes de qualquer outro passo, execute isto:**
 
-Se existir:
+Este arquivo contém um path embutido na última linha, no formato `<!-- BOOTSTRAP_AI_SOURCE: /caminho/absoluto -->`. Este é o diretório local onde o bootstrap-ai foi clonado quando você instalou o importer.
+
+Execute no terminal para extrair:
 
 ```bash
-# Extrair source embutido
-EMBEDDED_SOURCE=$(grep -oP '<!-- BOOTSTRAP_AI_SOURCE: \K[^>]+' "$0" 2>/dev/null || true)
+EMBEDDED_SOURCE=$(tail -5 "$(pwd)/.claude/commands/import-project-preset.md" | grep -oP '<!-- BOOTSTRAP_AI_SOURCE: \K[^>]+')
 if [ -n "$EMBEDDED_SOURCE" ] && [ -x "$EMBEDDED_SOURCE/bin/bootstrap-ai" ]; then
-  BOOTSTRAP_AI_DIR="$EMBEDDED_SOURCE"
-  printf 'Source embutido encontrado: %s\n' "$BOOTSTRAP_AI_DIR"
+  echo "SOURCE_ENCONTRADO=$EMBEDDED_SOURCE"
+else
+  echo "SOURCE_INVALIDO"
 fi
 ```
 
-Se o source embutido for válido, pule para o passo 3 (atualizar). Caso contrário, continue no passo 2.
+**Se `SOURCE_ENCONTRADO` apareceu:** set `BOOTSTRAP_AI_DIR` para esse path e pule direto para o passo 3 (atualizar). NÃO procure em workspaces, NÃO clone. O repo já existe localmente no path embutido.
+
+**Se `SOURCE_INVALIDO` apareceu:** continue no passo 2.
 
 ### 1. Resolver raiz do projeto e detectar estado
 
@@ -106,6 +110,7 @@ Procure nesta ordem (teste ambos os nomes `bootstrap-ai` e `bootstrap-ai`):
 $BOOTSTRAP_AI_PATH
 
 # 2. Workspace comum do usuário (onde ele provavelmente clonou)
+$HOME/.openclaw/workspace/bootstrap-ai
 $HOME/workspace/bootstrap-ai
 $HOME/workspace/bootstrap-ai
 $HOME/code/bootstrap-ai
@@ -147,6 +152,7 @@ find_bootstrap_ai() {
 
   # 2. Buscar em workspaces comuns do usuário
   local workspace_dirs=(
+    "$HOME/.openclaw/workspace"
     "$HOME/workspace"
     "$HOME/code"
     "$HOME/projects"
