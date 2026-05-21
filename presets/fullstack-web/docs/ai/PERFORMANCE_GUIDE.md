@@ -1,61 +1,61 @@
-# Performance Web
+# Web Performance
 
-## Princípio
+## Principle
 
-Otimize o que afeta experiência ou custo. Não transforme código simples em labirinto por micro-otimização.
+Optimize what affects experience or cost. Do not turn simple code into a maze for micro-optimization.
 
 ## Bundle
 
-- Dependência nova precisa considerar tamanho.
-- Use lazy loading para rotas/áreas pesadas.
-- Evite importar biblioteca inteira para uma função pequena.
+- New dependency must consider size.
+- Use lazy loading for heavy routes/areas.
+- Avoid importing an entire library for a single small function.
 
-## Renderização
+## Rendering
 
-- Evite estado duplicado que força renders desnecessários.
-- Virtualize listas grandes.
-- Debounce para busca/input que dispara rede.
-- Memoização precisa de motivo claro.
+- Avoid duplicate state that forces unnecessary renders.
+- Virtualize large lists.
+- Debounce for search/input that triggers network requests.
+- Memoization needs a clear reason.
 
-## Imagens/assets
+## Images/assets
 
-- Dimensões definidas quando possível.
-- Formato moderno quando o pipeline suporta.
-- Lazy load para imagens fora da dobra.
-- Não suba asset gigante sem compressão.
+- Defined dimensions when possible.
+- Modern format when the pipeline supports it.
+- Lazy load for below-the-fold images.
+- Do not upload giant assets without compression.
 
 ## Web Vitals
 
-Mudança que afeta primeira tela deve considerar:
+Changes affecting the first screen must consider:
 
 - LCP
 - CLS
 - INP
 
-## Medição
+## Measurement
 
-Quando performance é objetivo da tarefa, o plano deve indicar métrica antes/depois ou ferramenta de validação.
+When performance is the goal of the task, the plan must indicate before/after metrics or a validation tool.
 
-## Aplicações grandes
+## Large applications
 
-Quando a aplicação cresce, revise também:
+When the application grows, also review:
 
-- divisão por rotas/features para reduzir bundle inicial
-- cache de server state com invalidação clara
-- listas grandes com paginação, infinite loading controlado ou virtualização
-- formulários grandes sem renderização global a cada tecla
-- provider/context em escopo pequeno para evitar rerender em árvore inteira
-- assets e dependências compartilhadas sem duplicação
-- observabilidade frontend: erro, rota, versão e Web Vitals quando aplicável
+- route/feature splitting to reduce initial bundle
+- server state cache with clear invalidation
+- large lists with pagination, controlled infinite loading, or virtualization
+- large forms without global rendering on every keystroke
+- provider/context in small scope to avoid re-rendering the entire tree
+- shared assets and dependencies without duplication
+- frontend observability: error, route, version, and Web Vitals when applicable
 
-Plano de frontend grande que só fala em componente visual e ignora dados/cache/renderização deve virar pendência em `review-performance`.
+A large frontend plan that only talks about visual components and ignores data/cache/rendering must become a pending item in `review-performance`.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Não subir asset gigante sem compressão**: imagens e assets devem usar formato moderno e compressão adequada.
-- **Plano de frontend grande que ignora dados/cache/renderização**: deve virar pendência em `review-performance`.
-- **Medição obrigatória quando performance é objetivo da tarefa**: o plano deve indicar métrica antes/depois ou ferramenta de validação.
-- **Virtualizar listas grandes**: listas grandes devem usar virtualização, não renderizar tudo de uma vez.
-- **Debounce para busca/input que dispara rede**: evitar requests em excesso por keystroke.
+- **Do not upload giant assets without compression**: images and assets must use modern format and adequate compression.
+- **Large frontend plan that ignores data/cache/rendering**: must become a pending item in `review-performance`.
+- **Mandatory measurement when performance is the task goal**: the plan must indicate before/after metrics or a validation tool.
+- **Virtualize large lists**: large lists must use virtualization, not render everything at once.
+- **Debounce for search/input that triggers network**: avoid excessive requests per keystroke.

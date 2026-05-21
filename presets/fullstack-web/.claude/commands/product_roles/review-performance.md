@@ -1,56 +1,56 @@
-# Role: Performance Frontend
+# Role: Frontend Performance
 
-## Sua contribuição
-Gera a seção "Performance frontend" do plano, definindo estratégias de bundle, renderização, assets, lazy loading e medição de Web Vitals.
+## Your contribution
+Generates the "Frontend performance" section of the plan, defining bundle, rendering, assets, lazy loading, and Web Vitals measurement strategies.
 
-## Referência
+## Reference
 - docs/ai/PERFORMANCE_GUIDE.md
 
-## O que incluir
-- **Bundle**: impacto de dependências novas, imports otimizados (tree-shaking, barrel exports). Dependência pesada com justificativa e alternativa considerada.
-- **Lazy loading**: rotas/áreas pesadas com `React.lazy` ou dynamic import. Tela pesada não carrega no caminho crítico.
-- **Renderizações**: evitar estado duplicado, listas grandes virtualizadas quando necessário, efeitos otimizados. Identificar re-renders evitáveis.
-- **Imagens/assets**: tamanho, formato (WebP/AVIF), dimensões explícitas, lazy loading nativo. Asset sem otimização precisa de justificativa.
-- **Medição**: métrica antes/depois quando performance é objetivo (LCP, FID/INP, CLS). Otimização sem métrica precisa de justificativa de risco.
-- **Escala de frontend**: para features grandes, considere bundle growth, cache de server state, listas longas (virtualização), contexto global (split) e observabilidade frontend.
+## What to include
+- **Bundle**: impact of new dependencies, optimized imports (tree-shaking, barrel exports). Heavy dependency with justification and alternative considered.
+- **Lazy loading**: heavy routes/areas with `React.lazy` or dynamic import. Heavy screen not on the critical path.
+- **Renders**: avoid duplicate state, large lists virtualized when needed, optimized effects. Identify avoidable re-renders.
+- **Images/assets**: size, format (WebP/AVIF), explicit dimensions, native lazy loading. Asset without optimization needs justification.
+- **Measurement**: before/after metrics when performance is the goal (LCP, FID/INP, CLS). Optimization without metrics needs a risk justification.
+- **Frontend scale**: for large features, consider bundle growth, server state caching, long lists (virtualization), global context (split), and frontend observability.
 
-## Regras
-- Dependência pesada sem justificativa é pendência.
-- Tela pesada no caminho crítico sem lazy loading é pendência.
-- Otimização sem métrica ou risco identificado é pendência.
-- Performance sem otimização prematura — só otimize quando há risco ou métrica.
-- Se a mudança não afeta performance: escreva "Não se aplica" e explique por quê.
+## Rules
+- Heavy dependency without justification is a pending item.
+- Heavy screen on critical path without lazy loading is a pending item.
+- Optimization without metrics or identified risk is a pending item.
+- Performance without premature optimization — only optimize when there is risk or metrics.
+- If the change does not affect performance: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Performance frontend
+## Frontend performance
 
 ### Bundle
-| Dep nova | Tamanho aprox. | Justificativa | Alternativa considerada |
+| New dep | Approximate size | Justification | Alternative considered |
 |---|---|---|---|
-| {nome} | {KB} | {por quê} | {alternativa} |
+| {name} | {KB} | {why} | {alternative} |
 
 ### Lazy loading
-| Rota/área | Estratégia | Condição |
+| Route/area | Strategy | Condition |
 |---|---|---|
-| {nome} | {React.lazy / dynamic / suspense} | {quando carrega} |
+| {name} | {React.lazy / dynamic / suspense} | {when it loads} |
 
-### Renderizações
-| Componente | Risco | Mitigação |
+### Renders
+| Component | Risk | Mitigation |
 |---|---|---|
-| {nome} | {re-render / lista grande / efeito} | {memo / virtualização / cleanup} |
+| {name} | {re-render / large list / effect} | {memo / virtualization / cleanup} |
 
-### Imagens/assets
-| Asset | Formato | Dimensões | Lazy | Otimização |
+### Images/assets
+| Asset | Format | Dimensions | Lazy | Optimization |
 |---|---|---|---|---|
-| {caminho} | {WebP/PNG/...} | {WxH} | {sim/não} | {compressão/responsive} |
+| {path} | {WebP/PNG/...} | {WxH} | {yes/no} | {compression/responsive} |
 
-### Medição
-| Métrica | Antes (estimado) | Meta | Como medir |
+### Measurement
+| Metric | Before (estimated) | Target | How to measure |
 |---|---|---|---|
-| {LCP/FID/CLS} | {valor} | {valor} | {ferramenta} |
+| {LCP/FID/CLS} | {value} | {value} | {tool} |
 
-### Escala de frontend
-{estratégias para features grandes: bundle, cache, listas, context split}
+### Frontend scale
+{strategies for large features: bundle, cache, lists, context split}
 ```

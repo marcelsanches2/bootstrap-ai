@@ -1,10 +1,10 @@
-# Guia de Testes — Fullstack Web
+# Testing Guide — Fullstack Web
 
-Padrões de teste para aplicação fullstack (frontend + backend) com TypeScript.
+Testing standards for fullstack applications (frontend + backend) with TypeScript.
 
 ## Framework
 
-**Vitest** — framework único para frontend e backend.
+**Vitest** — single framework for frontend and backend.
 
 ```typescript
 // vitest.config.ts
@@ -13,7 +13,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'node', // override para 'jsdom' em testes de componente
+    environment: 'node', // override to 'jsdom' for component tests
     setupFiles: ['./tests/setup.ts'],
     coverage: { provider: 'v8', reporter: ['text', 'html'] },
   },
@@ -22,25 +22,25 @@ export default defineConfig({
 
 ---
 
-## Pirâmide de testes
+## Testing pyramid
 
-5 camadas, da mais rápida/barata à mais lenta/cara:
+5 layers, from fastest/cheapest to slowest/most expensive:
 
-| Camada | O quê | Quando |
+| Layer | What | When |
 |---|---|---|
-| **Unit** | Funções puras, formatadores, utils, hooks simples | Sempre — base da pirâmide |
-| **Component** | Render, interação e acessibilidade de componentes UI | Toda feature com UI |
-| **Integration** | Tela com dados mockados; rota de API com DB de teste | Toda feature integrada |
-| **API** | Contrato HTTP completo (status, body, headers, erros) | Todo endpoint |
-| **E2E** | Jornada crítica realista de ponta a ponta | Fluxos críticos de negócio |
+| **Unit** | Pure functions, formatters, utils, simple hooks | Always — base of the pyramid |
+| **Component** | Render, interaction, and accessibility of UI components | Every feature with UI |
+| **Integration** | Screen with mocked data; API route with test DB | Every integrated feature |
+| **API** | Complete HTTP contract (status, body, headers, errors) | Every endpoint |
+| **E2E** | Realistic end-to-end critical journey | Critical business flows |
 
 ---
 
-## Estrutura
+## Structure
 
 ```
 tests/
-├── setup.ts                  # DB setup, mocks globais
+├── setup.ts                  # DB setup, global mocks
 ├── unit/
 │   ├── format-date.test.ts
 │   └── calc-total.test.ts
@@ -48,18 +48,18 @@ tests/
 │   ├── OrderCard.test.tsx
 │   └── OrderList.test.tsx
 ├── integration/
-│   ├── OrdersPage.test.tsx       # tela com API mockada (MSW)
-│   └── users.routes.test.ts      # rota de API com DB real de teste
+│   ├── OrdersPage.test.tsx       # screen with mocked API (MSW)
+│   └── users.routes.test.ts      # API route with real test DB
 └── e2e/
     └── order-flow.test.ts        # Playwright/Cypress
 ```
 
 ---
 
-## Convenções
+## Conventions
 
-- **Arquivo:** `<module>.test.ts` (ou `.test.tsx` para componentes)
-- **Describe:** nome do módulo
+- **File:** `<module>.test.ts` (or `.test.tsx` for components)
+- **Describe:** module name
 - **Test:** `should <behavior> when <condition>`
 
 ```typescript
@@ -72,29 +72,29 @@ describe('UsersService', () => {
 
 ---
 
-## O que testar — Frontend
+## What to test — Frontend
 
-Para toda feature de UI, cubra os 8 estados:
+For every UI feature, cover the 8 states:
 
-1. **Render inicial** — componente monta sem erro
-2. **Loading** — estado de carregamento visível
-3. **Empty** — lista vazia mostra estado vazio
-4. **Error** — erro de API exibe mensagem + ação
-5. **Success** — dados renderizados corretamente
-6. **Interação principal** — click, submit, filtro funcionam
-7. **Cenário negativo** — dados inválidos, permissão negada
-8. **Acessibilidade** — labels, foco, navegação por teclado
+1. **Initial render** — component mounts without error
+2. **Loading** — loading state is visible
+3. **Empty** — empty list shows empty state
+4. **Error** — API error displays message + action
+5. **Success** — data rendered correctly
+6. **Main interaction** — click, submit, filter work
+7. **Negative scenario** — invalid data, permission denied
+8. **Accessibility** — labels, focus, keyboard navigation
 
 ---
 
-## O que testar — Backend
+## What to test — Backend
 
-Para toda feature de API, cubra:
+For every API feature, cover:
 
-- **Service behavior** — lógica de domínio funciona (happy path e edge cases)
-- **API contracts** — status code correto, body shape, headers
-- **Edge cases** — registro não encontrado, dados duplicados, limite de paginação
-- **Input validation** — Zod schema rejeita dados inválidos em cada campo
+- **Service behavior** — domain logic works (happy path and edge cases)
+- **API contracts** — correct status code, body shape, headers
+- **Edge cases** — record not found, duplicate data, pagination limit
+- **Input validation** — Zod schema rejects invalid data for each field
 
 ```typescript
 it('POST /api/v1/users should return 201', async () => {
@@ -112,7 +112,7 @@ it('POST /api/v1/users should return 201', async () => {
 
 ## Fixtures
 
-Test DB isolado (Prisma) com cleanup automático:
+Isolated test DB (Prisma) with automatic cleanup:
 
 ```typescript
 // tests/setup.ts
@@ -131,7 +131,7 @@ afterAll(async () => {
 });
 ```
 
-Use factories para criar entidades de teste:
+Use factories to create test entities:
 
 ```typescript
 function createUser(overrides?: Partial<UserCreateInput>) {
@@ -148,13 +148,13 @@ function createUser(overrides?: Partial<UserCreateInput>) {
 
 ## Mocks
 
-### Frontend — MSW para API
+### Frontend — MSW for API
 
-- MSW (Mock Service Worker) para interceptar chamadas de API.
-- Mock determinístico, sem depender de rede real.
-- Não mockar componente que é o alvo do teste.
+- MSW (Mock Service Worker) to intercept API calls.
+- Deterministic mocks, no dependency on real network.
+- Do not mock the component that is the target of the test.
 
-### Backend — vi.mock para serviços externos
+### Backend — vi.mock for external services
 
 ```typescript
 import { vi } from 'vitest';
@@ -166,24 +166,24 @@ vi.mock('../src/services/email.service', () => ({
 
 ---
 
-## Comandos
+## Commands
 
 ```bash
-# Qualidade
+# Quality
 npm run lint
 npm run typecheck
 
-# Testes
+# Tests
 vitest                              # Watch mode
 vitest run                          # Single run
-vitest run tests/unit/              # Só unitários
-vitest run tests/integration/       # Só integração
-vitest run --coverage               # Com coverage
+vitest run tests/unit/              # Unit only
+vitest run tests/integration/       # Integration only
+vitest run --coverage               # With coverage
 
 # E2E
-npx playwright test                 # Quando houver E2E configurado
+npx playwright test                 # When E2E is configured
 
-# Build (não substitui testes, mas é obrigatório antes de deploy)
+# Build (does not replace tests, but is mandatory before deploy)
 npm run build
 ```
 
@@ -191,26 +191,26 @@ npm run build
 
 ## Hard rules
 
-- **Não** remover assertion para fazer teste passar.
-- **Não** usar `any` em testes.
-- **Não** depender de ordem de execução dos testes.
-- **Não** chamar serviço externo real (API, email, pagamento).
-- **Não** commitar mudança sem pelo menos testes da alteração.
-- **Sempre** rode build production para mudanças relevantes de rotas/deps.
+- **Do not** remove assertions to make a test pass.
+- **Do not** use `any` in tests.
+- **Do not** depend on test execution order.
+- **Do not** call real external services (API, email, payment).
+- **Do not** commit changes without at least tests for the changes.
+- **Always** run production build for relevant route/dependency changes.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-### Integridade dos testes
-- **Não remover assertion para fazer teste passar**: se o teste falha, corrija o código.
-- **Não usar `any` em testes**: use tipos específicos ou fixtures tipadas.
-- **Não depender de ordem de execução dos testes**: cada teste deve ser isolado e independente.
+### Test integrity
+- **Do not remove assertions to make a test pass**: if the test fails, fix the code.
+- **Do not use `any` in tests**: use specific types or typed fixtures.
+- **Do not depend on test execution order**: each test must be isolated and independent.
 
-### Isolamento
-- **Não chamar serviço externo real (API, email, pagamento)**: use mocks (MSW, vi.mock).
-- **Testes não podem depender de produção, relógio real sem controle ou rede externa sem mock**.
+### Isolation
+- **Do not call real external services (API, email, payment)**: use mocks (MSW, vi.mock).
+- **Tests must not depend on production, real clocks without control, or external networks without mocks**.
 
 ### Commit
-- **Não commitar mudança sem pelo menos testes da alteração**: toda mudança precisa cobertura de teste.
-- **Sempre rode build production para mudanças relevantes de rotas/deps**.
+- **Do not commit changes without at least tests for the changes**: every change needs test coverage.
+- **Always run production build for relevant route/dependency changes**.

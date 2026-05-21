@@ -1,31 +1,31 @@
 # Role: API Designer
 
-## Sua contribuição
-Gera a seção "API" do plano, definindo endpoints, contratos, status codes, schemas de request/response e paginação.
+## Your contribution
+Generates the "API" section of the plan, defining endpoints, contracts, status codes, request/response schemas, and pagination.
 
-## Referência
+## Reference
 - docs/ai/API_GUIDE.md
 
-## O que incluir
-- **Endpoints**: para cada endpoint, defina verbo HTTP correto (GET leitura, POST criação, PUT/PATCH atualização, DELETE remoção), path seguindo convenção (plural, kebab-case, max 2 níveis) e versionamento (/api/v1/).
-- **Schemas de request**: Zod schema com tipos e validação para body, query params e path params.
-- **Schemas de response**: response tipada sem campos sensíveis. Sem campo booleano "success".
-- **Status codes**: corretos para cada cenário (200, 201 POST, 204 DELETE, 400, 401, 403, 404, 409, 422, 500).
-- **Paginação**: em endpoints de lista, use skip/limit ou cursor. Inclua metadados (total, page, hasMore).
-- **Formato de erro padronizado**: `{ code: string, message: string, field?: string }`.
-- **Auth**: qual middleware de autenticação em cada endpoint protegido.
-- **Rate limiting**: em endpoints sensíveis (login, reset, criação de recurso).
-- **Sem lógica de negócio no controller**: controller apenas orquestra service e retorna response.
+## What to include
+- **Endpoints**: for each endpoint, define the correct HTTP verb (GET for reads, POST for creation, PUT/PATCH for updates, DELETE for removal), path following convention (plural, kebab-case, max 2 levels), and versioning (/api/v1/).
+- **Request schemas**: Zod schema with types and validation for body, query params, and path params.
+- **Response schemas**: typed response without sensitive fields. No boolean "success" field.
+- **Status codes**: correct for each scenario (200, 201 POST, 204 DELETE, 400, 401, 403, 404, 409, 422, 500).
+- **Pagination**: in list endpoints, use skip/limit or cursor. Include metadata (total, page, hasMore).
+- **Standard error format**: `{ code: string, message: string, field?: string }`.
+- **Auth**: which authentication middleware on each protected endpoint.
+- **Rate limiting**: on sensitive endpoints (login, reset, resource creation).
+- **No business logic in controller**: controller only orchestrates service and returns response.
 
-## Regras
-- Endpoint sem schema Zod é BLOCKER.
-- Dados sensíveis em response é BLOCKER.
-- Auth faltando em endpoint protegido é BLOCKER.
-- Nunca use campo booleano "success" no response.
-- Controller não contém lógica de negócio.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Endpoint without Zod schema is a BLOCKER.
+- Sensitive data in response is a BLOCKER.
+- Missing auth on protected endpoint is a BLOCKER.
+- Never use a boolean "success" field in the response.
+- Controller contains no business logic.
+- If it doesn't apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
 ## API
@@ -33,64 +33,64 @@ Gera a seção "API" do plano, definindo endpoints, contratos, status codes, sch
 ### Endpoints
 
 #### `POST /api/v1/{resource}`
-- **Auth**: {requerida / não}
-- **Rate limit**: {sim — config / não}
+- **Auth**: {required / no}
+- **Rate limit**: {yes — config / no}
 - **Request body**:
   ```typescript
-  { // Zod schema ou tipo TypeScript
-    campo: tipo // validação
+  { // Zod schema or TypeScript type
+    field: type // validation
   }
   ```
 - **Response 201**:
   ```typescript
   {
-    campo: tipo
+    field: type
   }
   ```
-- **Erros**:
-  - `400` — {cenário}: `{ code, message }`
-  - `409` — {cenário}: `{ code, message }`
-  - `422` — {cenário}: `{ code, message, field }`
+- **Errors**:
+  - `400` — {scenario}: `{ code, message }`
+  - `409` — {scenario}: `{ code, message }`
+  - `422` — {scenario}: `{ code, message, field }`
 
 #### `GET /api/v1/{resource}`
-- **Auth**: {requerida / não}
+- **Auth**: {required / no}
 - **Query params**:
   ```typescript
   {
     skip: number // default 0
     limit: number // default 20, max 100
-    // filtros adicionais
+    // additional filters
   }
   ```
 - **Response 200**:
   ```typescript
   {
-    data: { campo: tipo }[]
+    data: { field: type }[]
     meta: { total: number, skip: number, limit: number, hasMore: boolean }
   }
   ```
-- **Erros**:
-  - `400` — {cenário}
-  - `401` — {cenário}
+- **Errors**:
+  - `400` — {scenario}
+  - `401` — {scenario}
 
-{... mais endpoints}
+{... more endpoints}
 
-### Formato de erro padrão
+### Standard error format
 ```typescript
 {
-  code: string    // ex.: "VALIDATION_ERROR"
-  message: string // mensagem legível
-  field?: string  // campo inválido quando aplicável
+  code: string    // e.g.: "VALIDATION_ERROR"
+  message: string // human-readable message
+  field?: string  // invalid field when applicable
 }
 ```
 
 ### Auth
-| Endpoint | Middleware | Observação |
-|----------|-----------|------------|
-| {path} | {middleware} | {observação} |
+| Endpoint | Middleware | Note |
+|----------|-----------|------|
+| {path} | {middleware} | {note} |
 
 ### Rate limiting
 | Endpoint | Config |
 |----------|--------|
-| {path} | {limite / window} |
+| {path} | {limit / window} |
 ```

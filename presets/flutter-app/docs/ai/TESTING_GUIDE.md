@@ -1,156 +1,211 @@
-# Guia de Testes Flutter
+# Testing Guide
 
-## Objetivo
+## Objective
 
-Garantir confiança para evoluir o app sem quebrar fluxos críticos.
-
-O objetivo não é aumentar cobertura artificialmente.
+Define the testing strategy for the Flutter app. Ensure each feature can be validated in isolation and in integration.
 
 ---
 
-## Camadas
+## Testing pyramid
 
-- Unit: funções, usecases, mappers, regras de domínio.
-- Controller/Provider: estado de tela, loading/error/success.
-- Repository: conversão e tratamento de erros.
-- Widget: comportamento visual relevante.
-- Integration/E2E: jornadas críticas do usuário.
+The project follows a testing pyramid:
 
-Use E2E com cuidado. É mais caro, mais lento e mais frágil. Deve cobrir jornadas críticas, não todos os detalhes do app.
-
----
-
-## Princípios
-
-Os testes devem ser:
-
-- determinísticos
-- rápidos quando unitários
-- claros
-- legíveis
-- independentes
-- fáceis de manter
-- orientados a comportamento
-- conectados a regras reais do produto
-
-Não criar testes frágeis apenas para aumentar cobertura.
-
-Não testar detalhe interno sem valor.
-
-Não depender de produção.
-
-Não depender de ordem de execução.
-
----
-
-## O que deve ser testado
-
-Teste obrigatoriamente quando houver:
-
-- regra de negócio
-- usecase relevante
-- cálculo
-- validação
-- autenticação
-- permissão
-- tratamento de erro
-- conversão DTO → Entity
-- repository com datasource
-- controller com loading/error/success
-- fluxo crítico do usuário
-
----
-
-## O que não deve ser testado
-
-Evite testar:
-
-- implementação interna irrelevante
-- getters simples
-- construtores triviais
-- widgets puramente visuais sem comportamento
-- mocks do próprio mock
-- detalhes que mudam com frequência
-- texto exato quando a copy ainda não está estabilizada
-- snapshot visual frágil sem necessidade
-
----
-
-## Nomeação dos testes
-
-Use nomes descritivos orientados a comportamento.
-
-Bom:
-
-```dart
-test('returns items when repository succeeds', () async {});
-test('emits error state when fetch fails', () async {});
-test('maps ItemDto to Item entity', () {});
-test('controller emits loading then success on fetch', () async {});
+```
+         /  E2E  \
+        /  Integration  \
+       /  Widget Tests  \
+      /   Unit Tests     \
+     /___________________\
 ```
 
-Ruim:
+Priority:
+
+1. Unit tests
+2. Widget tests
+3. Integration tests
+
+---
+
+## Unit tests
+
+### What to test
+
+- Use cases (application layer)
+- Repository implementations (data layer)
+- Datasources (data layer)
+- Domain rules
+- Mappers (DTO ↔ Entity)
+- Utility functions
+
+### Patterns
 
 ```dart
-test('test1', () {});
-test('works', () {});
-test('repository', () {});
+// Name convention
+test('should return user when repository responds successfully', () async {
+  // Arrange
+  final mockRepository = MockUserRepository();
+  final usecase = GetUserUseCase(mockRepository);
+  const userId = '123';
+
+  // Act
+  final result = await usecase(userId);
+
+  // Assert
+  expect(result, isA<Success<User>>());
+  verify(() => mockRepository.getUser(userId)).called(1);
+});
 ```
 
+### Rules
+
+- One test file per source file.
+- File in the same path as the source, within `test/`.
+- Example: `lib/features/auth/domain/usecases/login_usecase.dart`
+- Test: `test/features/auth/domain/usecases/login_usecase_test.dart`
+- Use `mocktail` for mocks.
+- Do not mock what is not used.
+- Each test must be independent. No shared mutable state.
+
 ---
 
-## Mocks
+## Widget tests
 
-- Use mocks determinísticos, sem depender de rede real.
-- Não mockar o alvo do teste.
-- Prefira `mocktail` ou equivalente para criar mocks.
-- Mantenha fixtures simples e reutilizáveis.
+### What to test
+
+- Custom widgets
+- Pages/Screen
+- Visual states (loading, error, empty, success)
+- User interaction (tap, scroll, input)
+- Navigation
+
+### Patterns
+
+```dart
+testWidgets('should show loading indicator while fetching data',
+    (tester) async {
+  // Arrange
+  final container = ProviderContainer(overrides: [
+    userProvider.overrideWith((ref) => Future.value()),
+  ]);
+
+  // Act
+  await tester.pumpWidget(
+    UncontrolledProviderScope(
+      container: container,
+      child: const MaterialApp(home: UserPage()),
+    ),
+  );
+
+  // Assert
+  expect(find.byType(CircularProgressIndicator), findsOneWidget);
+});
+```
+
+### Rules
+
+- Use `Key` in widgets that need to be found in tests.
+- Do not depend on network or real backend.
+- Use provider overrides to inject mocks.
+- Test all visual states of the component.
+- Do not test internal implementation details of Flutter widgets.
 
 ---
 
-## Comandos típicos
+## Integration tests
+
+### What to test
+
+- Complete user flows
+- Navigation between screens
+- State management in real scenario
+- Integration between layers
+
+### Patterns
+
+```dart
+import 'package:integration_test/integration_test.dart';
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('complete login flow', (tester) async {
+    // Arrange
+    await tester.pumpWidget(const MyApp());
+
+    // Act
+    await tester.enterText(find.byKey(const Key('email_field')), 'test@email.com');
+    await tester.enterText(find.byKey(const Key('password_field')), 'password123');
+    await tester.tap(find.byKey(const Key('login_button')));
+    await tester.pumpAndSettle();
+
+    // Assert
+    expect(find.byType(HomePage), findsOneWidget);
+  });
+}
+```
+
+### Rules
+
+- Use `package:integration_test`.
+- Do not depend on real backend. Use deterministic mocks.
+- Each test must be self-contained.
+- Do not use `Future.delayed` to "wait" for something. Use `pumpAndSettle` or `pump`.
+
+---
+
+## Golden tests
+
+### When to use
+
+- Components with stable and deterministic visual layout.
+- Design system components.
+- Do not use for complex pages that change frequently.
+
+---
+
+## Test commands
 
 ```bash
+# All unit and widget tests
 flutter test
-flutter test test/features/auth/
+
+# Specific test
+flutter test test/features/auth/domain/usecases/login_usecase_test.dart
+
+# Integration test
+flutter test integration_test/app_test.dart
+
+# Coverage
 flutter test --coverage
-flutter analyze
-```
-
-Use os comandos reais do projeto.
-
----
-
-## Build e regressão
-
-Mudança grande precisa de build. Teste unitário não substitui build.
-
-```bash
-flutter build apk       # Android
-flutter build ios       # iOS
-flutter build web       # Web quando aplicável
 ```
 
 ---
 
-## Pirâmide de testes
+## Coverage
 
-Prioridade:
+- Minimum coverage target: 80% for the application and domain layers.
+- Coverage does not need to be 100%, but critical paths must be covered.
+- Do not write tests just to inflate numbers.
 
-1. Testes unitários para regra de negócio.
-2. Testes de controller/provider para estado de tela.
-3. Testes de repository e mapper para conversão e tratamento de erros.
-4. Testes de widget quando houver comportamento visual relevante.
-5. Testes E2E para fluxos críticos do usuário.
+---
 
-## Regras bloqueantes
+## Anti-patterns
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+- Test that depends on real backend.
+- `Future.delayed` in test.
+- Shared mutable state between tests.
+- Test that tests implementation detail instead of behavior.
+- Test that is not deterministic.
+- Ignoring failing test to "fix later."
 
-- **Teste obrigatório quando há regra de negócio / usecase / cálculo / validação / autenticação / permissão / tratamento de erro / conversão DTO→Entity / repository com datasource / controller com loading-error-success / fluxo crítico**: não entregar sem teste para estes casos
-- **Não criar testes frágeis apenas para aumentar cobertura**: cobertura artificial é proibida
-- **Não testar detalhe interno sem valor**: testes devem ser orientados a comportamento
-- **Não depender de produção**: usar mocks e fixtures determinísticos
-- **Não depender de ordem de execução**: testes devem ser independentes
-- **Não mockar o alvo do teste**: mockar apenas dependências
-- **Mudança grande precisa de build**: teste unitário não substitui build real
+## Blocking rules
+
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
+
+- **Every use case must have at least a success and a failure test**: unit tests are mandatory for the application layer
+- **Every custom widget must have a widget test**: visual components must be tested
+- **Do not depend on real backend in tests**: all tests must be deterministic with mocks/fakes
+- **Do not use Future.delayed in tests**: use pump, pumpAndSettle or proper async mechanisms
+- **Each test must be independent**: no shared mutable state between tests
+- **One test file per source file**: each tested file has its corresponding _test.dart
+- **Integration tests must use package:integration_test**: do not use frameworks outside the standard

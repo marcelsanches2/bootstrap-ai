@@ -1,10 +1,10 @@
 # Security Guide
 
-Padrões de segurança para Python backend.
+Security standards for Python backend.
 
-## Autenticação
+## Authentication
 
-### JWT com access + refresh token
+### JWT with access + refresh token
 
 ```python
 from datetime import datetime, timedelta, timezone
@@ -27,11 +27,11 @@ def create_refresh_token(user_id: int, secret: str) -> str:
     return jwt.encode(payload, secret, algorithm="HS256")
 ```
 
-Regras:
-- Access token: 15 minutos.
-- Refresh token: 7 dias, armazenar hash no banco para revogar.
-- Secret: mínimo 256 bits, rotacionável via config.
-- Nunca hardcodar secret.
+Rules:
+- Access token: 15 minutes.
+- Refresh token: 7 days, store hash in database for revocation.
+- Secret: minimum 256 bits, rotatable via config.
+- Never hardcode secret.
 
 ### Password hashing
 
@@ -47,14 +47,14 @@ def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 ```
 
-Regras:
-- Sempre bcrypt ou argon2.
-- Nunca armazenar senha em texto plano.
-- Nunca logar senha original.
+Rules:
+- Always bcrypt or argon2.
+- Never store password in plain text.
+- Never log the original password.
 
-## Autorização
+## Authorization
 
-### RBAC com dependency
+### RBAC with dependency
 
 ```python
 from fastapi import Depends, HTTPException
@@ -65,10 +65,10 @@ class RoleChecker:
 
     def __call__(self, current_user=Depends(get_current_user)):
         if current_user.role not in self.allowed_roles:
-            raise HTTPException(status_code=403, detail="Sem permissão")
+            raise HTTPException(status_code=403, detail="No permission")
         return current_user
 
-# Uso
+# Usage
 @router.delete("/users/{user_id}", status_code=204)
 async def delete_user(
     user_id: int,
@@ -85,28 +85,28 @@ async def get_resource_or_403(resource_id: int, user_id: int, db: AsyncSession):
     result = await db.execute(select(Resource).where(Resource.id == resource_id))
     resource = result.scalar_one_or_none()
     if not resource:
-        raise AppError(code="NOT_FOUND", message="Recurso não encontrado", status=404)
+        raise AppError(code="NOT_FOUND", message="Resource not found", status=404)
     if resource.owner_id != user_id:
-        raise AppError(code="FORBIDDEN", message="Sem permissão", status=403)
+        raise AppError(code="FORBIDDEN", message="No permission", status=403)
     return resource
 ```
 
-## Dados sensíveis (PII)
+## Sensitive data (PII)
 
-### O que é PII
+### What is PII
 
-- CPF, CNPJ, RG
-- Email, telefone, endereço
-- Data de nascimento
-- Dados bancários, cartão
-- IP em alguns contextos
+- SSN, tax ID, ID card numbers
+- Email, phone, address
+- Date of birth
+- Banking data, credit card
+- IP in some contexts
 
-### Regras
+### Rules
 
-- Nunca logar PII.
-- Nunca retornar PII em endpoint público.
-- Criptografar PII no banco quando possível (pgcrypto).
-- Mascaramento em responses parciais: `cpf: "***.***.***-11"`.
+- Never log PII.
+- Never return PII on a public endpoint.
+- Encrypt PII in the database when possible (pgcrypto).
+- Masking in partial responses: `ssn: "***.**.***-11"`.
 
 ```python
 from cryptography.fernet import Fernet
@@ -122,7 +122,7 @@ def decrypt_pii(token: str, key: bytes) -> str:
 
 ## Input validation
 
-### Sempre validar com Pydantic
+### Always validate with Pydantic
 
 ```python
 class UserCreate(BaseModel):
@@ -131,7 +131,7 @@ class UserCreate(BaseModel):
     password: str = Field(min_length=8, max_length=128)
 ```
 
-### Sanitização
+### Sanitization
 
 ```python
 import re
@@ -139,13 +139,13 @@ import re
 def sanitize_filename(filename: str) -> str:
     # Remove path traversal
     name = os.path.basename(filename)
-    # Remove chars perigosos
+    # Remove dangerous chars
     return re.sub(r'[^a-zA-Z0-9._-]', '', name)
 ```
 
-- Nunca concatenar input em SQL — sempre parametrizado (SQLAlchemy já faz).
-- Nunca concatenar input em command — usar `subprocess` com lista.
-- Nunca renderizar input em HTML sem escape (se serving HTML).
+- Never concatenate input in SQL — always parameterized (SQLAlchemy already does this).
+- Never concatenate input in command — use `subprocess` with list.
+- Never render input in HTML without escaping (if serving HTML).
 
 ## Rate limiting
 
@@ -161,13 +161,13 @@ async def login(request: Request, payload: LoginRequest):
     ...
 ```
 
-Aplicar em:
+Apply to:
 - Login: 5/min
 - Reset password: 3/min
-- Registro: 10/min
-- API geral: 100/min
+- Registration: 10/min
+- General API: 100/min
 
-## Headers de segurança
+## Security headers
 
 ```python
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -188,55 +188,55 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 ```python
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,  # lista explícita
+    allow_origins=settings.cors_origins,  # explicit list
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
     allow_headers=["Authorization", "Content-Type"],
 )
 ```
 
-Nunca `allow_origins=["*"]` em produção.
+Never `allow_origins=["*"]` in production.
 
 ## Secrets
 
-- Nunca commitar `.env` — usar `.env.example`.
-- Nunca logar secrets.
-- Nunca retornar secrets em API.
-- Nunca hardcodar em código.
-- Usar variáveis de ambiente ou vault.
-- Rotacionar secrets periodicamente.
+- Never commit `.env` — use `.env.example`.
+- Never log secrets.
+- Never return secrets in API.
+- Never hardcode in source code.
+- Use environment variables or vault.
+- Rotate secrets periodically.
 
 ## HTTPS
 
-- Sempre HTTPS em produção.
+- Always HTTPS in production.
 - Redirect HTTP → HTTPS.
 - HSTS header.
-- Nunca servir credentials sem HTTPS.
+- Never serve credentials without HTTPS.
 
-## Regras duras
+## Hard rules
 
-- Nunca logar senha, token, PII.
-- Nunca armazenar senha em texto plano.
-- Nunca usar `allow_origins=["*"]` em produção.
-- Nunca commitar `.env`.
-- Nunca concatenar input em SQL.
-- Nunca servir HTTP em produção sem HTTPS.
-- Nunca expor stack trace em produção.
-- Nunca usar secret fraco ou default.
+- Never log password, token, PII.
+- Never store password in plain text.
+- Never use `allow_origins=["*"]` in production.
+- Never commit `.env`.
+- Never concatenate input in SQL.
+- Never serve HTTP in production without HTTPS.
+- Never expose stack trace in production.
+- Never use weak or default secret.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Não logar dados sensíveis**: Nunca logar senha, token, PII ou Authorization header.
-- **Senha sempre hasheada**: Nunca armazenar senha em texto plano; usar bcrypt ou argon2.
-- **CORS restrito em produção**: Nunca usar `allow_origins=["*"]` em produção.
-- **Não commitar `.env`**: Nunca commitar `.env` real; usar `.env.example`.
-- **SQL parametrizado**: Nunca concatenar input em SQL; sempre parametrizado.
-- **HTTPS obrigatório em produção**: Nunca servir HTTP em produção sem HTTPS.
-- **Sem stack trace em produção**: Nunca expor stack trace em resposta de produção.
-- **Secret forte e rotacionável**: Nunca usar secret fraco, default ou hardcodado.
-- **Não retornar PII em endpoint público**: Nunca retornar PII em endpoint sem autenticação/autorização.
-- **Não logar senha original**: Nunca logar senha original mesmo durante hashing.
-- **Não concatenar input em command**: Nunca concatenar input em command do sistema; usar lista.
-- **Não servir credentials sem HTTPS**: Nunca enviar credentials em conexão não-HTTPS.
+- **Do not log sensitive data**: Never log password, token, PII or Authorization header.
+- **Password always hashed**: Never store password in plain text; use bcrypt or argon2.
+- **Restricted CORS in production**: Never use `allow_origins=["*"]` in production.
+- **Do not commit `.env`**: Never commit real `.env`; use `.env.example`.
+- **Parameterized SQL**: Never concatenate input in SQL; always parameterized.
+- **HTTPS mandatory in production**: Never serve HTTP in production without HTTPS.
+- **No stack trace in production**: Never expose stack trace in production responses.
+- **Strong and rotatable secret**: Never use weak, default or hardcoded secret.
+- **Do not return PII on public endpoint**: Never return PII on endpoint without authentication/authorization.
+- **Do not log original password**: Never log the original password even during hashing.
+- **Do not concatenate input in command**: Never concatenate input in system command; use list.
+- **Do not serve credentials without HTTPS**: Never send credentials over non-HTTPS connection.

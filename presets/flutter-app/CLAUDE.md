@@ -1,12 +1,12 @@
 # CLAUDE.md
 
-Contrato principal para Claude Code no projeto {{PROJECT_NAME}}.
+Main contract for Claude Code in the {{PROJECT_NAME}} project.
 
-## Projeto
+## Project
 
-{{PROJECT_NAME}} é um app mobile Flutter.
+{{PROJECT_NAME}} is a Flutter mobile app.
 
-Stack principal:
+Main stack:
 
 - Flutter
 - Dart
@@ -14,21 +14,21 @@ Stack principal:
 - GoRouter
 - Dio
 - Feature-first architecture
-- Clean Architecture pragmática
+- Pragmatic Clean Architecture
 
-## Leitura sob demanda
+## On-demand reading
 
-Os arquivos em `docs/ai/` devem ser lidos conforme o tipo da tarefa. Não leia todos automaticamente — carregue apenas os relevantes.
+The files in `docs/ai/` should be read according to the task type. Do not read them all automatically — load only the relevant ones.
 
-| Tipo de tarefa | Documento(s) a ler |
+| Task type | Document(s) to read |
 |---|---|
-| Alteração de arquitetura, estrutura de pastas, DI, router, network, config ou core | `docs/ai/ARCHITECTURE.md` |
-| Alteração visual, tema, componente, tela, cor, tipografia ou UI | `docs/ai/DESIGN_SYSTEM.md` |
-| Implementação ou refatoração de código | `docs/ai/CODING_STANDARDS.md` |
-| Criação ou alteração de feature | `docs/ai/FEATURE_GUIDE.md` |
-| Tarefa misturando áreas | Todos os documentos relevantes |
+| Architecture change, folder structure, DI, router, network, config or core | `docs/ai/ARCHITECTURE.md` |
+| Visual change, theme, component, screen, color, typography or UI | `docs/ai/DESIGN_SYSTEM.md` |
+| Code implementation or refactoring | `docs/ai/CODING_STANDARDS.md` |
+| Feature creation or change | `docs/ai/FEATURE_GUIDE.md` |
+| Task mixing areas | All relevant documents |
 
-Se houver conflito entre documentos, a ordem de prioridade é:
+If there is a conflict between documents, the priority order is:
 
 1. `CLAUDE.md`
 2. `ARCHITECTURE.md`
@@ -36,66 +36,66 @@ Se houver conflito entre documentos, a ordem de prioridade é:
 4. `FEATURE_GUIDE.md`
 5. `DESIGN_SYSTEM.md`
 
-## Documentação no plano
+## Documentation in the plan
 
-No plano inicial de qualquer tarefa, informe explicitamente quais documentos de `docs/ai/` foram lidos antes de implementar. Isso garante rastreabilidade e alinhamento.
+In the initial plan of any task, explicitly state which `docs/ai/` documents were read before implementing. This ensures traceability and alignment.
 
-## Prioridade atual
+## Current priority
 
-O projeto está em fase de fundação técnica.
+The project is in the technical foundation phase.
 
-Prioridade:
+Priority:
 
-1. estrutura técnica
-2. organização feature-first
-3. separação de camadas
-4. navegação base
-5. injeção de dependência
+1. technical structure
+2. feature-first organization
+3. layer separation
+4. base navigation
+5. dependency injection
 6. network foundation
-7. preparação para design system
+7. design system preparation
 
-Não implemente feature, fluxo ou visual final sem pedido explícito.
+Do not implement feature, flow or final visual without explicit request.
 
-## Regras obrigatórias
+## Mandatory rules
 
-- Não misturar UI com regra de negócio.
-- Não chamar Dio em widgets, pages ou controllers.
-- Não acessar datasource fora da camada data.
-- Não vazar DTO para presentation.
-- Não criar arquitetura paralela.
-- Não criar fluxo grande sem pedido explícito.
-- Não implementar design final em tarefa técnica.
-- Não adicionar dependência sem justificar.
-- Não sobrescrever arquivos sem inspecionar antes.
-- Não criar arquivos grandes.
-- Não duplicar lógica entre features.
+- Do not mix UI with business logic.
+- Do not call Dio in widgets, pages or controllers.
+- Do not access datasource outside the data layer.
+- Do not leak DTOs to presentation.
+- Do not create parallel architecture.
+- Do not create large flow without explicit request.
+- Do not implement final design in a technical task.
+- Do not add dependency without justification.
+- Do not overwrite files without inspecting first.
+- Do not create large files.
+- Do not duplicate logic between features.
 
-## Processo
+## Process
 
-Antes de alterar:
+Before changing:
 
-1. inspecione a estrutura atual
-2. leia os documentos de `docs/ai/` relevantes para a tarefa (conforme a tabela de leitura sob demanda)
-3. entenda o escopo da tarefa
-4. descreva o plano brevemente
-5. implemente de forma incremental
+1. inspect the current structure
+2. read the `docs/ai/` documents relevant to the task (according to the on-demand reading table)
+3. understand the task scope
+4. briefly describe the plan
+5. implement incrementally
 
-Depois de alterar:
+After changing:
 
-1. rode `flutter pub get` se mexeu no `pubspec.yaml`
-2. rode `flutter analyze`
-3. rode `flutter test` se existirem testes
-4. corrija erros introduzidos
-5. informe arquivos criados/modificados, comandos executados e pendências
+1. run `flutter pub get` if `pubspec.yaml` was changed
+2. run `flutter analyze`
+3. run `flutter test` if tests exist
+4. fix introduced errors
+5. report created/modified files, executed commands and pending items
 
-## Princípio de decisão
+## Decision principle
 
-Prefira:
+Prefer:
 
-- simples em vez de esperto
-- explícito em vez de mágico
-- incremental em vez de grande reescrita
-- arquitetura estável em vez de falsa velocidade
-- placeholders em vez de lógica fake espalhada
+- simple over clever
+- explicit over magic
+- incremental over large rewrite
+- stable architecture over false speed
+- placeholders over scattered fake logic
 
-Quando houver dúvida de produto, não invente. Aponte a decisão pendente.
+When in doubt about the product, do not invent. Point out the pending decision.

@@ -1,80 +1,80 @@
 # Role: Security Engineer
 
-## Sua contribuição
-Gera a seção "Segurança" do plano, definindo autenticação, autorização, validação de input, proteção de dados sensíveis e headers de segurança.
+## Your contribution
+Generates the "Security" section of the plan, defining authentication, authorization, input validation, sensitive data protection, and security headers.
 
-## Referência
+## Reference
 - docs/ai/SECURITY_GUIDE.md
 
-## O que incluir
-- **Autenticação**: qual mecanismo (JWT, session), onde aplicar (`authMiddleware`), duração dos tokens (15min access, 7d refresh).
-- **Autorização**: verificação de role ou ownership em cada endpoint protegido. Defina quem pode acessar o quê.
-- **Validação de input**: todo input validado com Zod. Defina schemas para body, query e params.
-- **Senhas**: sempre hasheadas com bcrypt. Nunca texto plano.
-- **JWT**: expiração configurada, refresh token, revogação quando aplicável.
-- **PII em logs**: nenhum dado sensível em log (password, token, Authorization header, cookie, PII sem mascaramento).
-- **PII em responses**: nenhum dado sensível na resposta (passwordHash, token interno).
-- **CORS**: origins explícitos, nunca `*`.
-- **Rate limiting**: em login, reset de senha e endpoints sensíveis.
-- **Helmet**: security headers configurados.
-- **SQL injection**: parametrizado via ORM (Prisma já faz). Sem query raw com concatenação.
-- **Proibições**: sem `eval`, `Function` com input, secrets hardcoded, HTTP em produção.
-- **Secrets**: via env vars, nunca no código.
+## What to include
+- **Authentication**: which mechanism (JWT, session), where to apply (`authMiddleware`), token durations (15min access, 7d refresh).
+- **Authorization**: role or ownership verification on each protected endpoint. Define who can access what.
+- **Input validation**: all input validated with Zod. Define schemas for body, query, and params.
+- **Passwords**: always hashed with bcrypt. Never plain text.
+- **JWT**: configured expiration, refresh token, revocation when applicable.
+- **PII in logs**: no sensitive data in logs (password, token, Authorization header, cookie, unmasked PII).
+- **PII in responses**: no sensitive data in the response (passwordHash, internal token).
+- **CORS**: explicit origins, never `*`.
+- **Rate limiting**: on login, password reset, and sensitive endpoints.
+- **Helmet**: security headers configured.
+- **SQL injection**: parameterized via ORM (Prisma already does this). No raw queries with concatenation.
+- **Prohibitions**: no `eval`, `Function` with input, hardcoded secrets, HTTP in production.
+- **Secrets**: via env vars, never in code.
 
-## Regras
-- Auth faltando em endpoint protegido é BLOCKER.
-- Senha em texto plano é BLOCKER.
-- PII em log é BLOCKER.
-- CORS com `*` em produção é BLOCKER.
-- Nunca commitar secrets, tokens, `.env` real.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Missing auth on protected endpoint is a BLOCKER.
+- Plain text password is a BLOCKER.
+- PII in log is a BLOCKER.
+- CORS with `*` in production is a BLOCKER.
+- Never commit secrets, tokens, real `.env`.
+- If it doesn't apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Segurança
+## Security
 
-### Autenticação
-- **Mecanismo**: {JWT / session / API key}
-- **Access token**: {duração}
-- **Refresh token**: {duração}
-- **Middleware**: {nome e onde aplicar}
-- **Revogação**: {mecanismo quando aplicável}
+### Authentication
+- **Mechanism**: {JWT / session / API key}
+- **Access token**: {duration}
+- **Refresh token**: {duration}
+- **Middleware**: {name and where to apply}
+- **Revocation**: {mechanism when applicable}
 
-### Autorização
-| Endpoint | Role/Permissão | Verificação |
-|----------|---------------|-------------|
-| {path} | {role} | {como verificar ownership/role} |
+### Authorization
+| Endpoint | Role/Permission | Verification |
+|----------|----------------|-------------|
+| {path} | {role} | {how to verify ownership/role} |
 
-### Validação de input
-- Body: Zod schema `{exemplo}`
-- Query: Zod schema `{exemplo}`
-- Params: Zod schema `{exemplo}`
+### Input validation
+- Body: Zod schema `{example}`
+- Query: Zod schema `{example}`
+- Params: Zod schema `{example}`
 
-### Dados sensíveis
-| Dado | Armazenamento | Em log | Em response |
-|------|--------------|--------|-------------|
-| senha | bcrypt hash | ❌ mascarado | ❌ nunca |
-| token | env var | ❌ mascarado | ❌ nunca |
-| PII {tipo} | {proteção} | {mascaramento} | {policy} |
+### Sensitive data
+| Data | Storage | In log | In response |
+|------|----------|--------|-------------|
+| password | bcrypt hash | ❌ masked | ❌ never |
+| token | env var | ❌ masked | ❌ never |
+| PII {type} | {protection} | {masking} | {policy} |
 
 ### CORS
-- Origins permitidas: `{lista}`
-- Nunca `*` em produção.
+- Allowed origins: `{list}`
+- Never `*` in production.
 
 ### Rate limiting
-| Endpoint | Limite | Window |
-|----------|--------|--------|
-| {path} | {n requests} | {tempo} |
+| Endpoint | Limit | Window |
+|----------|-------|--------|
+| {path} | {n requests} | {time} |
 
 ### Security headers
-- Helmet: {habilitado com config}
-- Headers adicionais: {lista se aplicável}
+- Helmet: {enabled with config}
+- Additional headers: {list if applicable}
 
-### Checklist de segurança
-- [ ] Nenhum `eval` ou `Function` com input
-- [ ] Nenhum secret hardcoded
-- [ ] HTTPS em produção
-- [ ] SQL parametrizado (via ORM)
+### Security checklist
+- [ ] No `eval` or `Function` with input
+- [ ] No hardcoded secrets
+- [ ] HTTPS in production
+- [ ] Parameterized SQL (via ORM)
 - [ ] Secrets via env vars
 ```

@@ -1,68 +1,68 @@
 ---
-description: Valida um fluxo E2E fullstack garantindo massa deterministica, testes de componente, integracao de API, verificacao de contrato, migration e relatorio atualizado.
+description: Validates a fullstack E2E flow ensuring deterministic test data, component tests, API integration, contract verification, migration and updated report.
 ---
 
 # /jarvis-test-flow
 
-Valida um fluxo end-to-end do app fullstack {{PROJECT_NAME}} (React frontend + Node.js backend no mesmo repositório). Argumento opcional: `flow_id` (ex.: `user_auth`, `product_list`, `checkout_flow`, `webhook_handler`).
+Validates an end-to-end flow of the fullstack app {{PROJECT_NAME}} (React frontend + Node.js backend in the same repository). Optional argument: `flow_id` (e.g.: `user_auth`, `product_list`, `checkout_flow`, `webhook_handler`).
 
-O pipeline cobre ambas as camadas — frontend (componente, a11y, UI) e backend (API, DB, contrato) — em uma execução unificada.
+The pipeline covers both layers — frontend (component, a11y, UI) and backend (API, DB, contract) — in a single unified execution.
 
 ---
 
 ## Guard: greenfield
 
-- Antes de iniciar a etapa 0, verificar se o projeto possui código-fonte relevante:
-  - Checar existência de arquivos em `src/`, `app/`, `test/`, `prisma/`.
-  - Se o projeto acabou de ser inicializado e **não possui arquivos de código-fonte**, **parar na etapa 0** e reportar:
+- Before starting step 0, verify that the project has relevant source code:
+  - Check for files in `src/`, `app/`, `test/`, `prisma/`.
+  - If the project was just initialized and **has no source code files**, **stop at step 0** and report:
     ```
-    GREENFIELD — projeto sem código-fonte. Pipeline não aplicável.
-    Commitar infrastructure e rodar test-flow após primeira feature.
+    GREENFIELD — project without source code. Pipeline not applicable.
+    Commit infrastructure and run test-flow after the first feature.
     ```
-  - Este guard previne execução do pipeline em projetos vazios onde todo comando falharia por falta de contexto.
+  - This guard prevents running the pipeline on empty projects where every command would fail due to lack of context.
 
 ---
 
-## Sequência obrigatória
+## Mandatory sequence
 
-### 0. Avaliar tamanho da task
+### 0. Assess task size
 
-- Inspecionar `git diff --stat HEAD` e a natureza dos arquivos tocados.
-- **Diretórios/arquivos monitorados**: `src/`, `public/`, `test/`, `prisma/`, `migrations/`, `package.json`, `tsconfig.json`, `*.config.*`.
-- **GRANDE** (rodar pipeline completo, etapas 1-8):
-  - Nova página/rota (frontend ou backend).
-  - Novo componente de feature.
-  - Novo endpoint de API.
-  - Nova entidade/model.
-  - Mudança em migration.
-  - Integração de API nova (frontend consumindo novo endpoint ou backend integrando serviço externo).
-  - Mudança em estado global.
-  - Mudança em design system.
-  - Formulário complexo.
-  - Mudança em schema/interface que afeta contrato entre frontend e backend.
-  - Novo service/usecase.
-  - Mudança em regra de negócio.
-  - Mudança que afeta fluxo do usuário ponta a ponta.
-- **PEQUENA** (pular para etapa 7):
+- Inspect `git diff --stat HEAD` and the nature of the touched files.
+- **Monitored directories/files**: `src/`, `public/`, `test/`, `prisma/`, `migrations/`, `package.json`, `tsconfig.json`, `*.config.*`.
+- **LARGE** (run full pipeline, steps 1-8):
+  - New page/route (frontend or backend).
+  - New feature component.
+  - New API endpoint.
+  - New entity/model.
+  - Migration change.
+  - New API integration (frontend consuming new endpoint or backend integrating external service).
+  - Global state change.
+  - Design system change.
+  - Complex form.
+  - Schema/interface change affecting frontend-backend contract.
+  - New service/usecase.
+  - Business logic change.
+  - Change affecting end-to-end user flow.
+- **SMALL** (skip to step 7):
   - Typo.
-  - Ajuste de CSS isolado.
-  - Ajuste de log.
-  - Formatação.
-  - Comentário.
-  - Ajuste fino em config sem mudança de comportamento.
-  - Refactor sem mudança de comportamento observável.
-  - Ajuste de cópia/texto.
-  - Ajuste de tipos sem mudança de lógica.
-- **Em dúvida**: perguntar ao usuário antes de classificar (uma frase: "task X — pequena ou grande?"). **Não chutar.**
-- Reportar a classificação numa linha antes de prosseguir (ex: `task: PEQUENA — só ajuste de cor no botão`).
+  - Isolated CSS adjustment.
+  - Log adjustment.
+  - Formatting.
+  - Comment.
+  - Fine config tuning without behavior change.
+  - Refactor without observable behavior change.
+  - Copy/text adjustment.
+  - Type adjustment without logic change.
+- **In doubt**: ask the user before classifying (one sentence: "task X — small or large?"). **Do not guess.**
+- Report the classification in one line before proceeding (e.g.: `task: SMALL — just button color adjustment`).
 
 ---
 
-### 1. Determinar o `flow_id`
+### 1. Determine the `flow_id`
 
-- Se foi passado como argumento, usar diretamente.
-- Se não, inferir pelo `git diff --name-only HEAD` (qual página/feature/módulo foi tocado).
-- **Mapeamento de caminhos**:
+- If passed as argument, use it directly.
+- If not, infer from `git diff --name-only HEAD` (which page/feature/module was touched).
+- **Path mapping**:
   - Frontend:
     - `src/features/<X>/` → `<X>_*` flow
     - `src/app/<X>/` → `<X>_*` flow
@@ -71,170 +71,170 @@ O pipeline cobre ambas as camadas — frontend (componente, a11y, UI) e backend 
     - `src/routes/<X>.ts` → `<X>_*` flow
     - `src/server/routes/<X>.ts` → `<X>_*` flow
     - `src/<module>/` → `<module>_*` flow
-- **Se ambíguo** (touch em frontend E backend de módulos diferentes, ou múltiplos módulos), perguntar ao usuário antes de seguir. Não assumir.
-- O `flow_id` será usado para:
-  - Localizar massa/fixtures.
-  - Localizar testes.
-  - Nomear o relatório (`docs/test_report_{flow_id}.md`).
-  - Compor mensagem de commit.
+- **If ambiguous** (touching frontend AND backend of different modules, or multiple modules), ask the user before proceeding. Do not assume.
+- The `flow_id` will be used to:
+  - Locate test data/fixtures.
+  - Locate tests.
+  - Name the report (`docs/test_report_{flow_id}.md`).
+  - Compose the commit message.
 
 ---
 
-### 2. Inventariar massa (mocks + fixtures determinísticos)
+### 2. Inventory test data (deterministic mocks + fixtures)
 
-- Localizar toda a massa de dados que cobre o `flow_id` — **união de frontend e backend**:
+- Locate all test data that covers the `flow_id` — **union of frontend and backend**:
   - **Frontend (mock API)**:
-    - `src/mocks/*.ts` — handlers MSW ou jest.mock
-    - `src/__mocks__/*.ts` — mocks manuais
-    - `msw/handlers/*.ts` ou `src/mocks/handlers/*.ts` — handlers MSW organizados
+    - `src/mocks/*.ts` — MSW handlers or jest.mock
+    - `src/__mocks__/*.ts` — manual mocks
+    - `msw/handlers/*.ts` or `src/mocks/handlers/*.ts` — organized MSW handlers
   - **Backend (test DB / fixtures)**:
-    - `test/fixtures/*.ts` — dados estáticos para testes
-    - `test/factories/*.ts` — factories de entidades
-    - `prisma/seed.ts` — seed do banco
-    - `src/seed/*.ts` — seeds alternativos
-    - `test/**/helpers/*.ts` — helpers de setup/teardown
-- **Validação cruzada**:
-  - Cruzar dados esperados com asserts dos testes em `src/` e `test/`.
-  - Garantir que os dados mockados no frontend são consistentes com o contrato real do backend (schema, tipos, campos).
-- **Se faltar massa**:
-  - Criar mock/handler/fixture determinístico seguindo `docs/ai/TESTING_GUIDE.md` e `docs/ai/ARCHITECTURE.md`.
-  - Sem random (usar valores fixos e previsíveis).
-  - Sem chamada de rede real.
-  - Sem `setTimeout` em teste.
-- **Garantias obrigatórias**:
-  - Testes **frontend** usam mock da API (MSW, jest.mock, etc) e **nunca** chamam backend real.
-  - Testes **backend** usam banco de teste (SQLite in-memory, test database, ou container efêmero) e **nunca** o banco de produção/desenvolvimento.
-  - Environment vars sobrescritas para ambiente de teste: `NODE_ENV=test`, `DATABASE_URL=test_*`, etc.
+    - `test/fixtures/*.ts` — static data for tests
+    - `test/factories/*.ts` — entity factories
+    - `prisma/seed.ts` — database seed
+    - `src/seed/*.ts` — alternative seeds
+    - `test/**/helpers/*.ts` — setup/teardown helpers
+- **Cross-validation**:
+  - Cross-reference expected data with test assertions in `src/` and `test/`.
+  - Ensure that mocked data on the frontend is consistent with the actual backend contract (schema, types, fields).
+- **If test data is missing**:
+  - Create deterministic mock/handler/fixture following `docs/ai/TESTING_GUIDE.md` and `docs/ai/ARCHITECTURE.md`.
+  - No randomness (use fixed, predictable values).
+  - No real network calls.
+  - No `setTimeout` in tests.
+- **Mandatory guarantees**:
+  - **Frontend** tests use API mocks (MSW, jest.mock, etc.) and **never** call the real backend.
+  - **Backend** tests use a test database (SQLite in-memory, test database, or ephemeral container) and **never** the production/development database.
+  - Environment variables overridden for test environment: `NODE_ENV=test`, `DATABASE_URL=test_*`, etc.
 
 ---
 
-### 3. Inventariar teste
+### 3. Inventory tests
 
-- Procurar testes que cubram o `flow_id` — **união de frontend e backend**:
+- Find tests that cover the `flow_id` — **union of frontend and backend**:
   - **Frontend**: `src/**/{flow_id}*.test.{ts,tsx}`
-    - Deve cobrir: caminho feliz, loading states, error states, empty states, validação de formulário, navegação, acessibilidade (a11y).
-  - **Backend**: `test/**/{flow_id}*.test.ts` ou `test/**/{module}*.test.ts`
-    - Deve cobrir: caminho feliz, cenários de erro, validação de input, status codes corretos.
-- **Verificar revisão prévia**:
-  - Checar se existe relatório de revisão (`plans/*_revisao.md`, `docs/revisao_*.md` ou similar) gerado pelo `/jarvis-plan` para o mesmo fluxo.
-  - Se existir, extrair os **Cenários E2E sugeridos** da seção correspondente e considerá-los como **requisitos mínimos de cobertura** além dos cenários próprios do test-flow.
-  - Se não existir, prosseguir normalmente.
-- **Se não existir teste**:
-  - Criar seguindo `docs/ai/TESTING_GUIDE.md` com o runner configurado (jest, vitest).
-  - Frontend: usar Testing Library + mocks determinísticos. Cobrir renderização, interação, estados de UI.
-  - Backend: usar supertest ou equivalente + fixtures determinísticas. Cobrir endpoints, validação, erros.
-- **Validação final**:
-  - Confirmar que o teste cobre as etapas críticas do flow.
-  - Confirmar que usa os dados determinísticos da massa inventariada.
-  - Confirmar que não depende de estado externo (rede, relógio, ordem de execução).
+    - Must cover: happy path, loading states, error states, empty states, form validation, navigation, accessibility (a11y).
+  - **Backend**: `test/**/{flow_id}*.test.ts` or `test/**/{module}*.test.ts`
+    - Must cover: happy path, error scenarios, input validation, correct status codes.
+- **Check for previous review**:
+  - Check if there is a review report (`plans/*_review.md`, `docs/review_*.md` or similar) generated by `/jarvis-plan` for the same flow.
+  - If it exists, extract the **Suggested E2E Scenarios** from the corresponding section and consider them as **minimum coverage requirements** in addition to the test-flow's own scenarios.
+  - If not, proceed normally.
+- **If no test exists**:
+  - Create following `docs/ai/TESTING_GUIDE.md` with the configured runner (jest, vitest).
+  - Frontend: use Testing Library + deterministic mocks. Cover rendering, interaction, UI states.
+  - Backend: use supertest or equivalent + deterministic fixtures. Cover endpoints, validation, errors.
+- **Final validation**:
+  - Confirm the test covers the critical steps of the flow.
+  - Confirm it uses the deterministic data from the inventoried test data.
+  - Confirm it does not depend on external state (network, clock, execution order).
 
 ---
 
-### 4. Executar o pipeline (fullstack)
+### 4. Execute the pipeline (fullstack)
 
-- **Detectar package manager** por lockfile:
+- **Detect package manager** by lockfile:
   - `pnpm-lock.yaml` → pnpm
   - `yarn.lock` → yarn
   - `bun.lockb` → bun
-  - Senão → npm
-- **Detectar scripts** disponíveis em `package.json`.
-- **Executar na seguinte ordem** (cada passo depende do anterior):
+  - Otherwise → npm
+- **Detect available scripts** in `package.json`.
+- **Execute in the following order** (each step depends on the previous):
 
-  | # | Comando | Condição | Falha bloqueia? |
-  |---|---------|----------|-----------------|
-  | 1 | `[pkg-manager] install` | Se houve mudança em `dependencies` no `package.json` | Sim |
-  | 2 | `[pkg-manager] run lint` | Se existir script `lint` | Sim — bloqueia se introduzir erros novos |
-  | 3 | `npx tsc --noEmit` ou `run typecheck` | Sempre (ou se existir script `typecheck`) | Sim — bloqueia se introduzir erros de tipo novos |
-  | 4 | `npx vitest run` ou `[pkg-manager] test` | Sempre (unit + component tests) | Sim — bloqueia se quebrar |
-  | 5 | `npx vitest run --config vitest.config.integration.ts` | Se existir config de integração, ou filtrar por suíte | Sim — bloqueia se quebrar |
-  | 6 | `npx playwright test` ou `run test:e2e` | Se existirem testes E2E (Playwright/Cypress) | Sim — bloqueia se quebrar |
-  | 7 | `npx prisma validate && npx prisma migrate status` | Se diretório `prisma/` existe | Sim — bloqueia se migration divergente |
-  | 8 | `[pkg-manager] run build` | Sempre (production build) | Sim — bloqueia se quebrar |
-  | 9 | `curl -sf http://localhost:3000/api/health` ou script documentado | Se houver server rodando | Não — reporta warning |
+  | # | Command | Condition | Does failure block? |
+  |---|---------|-----------|---------------------|
+  | 1 | `[pkg-manager] install` | If there were dependency changes in `package.json` | Yes |
+  | 2 | `[pkg-manager] run lint` | If `lint` script exists | Yes — blocks if it introduces new errors |
+  | 3 | `npx tsc --noEmit` or `run typecheck` | Always (or if `typecheck` script exists) | Yes — blocks if it introduces new type errors |
+  | 4 | `npx vitest run` or `[pkg-manager] test` | Always (unit + component tests) | Yes — blocks if broken |
+  | 5 | `npx vitest run --config vitest.config.integration.ts` | If integration config exists, or filter by suite | Yes — blocks if broken |
+  | 6 | `npx playwright test` or `run test:e2e` | If E2E tests exist (Playwright/Cypress) | Yes — blocks if broken |
+  | 7 | `npx prisma validate && npx prisma migrate status` | If `prisma/` directory exists | Yes — blocks if migration diverges |
+  | 8 | `[pkg-manager] run build` | Always (production build) | Yes — blocks if broken |
+  | 9 | `curl -sf http://localhost:3000/api/health` or documented script | If server is running | No — reports warning |
 
-- **Regras de execução**:
-  - Se qualquer comando falhar, entrar no **loop de diagnóstico (etapa 4a)** antes de prosseguir.
-  - Não maquiar, não silenciar warning, não remover assertion.
-  - Não pular steps intermediários mesmo se "parecer simples".
-  - Registrar resultado de cada comando no relatório (etapa 5).
-
----
-
-### 4a. Loop de diagnóstico e correção
-
-Acionado quando algo na etapa 4 ou no pre-commit hook da etapa 7 falha.
-
-#### Diagnóstico
-
-- Ler atentamente a **saída de erro completa**.
-- Classificar a causa em uma das categorias:
-
-  | Categoria | Descrição | Exemplos |
-  |-----------|-----------|----------|
-  | `ambiente` | Infraestrutura local quebrada | Node version incorreta, `node_modules` corrompido, dependência ausente, cache corrompido, navegador/Playwright não instalado, Docker quebrado |
-  | `mock/massa` | Dados de teste inconsistentes | Dado determinístico faltando, divergência entre mock/seed e assertion, handler MSW não cobre endpoint, mock desatualizado vs contrato real, factory mal configurada, fixture com side effect |
-  | `teste` | Problema na estrutura do teste | Assertion inválida, seletor quebrado (`data-testid` removido), `act()` warning, async sem `waitFor`, mock no lugar errado, timeout, teste dependente de ordem, teardown/cleanup incompleto, snapshot desatualizado |
-  | `código` | Regressão real na aplicação | Componente não renderiza, hook com dependência errada, estado inconsistente, prop faltando, contrato quebrado, exception não tratada, lógica errada, retorno inesperado |
-  | `tipagem` | Erro de tipo TypeScript | `any` onde não deveria, `@ts-ignore` escondendo bug, interface desatualizada vs implementação, tipo assertion insegura (`as`) |
-  | `build` | Falha no build de produção | Import não resolvido, chunk error, env variable faltando, circular dependency, CSS module quebrado |
-  | `acessibilidade` | Violação de a11y | Contraste insuficiente, label faltando em input, aria attribute incorreto, foco perdido em modal/dialog |
-  | `migration` | Problema no schema/ORM | Schema divergente entre models e banco, constraint violada, dado existente incompatível, migration faltando ou fora de ordem |
-  | `contrato` | Inconsistência frontend↔backend | Payload divergindo entre test e implementação, status code errado, campo faltando na response, validação de input inconsistente |
-
-#### Planejamento
-
-- Escrever **1-3 frases** descrevendo:
-  - (a) Qual é a causa-raiz hipotética.
-  - (b) Qual a correção mínima proposta.
-  - (c) Qual arquivo será tocado.
-- **Não começar a editar sem isso.** Se não conseguir formular hipótese, escalar imediatamente.
-
-#### Correção
-
-- Aplicar **somente a correção mínima planejada**.
-- Sem refactor adicional, sem "limpar de quebra", sem alteração cosmética.
-
-#### Re-execução
-
-- Executar de novo o(s) comando(s) que falhou(aram), na mesma ordem da etapa 4.
-- Se passar, registrar no relatório e prosseguir.
-
-#### Limites e escalação
-
-- **Limite de 3 tentativas por causa-raiz**.
-  - Se a mesma causa reaparecer ao 3º ciclo → parar e escalar.
-  - Se a correção exigir mudanças fora do escopo da task original (refatorar estado global, criar página/endpoint novo) → parar e escalar.
-- **Critérios para parar e escalar imediatamente** (sem esperar 3 tentativas):
-  - A correção exigiria modificar `docs/ai/*` ou outro arquivo proibido pelas restrições.
-  - A correção exigiria criar página/componente/endpoint/service/model fora do escopo do `flow_id`.
-  - O erro indica problema de infraestrutura (build tool quebrado, banco não sobe, dependência não instala).
-  - Tentativas anteriores divergem (causa muda a cada rodada → sinal de diagnóstico raso).
-- **Ao escalar**, reportar: causa observada, o que foi tentado, próxima hipótese.
-
-#### Registro
-
-- Registrar **todas** as causas e correções tentadas na tabela "Problemas encontrados / correções" do report (etapa 5), **inclusive em caso de PASSOU**.
-- Isso garante rastreabilidade: mesmo que passou, fica documentado o que foi corrigido.
+- **Execution rules**:
+  - If any command fails, enter the **diagnostic loop (step 4a)** before proceeding.
+  - Do not mask, silence warnings, or remove assertions.
+  - Do not skip intermediate steps even if they "seem simple."
+  - Record the result of each command in the report (step 5).
 
 ---
 
-### 5. Gerar relatório
+### 4a. Diagnostic and correction loop
 
-- Escrever ou atualizar `docs/test_report_{flow_id}.md` com as seções:
+Triggered when something in step 4 or the pre-commit hook in step 7 fails.
+
+#### Diagnosis
+
+- Carefully read the **complete error output**.
+- Classify the cause into one of the categories:
+
+  | Category | Description | Examples |
+  |-----------|-------------|----------|
+  | `environment` | Broken local infrastructure | Wrong Node version, corrupted `node_modules`, missing dependency, corrupted cache, browser/Playwright not installed, broken Docker |
+  | `mock/data` | Inconsistent test data | Missing deterministic data, divergence between mock/seed and assertion, MSW handler doesn't cover endpoint, outdated mock vs real contract, misconfigured factory, fixture with side effect |
+  | `test` | Test structure issue | Invalid assertion, broken selector (removed `data-testid`), `act()` warning, async without `waitFor`, mock in wrong place, timeout, order-dependent test, incomplete teardown/cleanup, outdated snapshot |
+  | `code` | Real application regression | Component not rendering, hook with wrong dependency, inconsistent state, missing prop, broken contract, unhandled exception, wrong logic, unexpected return |
+  | `typing` | TypeScript type error | `any` where it shouldn't be, `@ts-ignore` hiding bug, outdated interface vs implementation, unsafe type assertion (`as`) |
+  | `build` | Production build failure | Unresolved import, chunk error, missing env variable, circular dependency, broken CSS module |
+  | `accessibility` | a11y violation | Insufficient contrast, missing label on input, incorrect aria attribute, focus lost in modal/dialog |
+  | `migration` | Schema/ORM issue | Divergent schema between models and database, violated constraint, incompatible existing data, missing or out-of-order migration |
+  | `contract` | Frontend↔backend inconsistency | Payload diverging between test and implementation, wrong status code, missing field in response, inconsistent input validation |
+
+#### Planning
+
+- Write **1-3 sentences** describing:
+  - (a) What the hypothetical root cause is.
+  - (b) What the proposed minimal fix is.
+  - (c) Which file will be touched.
+- **Do not start editing without this.** If you cannot formulate a hypothesis, escalate immediately.
+
+#### Correction
+
+- Apply **only the planned minimal fix**.
+- No additional refactoring, no "cleaning up while at it", no cosmetic changes.
+
+#### Re-run
+
+- Run the failed command(s) again, in the same order as step 4.
+- If it passes, record in the report and proceed.
+
+#### Limits and escalation
+
+- **Limit of 3 attempts per root cause**.
+  - If the same cause reappears on the 3rd cycle → stop and escalate.
+  - If the fix requires changes outside the scope of the original task (refactoring global state, creating new page/endpoint) → stop and escalate.
+- **Criteria for stopping and escalating immediately** (without waiting for 3 attempts):
+  - The fix would require modifying `docs/ai/*` or another file prohibited by the restrictions.
+  - The fix would require creating a page/component/endpoint/service/model outside the `flow_id` scope.
+  - The error indicates an infrastructure problem (broken build tool, database won't start, dependency won't install).
+  - Previous attempts diverge (cause changes each run → sign of shallow diagnosis).
+- **When escalating**, report: observed cause, what was attempted, next hypothesis.
+
+#### Record
+
+- Record **all** causes and attempted corrections in the "Issues found / corrections" table of the report (step 5), **even if PASSED**.
+- This ensures traceability: even if it passed, what was corrected is documented.
+
+---
+
+### 5. Generate report
+
+- Write or update `docs/test_report_{flow_id}.md` with the sections:
 
   ```
   # Test Report: {flow_id}
 
   ## Meta
-  - **Data**: <timestamp>
+  - **Date**: <timestamp>
   - **Branch**: <git branch>
-  - **Classificação**: GRANDE / PEQUENA
-  - **Estratégia**: <descrição da abordagem>
-  - **Package manager**: <detectado>
+  - **Classification**: LARGE / SMALL
+  - **Strategy**: <approach description>
+  - **Package manager**: <detected>
 
-  ## Ferramentas detectadas
-  | Ferramenta | Detectada? | Versão |
-  |------------|-----------|--------|
+  ## Detected tools
+  | Tool | Detected? | Version |
+  |------|----------|---------|
   | Linter     |           |        |
   | Typechecker|           |        |
   | Test runner|           |        |
@@ -242,131 +242,131 @@ Acionado quando algo na etapa 4 ou no pre-commit hook da etapa 7 falha.
   | ORM        |           |        |
   | Build tool |           |        |
 
-  ## Massa criada/validada
-  | Tipo | Arquivo | Status | Dados usados |
-  |------|---------|--------|--------------|
+  ## Test data created/validated
+  | Type | File | Status | Data used |
+  |------|------|--------|-----------|
   | Mock API (frontend) | ... | ... | ... |
   | Fixture (backend)   | ... | ... | ... |
   | Seed DB             | ... | ... | ... |
 
-  ## Comandos executados
-  | # | Comando | Resultado | Tempo |
-  |---|---------|-----------|-------|
+  ## Commands executed
+  | # | Command | Result | Time |
+  |---|---------|--------|------|
   | 1 | npm install | ✅ PASS | 12s |
   | 2 | npm run lint | ✅ PASS | 3s |
   | ... | ... | ... | ... |
 
-  ## Fluxo validado
-  | Etapa | Validação | Resultado |
-  |-------|-----------|-----------|
-  | Install | Dependencies instaladas | ✅ |
-  | Lint    | Sem erros novos | ✅ |
-  | Typecheck | Sem erros de tipo | ✅ |
-  | Unit/Component | Testes passam | ✅ |
-  | Integration | Testes passam | ✅ |
-  | E2E | Testes passam | ✅ |
-  | Migration | Schema válido | ✅ |
+  ## Validated flow
+  | Step | Validation | Result |
+  |------|------------|--------|
+  | Install | Dependencies installed | ✅ |
+  | Lint    | No new errors | ✅ |
+  | Typecheck | No type errors | ✅ |
+  | Unit/Component | Tests pass | ✅ |
+  | Integration | Tests pass | ✅ |
+  | E2E | Tests pass | ✅ |
+  | Migration | Schema valid | ✅ |
   | Build | Production build ok | ✅ |
-  | Healthcheck | Server responde | ⚠️ |
+  | Healthcheck | Server responds | ⚠️ |
 
-  ## Problemas encontrados / correções
-  | Causa | Correção | Tentativa | Resultado |
-  |-------|----------|-----------|-----------|
-  | (vazio se sem problemas) | | | |
+  ## Issues found / corrections
+  | Cause | Correction | Attempt | Result |
+  |-------|-----------|---------|--------|
+  | (empty if no issues) | | | |
 
-  ## Status final
-  **PASSOU** / **PASSOU PARCIALMENTE** / **FALHOU**
+  ## Final status
+  **PASSED** / **PARTIALLY PASSED** / **FAILED**
 
-  ## Arquivos criados/modificados
+  ## Files created/modified
   - `src/features/...`
   - `test/...`
 
-  ## Como rodar de novo
+  ## How to run again
   ```bash
   npm install && npm run lint && npx tsc --noEmit && npm test && npm run build
   ```
   ```
 
-- O relatório deve ser **completo e honesto**. Não omitir falhas intermediárias.
+- The report must be **complete and honest**. Do not omit intermediate failures.
 
 ---
 
-### 6. Encerrar
+### 6. Finish
 
-- Reportar **uma linha de resumo** no formato:
+- Report **a one-line summary** in the format:
   ```
-  ✅ test-flow({flow_id}): PASSOU — 9 steps, 2 correções — docs/test_report_{flow_id}.md
+  ✅ test-flow({flow_id}): PASSED — 9 steps, 2 corrections — docs/test_report_{flow_id}.md
   ```
-  ou
+  or
   ```
-  ⚠️ test-flow({flow_id}): PASSOU PARCIALMENTE — healthcheck falhou — docs/test_report_{flow_id}.md
+  ⚠️ test-flow({flow_id}): PARTIALLY PASSED — healthcheck failed — docs/test_report_{flow_id}.md
   ```
-  ou
+  or
   ```
-  ❌ test-flow({flow_id}): FALHOU — build quebrou após 3 tentativas — docs/test_report_{flow_id}.md
+  ❌ test-flow({flow_id}): FAILED — build broke after 3 attempts — docs/test_report_{flow_id}.md
   ```
-- Incluir caminho do relatório para referência rápida.
+- Include report path for quick reference.
 
 ---
 
 ### 7. Commit
 
-- **Stage arquivos**:
+- **Stage files**:
   ```
   git add src/ public/ test/ prisma/ migrations/ docs/ package.json tsconfig.json [pnpm-lock.yaml|yarn.lock|bun.lockb|package-lock.json]
   ```
-- **Se nada foi staged** (`git diff --cached --quiet`): **pular o commit**.
-- **Mensagem do commit** (conforme classificação):
-  - **PEQUENA**: `chore: <descrição curta>` (ex: `chore: ajusta cor do botão no header`).
-  - **GRANDE + PASSOU**: `feat|fix|refactor: <descrição> + test {flow_id}` conforme natureza da mudança.
-  - **GRANDE + PASSOU PARCIALMENTE / FALHOU**: **NÃO commitar**. Reportar e devolver para correção.
+- **If nothing was staged** (`git diff --cached --quiet`): **skip the commit**.
+- **Commit message** (according to classification):
+  - **SMALL**: `chore: <short description>` (e.g.: `chore: adjust button color in header`).
+  - **LARGE + PASSED**: `feat|fix|refactor: <description> + test {flow_id}` according to the nature of the change.
+  - **LARGE + PARTIALLY PASSED / FAILED**: **DO NOT commit**. Report and return for correction.
 - **Pre-commit hooks**:
-  - O commit pode disparar pre-commit hooks (lint, typecheck, test).
-  - Se quebrar, **NÃO usar `--no-verify`** — entrar no loop de diagnóstico (etapa 4a), corrigir, e tentar o commit de novo.
-  - Aplicam-se os mesmos limites de tentativas e escalação da etapa 4a.
+  - The commit may trigger pre-commit hooks (lint, typecheck, test).
+  - If it breaks, **DO NOT use `--no-verify`** — enter the diagnostic loop (step 4a), fix, and try the commit again.
+  - The same attempt limits and escalation rules from step 4a apply.
 
 ---
 
 ### 8. Push
 
-- **Pré-condição**: só executar se a etapa 7 efetivamente criou um novo commit.
-  - Se foi pulada (nada staged) ou bloqueada (GRANDE + falha): **NÃO empurrar**.
-- **Verificar upstream**:
-  - Se `git rev-parse --abbrev-ref --symbolic-full-name @{u}` falhar: `git push -u origin HEAD`.
-  - Caso contrário: `git push`.
-- **Regras de força**:
-  - **NUNCA** usar `--force` ou `--force-with-lease` aqui.
-  - Push de force só com pedido explícito do usuário e **nunca** em `master`/`main`.
-- **Se o push falhar por divergência** (`non-fast-forward`):
-  - **Parar, reportar e perguntar** antes de qualquer rebase/merge.
-  - Não assumir estratégia de resolução.
+- **Pre-condition**: only execute if step 7 actually created a new commit.
+  - If it was skipped (nothing staged) or blocked (LARGE + failure): **DO NOT push**.
+- **Check upstream**:
+  - If `git rev-parse --abbrev-ref --symbolic-full-name @{u}` fails: `git push -u origin HEAD`.
+  - Otherwise: `git push`.
+- **Force rules**:
+  - **NEVER** use `--force` or `--force-with-lease` here.
+  - Force push only with explicit user request and **never** on `master`/`main`.
+- **If push fails due to divergence** (`non-fast-forward`):
+  - **Stop, report and ask** before any rebase/merge.
+  - Do not assume a resolution strategy.
 
 ---
 
-## Prioridade de referência
+## Reference priority
 
-Ao resolver conflitos de orientação entre documentos, seguir esta hierarquia:
+When resolving conflicting guidance between documents, follow this hierarchy:
 
-1. `CLAUDE.md` — contrato principal do projeto
-2. `docs/ai/ARCHITECTURE.md` — estrutura e camadas
-3. `docs/ai/CODING_STANDARDS.md` — padrões de código
-4. `docs/ai/FEATURE_GUIDE.md` — guia de features
-5. `docs/ai/API_GUIDE.md` — contratos de API
-6. `docs/ai/DESIGN_SYSTEM.md` — sistema de design
-7. `docs/ai/TESTING_GUIDE.md` — padrões de teste
+1. `CLAUDE.md` — main project contract
+2. `docs/ai/ARCHITECTURE.md` — structure and layers
+3. `docs/ai/CODING_STANDARDS.md` — code standards
+4. `docs/ai/FEATURE_GUIDE.md` — feature guide
+5. `docs/ai/API_GUIDE.md` — API contracts
+6. `docs/ai/DESIGN_SYSTEM.md` — design system
+7. `docs/ai/TESTING_GUIDE.md` — testing standards
 
-Em caso de conflito, o documento de prioridade mais alta prevalece.
+In case of conflict, the highest priority document prevails.
 
 ---
 
-## Restrições obrigatórias
+## Mandatory restrictions
 
-- **Não** criar feature/página/componente/endpoint novo fora do escopo do `flow_id`.
-- **Não** modificar arquivos em `docs/ai/`.
-- **Não** hardcodar credenciais, API keys ou secrets.
-- **Não** pular etapas dentro de uma execução completa (1-6) mesmo se "parecer simples". A única forma legítima de pular é via etapa 0 (classificada PEQUENA), que vai direto para a etapa 7.
-- **Não** remover assertion ou maquiar teste só para passar.
-- **Não** aprovar build quebrado.
-- Se o fluxo exige backend real indisponível, registrar divergência e propor mock/handler determinístico.
-- Se o fluxo exige serviço externo indisponível, registrar a divergência e propor mock/stub determinístico.
-- Respeitar a hierarquia de prioridade dos documentos de referência.
+- **Do not** create feature/page/component/endpoint outside the `flow_id` scope.
+- **Do not** modify files in `docs/ai/`.
+- **Do not** hardcode credentials, API keys, or secrets.
+- **Do not** skip steps within a full execution (1-6) even if they "seem simple." The only legitimate skip is via step 0 (classified SMALL), which goes directly to step 7.
+- **Do not** remove assertions or mask tests just to pass.
+- **Do not** approve a broken build.
+- If the flow requires an unavailable real backend, record the divergence and propose a deterministic mock/handler.
+- If the flow requires an unavailable external service, record the divergence and propose a deterministic mock/stub.
+- Respect the priority hierarchy of reference documents.

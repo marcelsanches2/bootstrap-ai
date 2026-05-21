@@ -1,16 +1,16 @@
 # Deployment Guide
 
-Deploy, env vars, build e rollback para Python backend.
+Deploy, env vars, build and rollback for Python backend.
 
 ## Environment variables
 
-### Configuração via pydantic-settings
+### Configuration via pydantic-settings
 
 ```python
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    # Banco
+    # Database
     database_url: str
     database_pool_size: int = 20
 
@@ -36,12 +36,12 @@ CORS_ORIGINS=["https://app.example.com"]
 LOG_LEVEL=INFO
 ```
 
-### Regras
+### Rules
 
-- Nunca commitar `.env` real.
-- Nunca usar valores default em produção.
-- Sempre fornecer `.env.example` atualizado.
-- Secrets via env vars, nunca no código.
+- Never commit real `.env`.
+- Never use default values in production.
+- Always provide an updated `.env.example`.
+- Secrets via env vars, never in code.
 
 ## Build
 
@@ -52,14 +52,14 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Instalar deps
+# Install deps
 COPY pyproject.toml .
 RUN pip install --no-cache-dir .
 
-# Copiar código
+# Copy code
 COPY . .
 
-# Coletar static (se aplicável)
+# Collect static (if applicable)
 # RUN python -m collectstatic
 
 # Non-root user
@@ -118,15 +118,15 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-### Checklist de deploy
+### Deploy checklist
 
-1. `alembic upgrade head` (com backup antes em produção).
-2. Reiniciar serviço.
-3. Verificar healthcheck.
-4. Verificar logs.
-5. Monitorar por 15 minutos.
+1. `alembic upgrade head` (with backup first in production).
+2. Restart service.
+3. Verify healthcheck.
+4. Verify logs.
+5. Monitor for 15 minutes.
 
-### Nginx (proxy reverso)
+### Nginx (reverse proxy)
 
 ```nginx
 server {
@@ -162,18 +162,18 @@ server {
 
 ### Procedure
 
-1. Detectar problema (alerta, erro, reclamação).
-2. `git revert <commit>` ou checkout da versão anterior.
+1. Detect problem (alert, error, complaint).
+2. `git revert <commit>` or checkout previous version.
 3. Redeploy.
-4. Se migration: `alembic downgrade -1` ANTES de redeployar código antigo.
-5. Verificar healthcheck.
-6. Post-mortem em `docs/incidents/`.
+4. If migration: `alembic downgrade -1` BEFORE redeploying old code.
+5. Verify healthcheck.
+6. Post-mortem in `docs/incidents/`.
 
-### Regra
+### Rule
 
-- Sempre ter migration com downgrade testado.
-- Nunca fazer rollback de migration sem backup.
-- Nunca reverter código sem reverter migration correspondente.
+- Always have migration with tested downgrade.
+- Never rollback migration without backup.
+- Never revert code without reverting corresponding migration.
 
 ## Graceful shutdown
 
@@ -190,28 +190,28 @@ async def shutdown():
     await app.state.db_engine.dispose()
 ```
 
-uvicorn já lida com SIGTERM graceful. Workers terminam requests em andamento.
+uvicorn already handles SIGTERM gracefully. Workers finish in-progress requests.
 
-## Regras duras
+## Hard rules
 
-- Nunca deployar sem migration com downgrade.
-- Nunca usar `DEBUG=true` em produção.
-- Nunca servir sem HTTPS.
-- Nunca hardcodar env vars.
-- Nunca deployar sem verificar healthcheck.
-- Sempre ter rollback testado antes de deploy.
+- Never deploy without migration with downgrade.
+- Never use `DEBUG=true` in production.
+- Never serve without HTTPS.
+- Never hardcode env vars.
+- Never deploy without verifying healthcheck.
+- Always have tested rollback before deploy.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Migration com downgrade**: Nunca deployar sem migration com downgrade testado.
-- **DEBUG=false em produção**: Nunca usar `DEBUG=true` em produção.
-- **HTTPS obrigatório**: Nunca servir API em produção sem HTTPS.
-- **Sem hardcode de env vars**: Nunca hardcodar variáveis de ambiente; usar Settings.
-- **Healthcheck pós-deploy**: Nunca deployar sem verificar healthcheck.
-- **Rollback testado**: Sempre ter rollback testado antes de deploy.
-- **Não commitar `.env`**: Nunca commitar `.env` real.
-- **Sem valores default em produção**: Nunca usar valores default para secrets em produção.
-- **Rollback de migration com backup**: Nunca fazer rollback de migration sem backup.
-- **Reverter código e migration juntos**: Nunca reverter código sem reverter migration correspondente.
+- **Migration with downgrade**: Never deploy without migration with tested downgrade.
+- **DEBUG=false in production**: Never use `DEBUG=true` in production.
+- **HTTPS mandatory**: Never serve API in production without HTTPS.
+- **No hardcode of env vars**: Never hardcode environment variables; use Settings.
+- **Post-deploy healthcheck**: Never deploy without verifying healthcheck.
+- **Tested rollback**: Always have tested rollback before deploy.
+- **Do not commit `.env`**: Never commit real `.env`.
+- **No default values in production**: Never use default values for secrets in production.
+- **Migration rollback with backup**: Never rollback migration without backup.
+- **Revert code and migration together**: Never revert code without reverting corresponding migration.

@@ -1,259 +1,378 @@
-# Guia de Feature React Web
+# React Web Feature Guide
 
-## Plano mínimo
+## Feature creation flow
 
-Toda feature deve definir:
+Follow these steps in order. Do not skip stages.
 
-- objetivo do usuário
-- rota/tela/componente afetado
-- fluxo principal
-- fluxos alternativos
-- estados loading/empty/error/success
-- dados consumidos/enviados (API)
-- acessibilidade (navegação, labels, foco)
-- responsividade (mobile, tablet, desktop)
-- testes (unitário, integração, E2E quando crítico)
-- impacto em performance/build
+## 1 — Define scope
 
----
+Before writing code:
 
-## Estrutura padrão de uma feature
+- Describe what the feature does in 1-2 paragraphs.
+- List expected screens/pages.
+- List API endpoints consumed.
+- List states to handle (loading, error, empty, success).
+- Check if there is similar code already implemented.
 
-```txt
-features/
-  orders/
-    components/
-      OrderCard.tsx
-      OrderList.tsx
-      OrderFilters.tsx
-    hooks/
-      use-orders.ts
-      use-create-order.ts
-    api/
-      orders-api.ts
-    pages/
-      OrdersPage.tsx
-    types/
-      order.types.ts
-    tests/
-      OrderCard.test.tsx
-      use-orders.test.ts
-```
+## 2 — Plan structure
 
-Nem toda feature precisa começar com todos os arquivos. Crie apenas o necessário para a tarefa atual.
-
----
-
-## Quando criar uma feature
-
-Crie uma feature quando ela representar uma área funcional clara do produto:
-
-- `auth` — login, registro, recuperação de senha
-- `dashboard` — painel principal com resumos
-- `orders` — listagem, criação, detalhe de pedidos
-- `profile` — edição de dados do usuário
-- `settings` — preferências e configurações
-- `notifications` — lista e detalhe de notificações
-
----
-
-## Quando não criar uma feature
-
-Não crie feature nova para:
-
-- componente compartilhado → `shared/components/`
-- hook genérico → `shared/hooks/`
-- utilitário → `shared/utils/`
-- configuração de API → `shared/api/`
-- constantes globais → `shared/config/`
-- tipos compartilhados → `shared/types/`
-
----
-
-## Fatia vertical
-
-Prefira entregar uma jornada pequena completa em vez de várias telas ocas.
+Create the necessary folders following the project architecture:
 
 ```txt
-rota → página → hook de dados → componente → estados UI → testes → build
+src/
+  features/
+    [feature-name]/
+      components/
+      hooks/
+      api/
+      types.ts
+      constants.ts
+      utils.ts
 ```
 
-Exemplo de fatia vertical para feature de pedidos:
+## 3 — Types and contracts
 
-1. Definir tipos (`order.types.ts`)
-2. Criar camada de API (`orders-api.ts`)
-3. Criar hook TanStack Query (`use-orders.ts`)
-4. Criar componentes visuais (`OrderCard`, `OrderList`)
-5. Criar página que compõe tudo (`OrdersPage.tsx`)
-6. Registrar rota
-7. Tratar loading/error/empty
-
----
-
-## Fluxo de dependência correto
-
-```txt
-Page
-  → Hook (TanStack Query)
-    → API layer (shared/api)
-      → HTTP client (axios/fetch)
-
-Page
-  → Component
-    → recebe props (dados + callbacks)
-
-Page
-  → Store (Zustand) apenas se estado global
-```
-
----
-
-## Exemplo completo: feature de listagem
-
-### Tipos
+Define types BEFORE implementing.
 
 ```ts
-// features/orders/types/order.types.ts
-export interface Order {
+// types.ts
+export interface Feature {
   id: string;
-  customer: string;
-  total: number;
-  status: 'pending' | 'completed' | 'cancelled';
+  name: string;
+  status: 'active' | 'inactive';
   createdAt: string;
+}
+
+export interface FeatureFilters {
+  search: string;
+  status?: Feature['status'];
+  page: number;
+  limit: number;
+}
+
+export interface FeatureListResponse {
+  data: Feature[];
+  total: number;
+  page: number;
+  totalPages: number;
 }
 ```
 
-### API
+## 4 — API layer
+
+Isolate HTTP calls. Validate external data with Zod.
 
 ```ts
-// features/orders/api/orders-api.ts
-import { api } from '@/shared/api/client';
-import type { Order } from '../types/order.types';
+// api/feature-api.ts
+import { z } from 'zod';
+import { apiClient } from '@/shared/api/client';
+import type { Feature, FeatureFilters, FeatureListResponse } from '../types';
 
-export const ordersApi = {
-  getAll: async (filters?: Record<string, string>): Promise<Order[]> => {
-    const { data } = await api.get('/orders', { params: filters });
-    return data;
+const FeatureSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  status: z.enum(['active', 'inactive']),
+  createdAt: z.string(),
+});
+
+const FeatureListSchema = z.object({
+  data: z.array(FeatureSchema),
+  total: z.number(),
+  page: z.number(),
+  totalPages: z.number(),
+});
+
+export const featureApi = {
+  getAll: async (filters: FeatureFilters): Promise<FeatureListResponse> => {
+    const { data } = await apiClient.get('/features', { params: filters });
+    return FeatureListSchema.parse(data);
+  },
+
+  getById: async (id: string): Promise<Feature> => {
+    const { data } = await apiClient.get(`/features/${id}`);
+    return FeatureSchema.parse(data);
+  },
+
+  create: async (input: CreateFeatureInput): Promise<Feature> => {
+    const { data } = await apiClient.post('/features', input);
+    return FeatureSchema.parse(data);
+  },
+
+  update: async (id: string, input: UpdateFeatureInput): Promise<Feature> => {
+    const { data } = await apiClient.patch(`/features/${id}`, input);
+    return FeatureSchema.parse(data);
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/features/${id}`);
   },
 };
 ```
 
-### Hook
+## 5 — Hooks (TanStack Query)
+
+Encapsulate data fetching and cache.
 
 ```ts
-// features/orders/hooks/use-orders.ts
-import { useQuery } from '@tanstack/react-query';
-import { ordersApi } from '../api/orders-api';
+// hooks/use-features.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { featureApi } from '../api/feature-api';
+import type { FeatureFilters, CreateFeatureInput } from '../types';
 
-export function useOrders(filters?: Record<string, string>) {
+export const featureKeys = {
+  all: ['features'] as const,
+  list: (filters: FeatureFilters) => [...featureKeys.all, filters] as const,
+  detail: (id: string) => [...featureKeys.all, id] as const,
+};
+
+export function useFeatures(filters: FeatureFilters) {
   return useQuery({
-    queryKey: ['orders', filters],
-    queryFn: () => ordersApi.getAll(filters),
+    queryKey: featureKeys.list(filters),
+    queryFn: () => featureApi.getAll(filters),
     staleTime: 30_000,
+  });
+}
+
+export function useFeature(id: string) {
+  return useQuery({
+    queryKey: featureKeys.detail(id),
+    queryFn: () => featureApi.getById(id),
+    enabled: !!id,
+  });
+}
+
+export function useCreateFeature() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: featureApi.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: featureKeys.all });
+    },
+  });
+}
+
+export function useDeleteFeature() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: featureApi.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: featureKeys.all });
+    },
   });
 }
 ```
 
-### Página com estados
+## 6 — Components
+
+Build visual components following the design system.
+
+### List component
 
 ```tsx
-// features/orders/pages/OrdersPage.tsx
-import { useOrders } from '../hooks/use-orders';
-import { OrderList } from '../components/OrderList';
+// components/FeatureList.tsx
+import { useFeatures } from '../hooks/use-features';
+import { FeatureCard } from './FeatureCard';
+import { FeatureListSkeleton } from './FeatureListSkeleton';
+import { EmptyState } from '@/shared/components/EmptyState';
+import { ErrorMessage } from '@/shared/components/ErrorMessage';
 
-export function OrdersPage() {
-  const { data: orders, isLoading, isError, refetch } = useOrders();
+interface FeatureListProps {
+  filters: FeatureFilters;
+}
 
-  if (isLoading) return <OrderListSkeleton />;
-  if (isError) return <ErrorState onRetry={refetch} />;
-  if (!orders?.length) return <EmptyState message="Nenhum pedido encontrado" />;
+export function FeatureList({ filters }: FeatureListProps) {
+  const { data, isLoading, isError, error, refetch } = useFeatures(filters);
 
-  return <OrderList orders={orders} />;
+  if (isLoading) return <FeatureListSkeleton />;
+  if (isError) return <ErrorMessage error={error} onRetry={refetch} />;
+  if (!data.data.length) return <EmptyState message="No features found" />;
+
+  return (
+    <div role="list" aria-label="Features list">
+      {data.data.map((feature) => (
+        <FeatureCard key={feature.id} feature={feature} />
+      ))}
+    </div>
+  );
 }
 ```
 
----
+### Form component
 
-## Critérios de aceite
+```tsx
+// components/FeatureForm.tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useCreateFeature } from '../hooks/use-features';
 
-Critérios devem ser verificáveis por teste ou inspeção objetiva:
+const schema = z.object({
+  name: z.string().min(2, 'Name is required'),
+  status: z.enum(['active', 'inactive']),
+});
 
-- botão desabilita durante submit
-- erro X aparece no campo Y
-- usuário sem permissão vê estado Z
-- lista vazia mostra estado vazio
-- loading é exibido durante operação assíncrona
-- navegação por teclado alcança ações principais
-- formulário não envia dados inválidos
+type FormData = z.infer<typeof schema>;
 
----
+export function FeatureForm() {
+  const { mutate: createFeature, isPending } = useCreateFeature();
 
-## Checklist antes de finalizar feature
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-- Feature respeita a estrutura de pastas?
-- Tipos estão explícitos e validados?
-- Hook usa TanStack Query (não useEffect + useState)?
-- Componente não chama API diretamente?
-- Estados loading/error/empty estão tratados?
-- Acessibilidade: labels, foco, navegação por teclado?
-- Responsividade verificada?
-- `npm run build` passa?
-- `npm run lint` passa?
+  const onSubmit = (data: FormData) => {
+    createFeature(data, { onSuccess: () => reset() });
+  };
 
----
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div>
+        <label htmlFor="name">Name</label>
+        <input
+          id="name"
+          {...register('name')}
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? 'name-error' : undefined}
+        />
+        {errors.name && (
+          <span id="name-error" role="alert">{errors.name.message}</span>
+        )}
+      </div>
 
-## Produto
+      <div>
+        <label htmlFor="status">Status</label>
+        <select id="status" {...register('status')}>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
 
-Quando comportamento estiver ambíguo, pare e exponha decisão pendente. Não invente regra de negócio no frontend.
+      <button type="submit" disabled={isPending}>
+        {isPending ? 'Creating...' : 'Create'}
+      </button>
+    </form>
+  );
+}
+```
 
-O frontend deve:
+## 7 — Page (container)
 
-- refletir o estado do backend
-- validar para UX (não para segurança)
-- exibir erros de forma clara
-- não criar regras que o backend não confirma
+Join components, hooks, and layout.
 
----
+```tsx
+// pages/FeaturePage.tsx
+import { useState } from 'react';
+import { FeatureList } from '../components/FeatureList';
+import { FeatureForm } from '../components/FeatureForm';
+import type { FeatureFilters } from '../types';
 
-## Regra de escopo
+export function FeaturePage() {
+  const [filters, setFilters] = useState<FeatureFilters>({
+    search: '',
+    page: 1,
+    limit: 20,
+  });
 
-- Se a tarefa pedir "estrutura", não implemente feature.
-- Se a tarefa pedir "feature", implemente somente aquela feature.
-- Se a tarefa pedir "design", não mexa em regra de negócio.
-- Se a tarefa pedir "refatoração", não adicione comportamento novo.
+  return (
+    <main>
+      <h1>Features</h1>
+      <FeatureForm />
+      <FeatureList filters={filters} />
+    </main>
+  );
+}
+```
 
----
+## 8 — Tests
+
+Test the main scenarios:
+
+- Render with data
+- Render empty
+- Render loading
+- Render error and retry
+- Create with success
+- Create with validation error
+
+```tsx
+// tests/FeatureList.test.tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { FeatureList } from '../components/FeatureList';
+
+describe('FeatureList', () => {
+  it('shows empty state when no features', async () => {
+    // Mock API returning empty list
+    render(<FeatureList filters={{ search: '', page: 1, limit: 20 }} />);
+
+    expect(await screen.findByText('No features found')).toBeInTheDocument();
+  });
+
+  it('shows error and retry button on failure', async () => {
+    // Mock API failure
+    render(<FeatureList filters={{ search: '', page: 1, limit: 20 }} />);
+
+    expect(await screen.findByText(/error/i)).toBeInTheDocument();
+    const retryButton = screen.getByRole('button', { name: /retry/i });
+    expect(retryButton).toBeInTheDocument();
+  });
+});
+```
+
+## 9 — Accessibility checklist
+
+Before delivery, check:
+
+- [ ] Semantic HTML (button, a, nav, main)
+- [ ] Labels on all inputs
+- [ ] Announceable errors with role="alert"
+- [ ] Keyboard navigation (Tab, Enter, Escape)
+- [ ] Focus visible and in logical order
+- [ ] Images with alt text
+- [ ] Color contrast above 4.5:1
+
+## 10 — Delivery checklist
+
+- [ ] TypeScript without `any` in public contracts
+- [ ] External data validated with Zod
+- [ ] All states handled (loading, error, empty, success)
+- [ ] TanStack Query for data fetching
+- [ ] Design system used (no hardcoded values)
+- [ ] Build passes (`npm run build`)
+- [ ] Lint without errors (`npm run lint`)
+- [ ] Basic tests pass
+- [ ] Accessibility verified
 
 ## Anti-patterns
 
-- **Feature sem estados de UI:** loading, error e empty não são opcionais.
-- **Hook custom com useEffect para fetch:** use TanStack Query.
-- **Componente que faz tudo:** separe página, lista, card, filtros.
-- **Tipos duplicados entre features:** extraia para `shared/types/` ou `features/<name>/types/`.
-- **Feature que importa de outra feature diretamente:** use `shared/` como ponte.
-- **Teste que testa implementação (métodos internos):** teste comportamento e output.
-- **Commit de feature sem build passing:** rode `npm run build` antes.
-- **Feature com estado global desnecessário:** se o dado é da página, use estado local ou TanStack Query.
+- **Start coding without defining types**: types first, implementation after.
+- **HTTP call in component**: use hook + TanStack Query.
+- **Component handling fetch + logic + layout**: split responsibilities.
+- **Skip states**: loading, error, and empty are mandatory.
+- **Use any for convenience**: validate with Zod or type explicitly.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any below.
 
-### Feature obrigatórios
-- **Loading/error/empty não são opcionais**: toda feature deve tratar esses estados de UI.
-- **Hook de fetch usa TanStack Query**: nunca `useEffect` + `useState` para data fetching.
-- **Componente não chama API diretamente**: use hook + camada de API.
-- **Build deve passar antes de commit de feature**: rode `npm run build` antes.
+### Planning
+- **Types before implementation**: define types/contracts BEFORE writing logic.
+- **Check if similar code already exists**: do not duplicate features without verification.
 
-### Escopo
-- **Não inventar regra de negócio no frontend**: se ambíguo, pare e exponha decisão pendente.
-- **Frontend não cria regras que o backend não confirma**: refletir estado do backend, não inventar.
-- **Tarefa de estrutura não vira feature**: respeitar o escopo pedido.
-- **Tarefa de refatoração não adiciona comportamento novo**: só refatorar.
+### API and data
+- **Validate external data with Zod**: API responses must be validated at the boundary layer.
+- **HTTP call in component is prohibited**: use hook + TanStack Query.
 
-### Feature cross-boundaries
-- **Feature não importa de outra feature diretamente**: use `shared/` como ponte.
-- **Tipos duplicados entre features**: extrair para `shared/types/`.
+### States and rendering
+- **Handle all states**: loading, error, empty, and success are mandatory on every feature.
+- **Do not mix fetch + logic + layout in one component**: split responsibilities.
 
-### Testes
-- **Testar comportamento e output, não implementação**: não testar métodos internos.
+### Quality
+- **TypeScript without `any` in public contracts**: type explicitly or validate with Zod.
+- **Build and lint must pass**: `npm run build` and `npm run lint` without errors.
+- **Accessibility verified before delivery**: semantic HTML, labels, keyboard navigation, contrast.

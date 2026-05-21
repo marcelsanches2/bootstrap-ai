@@ -1,60 +1,60 @@
-# Role: Observabilidade
+# Role: Observability
 
-## Sua contribuição
-Gera a seção "Observabilidade" do plano, definindo logging estruturado, métricas, healthcheck, tracing e rastreabilidade.
+## Your contribution
+Generates the "Observability" section of the plan, defining structured logging, metrics, healthcheck, tracing, and traceability.
 
-## Referência
+## Reference
 - docs/ai/OBSERVABILITY_GUIDE.md
 
-## O que incluir
-- **Logging estruturado**: eventos de negócio logados com pino structured logging. Erros logados com contexto (orderId, userId, requestId). Nenhum dado sensível nos logs.
-- **Request ID**: propagado em toda cadeia (X-Request-ID). Correlação entre frontend e backend.
-- **Healthcheck**: atualizado com novas dependências. Endpoint `/health` reflete status real.
-- **Métricas de negócio**: quando aplicável, métricas que importam para o domínio (conversion, latency, error rate).
-- **Latência**: monitorada em endpoints novos. Alerta em degradação.
-- **External calls**: com timeout e log de falha. Timeout explícito, retry com backoff, circuit breaker quando necessário.
-- **Graceful shutdown**: tratado para não perder dados em trânsito.
+## What to include
+- **Structured logging**: business events logged with pino structured logging. Errors logged with context (orderId, userId, requestId). No sensitive data in logs.
+- **Request ID**: propagated across the entire chain (X-Request-ID). Correlation between frontend and backend.
+- **Healthcheck**: updated with new dependencies. `/health` endpoint reflects real status.
+- **Business metrics**: when applicable, metrics that matter to the domain (conversion, latency, error rate).
+- **Latency**: monitored on new endpoints. Alert on degradation.
+- **External calls**: with timeout and failure logging. Explicit timeout, retry with backoff, circuit breaker when needed.
+- **Graceful shutdown**: handled to not lose in-transit data.
 
-## Regras
-- Dado sensível em log é bloqueante.
-- Healthcheck faltando com dependência nova é bloqueante.
-- External call sem timeout é pendência.
-- Nenhum dado sensível em log (token, senha, Authorization header, cookie, PII sem mascaramento).
-- Se a task não afeta runtime/observabilidade: escreva "Não se aplica" e explique por quê.
+## Rules
+- Sensitive data in logs is blocking.
+- Missing healthcheck with new dependency is blocking.
+- External call without timeout is a pending item.
+- No sensitive data in logs (token, password, Authorization header, cookie, PII without masking).
+- If the task does not affect runtime/observability: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Observabilidade
+## Observability
 
-### Logging estruturado
-| Evento | Campos | Nível | Arquivo |
+### Structured logging
+| Event | Fields | Level | File |
 |---|---|---|---|
-| {evento de negócio} | {orderId, userId, ...} | {info/warn/error} | {onde loga} |
+| {business event} | {orderId, userId, ...} | {info/warn/error} | {where it logs} |
 
 ### Request ID
-{como é gerado, propagado e correlacionado}
+{how it is generated, propagated, and correlated}
 
 ### Healthcheck
-| Dependência | Verificação | Timeout |
+| Dependency | Check | Timeout |
 |---|---|---|
-| {serviço/banco} | {query/ping/tcp} | {ms} |
+| {service/database} | {query/ping/tcp} | {ms} |
 
-### Métricas
-| Métrica | Tipo | Dimensões | Alerta |
+### Metrics
+| Metric | Type | Dimensions | Alert |
 |---|---|---|---|
-| {nome} | {counter/histogram/gauge} | {labels} | {quando dispara} |
+| {name} | {counter/histogram/gauge} | {labels} | {when it fires} |
 
-### Latência
-| Endpoint | P95 esperado | P99 esperado | Como mede |
+### Latency
+| Endpoint | Expected P95 | Expected P99 | How to measure |
 |---|---|---|---|
-| {VERB /path} | {ms} | {ms} | {ferramenta} |
+| {VERB /path} | {ms} | {ms} | {tool} |
 
 ### External calls
-| Serviço | Timeout | Retry | Circuit breaker | Log de falha |
+| Service | Timeout | Retry | Circuit breaker | Failure log |
 |---|---|---|---|---|
-| {nome} | {ms} | {tentativas + backoff} | {sim/não} | {campos} |
+| {name} | {ms} | {attempts + backoff} | {yes/no} | {fields} |
 
 ### Graceful shutdown
-{como sinais SIGTERM/SIGINT são tratados}
+{how SIGTERM/SIGINT signals are handled}
 ```

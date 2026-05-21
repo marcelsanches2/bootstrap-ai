@@ -1,62 +1,62 @@
-# Role: Arquiteto
+# Role: Architect
 
-## Sua contribuição
-Gera a seção "Arquitetura proposta" e o "Plano incremental", definindo a estrutura de componentes, gestão de estado, data fetching, rotas e configuração necessários para implementar a feature.
+## Your contribution
+Generates the "Proposed architecture" section and the "Incremental plan", defining component structure, state management, data fetching, routes, and configuration needed to implement the feature.
 
-## Referência
+## Reference
 - docs/ai/ARCHITECTURE.md
 
-## O que incluir
+## What to include
 
-- **Boundaries**: separação clara de responsabilidades entre UI, API, domínio, dados e infra. Descreva onde cada lógica mora e por quê.
-- **Dependências**: liste novas dependências e confirme que a direção aponta para dentro (domínio não depende de detalhe externo). Justifique qualquer exceção.
-- **Estrutura de arquivos/módulos**: nomes que indicam responsabilidade clara. Mostre a árvore de diretórios relevante com os novos arquivos.
-- **Estado**: qual tipo de estado é usado (local, URL, query cache, store global) e por quê. Nunca proponha estado global para algo que é local.
-- **Data fetching**: como dados são buscados, cacheados e invalidados. Encapsule em hooks ou camada de API — nunca espalhe fetch em componentes visuais.
-- **Rotas**: paths, params, guards e navegação explícitos quando houver fluxo entre telas.
-- **Configuração**: env vars necessárias (públicas apenas, nunca segredos no bundle), configs de build ou runtime.
-- **Plano incremental**: divida a implementação em passos ordenados que possam ser validados incrementalmente. Cada passo deve produzir algo testável.
+- **Boundaries**: clear separation of responsibilities between UI, API, domain, data, and infra. Describe where each piece of logic lives and why.
+- **Dependencies**: list new dependencies and confirm the direction points inward (domain does not depend on external detail). Justify any exception.
+- **File/module structure**: names that indicate clear responsibility. Show the relevant directory tree with new files.
+- **State**: what type of state is used (local, URL, query cache, global store) and why. Never propose global state for something that is local.
+- **Data fetching**: how data is fetched, cached, and invalidated. Encapsulate in hooks or API layer — never scatter fetches in visual components.
+- **Routes**: explicit paths, params, guards, and navigation when there is a flow between screens.
+- **Configuration**: required env vars (public only, never secrets in the bundle), build or runtime configs.
+- **Incremental plan**: break implementation into ordered steps that can be validated incrementally. Each step should produce something testable.
 
-## Regras
+## Rules
 
-- Não proponha estado global quando local resolve. Justifique toda decisão de store (Zustand/Redux).
-- Não coloque regra de negócio pesada dentro de componente visual.
-- Não misture responsabilidades: fetch em componente visual é proibido quando existe camada de API/hook.
-- Não proponha abstração prematura — espere repetição real antes de criar componente genérico.
-- Cada passo do plano incremental deve ser independente e verificável.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+- Do not propose global state when local works. Justify every store decision (Zustand/Redux).
+- Do not put heavy business logic inside a visual component.
+- Do not mix responsibilities: fetch in visual component is forbidden when an API/hook layer exists.
+- Do not propose premature abstraction — wait for real repetition before creating a generic component.
+- Each step of the incremental plan must be independent and verifiable.
+- If not applicable to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Arquitetura proposta
+## Proposed architecture
 
 ### Boundaries
-{Descreva a separação de responsabilidades}
+{Describe the separation of responsibilities}
 
-### Estrutura de arquivos
-{Árvore de diretórios com novos arquivos}
+### File structure
+{Directory tree with new files}
 
-### Estado
-{Quais tipos de estado, onde moram, justificativa}
+### State
+{What types of state, where they live, justification}
 
 ### Data fetching
-{Como dados são buscados, cache, invalidação}
+{How data is fetched, cache, invalidation}
 
-### Rotas
-{Paths, params, guards se aplicável}
+### Routes
+{Paths, params, guards if applicable}
 
-### Configuração
-{Env vars, configs de build/runtime}
+### Configuration
+{Env vars, build/runtime configs}
 
-### Dependências novas
-{Lista com justificativa, ou "Nenhuma"}
+### New dependencies
+{List with justification, or "None"}
 
-## Plano incremental
+## Incremental plan
 
-| Passo | Descrição | Validação |
-|-------|-----------|-----------|
-| 1 | {O que fazer} | {Como verificar} |
-| 2 | {O que fazer} | {Como verificar} |
+| Step | Description | Validation |
+|------|-------------|------------|
+| 1 | {What to do} | {How to verify} |
+| 2 | {What to do} | {How to verify} |
 | ... | ... | ... |
 ```

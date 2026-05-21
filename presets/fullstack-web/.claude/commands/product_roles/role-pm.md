@@ -1,79 +1,79 @@
 # Role: PM
 
-## Sua contribuição
-Gera as seções "Objetivo", "Escopo", "Fora de escopo" e "Critérios de aceite" do plano, garantindo que valor, jornada do usuário e limites estejam claros.
+## Your contribution
+Generates the "Objective", "Scope", "Out of scope", and "Acceptance criteria" sections of the plan, ensuring value, user journey, and boundaries are clear.
 
-## Referência
+## Reference
 - docs/ai/FEATURE_GUIDE.md
 
-## O que incluir
-- **Objetivo**: quem é o usuário, qual problema resolve, qual resultado esperado — em linguagem de negócio, não técnica.
-- **Fluxo principal**: jornada do usuário no caminho feliz (passo a passo).
-- **Fluxos alternativos**: cancelamento, sem permissão, retry, caminhos de desvio relevantes.
-- **Error states**: tratamento de erro na interface E no backend (duplicado, insuficiente, timeout, 4xx/5xx).
-- **Estados loading/vazio**: UX definida para estados assíncronos e listas vazias.
-- **Critérios de aceite**: objetivos, testáveis, sem ambiguidade entre dev e PM. Cada critério deve ser verificável.
-- **Dados de teste / massa**: dados necessários para validar a feature.
-- **Breaking changes**: mudanças que quebram contrato existente identificadas e comunicadas.
-- **Migration impact**: impacto de migrations em features existentes e UX.
-- **Impacto em features existentes**: efeitos colaterais em features já entregues.
-- **Escopo**: o que entra nesta entrega.
-- **Fora de escopo**: o que explicitamente NÃO entra nesta entrega.
+## What to include
+- **Objective**: who the user is, what problem it solves, what the expected outcome is — in business language, not technical.
+- **Main flow**: user journey on the happy path (step by step).
+- **Alternative flows**: cancellation, no permission, retry, relevant deviation paths.
+- **Error states**: error handling in the interface AND backend (duplicate, insufficient, timeout, 4xx/5xx).
+- **Loading/empty states**: UX defined for async states and empty lists.
+- **Acceptance criteria**: objective, testable, no ambiguity between dev and PM. Each criterion must be verifiable.
+- **Test data / fixtures**: data needed to validate the feature.
+- **Breaking changes**: changes that break existing contract identified and communicated.
+- **Migration impact**: impact of migrations on existing features and UX.
+- **Impact on existing features**: side effects on already-delivered features.
+- **Scope**: what goes in this delivery.
+- **Out of scope**: what explicitly does NOT go in this delivery.
 
-## Regras
-- Fluxo principal não descrito é bloqueante.
-- Critério de aceite ambíguo ou subjetivo é bloqueante.
-- Breaking change não documentado é bloqueante.
-- Se a task é puramente infra/exploratória sem jornada de usuário: adapte os itens que fazem sentido e marque o resto como "Não se aplica" com justificativa.
+## Rules
+- Main flow not described is blocking.
+- Ambiguous or subjective acceptance criterion is blocking.
+- Undocumented breaking change is blocking.
+- If the task is purely infra/exploratory with no user journey: adapt the items that make sense and mark the rest as "Does not apply" with justification.
 
-## Formato de saída
+## Output format
 
 ```md
-## Objetivo
-{1-3 frases: usuário, problema, resultado esperado}
+## Objective
+{1-3 sentences: user, problem, expected outcome}
 
-## Escopo
-- {item que entra}
-- {item que entra}
+## Scope
+- {included item}
+- {included item}
 - ...
 
-## Fora de escopo
-- {item que não entra}
-- {item que não entra}
+## Out of scope
+- {excluded item}
+- {excluded item}
 
-## Fluxo principal
-1. {passo do usuário}
-2. {passo do usuário}
+## Main flow
+1. {user step}
+2. {user step}
 3. ...
 
-## Fluxos alternativos
-- {cenário}: {o que acontece}
+## Alternative flows
+- {scenario}: {what happens}
 
 ## Error states
-| Cenário | Frontend | Backend |
+| Scenario | Frontend | Backend |
 |---|---|---|
-| {erro} | {UI de erro} | {status + action} |
+| {error} | {error UI} | {status + action} |
 
-## Estados loading/vazio
-| Estado | UI |
+## Loading/empty states
+| State | UI |
 |---|---|
-| loading | {o que o usuário vê} |
-| vazio | {o que o usuário vê} |
+| loading | {what the user sees} |
+| empty | {what the user sees} |
 
-## Critérios de aceite
-- [ ] {critério verificável 1}
-- [ ] {critério verificável 2}
+## Acceptance criteria
+- [ ] {verifiable criterion 1}
+- [ ] {verifiable criterion 2}
 - ...
 
-## Dados de teste
-{dados necessários ou seed}
+## Test data
+{required data or seed}
 
 ## Breaking changes
-{lista ou "Nenhuma"}
+{list or "None"}
 
 ## Migration impact
-{impacto ou "Nenhuma migration"}
+{impact or "No migration"}
 
-## Impacto em features existentes
-{efeitos colaterais ou "Nenhum"}
+## Impact on existing features
+{side effects or "None"}
 ```

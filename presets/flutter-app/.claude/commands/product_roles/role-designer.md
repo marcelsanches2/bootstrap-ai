@@ -1,79 +1,79 @@
 # Role: Designer / UX
 
-## Sua contribuição
+## Your contribution
 
-Gera a seção "UI / Componentes / Design" do plano, definindo tokens, componentes visuais, estados visuais, responsividade e acessibilidade.
+Generates the "UI / Components / Design" section of the plan, defining tokens, visual components, visual states, responsiveness and accessibility.
 
-## Referência
+## Reference
 
 - docs/ai/DESIGN_SYSTEM.md
 - docs/ai/FEATURE_GUIDE.md
 
-## O que incluir
+## What to include
 
-- **Design system tokens usados** — listar cores, tipografia, espaçamento, bordas, elevação e quaisquer tokens do tema que a task utiliza. Referenciar o design system existente, não inventar valores.
-- **Componentes visuais necessários** — listar cada widget/componente que será criado ou reutilizado, com descrição visual clara (hierarquia, alinhamento, espaçamento, conteúdo).
-- **Estados visuais de cada componente** — para cada componente interativo, definir loading, empty, error, success e disabled states. Incluir transições visuais quando relevante.
-- **Responsividade** — descrever comportamento em larguras principais (phone, tablet), orientações (portrait, landscape) e tamanhos de tela. Usar LayoutBuilder, MediaQuery ou convenção do projeto.
-- **Acessibilidade visual** — declarar Semantics labels, contraste mínimo (WCAG AA), tamanho mínimo de touch target (48dp), ordem de leitura e hints de acessibilidade para cada componente interativo.
+- **Design system tokens used** — list colors, typography, spacing, borders, elevation and any theme tokens that the task uses. Reference the existing design system, do not invent values.
+- **Visual components needed** — list each widget/component that will be created or reused, with a clear visual description (hierarchy, alignment, spacing, content).
+- **Visual states of each component** — for each interactive component, define loading, empty, error, success and disabled states. Include visual transitions when relevant.
+- **Responsiveness** — describe behavior at main widths (phone, tablet), orientations (portrait, landscape) and screen sizes. Use LayoutBuilder, MediaQuery or project convention.
+- **Visual accessibility** — declare Semantics labels, minimum contrast (WCAG AA), minimum touch target size (48dp), reading order and accessibility hints for each interactive component.
 
-## Regras
+## Rules
 
-- Usar apenas tokens e componentes do design system existente. Se precisar de token novo, justificar e propor o valor.
-- Nenhum valor hardcoded de cor, espaçamento ou tipografia — sempre referenciar o tema.
-- Todo componente interativo deve ter pelo menos loading, error e default states definidos.
-- Touch targets mínimos de 48dp em todos os elementos clicáveis.
-- Contraste mínimo de 4.5:1 para texto normal, 3:1 para texto grande (WCAG AA).
-- Se a task não tem UI nova: escreva "Não se aplica" e explique por quê.
+- Use only existing design system tokens and components. If a new token is needed, justify and propose the value.
+- No hardcoded color, spacing or typography values — always reference the theme.
+- Every interactive component must have at least loading, error and default states defined.
+- Minimum touch targets of 48dp on all clickable elements.
+- Minimum contrast of 4.5:1 for normal text, 3:1 for large text (WCAG AA).
+- If the task has no new UI: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## UI / Componentes / Design
+## UI / Components / Design
 
-### Tokens utilizados
+### Tokens used
 
-| Token | Valor | Uso |
+| Token | Value | Usage |
 |---|---|---|
-| {corToken} | {valor} | {onde usa} |
-| {typographyToken} | {valor} | {onde usa} |
-| {spacingToken} | {valor} | {onde usa} |
+| {colorToken} | {value} | {where used} |
+| {typographyToken} | {value} | {where used} |
+| {spacingToken} | {value} | {where used} |
 
-### Componentes
+### Components
 
-#### {NomeDoComponente}
+#### {ComponentName}
 
-- **Descrição**: {composição visual, hierarquia, alinhamento}
-- **Reutiliza**: {componente existente do DS ou "novo"}
-- **Tokens**: {quais tokens usa}
+- **Description**: {visual composition, hierarchy, alignment}
+- **Reuses**: {existing DS component or "new"}
+- **Tokens**: {which tokens it uses}
 
-**Estados visuais:**
+**Visual states:**
 
-| Estado | Visual | Interação |
+| State | Visual | Interaction |
 |---|---|---|
-| Default | {descrição} | {comportamento} |
-| Loading | {descrição} | {comportamento} |
-| Empty | {descrição} | {comportamento} |
-| Error | {descrição} | {comportamento} |
-| Disabled | {descrição} | {comportamento} |
+| Default | {description} | {behavior} |
+| Loading | {description} | {behavior} |
+| Empty | {description} | {behavior} |
+| Error | {description} | {behavior} |
+| Disabled | {description} | {behavior} |
 
-#### {NomeDoComponente2}
+#### {ComponentName2}
 
-- **Descrição**: ...
+- **Description**: ...
 - ...
 
-### Responsividade
+### Responsiveness
 
-| Breakpoint | Comportamento |
+| Breakpoint | Behavior |
 |---|---|
-| Phone (< 600dp) | {layout e adaptações} |
-| Tablet (600dp–840dp) | {layout e adaptações} |
-| Landscape | {adaptações se diferente do portrait} |
+| Phone (< 600dp) | {layout and adaptations} |
+| Tablet (600dp–840dp) | {layout and adaptations} |
+| Landscape | {adaptations if different from portrait} |
 
-### Acessibilidade visual
+### Visual accessibility
 
-| Componente | Semantics label | Touch target | Contraste |
+| Component | Semantics label | Touch target | Contrast |
 |---|---|---|---|
-| {componente} | {label descritivo} | {≥ 48dp} | {≥ 4.5:1} |
-| {componente} | ... | ... | ... |
+| {component} | {descriptive label} | {≥ 48dp} | {≥ 4.5:1} |
+| {component} | ... | ... | ... |
 ```

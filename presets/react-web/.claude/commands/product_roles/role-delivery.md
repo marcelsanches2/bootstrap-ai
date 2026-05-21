@@ -1,55 +1,55 @@
 # Role: Delivery Web
 
-## Sua contribuição
-Gera a seção "Deploy e entrega" do plano, cobrindo variáveis de ambiente, CI/CD, build de produção, cache e estratégia de rollback.
+## Your contribution
+Generates the "Deploy and delivery" section of the plan, covering environment variables, CI/CD, production build, cache, and rollback strategy.
 
-## Referência
+## Reference
 - docs/ai/DEPLOYMENT_GUIDE.md
 
-## O que incluir
+## What to include
 
-- **Variáveis de ambiente**: liste todas as env vars necessárias (apenas públicas para frontend). Documente nome, tipo, valor padrão e onde são usadas. Nunca inclua segredos.
-- **CI/CD**: pipeline de integração e entrega contínua — quais comandos rodam (lint, typecheck, test, build), em qual ordem, e o que dispara o deploy.
-- **Build de produção**: comando de build, diretório de saída, comando de start (se SSR). Confirme que o build passa antes de deploy.
-- **Cache/CDN**: estratégia de cache para assets estáticos (hash no nome) e HTML/entrypoint. Garanta que atualização não serve versão incompatível.
-- **Rollback**: como reverter para build anterior. Verifique compatibilidade com API e cache ao voltar versão.
-- **Hosting**: fallback SPA (todas rotas → index.html), headers relevantes (CSP, CORS), TLS quando aplicável.
+- **Environment variables**: list all required env vars (public only for frontend). Document name, type, default value, and where they are used. Never include secrets.
+- **CI/CD**: continuous integration and delivery pipeline — which commands run (lint, typecheck, test, build), in what order, and what triggers the deploy.
+- **Production build**: build command, output directory, start command (if SSR). Confirm build passes before deploy.
+- **Cache/CDN**: cache strategy for static assets (hash in name) and HTML/entrypoint. Ensure update does not serve incompatible version.
+- **Rollback**: how to revert to previous build. Check API and cache compatibility when rolling back.
+- **Hosting**: SPA fallback (all routes → index.html), relevant headers (CSP, CORS), TLS when applicable.
 
-## Regras
+## Rules
 
-- Nunca proponha commit de `.env` real — apenas `.env.example` com valores de exemplo.
-- Todo segredo (API key, token) deve vir de env var injetada em runtime, nunca hardcoded no bundle.
-- Build de produção deve ser validado como passo explícito do pipeline.
-- Sempre defina estratégia de rollback — não assuma que deploy nunca falha.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+- Never propose committing real `.env` — only `.env.example` with example values.
+- Every secret (API key, token) must come from env var injected at runtime, never hardcoded in the bundle.
+- Production build must be validated as an explicit pipeline step.
+- Always define a rollback strategy — do not assume deploy never fails.
+- If not applicable to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Deploy e entrega
+## Deploy and delivery
 
-### Variáveis de ambiente
-| Nome | Tipo | Padrão | Uso |
-|------|------|--------|-----|
-| VITE_{NAME} | string | {valor} | {onde é usada} |
+### Environment variables
+| Name | Type | Default | Usage |
+|------|------|---------|-------|
+| VITE_{NAME} | string | {value} | {where it's used} |
 
 ### CI/CD
-{Pipeline: comandos, ordem, triggers}
+{Pipeline: commands, order, triggers}
 
-### Build de produção
-- **Build**: `{comando}`
-- **Output**: `{diretório}`
-- **Start** (se SSR): `{comando}`
+### Production build
+- **Build**: `{command}`
+- **Output**: `{directory}`
+- **Start** (if SSR): `{command}`
 
 ### Cache / CDN
-| Recurso | Estratégia | Headers |
-|---------|-----------|---------|
-| Assets (hash) | {longa duração} | Cache-Control: ... |
-| HTML/entrypoint | {curta duração / no-cache} | Cache-Control: ... |
+| Resource | Strategy | Headers |
+|----------|----------|---------|
+| Assets (hash) | {long duration} | Cache-Control: ... |
+| HTML/entrypoint | {short duration / no-cache} | Cache-Control: ... |
 
 ### Rollback
-{Como reverter + considerações de compatibilidade API/cache}
+{How to revert + API/cache compatibility considerations}
 
 ### Hosting
-{Fallback SPA, headers, TLS — se aplicável}
+{SPA fallback, headers, TLS — if applicable}
 ```

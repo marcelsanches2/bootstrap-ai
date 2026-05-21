@@ -1,61 +1,61 @@
-# Role: Banco de Dados
+# Role: Database
 
-## Sua contribuição
-Gera a seção "Banco de dados" do plano, definindo schema, migrations, índices, queries e integridade de dados.
+## Your contribution
+Generates the "Database" section of the plan, defining schema, migrations, indexes, queries, and data integrity.
 
-## Referência
+## Reference
 - docs/ai/DATABASE_GUIDE.md
 - docs/ai/SCALABILITY_GUIDE.md
 
-## O que incluir
-- **Migration**: migration criada e testada (`prisma migrate dev`/`deploy`). Comando de rollback/downgrade documentado.
-- **Schema**: modelos novos/alterados com campos, tipos e constraints. Tipos corretos (Decimal para dinheiro, DateTime com timezone).
-- **Índices**: `@@index` em toda foreign key. Índice em colunas de busca frequente. Justificativa para cada índice.
-- **Queries**: select explícito (nunca `SELECT *`), N+1 evitado com `include`/`select`, paginação em queries de lista.
-- **Transações**: `$transaction` em operações multi-step. Interactive transaction para operações concorrentes (saldo, estoque).
-- **Dados sensíveis**: nunca em texto plano (hash, encrypt).
-- **Seed**: dados iniciais necessários.
+## What to include
+- **Migration**: migration created and tested (`prisma migrate dev`/`deploy`). Rollback/downgrade command documented.
+- **Schema**: new/altered models with fields, types, and constraints. Correct types (Decimal for money, DateTime with timezone).
+- **Indexes**: `@@index` on every foreign key. Index on frequently searched columns. Justification for each index.
+- **Queries**: explicit select (never `SELECT *`), N+1 avoided with `include`/`select`, pagination on list queries.
+- **Transactions**: `$transaction` for multi-step operations. Interactive transaction for concurrent operations (balance, inventory).
+- **Sensitive data**: never in plain text (hash, encrypt).
+- **Seed**: initial data needed.
 
-## Regras
-- Migration sem rollback é bloqueante.
-- N+1 em listagem é bloqueante.
-- Saldo/estoque sem lock/transaction é bloqueante.
-- Dado sensível em texto plano é bloqueante.
-- Nunca alterar schema sem migration e rollback documentado.
-- Se a task não envolve banco de dados: escreva "Não se aplica" e explique por quê.
+## Rules
+- Migration without rollback is blocking.
+- N+1 in listing is blocking.
+- Balance/inventory without lock/transaction is blocking.
+- Sensitive data in plain text is blocking.
+- Never alter schema without migration and documented rollback.
+- If the task does not involve the database: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Banco de dados
+## Database
 
 ### Schema
-| Modelo | Campo | Tipo | Constraint | Observação |
+| Model | Field | Type | Constraint | Notes |
 |---|---|---|---|---|
-| {Model} | {campo} | {tipo} | {unique/required/default} | {notas} |
+| {Model} | {field} | {type} | {unique/required/default} | {notes} |
 
-### Índices
-| Modelo | Campos | Tipo | Justificativa |
+### Indexes
+| Model | Fields | Type | Justification |
 |---|---|---|---|
-| {Model} | {campos} | {unique/index} | {por quê} |
+| {Model} | {fields} | {unique/index} | {why} |
 
 ### Migration
-| Nome | Comando up | Comando down | Testada |
+| Name | Up command | Down command | Tested |
 |---|---|---|---|
-| {nome} | {prisma migrate deploy} | {prisma migrate resolve --rolled-back} | {sim/não} |
+| {name} | {prisma migrate deploy} | {prisma migrate resolve --rolled-back} | {yes/no} |
 
-### Queries críticas
-| Operação | Query | Otimização |
+### Critical queries
+| Operation | Query | Optimization |
 |---|---|---|
-| {descrição} | {include/select/where} | {índice/paginação/...} |
+| {description} | {include/select/where} | {index/pagination/...} |
 
-### Transações
-| Operação | Tipo | Escopo |
+### Transactions
+| Operation | Type | Scope |
 |---|---|---|
-| {descrição} | {batch/interactive} | {tabelas envolvidas} |
+| {description} | {batch/interactive} | {tables involved} |
 
 ### Seed
-| Dado | Arquivo | Condição |
+| Data | File | Condition |
 |---|---|---|
-| {dado inicial} | {seed.ts} | {quando executa} |
+| {initial data} | {seed.ts} | {when it runs} |
 ```

@@ -1,79 +1,79 @@
-# Role: Escala
+# Role: Scale
 
-## Sua contribuição
-Gera a seção "Escala" do plano, definindo estratégias de concorrência, filas, cache, pool, limites e validação de carga para suportar produção real.
+## Your contribution
+Generates the "Scale" section of the plan, defining concurrency, queues, cache, pool, limits, and load validation strategies to support real production.
 
-## Referência
+## Reference
 - docs/ai/SCALABILITY_GUIDE.md
 - docs/ai/DATABASE_GUIDE.md
 - docs/ai/OBSERVABILITY_GUIDE.md
 
-## O que incluir
-- **Volume e caminho quente**: identifique endpoints, jobs, queries ou telas que podem receber alto volume. Justifique quando não se aplica.
-- **Banco e queries**: paginação, filtros, ordenação, N+1, índices, constraints e custo de queries críticas conforme volume esperado.
-- **Concorrência e idempotência**: read-modify-write, retries, webhooks, jobs paralelos, criação duplicada, saldo/estoque/crédito. Mitigação por transação, constraint, lock ou idempotency key.
-- **Limites e backpressure**: payload máximo, paginação, rate limit, pool de conexões, timeouts, fila, workers e consumo de memória. Sem consumo ilimitado de recurso.
-- **Cache e invalidação**: chave, TTL, escopo, invalidação, stale data e métricas. Cache sem invalidação é débito técnico.
-- **Filas e jobs**: idempotência, retry/backoff, dead-letter, concorrência máxima, backlog e logging por job id.
-- **Integrações externas**: timeout, retry seguro, degradação, circuit breaker, métrica e teste de falha.
-- **Observabilidade de escala**: latência p95/p99, taxa de erro, throughput, pool/conexões, backlog e logs com request/job id.
-- **Validação de performance/carga**: teste concorrente, teste de query com volume, benchmark ou smoke de carga proporcional ao risco.
+## What to include
+- **Volume and hot path**: identify endpoints, jobs, queries, or screens that may receive high volume. Justify when it doesn't apply.
+- **Database and queries**: pagination, filters, sorting, N+1, indexes, constraints, and cost of critical queries per expected volume.
+- **Concurrency and idempotency**: read-modify-write, retries, webhooks, parallel jobs, duplicate creation, balance/inventory/credit. Mitigation via transaction, constraint, lock, or idempotency key.
+- **Limits and backpressure**: max payload, pagination, rate limit, connection pool, timeouts, queues, workers, and memory consumption. No unlimited resource consumption.
+- **Cache and invalidation**: key, TTL, scope, invalidation, stale data, and metrics. Cache without invalidation is technical debt.
+- **Queues and jobs**: idempotency, retry/backoff, dead-letter, max concurrency, backlog, and logging by job id.
+- **External integrations**: timeout, safe retry, degradation, circuit breaker, metrics, and failure testing.
+- **Scale observability**: p95/p99 latency, error rate, throughput, pool/connections, backlog, and logs with request/job id.
+- **Performance/load validation**: concurrent test, query test with volume, benchmark, or load smoke test proportional to risk.
 
-## Regras
-- Corrupção de dados por concorrência é bloqueante.
-- Duplicidade financeira/operacional é bloqueante.
-- Incidente sem rollback claro é bloqueante.
-- Consumo ilimitado de recurso (CPU, memória, conexão, fila, rede) é bloqueante.
-- Não buscar overengineering — só tratar falhas previsíveis de produção.
-- Se a mudança é pequena e sem risco de escala: escreva "Não se aplica" e explique por quê.
+## Rules
+- Data corruption from concurrency is blocking.
+- Financial/operational duplication is blocking.
+- Incident without clear rollback is blocking.
+- Unlimited resource consumption (CPU, memory, connection, queue, network) is blocking.
+- Do not over-engineer — only address predictable production failures.
+- If the change is small with no scale risk: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Escala
+## Scale
 
-### Volume e caminho quente
-| Operação | Volume esperado | Estratégia |
+### Volume and hot path
+| Operation | Expected volume | Strategy |
 |---|---|---|
-| {endpoint/job/query} | {estimativa} | {otimização} |
+| {endpoint/job/query} | {estimate} | {optimization} |
 
-### Banco e queries
-| Query | Risco | Índice | Paginação |
+### Database and queries
+| Query | Risk | Index | Pagination |
 |---|---|---|---|
-| {operação} | {N+1/full scan/...} | {criado/existente} | {skip/limit} |
+| {operation} | {N+1/full scan/...} | {created/existing} | {skip/limit} |
 
-### Concorrência e idempotência
-| Operação | Risco | Mitigação |
+### Concurrency and idempotency
+| Operation | Risk | Mitigation |
 |---|---|---|
-| {read-modify-write/retry/webhook} | {duplicidade/inconsistência} | {transaction/lock/constraint/idempotency key} |
+| {read-modify-write/retry/webhook} | {duplication/inconsistency} | {transaction/lock/constraint/idempotency key} |
 
-### Limites e backpressure
-| Recurso | Limite | Configuração |
+### Limits and backpressure
+| Resource | Limit | Configuration |
 |---|---|---|
-| {payload/paginação/rate limit/pool/timeout/fila/workers/memória} | {valor} | {onde configura} |
+| {payload/pagination/rate limit/pool/timeout/queue/workers/memory} | {value} | {where configured} |
 
 ### Cache
-| Dado | Chave | TTL | Invaliação | Escopo |
+| Data | Key | TTL | Invalidation | Scope |
 |---|---|---|---|---|
-| {dado cacheado} | {formato da chave} | {tempo} | {evento/timeout} | {global/user/tenant} |
+| {cached data} | {key format} | {time} | {event/timeout} | {global/user/tenant} |
 
-### Filas e jobs
-| Job | Idempotência | Retry | Dead-letter | Concorrência máx |
+### Queues and jobs
+| Job | Idempotency | Retry | Dead-letter | Max concurrency |
 |---|---|---|---|---|
-| {nome} | {como garante} | {tentativas + backoff} | {sim/não} | {workers} |
+| {name} | {how it guarantees} | {attempts + backoff} | {yes/no} | {workers} |
 
-### Integrações externas
-| Serviço | Timeout | Retry | Circuit breaker | Degradação |
+### External integrations
+| Service | Timeout | Retry | Circuit breaker | Degradation |
 |---|---|---|---|---|
-| {nome} | {ms} | {tentativas} | {sim/não} | {fallback} |
+| {name} | {ms} | {attempts} | {yes/no} | {fallback} |
 
-### Observabilidade de escala
-| Métrica | Threshold | Alerta |
+### Scale observability
+| Metric | Threshold | Alert |
 |---|---|---|
-| {p95/throughput/error rate/pool/backlog} | {valor} | {quando dispara} |
+| {p95/throughput/error rate/pool/backlog} | {value} | {when it fires} |
 
-### Validação de performance
-| Teste | Ferramenta | Volume | Critério de aprovação |
+### Performance validation
+| Test | Tool | Volume | Pass criteria |
 |---|---|---|---|
-| {tipo} | {k6/artillery/manual} | {RPS/conexões} | {p95 < Xms / 0 errors} |
+| {type} | {k6/artillery/manual} | {RPS/connections} | {p95 < Xms / 0 errors} |
 ```

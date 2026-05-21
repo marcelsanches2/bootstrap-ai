@@ -1,61 +1,61 @@
 # CLAUDE.md
 
-Contrato principal para Claude Code neste projeto React Web.
+Main contract for Claude Code in this React Web project.
 
-## Projeto
+## Project
 
-{{PROJECT_NAME}} é uma aplicação web React/TypeScript. O foco é UX consistente, componentes previsíveis, acessibilidade real, performance suficiente e entrega verificável.
+{{PROJECT_NAME}} is a React/TypeScript web application. Focus: consistent UX, predictable components, real accessibility, sufficient performance, and verifiable delivery.
 
-Stack padrão:
+Default stack:
 
 - React
 - TypeScript
-- Vite ou Next.js quando aplicável
-- React Router/roteador do framework quando aplicável
-- TanStack Query/Axios quando houver data fetching relevante
-- Zustand/Redux apenas quando estado global for necessário
-- Vitest/Jest para unit/component
-- Playwright/Cypress para E2E quando o fluxo justificar
+- Vite or Next.js when applicable
+- React Router / framework router when applicable
+- TanStack Query / Axios when relevant data fetching exists
+- Zustand / Redux only when global state is needed
+- Vitest / Jest for unit/component
+- Playwright / Cypress for E2E when the flow justifies it
 
-## Leitura sob demanda
+## On-demand reading
 
-| Tipo de tarefa | Documento(s) a ler |
+| Task type | Document(s) to read |
 |---|---|
-| Arquitetura, boundaries, estado, rotas ou data fetching | `docs/ai/ARCHITECTURE.md` |
-| Tela, componente, layout, cor, tipografia ou UX | `docs/ai/DESIGN_SYSTEM.md` |
-| Acessibilidade, teclado, foco, labels ou semântica | `docs/ai/ACCESSIBILITY_GUIDE.md` |
-| Performance, bundle, renderização, imagens ou Web Vitals | `docs/ai/PERFORMANCE_GUIDE.md` |
-| Deploy, env, build, cache ou rollback | `docs/ai/DEPLOYMENT_GUIDE.md` |
-| Código/refactor | `docs/ai/CODING_STANDARDS.md` |
-| Testes | `docs/ai/TESTING_GUIDE.md` |
-| Feature completa | `docs/ai/FEATURE_GUIDE.md` + documentos das áreas afetadas |
+| Architecture, boundaries, state, routes, or data fetching | `docs/ai/ARCHITECTURE.md` |
+| Screen, component, layout, color, typography, or UX | `docs/ai/DESIGN_SYSTEM.md` |
+| Accessibility, keyboard, focus, labels, or semantics | `docs/ai/ACCESSIBILITY_GUIDE.md` |
+| Performance, bundle, rendering, images, or Web Vitals | `docs/ai/PERFORMANCE_GUIDE.md` |
+| Deploy, env, build, cache, or rollback | `docs/ai/DEPLOYMENT_GUIDE.md` |
+| Code / refactor | `docs/ai/CODING_STANDARDS.md` |
+| Tests | `docs/ai/TESTING_GUIDE.md` |
+| Full feature | `docs/ai/FEATURE_GUIDE.md` + documents of affected areas |
 
-## Prioridade atual
+## Current priorities
 
-1. UX clara e consistente
-2. componentes pequenos e testáveis
-3. acessibilidade mínima desde o início
-4. estado/data fetching sem mágica
-5. build production confiável
-6. performance sem otimização prematura
+1. Clear and consistent UX
+2. Small, testable components
+3. Minimum accessibility from the start
+4. State/data fetching without magic
+5. Reliable production build
+6. Performance without premature optimization
 
-## Regras obrigatórias
+## Mandatory rules
 
-- Não misturar regra de negócio pesada dentro de componente visual.
-- Não espalhar chamada HTTP em componente quando existe camada de API/hook.
-- Não criar estado global para estado local.
-- Não usar `any` para fugir de tipagem em contrato público.
-- Não quebrar navegação por teclado.
-- Não usar cor/espaçamento hardcoded quando existir token/componente.
-- Não criar componente genérico antes de existir repetição real.
-- Não depender de layout só por pixel perfeito em uma largura.
-- Não deixar loading/error/empty state sem decisão.
-- Não commitar `.env` real.
+- Do not mix heavy business logic inside a visual component.
+- Do not scatter HTTP calls in components when an API/hook layer exists.
+- Do not create global state for local state.
+- Do not use `any` to bypass typing in a public contract.
+- Do not break keyboard navigation.
+- Do not use hardcoded color/spacing when a token/component exists.
+- Do not create a generic component before there is real repetition.
+- Do not rely on layout solely by pixel-perfect at one width.
+- Do not leave loading/error/empty states undecided.
+- Do not commit real `.env`.
 
+## After changes
 
-
-- Rode typecheck/lint quando existirem scripts.
-- Rode testes afetados.
-- Rode build production para mudanças relevantes de app/rotas/deps.
-- Para UI relevante, valide responsividade, foco e estados visuais.
-- Informe arquivos alterados, comandos executados e pendências.
+- Run typecheck/lint when scripts exist.
+- Run affected tests.
+- Run production build for relevant changes to app/routes/deps.
+- For relevant UI, validate responsiveness, focus, and visual states.
+- Report changed files, executed commands, and pending items.

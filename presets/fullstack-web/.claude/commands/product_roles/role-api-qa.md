@@ -1,60 +1,60 @@
-# Role: QA API
+# Role: API QA
 
-## Sua contribuição
-Gera a seção "Testes backend" do plano, definindo testes unit, integration e de API para o backend.
+## Your contribution
+Generates the "Backend tests" section of the plan, defining unit, integration, and API tests for the backend.
 
-## Referência
+## Reference
 - docs/ai/TESTING_GUIDE.md
 
-## O que incluir
-- **Caminho feliz**: input válido → output esperado. Cada endpoint novo com teste de caminho feliz.
-- **Cenários negativos**: 400 (bad request), 401 (unauthorized), 403 (forbidden), 404 (not found), 409 (conflict), 422 (unprocessable). Liste quais se aplicam a cada endpoint.
-- **Massa de dados determinística**: seed/factory que garante repetibilidade. Testes independentes, sem ordem.
-- **Paginação testada**: quando endpoint tem lista, teste com skip/limit.
-- **Edge cases**: lista vazia, campo máximo, null, boundary values.
-- **Contrato API verificado**: campos e tipos do response validados.
-- **Dados sensíveis**: nenhum dado sensível em response (passwordHash, token).
-- **Mocks para serviços externos**: chamadas externas mockadas, sem dependência de rede.
+## What to include
+- **Happy path**: valid input → expected output. Each new endpoint with a happy path test.
+- **Negative scenarios**: 400 (bad request), 401 (unauthorized), 403 (forbidden), 404 (not found), 409 (conflict), 422 (unprocessable). List which ones apply to each endpoint.
+- **Deterministic test data**: seed/factory that guarantees repeatability. Independent tests, no ordering.
+- **Pagination tested**: when endpoint has a list, test with skip/limit.
+- **Edge cases**: empty list, max field, null, boundary values.
+- **API contract verified**: response fields and types validated.
+- **Sensitive data**: no sensitive data in response (passwordHash, token).
+- **Mocks for external services**: external calls mocked, no network dependency.
 
-## Regras
-- Caminho feliz sem teste é bloqueante.
-- Contrato API não verificável é bloqueante.
-- Teste que depende de rede externa sem mock é bloqueante.
-- Dados sensíveis em response é bloqueante.
-- Se a task não envolve backend/API testável: escreva "Não se aplica" e explique por quê.
+## Rules
+- Happy path without test is blocking.
+- Unverifiable API contract is blocking.
+- Test depending on external network without mock is blocking.
+- Sensitive data in response is blocking.
+- If the task does not involve testable backend/API: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Testes — Backend
+## Tests — Backend
 
-### Caminho feliz
-| Endpoint | Input | Output esperado | Arquivo |
+### Happy path
+| Endpoint | Input | Expected output | File |
 |---|---|---|---|
-| {VERB /path} | {body/params} | {status + body} | {caminho do teste} |
+| {VERB /path} | {body/params} | {status + body} | {test path} |
 
-### Cenários negativos
-| Endpoint | Cenário | Status esperado | Arquivo |
+### Negative scenarios
+| Endpoint | Scenario | Expected status | File |
 |---|---|---|---|
-| {VERB /path} | {400/401/403/404/409/422} | {status} | {caminho} |
+| {VERB /path} | {400/401/403/404/409/422} | {status} | {path} |
 
-### Massa de dados
-| Dado | Factory/seed | Arquivo |
+### Test data
+| Data | Factory/seed | File |
 |---|---|---|
-| {entidade} | {como cria} | {caminho} |
+| {entity} | {how to create} | {path} |
 
 ### Edge cases
-| Caso | Teste | Arquivo |
+| Case | Test | File |
 |---|---|---|
-| {lista vazia / campo máximo / null / ...} | {o que verifica} | {caminho} |
+| {empty list / max field / null / ...} | {what it verifies} | {path} |
 
-### Contrato API
-| Endpoint | Campos response | Tipos verificados |
+### API contract
+| Endpoint | Response fields | Types verified |
 |---|---|---|
-| {VERB /path} | {lista de campos} | {sim/não + como} |
+| {VERB /path} | {field list} | {yes/no + how} |
 
 ### Mocks
-| Serviço externo | Estratégia | Arquivo |
+| External service | Strategy | File |
 |---|---|---|
-| {serviço} | {mock/stub} | {caminho} |
+| {service} | {mock/stub} | {path} |
 ```

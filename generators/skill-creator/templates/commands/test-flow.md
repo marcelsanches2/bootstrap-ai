@@ -1,34 +1,34 @@
 ---
-description: Valida um fluxo E2E garantindo massa deterministica, testes e relatorio atualizado.
+description: Validates an E2E flow ensuring deterministic test data, tests, and updated report.
 ---
 
 # /jarvis-test-flow
 
-Valida um fluxo end-to-end do {{PROJECT_NAME}}. Argumento opcional: `flow_id`.
+Validates an end-to-end flow of {{PROJECT_NAME}}. Optional argument: `flow_id`.
 
-## Geração
+## Generation
 
-Este arquivo deve ser gerado usando `prompts/derive-jarvis-test-flow.md` com base na stack específica.
+This file should be generated using `prompts/derive-jarvis-test-flow.md` based on the specific stack.
 
-## Estrutura obrigatória (a preencher)
+## Mandatory structure (to be filled)
 
 ```
-0. Avaliar tamanho da task (GRANDE/PEQUENA)
-1. Determinar flow_id
-2. Inventariar massa (fixtures/mocks deterministicos)
-3. Inventariar teste (com cross-ref ao jarvis-plan)
-4. Executar pipeline (lint → typecheck → test → migration → build → healthcheck)
-4a. Loop de diagnóstico e correcao (max 3 tentativas)
-5. Gerar relatório em docs/test_report_{flow_id}.md
-6. Encerrar
-7. Commit (so se PASSOU, nunca --no-verify)
-8. Push (nunca force, pergunta antes de rebase)
-+ Restrições obrigatórias
+0. Evaluate task size (LARGE/SMALL)
+1. Determine flow_id
+2. Inventory test data (fixtures/deterministic mocks)
+3. Inventory tests (with cross-ref to jarvis-plan)
+4. Execute pipeline (lint → typecheck → test → migration → build → healthcheck)
+4a. Diagnosis and correction loop (max 3 attempts)
+5. Generate report in docs/test_report_{flow_id}.md
+6. Finish
+7. Commit (only if PASSED, never --no-verify)
+8. Push (never force, ask before rebase)
++ Mandatory restrictions
 ```
 
-## Mínimo esperado
+## Minimum expected
 
-- 200+ linhas (~9000+ chars)
-- Pipeline com comandos reais da stack
-- Loop de diagnóstico com causas específicas
-- Commit/push com regras duras
+- 200+ lines (~9000+ chars)
+- Pipeline with real stack commands
+- Diagnosis loop with specific causes
+- Commit/push with hard rules

@@ -1,10 +1,10 @@
 # Database Guide
 
-Padrões de banco de dados com SQLAlchemy 2.0 + Alembic + PostgreSQL.
+Database standards with SQLAlchemy 2.0 + Alembic + PostgreSQL.
 
-## ORM e Query Builder
+## ORM and Query Builder
 
-### Setup async
+### Async setup
 
 ```python
 # database.py
@@ -23,30 +23,30 @@ engine = create_async_engine(
 async_session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 ```
 
-### Queries com select()
+### Queries with select()
 
 ```python
 from sqlalchemy import select, func
 
-# Simples
+# Simple
 result = await session.execute(select(User).where(User.id == user_id))
 user = result.scalar_one_or_none()
 
-# Com join
+# With join
 result = await session.execute(
     select(User, Profile)
     .join(Profile, User.id == Profile.user_id)
     .where(User.is_active == True)
 )
 
-# Com agregação
+# With aggregation
 result = await session.execute(
     select(func.count()).select_from(User).where(User.is_active == True)
 )
 total = result.scalar()
 ```
 
-### Paginação com cursor (offset para listas simples)
+### Pagination with cursor (offset for simple lists)
 
 ```python
 async def list_paginated(session: AsyncSession, skip: int, limit: int):
@@ -61,7 +61,7 @@ async def list_paginated(session: AsyncSession, skip: int, limit: int):
     return {"items": items, "total": total, "skip": skip, "limit": limit}
 ```
 
-Para tabelas grandes (>1M), use cursor-based (keyset):
+For large tables (>1M), use cursor-based (keyset):
 
 ```python
 async def list_cursor(session: AsyncSession, after_id: int | None, limit: int):
@@ -73,35 +73,35 @@ async def list_cursor(session: AsyncSession, after_id: int | None, limit: int):
 
 ## Migrations (Alembic)
 
-### Comandos
+### Commands
 
 ```bash
-# Gerar migration auto
+# Auto-generate migration
 alembic revision --autogenerate -m "add users table"
 
-# Aplicar
+# Apply
 alembic upgrade head
 
 # Rollback 1
 alembic downgrade -1
 
-# Rollback para specific
+# Rollback to specific
 alembic downgrade <revision>
 
-# Ver histórico
+# View history
 alembic history
 
-# Ver current
+# View current
 alembic current
 ```
 
-### Regras de migration
+### Migration rules
 
-- Toda migration DEVE ter `upgrade()` e `downgrade()`.
-- Não usar `autogenerate` cegamente — revisar antes de aplicar.
-- Não alterar migration já aplicada em produção — criar nova.
-- Não deletar dados sem migration explícita.
-- Testar downgrade antes de deploy.
+- Every migration MUST have `upgrade()` and `downgrade()`.
+- Do not use `autogenerate` blindly — review before applying.
+- Do not modify a migration already applied in production — create a new one.
+- Do not delete data without explicit migration.
+- Test downgrade before deploy.
 
 ```python
 def upgrade() -> None:
@@ -121,35 +121,35 @@ def downgrade() -> None:
     op.drop_table("users")
 ```
 
-## Índices
+## Indexes
 
-Criar índice para:
+Create index for:
 
-- Colunas usadas em WHERE frequente.
-- Colunas de JOIN (foreign keys).
-- Colunas de ORDER BY com WHERE.
-- Colunas de busca (email, slug, código).
+- Columns used in frequent WHERE.
+- JOIN columns (foreign keys).
+- ORDER BY columns with WHERE.
+- Search columns (email, slug, code).
 
 ```python
-# No model
+# In model
 class User(Base):
-    email: Mapped[str] = mapped_column(String(255), index=True)  # automático
+    email: Mapped[str] = mapped_column(String(255), index=True)  # automatic
 
-# Índice composto
+# Composite index
 __table_args__ = (
     Index("ix_user_org_active", "organization_id", "is_active"),
 )
 ```
 
-## N+1 e eager loading
+## N+1 and eager loading
 
 ```python
-# ❌ N+1: carrega users, depois 1 query por user para pegar profile
+# ❌ N+1: loads users, then 1 query per user to get profile
 users = (await session.execute(select(User))).scalars().all()
 for u in users:
-    print(u.profile.name)  # +1 query por user
+    print(u.profile.name)  # +1 query per user
 
-# ✓ Eager loading com selectinload
+# ✓ Eager loading with selectinload
 from sqlalchemy.orm import selectinload
 
 users = (
@@ -158,26 +158,26 @@ users = (
     )
 ).scalars().all()
 for u in users:
-    print(u.profile.name)  # 0 queries extras
+    print(u.profile.name)  # 0 extra queries
 ```
 
-### Quando usar cada estratégia
+### When to use each strategy
 
-- `selectinload`: melhor para coleções (one-to-many, many-to-many).
-- `joinedload`: melhor para many-to-one, single relacionamento.
-- `subqueryload`: quando não pode usar IN (selectinload).
-- `lazyload` (default): quando certeza que não vai acessar.
+- `selectinload`: best for collections (one-to-many, many-to-many).
+- `joinedload`: best for many-to-one, single relationship.
+- `subqueryload`: when you can't use IN (selectinload).
+- `lazyload` (default): when certain you won't access.
 
-## Transações
+## Transactions
 
-### Commit e rollback
+### Commit and rollback
 
 ```python
 async def create_user_with_profile(db: AsyncSession, data: UserCreate):
     try:
         user = User(email=data.email, name=data.name)
         db.add(user)
-        await db.flush()  # gera ID sem commitar
+        await db.flush()  # generates ID without committing
 
         profile = Profile(user_id=user.id, bio=data.bio)
         db.add(profile)
@@ -193,7 +193,7 @@ async def create_user_with_profile(db: AsyncSession, data: UserCreate):
 ### Pessimistic locking
 
 ```python
-# Lock de linha para evitar race condition
+# Row lock to prevent race condition
 result = await session.execute(
     select(Account)
     .where(Account.id == account_id)
@@ -209,18 +209,18 @@ await session.commit()
 ```python
 class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
-    cpf: Mapped[str] = mapped_column(String(11), unique=True)
+    ssn: Mapped[str] = mapped_column(String(11), unique=True)
 
     __table_args__ = (
-    #   CheckConstraint("char_length(cpf) = 11", name="ck_user_cpf_length"),
+    #   CheckConstraint("char_length(ssn) = 11", name="ck_user_ssn_length"),
     )
 ```
 
-Deixar constraint no banco, não só na aplicação.
+Leave constraints in the database, not only in the application.
 
 ## Seeds
 
-Scripts em `scripts/seed_*.py`:
+Scripts in `scripts/seed_*.py`:
 
 ```python
 # scripts/seed_roles.py
@@ -240,44 +240,44 @@ async def seed():
 asyncio.run(seed())
 ```
 
-## Conexões e pool
+## Connections and pool
 
-Config no engine:
+Config in engine:
 
-- `pool_size`: conexões permanentes (default 5, production 20).
-- `max_overflow`: extra sob demanda (default 10).
-- `pool_timeout`: espera por conexão livre (default 30s).
-- `pool_recycle`: recicla conexão velha (default -1, usar 1800s).
-- `pool_pre_ping`: verifica conexão antes de usar (default True).
+- `pool_size`: permanent connections (default 5, production 20).
+- `max_overflow`: extra on demand (default 10).
+- `pool_timeout`: wait for free connection (default 30s).
+- `pool_recycle`: recycle old connection (default -1, use 1800s).
+- `pool_pre_ping`: verify connection before use (default True).
 
-Monitorar uso com:
+Monitor usage with:
 
 ```python
 engine.pool.status()  # "Pool size: 5  Connections in pool: 3  Current Overflow: 0"
 ```
 
-## Regras duras
+## Hard rules
 
-- Não usar `SELECT *` — sempre colunas explícitas.
-- Não fazer N+1 — usar eager loading.
-- Não commitar migration sem downgrade.
-- Não alterar migration aplicada — criar nova.
-- Não criar tabela sem índice em FK.
-- Não usar offset em tabela com >1M linhas — usar cursor.
-- Não executar query sem timeout em produção.
-- Não logar dados sensíveis do banco.
+- Do not use `SELECT *` — always explicit columns.
+- Do not do N+1 — use eager loading.
+- Do not commit migration without downgrade.
+- Do not modify applied migration — create new one.
+- Do not create table without index on FK.
+- Do not use offset on table with >1M rows — use cursor.
+- Do not execute query without timeout in production.
+- Do not log sensitive database data.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Colunas explícitas**: Não usar `SELECT *`; sempre colunas explícitas.
-- **Sem N+1**: Não fazer N+1; usar eager loading (`selectinload`, `joinedload`).
-- **Migration com downgrade**: Não commitar migration sem `downgrade()` funcional.
-- **Migration imutável em produção**: Não alterar migration já aplicada; criar nova.
-- **Índice em FK**: Não criar tabela sem índice em foreign key.
-- **Cursor para tabelas grandes**: Não usar offset em tabela com >1M linhas; usar cursor-based.
-- **Query com timeout**: Não executar query sem timeout em produção.
-- **Não logar dados sensíveis**: Não logar dados sensíveis do banco.
-- **Constraint no banco**: Deixar constraint no banco, não só na aplicação.
-- **Testar downgrade**: Testar downgrade de migration antes de deploy.
+- **Explicit columns**: Do not use `SELECT *`; always explicit columns.
+- **No N+1**: Do not do N+1; use eager loading (`selectinload`, `joinedload`).
+- **Migration with downgrade**: Do not commit migration without functional `downgrade()`.
+- **Immutable migration in production**: Do not modify already applied migration; create new one.
+- **Index on FK**: Do not create table without index on foreign key.
+- **Cursor for large tables**: Do not use offset on table with >1M rows; use cursor-based.
+- **Query with timeout**: Do not execute query without timeout in production.
+- **Do not log sensitive data**: Do not log sensitive database data.
+- **Constraint in database**: Leave constraints in the database, not only in the application.
+- **Test downgrade**: Test migration downgrade before deploy.

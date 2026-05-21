@@ -1,209 +1,209 @@
 # derive-roles.md
 
-Gere os roles de revisão em `.claude/commands/product_roles/` específicos para a stack.
+Generate the review roles in `.claude/commands/product_roles/` specific to the stack.
 
 ## Input
 
 - **Stack**: `{{DESCRIPTION}}`
-- **Nome dO preset**: `{{PRESET_NAME}}`
-- **Tipo**: backend / frontend / mobile (inferir pela descrição)
+- **Preset name**: `{{PRESET_NAME}}`
+- **Type**: backend / frontend / mobile (infer from description)
 
-## Referência
+## Reference
 
-Leia os roles dos presets existentes antes de gerar:
+Read the roles from existing presets before generating:
 
-- `presets/python-backend/.claude/commands/product_roles/role-*.md` — backend completo
-- `presets/react-web/.claude/commands/product_roles/role-*.md` — frontend completo
-- `presets/node-backend/.claude/commands/product_roles/role-*.md` — backend Node
-- `presets/flutter-app/.claude/commands/product_roles/role-*.md` — mobile Flutter
-- Preset mais similar — roles genéricos (copiar diretamente do preset)
+- `presets/python-backend/.claude/commands/product_roles/role-*.md` — complete backend
+- `presets/react-web/.claude/commands/product_roles/role-*.md` — complete frontend
+- `presets/node-backend/.claude/commands/product_roles/role-*.md` — Node backend
+- `presets/flutter-app/.claude/commands/product_roles/role-*.md` — Flutter mobile
+- Most similar preset — generic roles (copy directly from preset)
 
-## Padrão de nomenclatura
+## Naming convention
 
-| Tipo | Prefixo | Exemplos |
+| Type | Prefix | Examples |
 |---|---|---|
-| Pessoa que revisa | `role-` | `role-architect.md`, `role-pm.md`, `role-designer.md`, `role-delivery.md` |
-| Pessoa + stack | `role-<stack>-` | `role-flutter-qa.md`, `role-web-qa.md`, `role-api-qa.md` |
-| Ótica técnica | `review-` | `review-database.md`, `review-api.md`, `review-security.md` |
+| Person who reviews | `role-` | `role-architect.md`, `role-pm.md`, `role-designer.md`, `role-delivery.md` |
+| Person + stack | `role-<stack>-` | `role-flutter-qa.md`, `role-web-qa.md`, `role-api-qa.md` |
+| Technical perspective | `review-` | `review-database.md`, `review-api.md`, `review-security.md` |
 
-Sempre em inglês. Sempre kebab-case. Cada arquivo ~40-50 linhas (objetivo + checklist + regra dura, SEM boilerplate de Entrada/Método/Saída).
+Always in English. Always kebab-case. Each file ~40-50 lines (objective + checklist + hard rule, NO Input/Method/Output boilerplate).
 
-## Roles genéricos (copiar do preset mais similar, não reescrever)
+## Generic roles (copy from most similar preset, do not rewrite)
 
 - `role-architect.md`
 - `role-pm.md`
 - `role-delivery.md`
 
-## Reviews genéricos (copiar do preset mais similar quando aplicável)
+## Generic reviews (copy from most similar preset when applicable)
 
 - Backend: `review-api.md`, `review-database.md`, `review-security.md`, `review-observability.md`, `review-scalability.md`
 - Frontend: `review-accessibility.md`, `review-performance.md`
-- Todos: `review-testing.md`
+- All: `review-testing.md`
 
-## Roles específicos (criar para a stack)
+## Specific roles (create for the stack)
 
-Perspectiva de entrega:
-- Objetivo: validar que o plano é implementável sem surpresas
-- Checklist: escopo claro, dependências, riscos, rollback, deploy
-- Regra dura: plano sem rollback ou sem considerar deploy não está pronto
+Delivery perspective:
+- Objective: validate that the plan is implementable without surprises
+- Checklist: clear scope, dependencies, risks, rollback, deploy
+- Hard rule: plan without rollback or without considering deploy is not ready
 
-## Roles por tipo de stack
+## Roles by stack type
 
-### Backend (gerar TODOS)
+### Backend (generate ALL)
 
-#### review-api.md (~80+ linhas)
-- Contrato HTTP (verbo, path, payload, response, status codes)
-- Validação de input
-- Paginação e ordenação
-- Versionamento
-- Error handling consistente
-- Documentação automática
+#### review-api.md (~80+ lines)
+- HTTP contract (verb, path, payload, response, status codes)
+- Input validation
+- Pagination and sorting
+- Versioning
+- Consistent error handling
+- Auto-documentation
 
-#### role-<stack>-architect.md (~100+ linhas)
-- Separação de camadas (router/controller → service → repository/data)
-- Injeção de dependência
-- Error handling por camada
-- Config e env vars
-- Tipagem/contratos entre camadas
-- Anti-patterns específicos da stack
+#### role-<stack>-architect.md (~100+ lines)
+- Layer separation (router/controller → service → repository/data)
+- Dependency injection
+- Error handling per layer
+- Config and env vars
+- Typing/contracts between layers
+- Stack-specific anti-patterns
 
-#### review-database.md (~80+ linhas)
+#### review-database.md (~80+ lines)
 - Migrations (up/down, rollback)
-- Índices em colunas de busca
+- Indexes on search columns
 - N+1, SELECT *, query optimization
-- Constraints e integridade
-- Conexões, pool, timeouts
-- Seeds e dados iniciais
+- Constraints and integrity
+- Connections, pool, timeouts
+- Seeds and initial data
 
-#### review-security.md (~80+ linhas)
-- Auth e autorização
-- Dados sensíveis (PII, secrets, tokens)
-- Input validation e sanitização
+#### review-security.md (~80+ lines)
+- Auth and authorization
+- Sensitive data (PII, secrets, tokens)
+- Input validation and sanitization
 - Rate limiting
-- Headers de segurança
-- Logs sem dados sensíveis
+- Security headers
+- Logs without sensitive data
 
-#### review-observability.md (~80+ linhas)
+#### review-observability.md (~80+ lines)
 - Structured logging
-- Métricas (latência, throughput, erro rate)
+- Metrics (latency, throughput, error rate)
 - Healthcheck endpoints
-- Tracing e correlation IDs
-- Alertas e thresholds
+- Tracing and correlation IDs
+- Alerts and thresholds
 
-#### review-scalability.md (~100+ linhas)
-- Concorrência e race conditions
-- Cache e invalidação
-- Filas e jobs (retry, DLQ, backpressure)
+#### review-scalability.md (~100+ lines)
+- Concurrency and race conditions
+- Cache and invalidation
+- Queues and jobs (retry, DLQ, backpressure)
 - Rate limit, timeout, bulkhead, circuit breaker
-- Pool de conexões
+- Connection pools
 - Graceful shutdown
 
-#### review-api-qa.md (~80+ linhas)
-- Testabilidade do plano
-- Caminho feliz
-- Cenários negativos (erro 400, 401, 403, 404, 500)
-- Massa de dados determinística
-- Contrato API (testes de integração)
+#### review-api-qa.md (~80+ lines)
+- Plan testability
+- Happy path
+- Negative scenarios (error 400, 401, 403, 404, 500)
+- Deterministic test data
+- API contract (integration tests)
 - Edge cases
 
-### Frontend (gerar TODOS)
+### Frontend (generate ALL)
 
-#### role-frontend-architect.md (~100+ linhas)
-- Componentização e composição
-- Hooks/services para lógica
-- Estado (local vs global, escopo)
-- Roteamento centralizado
+#### role-frontend-architect.md (~100+ lines)
+- Componentization and composition
+- Hooks/services for logic
+- State (local vs global, scope)
+- Centralized routing
 - Error boundaries
-- Code splitting e lazy loading
+- Code splitting and lazy loading
 
-#### role-designer.md (~80+ linhas)
+#### role-designer.md (~80+ lines)
 - Design system / tokens
-- Fidelidade visual
-- Estados visuais (loading, error, empty, disabled)
-- Responsividade
-- Componentização visual
+- Visual fidelity
+- Visual states (loading, error, empty, disabled)
+- Responsiveness
+- Visual componentization
 
-#### review-accessibility.md (~80+ linhas)
-- Semântica HTML
-- Navegação por teclado
-- Contraste e cores
-- Formulários (labels, association, errors)
+#### review-accessibility.md (~80+ lines)
+- HTML semantics
+- Keyboard navigation
+- Contrast and colors
+- Forms (labels, association, errors)
 - ARIA attributes
 
-#### review-performance.md (~80+ linhas)
-- Bundle size e code splitting
-- Renderização (memo, virtualização, rerenders)
-- Imagens e assets
-- Cache de dados e invalidação
+#### review-performance.md (~80+ lines)
+- Bundle size and code splitting
+- Rendering (memo, virtualization, rerenders)
+- Images and assets
+- Data cache and invalidation
 - Web Vitals
 
-#### role-web-qa.md (~80+ linhas)
-- Testabilidade
-- Caminho feliz via UI
-- Cenários negativos
-- Responsividade
-- Acessibilidade
+#### role-web-qa.md (~80+ lines)
+- Testability
+- Happy path via UI
+- Negative scenarios
+- Responsiveness
+- Accessibility
 
-### Mobile (gerar TODOS)
+### Mobile (generate ALL)
 
-#### role-architect.md (~100+ linhas)
+#### role-architect.md (~100+ lines)
 - Feature-first + clean architecture
-- Separação presentation/domain/data
-- DI e providers
-- Navegação centralizada
-- Mocks e overrides
+- presentation/domain/data separation
+- DI and providers
+- Centralized navigation
+- Mocks and overrides
 
-#### role-designer.md (~80+ linhas)
+#### role-designer.md (~80+ lines)
 - Design system / tokens
-- Fidelidade visual
-- Estados visuais
-- Plataformas (iOS/Android)
+- Visual fidelity
+- Visual states
+- Platforms (iOS/Android)
 
-#### role-qa-e2e-<stack>.md (~80+ linhas)
+#### role-qa-e2e-<stack>.md (~80+ lines)
 - Integration test
-- Mocks determinísticos
-- Caminho feliz
-- Cenários negativos
-- Massa de dados
+- Deterministic mocks
+- Happy path
+- Negative scenarios
+- Test data
 
-## Formato obrigatório de cada role
+## Mandatory format for each role
 
 ```md
-# role-<nome>
+# role-<name>
 
-## Objetivo
-<1 frase>
+## Objective
+<1 sentence>
 
-## Fonte de referência
+## Reference source
 - `docs/ai/<GUIDE>.md`
 
-## Entrada esperada
-<o que o role precisa receber para revisar>
+## Expected input
+<what the role needs to receive to review>
 
-## Método
-<como o role avalia>
+## Method
+<how the role evaluates>
 
-## Checklist obrigatório
-- [ ] Item 1 — descrição
-- [ ] Item 2 — descrição
+## Mandatory checklist
+- [ ] Item 1 — description
+- [ ] Item 2 — description
 ...
 
-## Resultado esperado por item
-Para cada item do checklist:
-- **OK**: evidência de conformidade
-- **OK — não aplicável**: por que não se aplica
-- **PENDÊNCIA (severidade, evidência, correção concreta)**
+## Expected result per item
+For each checklist item:
+- **OK**: evidence of compliance
+- **OK — not applicable**: why it doesn't apply
+- **PENDING (severity, evidence, concrete correction)**
 
-## Saída em Markdown
-<formato do parecer>
+## Output in Markdown
+<report format>
 
-## Regra dura
-<uma restrição que reprova o plano se violada>
+## Hard rule
+<one restriction that rejects the plan if violated>
 ```
 
-## Regras de qualidade
+## Quality rules
 
-- Cada role deve ter pelo menos 80 linhas.
-- Checklist com pelo menos 8 itens.
-- Referência a docs/ai específicos, não genéricos.
-- Exemplos concretos da stack, não abstrações.
+- Each role must have at least 80 lines.
+- Checklist with at least 8 items.
+- Reference to specific docs/ai, not generic.
+- Concrete stack examples, not abstractions.

@@ -1,93 +1,93 @@
 # Role: QA Flutter
 
-## Sua contribuição
+## Your contribution
 
-Gera a seção "Testes" do plano, definindo unit tests, widget tests, integration tests, pipeline e cenários em Gherkin.
+Generates the "Tests" section of the plan, defining unit tests, widget tests, integration tests, pipeline and Gherkin scenarios.
 
-## Referência
+## Reference
 
 - docs/ai/CODING_STANDARDS.md
 - docs/ai/FEATURE_GUIDE.md
 
-## O que incluir
+## What to include
 
-- **Unit tests** — para cada camada:
-  - **Regra de negócio / usecase**: testar lógica de domínio com repository mock. Cobrir casos de sucesso e falha.
-  - **Repository**: testar mapeamento entre DTO e entity, chamadas ao datasource, tratamento de erro.
-  - **Datasource**: testar parsing de resposta, tratamento de status code, timeout e conexão.
-- **Widget tests** — testar cada widget novo ou alterado: renderização correta, interação (tap, scroll, input), estados visuais (loading, error, empty), e verificacao de Semantics.
-- **Integration tests** — testar o fluxo completo da feature ponta a ponta com `integration_test`. Incluir setup de ambiente determinístico (mock/fake datasource, seed de dados).
-- **Pipeline** — definir comandos que devem passar:
-  - `flutter test` — todos os testes unitários e widget
+- **Unit tests** — for each layer:
+  - **Business rule / use case**: test domain logic with mock repository. Cover success and failure cases.
+  - **Repository**: test mapping between DTO and entity, datasource calls, error handling.
+  - **Datasource**: test response parsing, status code handling, timeout and connection.
+- **Widget tests** — test each new or altered widget: correct rendering, interaction (tap, scroll, input), visual states (loading, error, empty), and Semantics verification.
+- **Integration tests** — test the complete feature flow end-to-end with `integration_test`. Include deterministic environment setup (mock/fake datasource, data seed).
+- **Pipeline** — define commands that must pass:
+  - `flutter test` — all unit and widget tests
   - `flutter analyze` — zero warnings
-  - Golden tests — quando aplicável (componentes visuais com estado determinístico)
-- **Cenários em Gherkin** — escrever cenários E2E em formato Gherkin para caminho feliz e cenários negativos. Cada cenário deve ser determinístico e não depender de ambiente externo.
+  - Golden tests — when applicable (visual components with deterministic state)
+- **Gherkin scenarios** — write E2E scenarios in Gherkin format for happy path and negative scenarios. Each scenario must be deterministic and not depend on external environment.
 
-## Regras
+## Rules
 
-- Toda feature que depende de API ou integração deve ter mock/fake/massa determinística. Sem exceção.
-- Cenários Gherkin devem ser autocontidos: o passo "Dado" prepara todo o estado necessário.
-- Widget tests devem usar `Key` nos widgets críticos para estabilidade.
-- Nenhum teste depende de backend real, usuário real ou dados de produção.
-- Golden tests apenas quando o componente tem layout estável e determinístico.
-- Se a task é puramente técnica sem lógica testável (ex.: config, build): escreva "Não se aplica" e explique por quê.
+- Every feature that depends on API or integration must have mock/fake/deterministic test data. No exceptions.
+- Gherkin scenarios must be self-contained: the "Given" step prepares all necessary state.
+- Widget tests must use `Key` on critical widgets for stability.
+- No test depends on real backend, real user or production data.
+- Golden tests only when the component has a stable and deterministic layout.
+- If the task is purely technical without testable logic (e.g.: config, build): write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Testes
+## Tests
 
 ### Unit tests
 
-| Camada | Alvo | Cenários | Arquivo |
+| Layer | Target | Scenarios | File |
 |---|---|---|---|
-| Domain / Usecase | {NomeUsecase} | sucesso, falha, edge cases | test/{feature}/domain/usecases/{nome}_test.dart |
-| Repository | {NomeRepositoryImpl} | mapeamento OK, erro datasource | test/{feature}/data/repositories/{nome}_test.dart |
-| Datasource | {NomeDatasource} | parsing OK, timeout, status error | test/{feature}/data/datasources/{nome}_test.dart |
+| Domain / Use case | {UseCaseName} | success, failure, edge cases | test/{feature}/domain/usecases/{name}_test.dart |
+| Repository | {RepositoryImplName} | mapping OK, datasource error | test/{feature}/data/repositories/{name}_test.dart |
+| Datasource | {DatasourceName} | parsing OK, timeout, status error | test/{feature}/data/datasources/{name}_test.dart |
 
 ### Widget tests
 
-| Widget | O que testa | Arquivo |
+| Widget | What it tests | File |
 |---|---|---|
-| {NomeWidget} | renderiza estado default, loading, error, empty | test/{feature}/presentation/widgets/{nome}_test.dart |
-| {NomePage} | navegação, interação, estados | test/{feature}/presentation/pages/{nome}_test.dart |
+| {WidgetName} | renders default state, loading, error, empty | test/{feature}/presentation/widgets/{name}_test.dart |
+| {PageName} | navigation, interaction, states | test/{feature}/presentation/pages/{name}_test.dart |
 
 ### Integration tests
 
-| Fluxo | Setup | Arquivo |
+| Flow | Setup | File |
 |---|---|---|
-| {nome do fluxo} | {dados/estado inicial} | integration_test/{feature}/{nome}_test.dart |
+| {flow name} | {data/initial state} | integration_test/{feature}/{name}_test.dart |
 
 ### Pipeline
 
 ```bash
 flutter test
 flutter analyze
-# Golden tests (se aplicável):
+# Golden tests (if applicable):
 flutter test --update-goldens
 ```
 
-### Cenários Gherkin
+### Gherkin scenarios
 
-#### Caminho feliz
-
-```gherkin
-Cenário: {nome do cenário}
-  Dado {pré-condição}
-  E {massa/estado inicial}
-  Quando {ação do usuário}
-  Então {resultado esperado}
-```
-
-#### Cenários negativos
+#### Happy path
 
 ```gherkin
-Cenário: {nome do cenário de erro}
-  Dado {pré-condição}
-  E {condição de erro simulada}
-  Quando {ação do usuário}
-  Então {comportamento de erro esperado}
+Scenario: {scenario name}
+  Given {precondition}
+  And {test data/initial state}
+  When {user action}
+  Then {expected result}
 ```
 
-{Repetir para cada cenário negativo relevante}
+#### Negative scenarios
+
+```gherkin
+Scenario: {error scenario name}
+  Given {precondition}
+  And {simulated error condition}
+  When {user action}
+  Then {expected error behavior}
+```
+
+{Repeat for each relevant negative scenario}
 ```

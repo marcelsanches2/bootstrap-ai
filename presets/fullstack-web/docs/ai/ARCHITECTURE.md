@@ -1,76 +1,76 @@
-# Arquitetura Fullstack Web
+# Fullstack Web Architecture
 
-## Visão geral
+## Overview
 
-Aplicação fullstack com frontend e backend no mesmo repositório monorepo. O frontend (Next.js App Router ou Remix) e o backend (API layers) compartilham tipos, schemas e utilitários, mas mantêm boundaries claras.
+Fullstack application with frontend and backend in the same monorepo repository. The frontend (Next.js App Router or Remix) and the backend (API layers) share types, schemas, and utilities, but maintain clear boundaries.
 
-**Fluxo backend:**
-
-```
-Request → Route → Controller → Schema (Zod) → Service → Repository → Banco → Response
-```
-
-**Fluxo frontend:**
+**Backend flow:**
 
 ```
-Banco → Server Component / API Route → Client Component → UI
+Request → Route → Controller → Schema (Zod) → Service → Repository → Database → Response
 ```
 
-O ponto de encontro é a camada `shared/`: tipos, constantes e schemas Zod são consumidos tanto pelo server quanto pelo client, garantindo contrato único.
+**Frontend flow:**
+
+```
+Database → Server Component / API Route → Client Component → UI
+```
+
+The meeting point is the `shared/` layer: types, constants, and Zod schemas are consumed by both server and client, ensuring a single contract.
 
 ---
 
-## Estrutura de diretórios
+## Directory structure
 
 ```txt
 src/
-  app/ (ou pages/)              # Rotas, páginas, layouts (Next.js App Router / Remix)
-  components/                   # Componentes UI compartilhados
-  hooks/                        # React hooks compartilhados
-  server/                       # Camadas do backend
-    config/                     # Env vars validadas via Zod, DB client singleton
+  app/ (or pages/)              # Routes, pages, layouts (Next.js App Router / Remix)
+  components/                   # Shared UI components
+  hooks/                        # Shared React hooks
+  server/                       # Backend layers
+    config/                     # Env vars validated via Zod, DB client singleton
     routes/                     # HTTP route handlers
-    controllers/                # Orquestração de requests
+    controllers/                # Request orchestration
     schemas/                    # Zod validation schemas (request/response)
-    services/                   # Lógica de negócio
-    repositories/               # Acesso a dados (Prisma queries)
-  shared/                       # Código compartilhado frontend ↔ backend
-    utils/                      # Helpers puros
-    types/                      # TypeScript types/interfaces compartilhados
+    services/                   # Business logic
+    repositories/               # Data access (Prisma queries)
+  shared/                       # Code shared frontend ↔ backend
+    utils/                      # Pure helpers
+    types/                      # Shared TypeScript types/interfaces
     api/                        # API client (frontend → backend)
-    constants/                  # Constantes do domínio
-  features/<name>/              # Colocation opcional por feature
+    constants/                  # Domain constants
+  features/<name>/              # Optional feature colocation
     components/
     hooks/
     api/
-    server/                     # Lógica server-side da feature
+    server/                     # Feature server-side logic
 prisma/
-  schema.prisma                 # Schema do banco
-  migrations/                   # Migrations auto-geradas
-  seed.ts                       # Dados iniciais
+  schema.prisma                 # Database schema
+  migrations/                   # Auto-generated migrations
+  seed.ts                       # Initial data
 ```
 
 ---
 
-## Camadas — Frontend
+## Layers — Frontend
 
-### Hierarquia de componentes
+### Component hierarchy
 
 ```
-Page (carrega dados, monta layout)
-  → Container (coordena estado e callbacks)
-    → UI Component (recebe props, renderiza markup)
+Page (loads data, assembles layout)
+  → Container (coordinates state and callbacks)
+    → UI Component (receives props, renders markup)
 ```
 
-- **Page**: orquestra data fetching e layout de alto nível. Pode ser Server Component ou client-side.
-- **Componentes de UI**: recebem props explícitas, não chamam API diretamente, não gerenciam estado global.
-- **Hooks**: encapsulam data fetching, eventos e integração com browser.
+- **Page**: orchestrates data fetching and high-level layout. Can be a Server Component or client-side.
+- **UI Components**: receive explicit props, do not call API directly, do not manage global state.
+- **Hooks**: encapsulate data fetching, events, and browser integration.
 
 ### Data fetching
 
-- Centralize o client HTTP e o tratamento de erro em `shared/api/`.
-- Use TanStack Query para cache e server state.
-- Defina sempre loading, error, empty e retry states.
+- Centralize the HTTP client and error handling in `shared/api/`.
+- Use TanStack Query for cache and server state.
+- Always define loading, error, empty, and retry states.
 
 ```typescript
 // hooks/useUsers.ts
@@ -82,40 +82,40 @@ export function useUsers() {
 }
 ```
 
-### Decisão de estado
+### State decision
 
-| Tipo de estado | Solução | Quando usar |
+| State type | Solution | When to use |
 |---|---|---|
-| Local de componente | `useState` / `useReducer` | Toggle, form input, seleção |
-| Navegável / compartilhável | URL search params | Filtros, paginação, aba ativa |
-| Dados remotos | TanStack Query | Qualquer dado do servidor |
-| Global client-side | Zustand / Context | Tema, locale, auth state |
+| Component local | `useState` / `useReducer` | Toggle, form input, selection |
+| Navigable / shareable | URL search params | Filters, pagination, active tab |
+| Remote data | TanStack Query | Any server data |
+| Global client-side | Zustand / Context | Theme, locale, auth state |
 
-### Rotas
+### Routes
 
-- Rotas públicas e protegidas declaradas explicitamente.
-- Tela nova declarar path, params e comportamento de navegação.
-- Usar mapa de rotas centralizado, nunca strings soltas repetidas.
+- Public and protected routes declared explicitly.
+- New screen must declare path, params, and navigation behavior.
+- Use a centralized route map, never loose repeated strings.
 
-### Erros no frontend
+### Frontend errors
 
-- Erro de API deve virar estado renderizável.
-- Error boundaries em áreas críticas da UI.
-- Mensagem técnica nunca vaza para o usuário final.
+- API error must become renderable state.
+- Error boundaries in critical UI areas.
+- Technical message never leaks to the end user.
 
 ---
 
-## Camadas — Backend
+## Layers — Backend
 
-Pipeline completo de uma request:
+Complete request pipeline:
 
 ```
-Route → Controller → Schema → Service → Repository → Prisma → Banco
+Route → Controller → Schema → Service → Repository → Prisma → Database
 ```
 
 ### Route → Controller
 
-Route define apenas o binding HTTP (path, method, middleware, handler).
+Route defines only the HTTP binding (path, method, middleware, handler).
 
 ```typescript
 // server/routes/users.routes.ts
@@ -132,7 +132,7 @@ export { router as usersRoutes };
 
 ### Schema (Zod)
 
-Validação de entrada e saída. Cada endpoint tem schema de request.
+Input and output validation. Each endpoint has a request schema.
 
 ```typescript
 // server/schemas/users.schema.ts
@@ -151,7 +151,7 @@ export type CreateUserInput = z.infer<typeof createUserSchema>['body'];
 
 ### Service
 
-Lógica de negócio pura. Não conhece HTTP (sem req/res).
+Pure business logic. Does not know HTTP (no req/res).
 
 ```typescript
 // server/services/users.service.ts
@@ -160,7 +160,7 @@ export class UsersService {
 
   async create(data: CreateUserInput) {
     const existing = await this.prisma.user.findUnique({ where: { email: data.email } });
-    if (existing) throw new AppError('CONFLICT', 'Email já cadastrado', 409);
+    if (existing) throw new AppError('CONFLICT', 'Email already registered', 409);
 
     const passwordHash = await hashPassword(data.password);
     return this.prisma.user.create({
@@ -173,7 +173,7 @@ export class UsersService {
 
 ### Repository
 
-Acesso a dados. Quando Prisma direto no service basta, use direto. Quando queries são complexas ou reutilizadas, extraia para repository.
+Data access. When direct Prisma in the service suffices, use it directly. When queries are complex or reused, extract to a repository.
 
 ```typescript
 // server/repositories/orders.repository.ts
@@ -189,7 +189,7 @@ export class OrdersRepository {
 }
 ```
 
-### Configuração (env vars via Zod)
+### Configuration (env vars via Zod)
 
 ```typescript
 // server/config/index.ts
@@ -205,42 +205,42 @@ const envSchema = z.object({
 export const config = envSchema.parse(process.env);
 ```
 
-Cada camada tem **uma única responsabilidade**. Service nunca importa Express. Repository nunca valida input. Controller nunca faz query direta.
+Each layer has **a single responsibility**. Service never imports Express. Repository never validates input. Controller never makes direct queries.
 
 ---
 
 ## Server Components boundary
 
-### O que roda no server vs client
+### What runs on server vs client
 
-| Conceito | Server | Client |
+| Concept | Server | Client |
 |---|---|---|
-| Acesso a banco / ORM | ✅ | ❌ |
+| Database / ORM access | ✅ | ❌ |
 | Env vars / secrets | ✅ | ❌ |
-| Lógica de negócio | ✅ | ❌ |
-| Busca de dados inicial | ✅ | Opcional (TanStack Query) |
-| Interatividade (onClick, useState) | ❌ | ✅ |
+| Business logic | ✅ | ❌ |
+| Initial data fetching | ✅ | Optional (TanStack Query) |
+| Interactivity (onClick, useState) | ❌ | ✅ |
 | Browser APIs (localStorage, window) | ❌ | ✅ |
-| Efeitos colaterais (useEffect) | ❌ | ✅ |
+| Side effects (useEffect) | ❌ | ✅ |
 
-### Quando usar `'use client'`
+### When to use `'use client'`
 
-Somente quando o componente precisa de:
+Only when the component needs:
 - Event handlers (onClick, onChange)
-- Hooks de estado (useState, useReducer)
-- Hooks de efeito (useEffect, useLayoutEffect)
+- State hooks (useState, useReducer)
+- Effect hooks (useEffect, useLayoutEffect)
 - Browser APIs (localStorage, matchMedia, IntersectionObserver)
 
-### Estratégias de data fetching
+### Data fetching strategies
 
 ```typescript
-// Server Component — busca direta no banco
+// Server Component — direct database fetch
 async function UserPage({ params }: { params: { id: string } }) {
   const user = await prisma.user.findUnique({ where: { id: params.id } });
   return <UserProfile user={user} />;
 }
 
-// Client Component — busca via API com cache
+// Client Component — fetch via API with cache
 'use client';
 function UserDashboard() {
   const { data, isLoading } = useQuery({ queryKey: ['user'], queryFn: fetchUser });
@@ -249,7 +249,7 @@ function UserDashboard() {
 }
 ```
 
-Prefira Server Components para dados que não mudam por interação do usuário. Use client-side fetching para dados que atualizam por ação do usuário ou polling.
+Prefer Server Components for data that does not change by user interaction. Use client-side fetching for data that updates by user action or polling.
 
 ---
 
@@ -257,35 +257,35 @@ Prefira Server Components para dados que não mudam por interação do usuário.
 
 ### Frontend
 
-- **Monolito de 500 linhas**: componente que faz fetch, regra de negócio, layout e formatação. Divida em hook + componente puro.
-- **useEffect para derivar estado** que poderia ser `useMemo` ou cálculo simples durante render.
-- **Context global para evitar props**: se são 2–3 props, passe como props. Context é para estado verdadeiramente global.
-- **API client duplicado por feature**: centralize em `shared/api/`.
+- **500-line monolith**: component that does fetch, business rule, layout, and formatting. Split into hook + pure component.
+- **useEffect to derive state** that could be `useMemo` or simple calculation during render.
+- **Global Context to avoid props**: if it's 2–3 props, pass as props. Context is for truly global state.
+- **Duplicated API client per feature**: centralize in `shared/api/`.
 
 ```typescript
-// ❌ Ruim — efeito para derivar
+// ❌ Bad — effect to derive
 useEffect(() => { setFullName(`${first} ${last}`); }, [first, last]);
 
-// ✅ Bom — derivado sem efeito
+// ✅ Good — derived without effect
 const fullName = `${first} ${last}`;
 ```
 
 ### Backend
 
-- **Controller com lógica de negócio** — pertence ao service.
-- **Service com req/res** — não conhece HTTP.
-- **Raw SQL quando Prisma resolve** — só raw para performance crítica com evidência.
-- **Import circular** — use dependency injection ou extraia para `shared/`.
+- **Controller with business logic** — belongs in the service.
+- **Service with req/res** — does not know HTTP.
+- **Raw SQL when Prisma works** — only raw for critical performance with evidence.
+- **Circular import** — use dependency injection or extract to `shared/`.
 
 ```typescript
-// ❌ Ruim — controller com lógica
+// ❌ Bad — controller with logic
 static async create(req: Request, res: Response) {
-  const hash = await bcrypt.hash(req.body.password, 10); // lógica no controller
+  const hash = await bcrypt.hash(req.body.password, 10); // logic in controller
   const user = await prisma.user.create({ data: { ...req.body, passwordHash: hash } });
   return res.json(user);
 }
 
-// ✅ Bom — controller orquestra, service executa
+// ✅ Good — controller orchestrates, service executes
 static async create(req: Request, res: Response) {
   const input = req.validatedBody as CreateUserInput;
   const user = await usersService.create(input);
@@ -295,43 +295,43 @@ static async create(req: Request, res: Response) {
 
 ---
 
-## Regras duras
+## Hard rules
 
-- **Não pular camadas**: Controller → Service → Repository → Prisma. Sem atalhos.
-- **Não usar `any`**: tipo específico ou `unknown` com type guard.
-- **Não criar endpoint sem Zod schema** de request e response.
-- **Não alterar schema do banco sem migration** e caminho de rollback documentado.
-- **Não commitar sem `tsc --noEmit`** passando.
-- **Não hardcodar config**: usar env vars validadas via Zod.
-- **Não commitar `.env` real**, secrets, tokens ou credenciais.
-- **Não criar abstração antes de existir pelo menos um uso real**.
+- **Do not skip layers**: Controller → Service → Repository → Prisma. No shortcuts.
+- **Do not use `any`**: specific type or `unknown` with type guard.
+- **Do not create an endpoint without Zod schema** for request and response.
+- **Do not change database schema without migration** and documented rollback path.
+- **Do not commit without `tsc --noEmit`** passing.
+- **Do not hardcode config**: use env vars validated via Zod.
+- **Do not commit real `.env`**, secrets, tokens, or credentials.
+- **Do not create abstraction before at least one real use exists**.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-### Camadas e separação
-- **Não pular camadas**: Controller → Service → Repository → Prisma, sem atalhos.
-- **Service não conhece HTTP**: service nunca importa Express ou recebe req/res.
-- **Repository não valida input**: validação é responsabilidade do schema/controller.
-- **Controller não faz query direta**: acesso a dados passa pelo repository ou service.
+### Layers and separation
+- **Do not skip layers**: Controller → Service → Repository → Prisma, no shortcuts.
+- **Service does not know HTTP**: service never imports Express or receives req/res.
+- **Repository does not validate input**: validation is the responsibility of the schema/controller.
+- **Controller does not make direct queries**: data access goes through the repository or service.
 
-### Tipagem e validação
-- **Não usar `any`**: use tipo específico ou `unknown` com type guard.
-- **Não criar endpoint sem Zod schema**: todo endpoint precisa schema de request e response.
+### Typing and validation
+- **Do not use `any`**: use a specific type or `unknown` with type guard.
+- **Do not create an endpoint without Zod schema**: every endpoint needs request and response schemas.
 
-### Banco de dados
-- **Não alterar schema sem migration**: toda mudança no banco precisa migration com caminho de rollback documentado.
+### Database
+- **Do not change schema without migration**: every database change needs a migration with a documented rollback path.
 
-### Configuração e segurança
-- **Não hardcodar config**: usar env vars validadas via Zod.
-- **Não commitar `.env` real**, secrets, tokens ou credenciais.
-- **Não commitar sem `tsc --noEmit`** passando.
+### Configuration and security
+- **Do not hardcode config**: use env vars validated via Zod.
+- **Do not commit real `.env`**, secrets, tokens, or credentials.
+- **Do not commit without `tsc --noEmit`** passing.
 
-### Abstração
-- **Não criar abstração antes de uso real**: pelo menos um uso real deve existir antes de extrair.
+### Abstraction
+- **Do not create abstraction before real use**: at least one real use must exist before extracting.
 
 ### Frontend
-- **Mensagem técnica nunca vaza para o usuário final**: erros de API viram estado renderizável amigável.
-- **Mapa de rotas centralizado**: nunca strings soltas repetidas para rotas.
-- **API client centralizado em `shared/api/`**: não duplicar client HTTP por feature.
+- **Technical message never leaks to the end user**: API errors become friendly renderable state.
+- **Centralized route map**: never loose repeated strings for routes.
+- **Centralized API client in `shared/api/`**: do not duplicate HTTP client per feature.

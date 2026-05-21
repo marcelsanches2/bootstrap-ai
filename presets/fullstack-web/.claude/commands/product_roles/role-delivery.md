@@ -1,81 +1,81 @@
 # Role: Delivery
 
-## Sua contribuição
-Gera a seção "Deploy e entrega" do plano, cobrindo env vars, CI/CD, build, migrations, rollback e riscos operacionais.
+## Your contribution
+Generates the "Deploy and delivery" section of the plan, covering env vars, CI/CD, build, migrations, rollback, and operational risks.
 
-## Referência
+## Reference
 - docs/ai/DEPLOYMENT_GUIDE.md
 
-## O que incluir
-- **Escopo da entrega**: o que entra e o que NÃO entra nesta entrega.
-- **Arquivos alterados**: lista completa com caminho (frontend e backend).
-- **Dependências externas**: npm packages, APIs, serviços novos — com justificativa.
-- **Env/config**: variáveis de ambiente (frontend e backend) documentadas em `.env.example`, sem segredos expostos.
-- **Build production**: comando de build previsto (frontend + backend), com saída/start definido.
-- **Deploy procedure**: CI/CD, comandos, ordem de services.
-- **Migration**: migration incluída, testada e com caminho de rollback/downgrade documentado.
-- **Rollback**: como retornar à versão anterior — build anterior + compatibilidade API/cache/db.
-- **Cache/CDN**: cache de assets, HTML/entrypoint e estratégia de invalidação.
-- **Hosting**: fallback SPA, TLS, headers, proxy quando self-host.
-- **Breaking changes**: breaking changes versionadas e comunicadas.
-- **Riscos e mitigações**: riscos identificados com mitigações concretas.
+## What to include
+- **Delivery scope**: what goes in and what does NOT go in this delivery.
+- **Changed files**: complete list with path (frontend and backend).
+- **External dependencies**: npm packages, APIs, new services — with justification.
+- **Env/config**: environment variables (frontend and backend) documented in `.env.example`, no exposed secrets.
+- **Production build**: planned build command (frontend + backend), with output/start defined.
+- **Deploy procedure**: CI/CD, commands, service order.
+- **Migration**: migration included, tested, and with rollback/downgrade path documented.
+- **Rollback**: how to return to the previous version — previous build + API/cache/db compatibility.
+- **Cache/CDN**: asset caching, HTML/entrypoint, and invalidation strategy.
+- **Hosting**: SPA fallback, TLS, headers, proxy when self-hosted.
+- **Breaking changes**: versioned and communicated breaking changes.
+- **Risks and mitigations**: identified risks with concrete mitigations.
 
-## Regras
-- Sem rollback documentado é bloqueante.
-- Breaking change sem versão/aviso é bloqueante.
-- Dependência não mapeada é bloqueante.
-- Migration sem teste é bloqueante.
-- Nunca commitar secrets, tokens, dumps, `.env` real ou credenciais.
-- Se a mudança não tem impacto de deploy: escreva "Não se aplica" e explique por quê.
+## Rules
+- No documented rollback is blocking.
+- Breaking change without version/notice is blocking.
+- Unmapped dependency is blocking.
+- Migration without testing is blocking.
+- Never commit secrets, tokens, dumps, real `.env`, or credentials.
+- If the change has no deploy impact: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Deploy e entrega
+## Deploy and delivery
 
-### Escopo
-- **Inclui**: {itens}
-- **Não inclui**: {itens}
+### Scope
+- **Includes**: {items}
+- **Does not include**: {items}
 
-### Arquivos alterados
-- {caminho/completo/do/arquivo}
+### Changed files
+- {full/file/path}
 - ...
 
-### Dependências externas novas
-| Pacote/Serviço | Justificativa |
+### New external dependencies
+| Package/Service | Justification |
 |---|---|
-| {nome} | {por quê} |
+| {name} | {why} |
 
 ### Env vars
-| Variável | Ambiente | Descrição | Exemplo (.env.example) |
+| Variable | Environment | Description | Example (.env.example) |
 |---|---|---|---|
-| {NOME} | {dev/prod} | {o que faz} | {valor de exemplo} |
+| {NAME} | {dev/prod} | {what it does} | {example value} |
 
 ### Build
-{comandos de build para frontend e backend}
+{build commands for frontend and backend}
 
 ### Deploy procedure
-{passo a passo do deploy, ordem de services}
+{step-by-step deploy, service order}
 
 ### Migration
-| Migration | Comando | Rollback |
+| Migration | Command | Rollback |
 |---|---|---|
-| {nome} | {comando up} | {comando down} |
+| {name} | {up command} | {down command} |
 
 ### Rollback
-{procedimento de rollback completo}
+{complete rollback procedure}
 
 ### Cache/CDN
-{estratégia de cache e invalidação}
+{cache and invalidation strategy}
 
 ### Hosting
-{configuração de nginx/hosting se aplicável}
+{nginx/hosting configuration if applicable}
 
 ### Breaking changes
-{lista ou "Nenhuma"}
+{list or "None"}
 
-### Riscos e mitigações
-| Risco | Probabilidade | Mitigação |
+### Risks and mitigations
+| Risk | Probability | Mitigation |
 |---|---|---|
-| {risco} | {alta/média/baixa} | {ação concreta} |
+| {risk} | {high/medium/low} | {concrete action} |
 ```

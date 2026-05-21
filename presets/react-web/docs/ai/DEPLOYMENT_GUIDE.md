@@ -1,28 +1,28 @@
-# Deploy React Web
+# React Web Deployment
 
 ## Build
 
-Build production deve passar antes de entrega relevante.
+Production build must pass before relevant delivery.
 
 ### Vite
 
 ```bash
-# Build de produção
+# Production build
 npx vite build
 
-# Preview local do build
+# Local preview of build
 npx vite preview
 
-# Output padrão: dist/
+# Default output: dist/
 ```
 
-Configuração típica `vite.config.ts`:
+Typical `vite.config.ts` configuration:
 
 ```ts
 export default defineConfig({
   build: {
     outDir: 'dist',
-    sourcemap: true, // para debug em produção, não para servir publicamente
+    sourcemap: true, // for production debug, not to serve publicly
     rollupOptions: {
       output: {
         manualChunks: {
@@ -38,29 +38,29 @@ export default defineConfig({
 ### Next.js
 
 ```bash
-# Build de produção
+# Production build
 npx next build
 
-# Start do servidor
+# Start server
 npx next start
 
-# Output padrão: .next/
+# Default output: .next/
 ```
 
-Variáveis de ambiente em Next.js:
+Environment variables in Next.js:
 
-- `NEXT_PUBLIC_*` — expostas no client (embarcadas no bundle).
-- Sem prefixo — disponíveis apenas em server components / API routes.
+- `NEXT_PUBLIC_*` — exposed on the client (embedded in the bundle).
+- No prefix — available only in server components / API routes.
 
-**Nunca** coloque segredo em variáveis `NEXT_PUBLIC_*`.
+**Never** put secrets in `NEXT_PUBLIC_*` variables.
 
 ---
 
-## Variáveis de ambiente
+## Environment variables
 
-- `.env` real fora do git (adicionar ao `.gitignore`).
-- `.env.example` com todas as chaves necessárias, sem valores sensíveis.
-- Feature flags e URLs de API documentadas no README ou em `docs/ai/`.
+- Real `.env` outside git (add to `.gitignore`).
+- `.env.example` with all required keys, without sensitive values.
+- Feature flags and API URLs documented in README or `docs/ai/`.
 
 ```bash
 # .env.example
@@ -74,7 +74,7 @@ NEXT_PUBLIC_APP_TITLE=
 DATABASE_URL=           # server-only
 ```
 
-### Validação de env com Zod
+### Env validation with Zod
 
 ```ts
 // shared/config/env.ts
@@ -90,41 +90,41 @@ export const env = envSchema.parse(import.meta.env);
 
 ---
 
-## Cache e CDN
+## Cache and CDN
 
-### Assets estáticos
+### Static assets
 
-- Arquivos em `assets/` são versionados pelo hash no nome (Vite/Next.js fazem automaticamente).
-- Cache longo para assets com hash (1 ano é seguro).
-- HTML e entrypoint precisam permitir atualização rápida (cache curto ou no-cache).
+- Files in `assets/` are versioned by hash in the name (Vite/Next.js do this automatically).
+- Long cache for assets with hash (1 year is safe).
+- HTML and entrypoint need to allow quick updates (short cache or no-cache).
 
-### Configuração Nginx
+### Nginx configuration
 
 ```nginx
-# Assets com hash — cache agressivo
+# Assets with hash — aggressive cache
 location /assets/ {
   expires 1y;
   add_header Cache-Control "public, immutable";
 }
 
-# HTML — sem cache
+# HTML — no cache
 location / {
   try_files $uri $uri/ /index.html;
   add_header Cache-Control "no-cache, no-store, must-revalidate";
 }
 ```
 
-### Mudança de contrato frontend/backend
+### Frontend/backend contract changes
 
-Ao alterar contrato de API:
+When changing API contract:
 
-1. Comunique o backend sobre breaking changes.
-2. Se possível, versione a API (`/v2/users`).
-3. Cache antigo no client pode mostrar dados desatualizados — considere invalidação.
+1. Communicate breaking changes to the backend.
+2. If possible, version the API (`/v2/users`).
+3. Stale client cache may show outdated data — consider invalidation.
 
 ---
 
-## Headers de segurança
+## Security headers
 
 ### Nginx
 
@@ -159,21 +159,21 @@ module.exports = {
 ### Vercel (Next.js)
 
 ```bash
-# Instalar Vercel CLI
+# Install Vercel CLI
 npm i -g vercel
 
-# Deploy preview
+# Preview deploy
 vercel
 
-# Deploy produção
+# Production deploy
 vercel --prod
 ```
 
-Configurações importantes:
+Important configurations:
 
-- Variáveis de ambiente em Settings → Environment Variables.
-- Preview deploy automático por branch.
-- Domínio customizado em Settings → Domains.
+- Environment variables in Settings → Environment Variables.
+- Automatic preview deploy per branch.
+- Custom domain in Settings → Domains.
 
 ### VPS / Docker
 
@@ -194,7 +194,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 
 ```bash
-# Build e run
+# Build and run
 docker build -t react-app .
 docker run -p 8080:80 react-app
 ```
@@ -203,7 +203,7 @@ docker run -p 8080:80 react-app
 
 ## SPA Fallback
 
-Para SPA com React Router, configure o servidor para redirecionar rotas não-encontradas para `index.html`:
+For SPAs with React Router, configure the server to redirect unfound routes to `index.html`:
 
 ```nginx
 # Nginx
@@ -212,33 +212,33 @@ location / {
 }
 ```
 
-**Importante:** Não aplique fallback SPA em apps Next.js com SSR — o Next.js gerencia rotas no servidor.
+**Important:** Do not apply SPA fallback in Next.js apps with SSR — Next.js manages routes on the server.
 
 ---
 
 ## Rollback
 
-Plano de rollback deve cobrir:
+Rollback plan must cover:
 
-1. **Build anterior acessível:** mantenha artefato ou imagem Docker da versão anterior.
-2. **Rollback de env:** se mudou variável de ambiente, reverta junto.
-3. **Contrato de API:** se mudou contrato, garanta que versão anterior funciona com backend atual.
-4. **Cache do client:** usuários com versão antiga em cache podem ter comportamento inconsistente.
+1. **Previous build accessible:** keep artifact or Docker image of the previous version.
+2. **Env rollback:** if you changed environment variables, revert them too.
+3. **API contract:** if you changed the contract, ensure the previous version works with the current backend.
+4. **Client cache:** users with old cached version may have inconsistent behavior.
 
 ```bash
 # Docker rollback
 docker tag react-app:latest react-app:backup
 docker build -t react-app:latest .
-# Se der problema:
+# If there's a problem:
 docker stop react-app-container
 docker run -d --name react-app-container -p 8080:80 react-app:backup
 ```
 
 ---
 
-## Compressão
+## Compression
 
-Habilite gzip ou brotli no servidor web:
+Enable gzip or brotli on the web server:
 
 ```nginx
 # Nginx
@@ -247,7 +247,7 @@ gzip_types text/plain text/css application/json application/javascript text/xml;
 gzip_min_length 1024;
 ```
 
-Para Vite, gere assets pré-comprimidos:
+For Vite, generate pre-compressed assets:
 
 ```ts
 // vite.config.ts
@@ -262,29 +262,29 @@ export default defineConfig({
 
 ## Anti-patterns
 
-- **Segredo em `NEXT_PUBLIC_*` ou `VITE_*`:** variáveis públicas são embarcadas no bundle e visíveis no browser.
-- **`.env` commitado:** sempre adicione ao `.gitignore`.
-- **Sem sourcemap em produção:** dificulta debug de erros em produção. Gere, mas não sirva publicamente.
-- **Cache agressivo em HTML:** impede atualização rápida. Reserve cache longo para assets com hash.
-- **Deploy sem build check:** rode `npm run build` (e `npm run lint` + `npx tsc --noEmit`) antes de deploy.
-- **Fallback SPA em app com SSR:** quebra rotas server-rendered.
-- **Sem rollback planejado:** todo deploy deve ter forma de voltar.
+- **Secret in `NEXT_PUBLIC_*` or `VITE_*`:** public variables are embedded in the bundle and visible in the browser.
+- **Committed `.env`:** always add to `.gitignore`.
+- **No sourcemap in production:** makes debugging production errors harder. Generate, but do not serve publicly.
+- **Aggressive cache on HTML:** prevents quick updates. Reserve long cache for assets with hash.
+- **Deploy without build check:** run `npm run build` (and `npm run lint` + `npx tsc --noEmit`) before deploy.
+- **SPA fallback in SSR app:** breaks server-rendered routes.
+- **No planned rollback:** every deploy must have a way back.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any below.
 
-### Segurança
-- **Nunca colocar segredo em `NEXT_PUBLIC_*` ou `VITE_*`**: variáveis públicas são embarcadas no bundle e visíveis no browser.
-- **Nunca commitar `.env` real**: `.env` deve estar no `.gitignore`; só commitar `.env.example` sem valores sensíveis.
-- **Headers de segurança obrigatórios**: X-Frame-Options, X-Content-Type-Options, Referrer-Policy devem estar configurados.
+### Security
+- **Never put secrets in `NEXT_PUBLIC_*` or `VITE_*`**: public variables are embedded in the bundle and visible in the browser.
+- **Never commit real `.env`**: `.env` must be in `.gitignore`; only commit `.env.example` without sensitive values.
+- **Security headers required**: X-Frame-Options, X-Content-Type-Options, Referrer-Policy must be configured.
 
-### Build e deploy
-- **Build production deve passar antes de entrega relevante**: rode `npm run build` (e `npm run lint` + `npx tsc --noEmit`) antes de deploy.
-- **Todo deploy deve ter rollback planejado**: manter artefato/imagem da versão anterior acessível.
-- **Não aplicar fallback SPA em app Next.js com SSR**: quebra rotas server-rendered.
+### Build and deploy
+- **Production build must pass before relevant delivery**: run `npm run build` (and `npm run lint` + `npx tsc --noEmit`) before deploy.
+- **Every deploy must have planned rollback**: keep previous artifact/image accessible.
+- **Do not apply SPA fallback in Next.js app with SSR**: breaks server-rendered routes.
 
-### Cache e env
-- **Cache agressivo só para assets com hash**: HTML e entrypoint devem ter cache curto ou no-cache.
-- **Sourcemap em produção deve ser gerado, mas não servido publicamente**: dificulta debug se ausente.
-- **`.env.example` deve ter todas as chaves necessárias**: sem valores sensíveis, documentando cada variável.
+### Cache and env
+- **Aggressive cache only for assets with hash**: HTML and entrypoint must have short cache or no-cache.
+- **Sourcemap in production must be generated but not served publicly**: makes debugging harder if absent.
+- **`.env.example` must have all required keys**: without sensitive values, documenting each variable.

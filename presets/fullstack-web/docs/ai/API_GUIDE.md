@@ -1,26 +1,26 @@
 # API Guide
 
-Convenções REST para APIs Node.js/TypeScript.
+REST conventions for Node.js/TypeScript APIs.
 
-## Versionamento
+## Versioning
 
-Prefixo na URL: `/api/v1/`, `/api/v2/`.
+URL prefix: `/api/v1/`, `/api/v2/`.
 
 ## Status codes
 
-| Código | Quando usar |
+| Code | When to use |
 |---|---|
-| 200 | Sucesso (GET, PUT, PATCH) |
-| 201 | Criado (POST) |
-| 204 | Sem conteúdo (DELETE) |
-| 400 | Validação de input falhou |
-| 401 | Não autenticado |
-| 403 | Sem permissão |
-| 404 | Recurso não encontrado |
-| 409 | Conflito (duplicado) |
+| 200 | Success (GET, PUT, PATCH) |
+| 201 | Created (POST) |
+| 204 | No content (DELETE) |
+| 400 | Input validation failed |
+| 401 | Unauthenticated |
+| 403 | Forbidden |
+| 404 | Resource not found |
+| 409 | Conflict (duplicate) |
 | 422 | Unprocessable entity (Zod validation) |
 | 429 | Rate limit |
-| 500 | Erro interno |
+| 500 | Internal error |
 
 ## Error format
 
@@ -28,13 +28,13 @@ Prefixo na URL: `/api/v1/`, `/api/v2/`.
 {
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Email já cadastrado",
+    "message": "Email already registered",
     "field": "email"
   }
 }
 ```
 
-## Validação com Zod
+## Validation with Zod
 
 ```typescript
 import { z } from 'zod';
@@ -45,7 +45,7 @@ const createUserSchema = z.object({
   password: z.string().min(8).max(128),
 });
 
-// Middleware de validação
+// Validation middleware
 export function validate(schema: z.ZodSchema) {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse({ body: req.body, query: req.query, params: req.params });
@@ -60,7 +60,7 @@ export function validate(schema: z.ZodSchema) {
 }
 ```
 
-## Paginação
+## Pagination
 
 ```typescript
 // Query: skip=0&limit=20
@@ -73,7 +73,7 @@ export function validate(schema: z.ZodSchema) {
 }
 ```
 
-Limites: limit min 1, max 100, default 20.
+Limits: limit min 1, max 100, default 20.
 
 ## Rate limiting
 
@@ -95,23 +95,23 @@ app.use(cors({
 }));
 ```
 
-Nunca `origin: '*'` em produção.
+Never `origin: '*'` in production.
 
-## Regras duras
+## Hard rules
 
-- Não usar status 200 para tudo.
-- Não retornar `{ success: true }`.
-- Não expor passwordHash, tokens internos.
-- Não validar com if/else — usar Zod.
-- Não criar endpoint sem schema de request e response.
+- Do not use status 200 for everything.
+- Do not return `{ success: true }`.
+- Do not expose passwordHash, internal tokens.
+- Do not validate with if/else — use Zod.
+- Do not create an endpoint without request and response schemas.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Nunca `origin: '*'` em produção**: CORS deve ter origens explícitas.
-- **Não usar status 200 para tudo**: cada cenário deve usar o status code correto (201, 400, 401, 404, etc.).
-- **Não retornar `{ success: true }`**: response deve ter formato padronizado de erro ou dados.
-- **Não expor passwordHash, tokens internos**: dados sensíveis nunca vazam na response.
-- **Não validar com if/else**: usar Zod para validação de input.
-- **Não criar endpoint sem schema de request e response**: todo endpoint precisa contrato definido.
+- **Never `origin: '*'` in production**: CORS must have explicit origins.
+- **Do not use status 200 for everything**: each scenario must use the correct status code (201, 400, 401, 404, etc.).
+- **Do not return `{ success: true }`**: response must have standardized error or data format.
+- **Do not expose passwordHash, internal tokens**: sensitive data must never leak in the response.
+- **Do not validate with if/else**: use Zod for input validation.
+- **Do not create an endpoint without request and response schemas**: every endpoint needs a defined contract.

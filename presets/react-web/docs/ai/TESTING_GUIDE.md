@@ -1,52 +1,52 @@
-# Guia de Testes React Web
+# React Web Testing Guide
 
-## Camadas
+## Layers
 
-- Unit: funções, formatadores, hooks simples.
-- Component: estados visuais, interação e acessibilidade básica.
-- Integration: tela com dados mockados.
-- E2E: jornada crítica realista.
+- Unit: functions, formatters, simple hooks.
+- Component: visual states, interaction, and basic accessibility.
+- Integration: screen with mocked data.
+- E2E: realistic critical journey.
 
-## O que testar
+## What to test
 
-Para feature de UI, cubra:
+For a UI feature, cover:
 
-- render inicial
+- initial render
 - loading
 - empty
 - error
 - success
-- interação principal
-- cenário negativo relevante
-- acessibilidade básica quando possível
+- main interaction
+- relevant negative scenario
+- basic accessibility when possible
 
 ## Mocks
 
-- MSW ou equivalente para API quando disponível.
-- Mock determinístico, sem depender de rede real.
-- Não mockar componente que é justamente o alvo do teste.
+- MSW or equivalent for API when available.
+- Deterministic mock, no dependency on real network.
+- Do not mock the component that is the test target.
 
-## Build e regressão
+## Build and regression
 
-Mudança grande precisa de build production. Teste unitário não substitui build.
+Large changes need a production build. Unit tests do not replace the build.
 
-## Comandos típicos
+## Typical commands
 
 ```bash
 npm run lint
 npm run typecheck
 npm test
 npm run build
-npx playwright test  # quando houver E2E
+npx playwright test  # when E2E exists
 ```
 
-Use os scripts reais do projeto.
+Use the project's actual scripts.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any below.
 
-- **Não mockar o alvo do teste**: nunca mockar o componente/função que é justamente o que está sendo testado.
-- **Build production obrigatório para mudança grande**: teste unitário não substitui build; rode `npm run build`.
-- **Mocks determinísticos**: testes não devem depender de rede real; use MSW ou equivalente.
-- **Cobrir estados de UI**: render, loading, empty, error, success e interação principal devem ser testados.
+- **Do not mock the test target**: never mock the component/function that is precisely what is being tested.
+- **Production build required for large changes**: unit tests do not replace the build; run `npm run build`.
+- **Deterministic mocks**: tests must not depend on real network; use MSW or equivalent.
+- **Cover UI states**: render, loading, empty, error, success, and main interaction must be tested.

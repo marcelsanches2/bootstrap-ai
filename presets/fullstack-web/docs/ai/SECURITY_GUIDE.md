@@ -1,8 +1,8 @@
 # Security Guide
 
-Padrões de segurança para Node.js backend.
+Security standards for Node.js backend.
 
-## Autenticação JWT
+## JWT Authentication
 
 ```typescript
 import jwt from 'jsonwebtoken';
@@ -18,14 +18,14 @@ function createRefreshToken(userId: number): string {
 // Middleware
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token) return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Token ausente' } });
+  if (!token) return res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Token missing' } });
 
   try {
     const payload = jwt.verify(token, config.JWT_SECRET) as { sub: string };
     req.userId = parseInt(payload.sub);
     next();
   } catch {
-    res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Token inválido' } });
+    res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Invalid token' } });
   }
 }
 ```
@@ -47,7 +47,7 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 
 ## Input validation (Zod)
 
-Sempre validar input com Zod. Nunca confiar em req.body diretamente.
+Always validate input with Zod. Never trust req.body directly.
 
 ## CORS
 
@@ -58,7 +58,7 @@ app.use(cors({
 }));
 ```
 
-Nunca `origin: '*'` em produção.
+Never `origin: '*'` in production.
 
 ## Security headers
 
@@ -74,23 +74,23 @@ import rateLimit from 'express-rate-limit';
 app.use('/api/v1/auth', rateLimit({ windowMs: 60_000, max: 5 }));
 ```
 
-## Regras duras
+## Hard rules
 
-- Nunca logar senha, token, PII.
-- Nunca armazenar senha em texto plano.
-- Nunca `origin: '*'` em produção.
-- Nunca commitar `.env`.
-- Nunca usar `eval()`.
-- Nunca expor stack trace em produção.
+- Never log passwords, tokens, or PII.
+- Never store passwords in plain text.
+- Never `origin: '*'` in production.
+- Never commit `.env`.
+- Never use `eval()`.
+- Never expose stack traces in production.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Nunca logar senha, token, PII**: dados sensíveis nunca aparecem em logs.
-- **Nunca armazenar senha em texto plano**: sempre hash com bcrypt.
-- **Nunca `origin: '*'` em produção**: CORS deve ter origens explícitas.
-- **Nunca commitar `.env`**: secrets não entram no repositório.
-- **Nunca usar `eval()`**: proibido em qualquer circunstância.
-- **Nunca expor stack trace em produção**: capture internamente, retorne erro genérico.
-- **Nunca confiar em `req.body` diretamente**: sempre validar input com Zod.
+- **Never log passwords, tokens, or PII**: sensitive data must never appear in logs.
+- **Never store passwords in plain text**: always hash with bcrypt.
+- **Never `origin: '*'` in production**: CORS must have explicit origins.
+- **Never commit `.env`**: secrets must not enter the repository.
+- **Never use `eval()`**: prohibited under any circumstance.
+- **Never expose stack traces in production**: capture internally, return generic error.
+- **Never trust `req.body` directly**: always validate input with Zod.

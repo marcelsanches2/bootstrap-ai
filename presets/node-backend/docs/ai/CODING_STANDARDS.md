@@ -1,8 +1,8 @@
 # Coding Standards
 
-Padrões de código para Node.js backend com TypeScript.
+Code standards for Node.js backend with TypeScript.
 
-## Ferramentas
+## Tools
 
 - **Formatter**: Prettier
 - **Linter**: ESLint + @typescript-eslint
@@ -27,37 +27,37 @@ Padrões de código para Node.js backend com TypeScript.
 }
 ```
 
-## Tipagem
+## Typing
 
 ```typescript
-// ✓ Tipos explícitos
+// ✓ Explicit types
 async function getUser(id: number): Promise<User | null> { ... }
 
-// ✗ Nunca any
+// ✗ Never any
 function process(data: any): any { ... }  // ❌
 
-// ✓ Use unknown quando não sabe o tipo
+// ✓ Use unknown when you don't know the type
 function process(data: unknown): Result {
   const parsed = schema.parse(data);
   ...
 }
 ```
 
-## Nomenclatura
+## Naming
 
-| Elemento | Convenção | Exemplo |
+| Element | Convention | Example |
 |---|---|---|
-| Arquivo | kebab-case | user-service.ts |
-| Classe | PascalCase | UsersService |
-| Função | camelCase | createUser() |
-| Constante | UPPER_SNAKE | MAX_RETRIES |
+| File | kebab-case | user-service.ts |
+| Class | PascalCase | UsersService |
+| Function | camelCase | createUser() |
+| Constant | UPPER_SNAKE | MAX_RETRIES |
 | Interface | PascalCase | UserProfile |
 | Type alias | PascalCase | OrderStatus |
 | Boolean | is/has/can | isActive, hasPermission |
-| Rota | kebab-case | /api/v1/user-profiles |
-| Campo Prisma | camelCase | createdAt |
+| Route | kebab-case | /api/v1/user-profiles |
+| Prisma field | camelCase | createdAt |
 
-## Tratamento de erros
+## Error handling
 
 ```typescript
 // utils/errors.ts
@@ -76,7 +76,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     return res.status(err.status).json({ error: { code: err.code, message: err.message, field: err.field } });
   }
   logger.error('Unexpected error', { error: err.message, stack: err.stack });
-  res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Erro interno' } });
+  res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Internal error' } });
 });
 ```
 
@@ -90,50 +90,50 @@ logger.info({ userId: user.id }, 'user_created');
 logger.error({ orderId: order.id, error: err.message }, 'payment_failed');
 ```
 
-Nunca logar senhas, tokens, PII.
+Never log passwords, tokens, PII.
 
 ## Async
 
-Sempre async/await, nunca callbacks:
+Always async/await, never callbacks:
 
 ```typescript
 // ✓
 const user = await prisma.user.findUnique({ where: { id } });
 
-// ✗ Nunca callback hell
+// ✗ Never callback hell
 prisma.user.findUnique({ where: { id } }).then(user => { ... }).catch(err => { ... });
 ```
 
-## Proibições
+## Prohibitions
 
-- `any` sem comentário justificando
-- `console.log` em produção
-- `require()` — usar import
+- `any` without a comment justifying it
+- `console.log` in production
+- `require()` — use import
 - `eval()`, `Function()`
-- `// @ts-ignore` sem justificativa
-- Callbacks — usar async/await
-- `ts-ignore` / `ts-expect-error` sem justificativa
+- `// @ts-ignore` without justification
+- Callbacks — use async/await
+- `ts-ignore` / `ts-expect-error` without justification
 
-## Regras duras
+## Hard rules
 
-- Não commitar sem `tsc --noEmit` passando.
-- Não usar `any` sem documentar.
-- Não logar dados sensíveis.
-- Não usar `console.log` em produção.
-- Não hardcodar configuração.
+- Do not commit without `tsc --noEmit` passing.
+- Do not use `any` without documenting.
+- Do not log sensitive data.
+- Do not use `console.log` in production.
+- Do not hardcode configuration.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any of the rules below.
 
-- **Não usar `any` sem documentar**: Usar `unknown` ou tipo específico; se `any`, justificar em comentário.
-- **Não commitar sem `tsc --noEmit` passando**: Type checking deve estar limpo antes de commit.
-- **Não logar dados sensíveis**: Nunca logar senhas, tokens, PII.
-- **Não usar `console.log` em produção**: Usar logger estruturado (pino).
-- **Não hardcodar configuração**: Usar env vars via Zod.
-- **Não usar `require()`**: Usar import/ES modules.
-- **Não usar `eval()` nem `Function()`**: Proibido em qualquer contexto.
-- **Não usar `// @ts-ignore` sem justificativa**: Justificar se necessário.
-- **Não usar callbacks**: Sempre async/await.
-- **Não usar `ts-ignore` / `ts-expect-error` sem justificativa**: Justificar se necessário.
-- **Sempre async/await, nunca callbacks**: Callbacks são proibidos; usar async/await.
+- **Do not use `any` without documenting**: Use `unknown` or specific type; if `any`, justify in a comment.
+- **Do not commit without `tsc --noEmit` passing**: Type checking must be clean before commit.
+- **Do not log sensitive data**: Never log passwords, tokens, PII.
+- **Do not use `console.log` in production**: Use structured logger (pino).
+- **Do not hardcode configuration**: Use env vars via Zod.
+- **Do not use `require()`**: Use import/ES modules.
+- **Do not use `eval()` or `Function()`**: Prohibited in any context.
+- **Do not use `// @ts-ignore` without justification**: Justify if necessary.
+- **Do not use callbacks**: Always async/await.
+- **Do not use `ts-ignore` / `ts-expect-error` without justification**: Justify if necessary.
+- **Always async/await, never callbacks**: Callbacks are prohibited; use async/await.

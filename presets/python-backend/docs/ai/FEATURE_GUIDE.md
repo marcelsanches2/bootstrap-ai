@@ -1,16 +1,16 @@
 # Feature Guide
 
-Como desenvolver features novas no Python backend.
+How to develop new features in the Python backend.
 
-## Nova feature passo a passo
+## New feature step by step
 
-### 1. Criar migration
+### 1. Create migration
 
 ```bash
 alembic revision --autogenerate -m "add orders table"
 ```
 
-Revisar e ajustar. Garantir downgrade:
+Review and adjust. Ensure downgrade:
 
 ```python
 def upgrade():
@@ -156,7 +156,7 @@ class OrderService:
     async def get(self, order_id: int) -> Order:
         order = await self.repo.get_by_id(order_id)
         if not order:
-            raise NotFoundError("Pedido", order_id)
+            raise NotFoundError("Order", order_id)
         return order
 ```
 
@@ -191,18 +191,18 @@ async def get_order(
     return await service.get(order_id)
 ```
 
-## Regras duras
+## Hard rules
 
-- Sempre: migration → model → schema → repository → service → router.
-- Nunca pular camada.
-- Nunca criar endpoint sem schema de request e response.
-- Nunca criar tabela sem migration com downgrade.
+- Always: migration → model → schema → repository → service → router.
+- Never skip a layer.
+- Never create endpoint without request and response schema.
+- Never create table without migration with downgrade.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Ordem obrigatória**: Sempre seguir migration → model → schema → repository → service → router.
-- **Não pular camada**: Nunca pular camada na arquitetura.
-- **Endpoint com schema**: Nunca criar endpoint sem schema de request e response.
-- **Migration com downgrade**: Nunca criar tabela sem migration que tenha `downgrade()` funcional.
+- **Mandatory order**: Always follow migration → model → schema → repository → service → router.
+- **Do not skip layer**: Never skip a layer in the architecture.
+- **Endpoint with schema**: Never create endpoint without request and response schema.
+- **Migration with downgrade**: Never create table without migration that has functional `downgrade()`.

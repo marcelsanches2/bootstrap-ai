@@ -1,69 +1,69 @@
 # /refactor
 
-Planeja e conduz uma refatoração segura em projeto existente.
+Plans and conducts a safe refactoring in an existing project.
 
-Use quando este preset for aplicado em um projeto já em andamento e o objetivo for alinhar o código ao lifecycle, arquitetura, docs `docs/ai/`, roles e padrões do preset.
+Use when this preset has been applied to an in-progress project and the goal is to align the code with the lifecycle, architecture, `docs/ai/` docs, roles, and preset standards.
 
-## Regra principal
+## Main Rule
 
-Não comece refatorando código. Primeiro inventarie, gere plano, rode revisão e só então execute incrementalmente.
+Do not start refactoring code. First inventory, generate a plan, run a review, and only then execute incrementally.
 
-## Sequência obrigatória
+## Mandatory Sequence
 
-### 0. Classificar escopo
+### 0. Classify scope
 
-- `PEQUENA`: módulo isolado, sem mudança pública de contrato.
-- `MÉDIA`: múltiplos arquivos/features, sem alterar arquitetura central.
-- `GRANDE`: arquitetura, pastas, DI, banco, API pública ou mudança transversal.
+- `SMALL`: isolated module, no public contract change.
+- `MEDIUM`: multiple files/features, no central architecture change.
+- `LARGE`: architecture, folders, DI, database, public API, or cross-cutting change.
 
-Se for `GRANDE`, divida em fases pequenas.
+If it's `LARGE`, break it into small phases.
 
-### 1. Carregar contexto
+### 1. Load context
 
-Leia obrigatoriamente:
+Mandatory reads:
 
 - `CLAUDE.md`
 - `docs/ai/ARCHITECTURE.md`
 - `docs/ai/CODING_STANDARDS.md`
 - `docs/ai/TESTING_GUIDE.md`
-- demais guias da stack
+- other stack guides
 
-### 2. Inventário técnico
+### 2. Technical inventory
 
-- Padrões atuais do projeto
-- Divergências contra `docs/ai/`
-- Dívidas técnicas
-- Duplicações
-- Violações de camada
-- Código morto
-- Testes ausentes
+- Current project patterns
+- Divergences against `docs/ai/`
+- Technical debt
+- Duplications
+- Layer violations
+- Dead code
+- Missing tests
 
-### 3. Gerar plano de refatoração
+### 3. Generate refactoring plan
 
-Salvar em `plans/YYYY-MM-DD-refactor-<slug>.md`:
+Save to `plans/YYYY-MM-DD-refactor-<slug>.md`:
 
 ```md
-# Plano de Refatoração: <título>
-## Objetivo / Contexto / Estado atual / Problemas / Fora de escopo
-## Estratégia / Fases incrementais / Arquivos / Testes / Riscos / Rollback / Critérios
+# Refactoring Plan: <title>
+## Objective / Context / Current state / Problems / Out of scope
+## Strategy / Incremental phases / Files / Tests / Risks / Rollback / Criteria
 ```
 
-### 4. Rodar `/jarvis-plan` no plano.
+### 4. Run `/jarvis-plan` on the plan.
 
-### 5. Executar incrementalmente por fase.
+### 5. Execute incrementally per phase.
 
-### 6. Relatório final em `docs/refactor_report_<slug>.md`.
+### 6. Final report in `docs/refactor_report_<slug>.md`.
 
-## Regras duras
+## Hard Rules
 
-- Não fazer big-bang refactor.
-- Não misturar refatoração com feature nova.
-- Não alterar comportamento sem teste.
-- Não apagar código sem confirmar uso.
-- Não mexer em `.env` ou secrets.
-- Não usar `--no-verify`.
-- Não fazer push force.
+- No big-bang refactoring.
+- Do not mix refactoring with new features.
+- Do not change behavior without a test.
+- Do not delete code without confirming usage.
+- Do not touch `.env` or secrets.
+- Do not use `--no-verify`.
+- Do not force push.
 
-## Regras específicas {{STACK}}
+## Stack-specific rules {{STACK}}
 
 {{STACK_SPECIFIC_RULES}}

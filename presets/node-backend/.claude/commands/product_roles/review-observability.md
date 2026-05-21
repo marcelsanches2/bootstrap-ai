@@ -1,50 +1,50 @@
 # Role: Observability Engineer
 
-## Sua contribuição
-Gera a seção "Observabilidade" do plano, definindo logs estruturados, métricas, tracing, healthcheck e graceful shutdown.
+## Your contribution
+Generates the "Observability" section of the plan, defining structured logs, metrics, tracing, healthcheck, and graceful shutdown.
 
-## Referência
+## Reference
 - docs/ai/OBSERVABILITY_GUIDE.md
 
-## O que incluir
-- **Logs estruturados**: eventos de negócio logados com pino (ou equivalente) em formato JSON. Inclua contexto relevante (orderId, userId, requestId).
-- **Erros com contexto**: todo erro logado com informações suficientes para diagnóstico (stack trace, parâmetros, id da entidade).
-- **Nenhum dado sensível nos logs**: password, token, Authorization header, cookie, PII — mascarados ou omitidos.
-- **Request ID propagado**: `X-Request-ID` gerado na entrada e propagado em toda a chain (logs, chamadas externas).
-- **Latência**: monitorada em endpoints novos. Defina p95/p99 aceitável quando relevante.
-- **Healthcheck**: endpoint `/health` atualizado com novas dependências. Cada dependência verificada (DB, Redis, fila, serviço externo).
-- **Métricas de negócio**: quando aplicável, defina métricas que importam para negócio (ex.: pedidos/minuto, tempo de processamento).
-- **Chamadas externas**: timeout configurado e log de falha com contexto.
-- **Graceful shutdown**: SIGTERM/SIGINT tratados — fechar server, drenar conexões, completar jobs em andamento.
+## What to include
+- **Structured logs**: business events logged with pino (or equivalent) in JSON format. Include relevant context (orderId, userId, requestId).
+- **Errors with context**: every error logged with sufficient information for diagnosis (stack trace, parameters, entity id).
+- **No sensitive data in logs**: password, token, Authorization header, cookie, PII — masked or omitted.
+- **Propagated Request ID**: `X-Request-ID` generated at entry and propagated throughout the chain (logs, external calls).
+- **Latency**: monitored on new endpoints. Define acceptable p95/p99 when relevant.
+- **Healthcheck**: `/health` endpoint updated with new dependencies. Each dependency verified (DB, Redis, queue, external service).
+- **Business metrics**: when applicable, define metrics that matter for business (e.g., orders/minute, processing time).
+- **External calls**: configured timeout and failure logging with context.
+- **Graceful shutdown**: SIGTERM/SIGINT handled — close server, drain connections, complete in-progress jobs.
 
-## Regras
-- Dado sensível em log é BLOCKER.
-- Healthcheck faltando com dependência nova é BLOCKER.
-- Toda chamada externa precisa de timeout.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Sensitive data in log is a BLOCKER.
+- Missing healthcheck with new dependency is a BLOCKER.
+- Every external call needs a timeout.
+- If it doesn't apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Observabilidade
+## Observability
 
-### Logs estruturados
-| Evento | Campos obrigatórios | Nível |
-|--------|--------------------|-------|
-| {evento} | {requestId, userId, ...} | info/warn/error |
+### Structured logs
+| Event | Mandatory fields | Level |
+|-------|-----------------|-------|
+| {event} | {requestId, userId, ...} | info/warn/error |
 
-### Erros
-- Formato: `{ error, message, stack, requestId, {entidade}Id }`
-- Sem dado sensível no log.
+### Errors
+- Format: `{ error, message, stack, requestId, {entity}Id }`
+- No sensitive data in log.
 
 ### Request ID
 - Header: `X-Request-ID`
-- Geração: {middleware/ferramenta}
-- Propagação: {logs, chamadas externas, contexto async}
+- Generation: {middleware/tool}
+- Propagation: {logs, external calls, async context}
 
-### Latência
-| Endpoint | p95 aceitável | p99 aceitável |
-|----------|--------------|--------------|
+### Latency
+| Endpoint | Acceptable p95 | Acceptable p99 |
+|----------|---------------|---------------|
 | {path} | {ms} | {ms} |
 
 ### Healthcheck
@@ -55,25 +55,25 @@ Response 200:
   status: "ok",
   checks: {
     database: "ok",
-    {dependência}: "ok"
+    {dependency}: "ok"
   }
 }
 ```
 
-### Métricas de negócio
-| Métrica | Tipo | Fonte |
-|---------|------|-------|
-| {métrica} | {counter/gauge/histogram} | {onde coletar} |
+### Business metrics
+| Metric | Type | Source |
+|--------|------|--------|
+| {metric} | {counter/gauge/histogram} | {where to collect} |
 
-### Chamadas externas
-| Serviço | Timeout | Log de falha |
+### External calls
+| Service | Timeout | Failure log |
 |---------|---------|-------------|
-| {serviço} | {ms} | {campos logados} |
+| {service} | {ms} | {logged fields} |
 
 ### Graceful shutdown
-1. Receber SIGTERM/SIGINT
-2. Parar de aceitar novas conexões
-3. Completar requests em andamento (deadline: {ms})
-4. Fechar pool de conexões
+1. Receive SIGTERM/SIGINT
+2. Stop accepting new connections
+3. Complete in-progress requests (deadline: {ms})
+4. Close connection pool
 5. Log: "shutdown complete"
 ```

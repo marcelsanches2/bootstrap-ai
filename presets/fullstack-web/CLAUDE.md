@@ -1,90 +1,90 @@
 # CLAUDE.md
 
-Contrato principal para Claude Code neste projeto fullstack web.
+Main contract for Claude Code in this fullstack web project.
 
-## Projeto
+## Project
 
-{{PROJECT_NAME}} é uma aplicação fullstack web (Next.js/Remix) com React frontend e Node.js backend no mesmo repositório. Foco: contratos de API estáveis, UX consistente, componentes testáveis, migrations seguras, observabilidade mínima e deploy recuperável.
+{{PROJECT_NAME}} is a fullstack web application (Next.js/Remix) with React frontend and Node.js backend in the same repository. Focus: stable API contracts, consistent UX, testable components, safe migrations, minimal observability, and recoverable deploys.
 
-Stack padrão:
+Default stack:
 
 - Node.js LTS
 - TypeScript
-- Next.js ou Remix (App Router / nested routes)
-- React para UI
-- Prisma ou Drizzle para persistência
-- PostgreSQL em produção; SQLite para dev/test quando adequado
-- TanStack Query / Axios para data fetching
-- Zustand / Redux apenas quando estado global for necessário
-- Zod para validação (boundaries do frontend E input do backend)
-- Vitest / Jest para testes
-- Playwright / Cypress para E2E
+- Next.js or Remix (App Router / nested routes)
+- React for UI
+- Prisma or Drizzle for persistence
+- PostgreSQL in production; SQLite for dev/test when appropriate
+- TanStack Query / Axios for data fetching
+- Zustand / Redux only when global state is needed
+- Zod for validation (frontend boundaries AND backend input)
+- Vitest / Jest for tests
+- Playwright / Cypress for E2E
 
-## Leitura sob demanda
+## On-demand reading
 
-Arquivos em `docs/ai/` devem ser lidos conforme o tipo da tarefa. Não leia todos automaticamente.
+Files in `docs/ai/` should be read according to the task type. Do not read them all automatically.
 
-| Tipo de tarefa | Documento(s) a ler |
+| Task type | Document(s) to read |
 |---|---|
-| Arquitetura, boundaries, estado, rotas, data flow, DI | `docs/ai/ARCHITECTURE.md` |
-| Tela, componente, layout, cor, tipografia, UX | `docs/ai/DESIGN_SYSTEM.md` |
-| Acessibilidade, teclado, foco, labels, semântica | `docs/ai/ACCESSIBILITY_GUIDE.md` |
-| Performance, bundle, renderização, imagens, Web Vitals | `docs/ai/PERFORMANCE_GUIDE.md` |
-| Endpoint, status code, schema, OpenAPI, paginação | `docs/ai/API_GUIDE.md` |
-| Modelos, migrations, índices, constraints, queries | `docs/ai/DATABASE_GUIDE.md` |
-| Auth, autorização, secrets, PII, rate limit, headers | `docs/ai/SECURITY_GUIDE.md` |
-| Logs, métricas, tracing, healthcheck, incidentes | `docs/ai/OBSERVABILITY_GUIDE.md` |
-| Escala, concorrência, performance backend, filas, cache, pool | `docs/ai/SCALABILITY_GUIDE.md` |
+| Architecture, boundaries, state, routes, data flow, DI | `docs/ai/ARCHITECTURE.md` |
+| Screen, component, layout, color, typography, UX | `docs/ai/DESIGN_SYSTEM.md` |
+| Accessibility, keyboard, focus, labels, semantics | `docs/ai/ACCESSIBILITY_GUIDE.md` |
+| Performance, bundle, rendering, images, Web Vitals | `docs/ai/PERFORMANCE_GUIDE.md` |
+| Endpoint, status code, schema, OpenAPI, pagination | `docs/ai/API_GUIDE.md` |
+| Models, migrations, indexes, constraints, queries | `docs/ai/DATABASE_GUIDE.md` |
+| Auth, authorization, secrets, PII, rate limit, headers | `docs/ai/SECURITY_GUIDE.md` |
+| Logs, metrics, tracing, healthcheck, incidents | `docs/ai/OBSERVABILITY_GUIDE.md` |
+| Scale, concurrency, backend performance, queues, cache, pool | `docs/ai/SCALABILITY_GUIDE.md` |
 | Deploy, env, build, cache, CI/CD, rollback | `docs/ai/DEPLOYMENT_GUIDE.md` |
-| Código / refactor | `docs/ai/CODING_STANDARDS.md` |
-| Testes | `docs/ai/TESTING_GUIDE.md` |
-| Feature completa | `docs/ai/FEATURE_GUIDE.md` + docs das áreas afetadas |
+| Code / refactor | `docs/ai/CODING_STANDARDS.md` |
+| Tests | `docs/ai/TESTING_GUIDE.md` |
+| Full feature | `docs/ai/FEATURE_GUIDE.md` + docs of affected areas |
 
-## Prioridade atual
+## Current priorities
 
-1. Contrato de API estável
-2. UX clara e consistente
-3. Componentes pequenos e testáveis
-4. Migrations seguras com rollback
-5. Observabilidade mínima para debug em produção
-6. Deploy recuperável
-7. Performance sem otimização prematura
+1. Stable API contract
+2. Clear and consistent UX
+3. Small, testable components
+4. Safe migrations with rollback
+5. Minimal observability for production debugging
+6. Recoverable deploy
+7. Performance without premature optimization
 
-## Regras obrigatórias
+## Mandatory rules
 
 **Frontend:**
 
-- Não misturar regra de negócio pesada dentro de componente visual.
-- Não espalhar chamada HTTP em componente quando existe camada de API/hook.
-- Não criar estado global para estado local.
-- Não usar `any` para fugir de tipagem em contrato público.
-- Não quebrar navegação por teclado.
-- Não usar cor/espaçamento hardcoded quando existir token/componente.
-- Não criar componente genérico antes de existir repetição real.
-- Não depender de layout só por pixel perfeito em uma largura.
-- Não deixar loading/error/empty state sem decisão.
+- Do not mix heavy business logic inside a visual component.
+- Do not scatter HTTP calls in components when an API/hook layer exists.
+- Do not create global state for local state.
+- Do not use `any` to bypass typing in a public contract.
+- Do not break keyboard navigation.
+- Do not use hardcoded color/spacing when a token/component exists.
+- Do not create a generic component before there is real repetition.
+- Do not rely on layout solely by pixel-perfect at one width.
+- Do not leave loading/error/empty states undecided.
 
 **Backend:**
 
-- Não alterar schema sem migration e caminho de rollback documentado.
-- Não commitar secrets, tokens, dumps, `.env` real ou credenciais de banco.
-- Não logar token, senha, Authorization header, cookie ou PII sem mascaramento.
-- Funções públicas precisam de tipos explícitos.
-- Endpoints precisam de contrato de erro previsível.
-- DTO/schema não é entidade de domínio.
-- Domínio não importa framework, ORM, fetch/axios ou SDK externo.
-- Transações devem ter fronteira explícita.
-- Testes não podem depender de produção, relógio real sem controle ou rede externa sem mock.
+- Do not alter schema without a migration and a documented rollback path.
+- Do not commit secrets, tokens, dumps, real `.env`, or database credentials.
+- Do not log tokens, passwords, Authorization headers, cookies, or PII without masking.
+- Public functions need explicit types.
+- Endpoints need predictable error contracts.
+- DTO/schema is not a domain entity.
+- Domain does not import framework, ORM, fetch/axios, or external SDK.
+- Transactions must have explicit boundaries.
+- Tests cannot depend on production, real clocks without control, or external networks without mocks.
 
-## Depois de alterar
+## After changes
 
-- Rode typecheck/lint quando existirem scripts.
-- Rode testes afetados.
-- Rode build production para mudanças em rotas/deps.
-- Rode `prisma generate` se schema foi alterado.
-- Para UI relevante, valide responsividade, foco e estados visuais.
-- Informe arquivos alterados, comandos executados e pendências.
+- Run typecheck/lint when scripts exist.
+- Run affected tests.
+- Run production build for changes in routes/deps.
+- Run `prisma generate` if schema was altered.
+- For relevant UI, validate responsiveness, focus, and visual states.
+- Report changed files, executed commands, and pending items.
 
-## Princípio de decisão
+## Decision principle
 
-Código fullstack bom falha com erro diagnosticável, preserva dados e permite rollback às 3 da manhã. Frontend reflete estado do backend, valida para UX não para segurança. Backend é operacionalmente simples e explícito.
+Good fullstack code fails with a diagnosable error, preserves data, and allows rollback at 3 AM. Frontend reflects backend state, validates for UX not for security. Backend is operationally simple and explicit.

@@ -1,109 +1,109 @@
 ---
-description: Valida um fluxo E2E garantindo massa deterministica, testes de integracao, verificacao de contrato API e relatorio atualizado.
+description: Validates an E2E flow ensuring deterministic test data, integration tests, API contract verification and updated report.
 ---
 
 # /jarvis-test-flow
 
-Valida um fluxo end-to-end do backend Python {{PROJECT_NAME}}. Argumento opcional: `flow_id` (ex.: `user_registration`, `order_checkout`).
+Validates an end-to-end flow of the Python backend {{PROJECT_NAME}}. Optional argument: `flow_id` (e.g.: `user_registration`, `order_checkout`).
 
-## Sequencia obrigatoria
+## Mandatory sequence
 
-0. **Avaliar tamanho da task**
-   - Inspecionar `git diff --stat HEAD` e a natureza dos arquivos tocados em `src/`, `app/`, `tests/`, `alembic/`, `pyproject.toml`, `requirements*.txt`.
-   - **GRANDE** (rodar pipeline completo, etapas 1-8): novo endpoint, nova entidade/model, mudanca em migration, integracao externa, mudanca em schema/serializer, novo service/usecase, mudanca em regra de negocio, mudanca que afeta fluxo do usuario ponta a ponta.
-   - **PEQUENA** (pular para etapa 7): typo, ajuste de log, formatacao, comentario, ajuste fino em config sem mudanca de comportamento, refactor sem mudanca de comportamento observavel, ajuste de docstring.
-   - **Em duvida**: perguntar ao usuario antes de classificar (uma frase: "task X — pequena ou grande?"). Nao chutar.
-   - Reportar a classificacao numa linha antes de prosseguir (ex: `task: PEQUENA — so ajuste de log em service.py`).
+0. **Assess task size**
+   - Inspect `git diff --stat HEAD` and the nature of the touched files in `src/`, `app/`, `tests/`, `alembic/`, `pyproject.toml`, `requirements*.txt`.
+   - **LARGE** (run full pipeline, steps 1-8): new endpoint, new entity/model, migration change, external integration, schema/serializer change, new service/use case, business rule change, change that affects end-to-end user flow.
+   - **SMALL** (skip to step 7): typo, log adjustment, formatting, comment, fine-tuning config without behavior change, refactor without observable behavior change, docstring adjustment.
+   - **In doubt**: ask the user before classifying (one sentence: "task X — small or large?"). Do not guess.
+   - Report the classification in one line before proceeding (e.g.: `task: SMALL — just log adjustment in service.py`).
 
-1. **Determinar o `flow_id`**
-   - Se foi passado como argumento, usar.
-   - Se nao, inferir pelo `git diff --name-only HEAD` (qual modulo/feature foi tocada). Mapear `src/<module>/` ou `app/<module>/` -> `<module>_*` flow. Se ambiguo, perguntar ao usuario antes de seguir.
+1. **Determine the `flow_id`**
+   - If passed as argument, use it.
+   - If not, infer from `git diff --name-only HEAD` (which module/feature was touched). Map `src/<module>/` or `app/<module>/` -> `<module>_*` flow. If ambiguous, ask the user before proceeding.
 
-2. **Inventariar massa (fixtures deterministicos)**
-   - Localizar fixtures que cobrem o flow_id:
+2. **Inventory test data (deterministic fixtures)**
+   - Locate fixtures that cover the flow_id:
      - `tests/conftest.py`
      - `tests/fixtures/*.py`
      - `tests/factories/*.py`
      - `tests/**/conftest.py`
-   - Validar que os dados esperados existem (cruzar com asserts dos testes em `tests/`).
-   - Se faltar massa, criar fixture(s) deterministico(s) seguindo `docs/ai/TESTING_GUIDE.md` e `docs/ai/ARCHITECTURE.md`. Sem random (usar valores fixos ou factory deterministica), sem chamada de rede real, sem `time.sleep` em teste.
-   - Garantir que testes usam banco de teste (SQLite in-memory, test database ou transaction rollback) e nunca o banco de producao/desenvolvimento.
-   - Garantir que env vars estao sobrescritas para ambiente de teste (`TESTING=True`, `DATABASE_URL=test_*`, etc).
+   - Validate that expected data exists (cross-reference with test assertions in `tests/`).
+   - If test data is missing, create deterministic fixture(s) following `docs/ai/TESTING_GUIDE.md` and `docs/ai/ARCHITECTURE.md`. No random (use fixed values or deterministic factory), no real network calls, no `time.sleep` in tests.
+   - Ensure tests use a test database (SQLite in-memory, test database or transaction rollback) and never the production/development database.
+   - Ensure env vars are overridden for the test environment (`TESTING=True`, `DATABASE_URL=test_*`, etc.).
 
-3. **Inventariar teste**
-   - Procurar `tests/**/test_{flow_id}*.py` ou `tests/**/test_{module}*.py` que cubra o flow.
-   - Verificar se existe um relatorio de revisao (`plans/*_revisao.md`, `docs/revisao_*.md` ou similar) gerado pelo `/jarvis-plan` para o mesmo fluxo. Se existir, extrair os **Cenarios E2E sugeridos** da secao correspondente e considera-los como requisitos minimos de cobertura alem dos cenarios proprios do test-flow.
-   - Se nao existir, prosseguir normalmente.
-   - Se nao existir teste, criar seguindo `docs/ai/TESTING_GUIDE.md` com `pytest`. Usar fixtures deterministicas. Teste deve cobrir: caminho feliz, cenarios de erro, validacao de input, status codes corretos.
-   - Validar que o teste cobre as etapas criticas e usa os dados deterministicos da massa.
+3. **Inventory tests**
+   - Search for `tests/**/test_{flow_id}*.py` or `tests/**/test_{module}*.py` that cover the flow.
+   - Check if there is a review report (`plans/*_review.md`, `docs/review_*.md` or similar) generated by `/jarvis-plan` for the same flow. If it exists, extract the **Suggested E2E Scenarios** from the corresponding section and consider them as minimum coverage requirements in addition to the test-flow's own scenarios.
+   - If it doesn't exist, proceed normally.
+   - If no test exists, create one following `docs/ai/TESTING_GUIDE.md` with `pytest`. Use deterministic fixtures. Test must cover: happy path, error scenarios, input validation, correct status codes.
+   - Validate that the test covers critical steps and uses the deterministic test data.
 
-4. **Executar o pipeline**
-   - Detectar ferramentas disponiveis: `pyproject.toml`, `pytest.ini`, `setup.cfg`, `Makefile`, `alembic.ini`, `Dockerfile`.
-   - Rodar na seguinte ordem:
-     - `ruff format --check .` (ou `black --check .` se o projeto usa Black) — bloqueia se introduzir formatacao incorreta.
-     - `ruff check .` (ou `flake8` se configurado) — bloqueia se introduzir warnings/erros novos.
-     - `mypy .` (ou `pyright` se configurado) — bloqueia se introduzir erros de tipo novos. Warnings pre-existentes conhecidos podem ser aceitaveis (reportar quais).
-     - `pytest` (com `--cov` se configurado) — bloqueia se quebrar.
-     - `alembic check` ou validacao de migration equivalente, se Alembic existir — bloqueia se migration estiver divergente.
-     - Healthcheck local, se houver comando documentado (ex: `make healthcheck`, `curl localhost:8000/health`).
-   - **Se qualquer comando falhar, entrar no loop de diagnostico (etapa 4a) antes de prosseguir.** Nao maquiar, nao silenciar warning, nao remover assertion.
+4. **Execute the pipeline**
+   - Detect available tools: `pyproject.toml`, `pytest.ini`, `setup.cfg`, `Makefile`, `alembic.ini`, `Dockerfile`.
+   - Run in the following order:
+     - `ruff format --check .` (or `black --check .` if the project uses Black) — blocks if incorrect formatting is introduced.
+     - `ruff check .` (or `flake8` if configured) — blocks if new warnings/errors are introduced.
+     - `mypy .` (or `pyright` if configured) — blocks if new type errors are introduced. Known pre-existing warnings may be acceptable (report which ones).
+     - `pytest` (with `--cov` if configured) — blocks if it breaks.
+     - `alembic check` or equivalent migration validation, if Alembic exists — blocks if migration is divergent.
+     - Local healthcheck, if there is a documented command (e.g.: `make healthcheck`, `curl localhost:8000/health`).
+   - **If any command fails, enter the diagnostic loop (step 4a) before proceeding.** Do not cover up, do not silence warnings, do not remove assertions.
 
-4a. **Loop de diagnostico e correcao** (acionado quando algo na etapa 4 ou no pre-commit hook da etapa 7 falha)
-   - **Diagnosticar**: ler atentamente a saida de erro completa. Classificar a causa em uma das categorias:
-     - `ambiente`: Python version incorreta, venv nao ativado, dependencia ausente, cache corrompido (`__pycache__`), pip/uv desatualizado.
-     - `fixture/massa`: dado deterministico faltando, divergencia entre fixture e assertion, factory mal configurada, fixture com escopo errado (function vs session), conftest conflitante.
-     - `teste`: assertion invalida, mock mal configurado (`patch` no lugar errado), fixture acoplada a estado externo, teste dependente de ordem, teardown incompleto.
-     - `codigo`: regressao real introduzida pela mudanca da task, contrato quebrado (serializer, schema), exception nao tratada, logica errada, retorno inesperado.
-     - `migration`: schema divergente entre models e banco, constraint violada, dado existente incompativel com novo schema, migration faltando ou fora de ordem.
-     - `contrato`: payload divergindo entre test e implementacao, status code errado, campo faltando na response, validacao de input inconsistente.
-   - **Planejar**: escrever 1-3 frases descrevendo: (a) qual e a causa-raiz hipotetica, (b) qual a correcao minima proposta, (c) qual arquivo sera tocado. Nao comecar a editar sem isso.
-   - **Corrigir**: aplicar somente a correcao minima planejada. Sem refactor adicional, sem "limpar de quebra".
-   - **Re-rodar**: executar de novo o(s) comando(s) que falhou(aram), na mesma ordem da etapa 4.
-   - **Limite de 3 tentativas por causa-raiz**. Se a mesma causa reaparecer ao 3 ciclo, ou se a correcao exigir mudancas fora do escopo da task original (ex.: refatorar arquitetura, criar endpoint novo), parar e escalar para o usuario com: causa observada, o que foi tentado, proxima hipotese.
-   - **Criterios para parar e escalar imediatamente** (sem esperar 3 tentativas):
-     - A correcao exigiria modificar `docs/ai/*` ou outro arquivo proibido pelas restricoes.
-     - A correcao exigiria criar endpoint/service/model fora do escopo do flow_id.
-     - O erro indica problema de infraestrutura (banco nao sobe, dependencia nao instala, Docker quebrado).
-     - Tentativas anteriores divergem (causa muda a cada rodada -> sinal de que o diagnostico esta raso).
-   - Registrar todas as causas e correcoes tentadas na tabela "Problemas encontrados / correcoes" do report (etapa 5), inclusive em caso de PASSOU.
+4a. **Diagnostic and correction loop** (triggered when something in step 4 or the pre-commit hook in step 7 fails)
+   - **Diagnose**: carefully read the complete error output. Classify the cause into one of the categories:
+     - `environment`: incorrect Python version, venv not activated, missing dependency, corrupted cache (`__pycache__`), outdated pip/uv.
+     - `fixture/data`: missing deterministic data, divergence between fixture and assertion, misconfigured factory, fixture with wrong scope (function vs session), conflicting conftest.
+     - `test`: invalid assertion, misconfigured mock (`patch` in wrong place), fixture coupled to external state, order-dependent test, incomplete teardown.
+     - `code`: real regression introduced by the task's change, broken contract (serializer, schema), unhandled exception, incorrect logic, unexpected return.
+     - `migration`: divergent schema between models and database, violated constraint, existing data incompatible with new schema, missing or out-of-order migration.
+     - `contract`: payload diverging between test and implementation, wrong status code, missing field in response, inconsistent input validation.
+   - **Plan**: write 1-3 sentences describing: (a) what is the hypothetical root cause, (b) what is the proposed minimal fix, (c) which file will be touched. Do not start editing without this.
+   - **Fix**: apply only the planned minimal fix. No additional refactor, no "clean up while at it".
+   - **Re-run**: execute again the failed command(s), in the same order as step 4.
+   - **Limit of 3 attempts per root cause**. If the same cause reappears on the 3rd cycle, or if the fix requires changes outside the original task scope (e.g.: refactoring architecture, creating a new endpoint), stop and escalate to the user with: observed cause, what was attempted, next hypothesis.
+   - **Criteria to stop and escalate immediately** (without waiting for 3 attempts):
+     - The fix would require modifying `docs/ai/*` or another file prohibited by the restrictions.
+     - The fix would require creating an endpoint/service/model outside the flow_id scope.
+     - The error indicates an infrastructure problem (database won't start, dependency won't install, Docker broken).
+     - Previous attempts diverge (cause changes each run → sign that the diagnosis is shallow).
+   - Record all causes and correction attempts in the "Problems found / corrections" table of the report (step 5), even in case of PASS.
 
-5. **Gerar relatorio**
-   - Escrever ou atualizar `docs/test_report_{flow_id}.md` com:
-     - Data, branch, classificacao (GRANDE/PEQUENA), estrategia
-     - Ferramentas detectadas (linter, typechecker, test runner, ORM)
-     - Massa criada/validada (tabela com fixtures, factories, dados usados)
-     - Comandos executados (tabela: comando, resultado)
-     - Fluxo validado (tabela: etapa, validacao)
-     - Problemas encontrados / correcoes (tabela: causa, correcao)
-     - Coverage (se disponivel)
-     - Status final: **PASSOU**, **PASSOU PARCIALMENTE**, ou **FALHOU**
-     - Arquivos criados/modificados
-     - Como rodar de novo
+5. **Generate report**
+   - Write or update `docs/test_report_{flow_id}.md` with:
+     - Date, branch, classification (LARGE/SMALL), strategy
+     - Detected tools (linter, typechecker, test runner, ORM)
+     - Test data created/validated (table with fixtures, factories, data used)
+     - Executed commands (table: command, result)
+     - Validated flow (table: step, validation)
+     - Problems found / corrections (table: cause, correction)
+     - Coverage (if available)
+     - Final status: **PASS**, **PARTIAL PASS**, or **FAIL**
+     - Files created/modified
+     - How to run again
 
-6. **Encerrar**
-   - Reportar uma linha de resumo + caminho do relatorio em `docs/`.
+6. **Finish**
+   - Report a one-line summary + report path in `docs/`.
 
 7. **Commit**
-   - Executar `git add src/ app/ tests/ alembic/ docs/ pyproject.toml requirements*.txt setup.cfg conftest.py`.
-   - Se nada foi staged (`git diff --cached --quiet`), pular o commit.
-   - Mensagem do commit:
-     - **PEQUENA**: `chore: <descricao curta da mudanca>` (ex: `chore: ajusta log level no order service`).
-     - **GRANDE + PASSOU**: `feat|fix|refactor: <descricao> + test {flow_id}` conforme natureza da mudanca.
-     - **GRANDE + PASSOU PARCIALMENTE / FALHOU**: NAO commitar. Reportar e devolver para correcao.
-   - O commit pode disparar pre-commit hooks (ruff, mypy, pytest). Se quebrar, NAO usar `--no-verify` — entrar no loop de diagnostico (etapa 4a), corrigir, e tentar o commit de novo.
+   - Execute `git add src/ app/ tests/ alembic/ docs/ pyproject.toml requirements*.txt setup.cfg conftest.py`.
+   - If nothing is staged (`git diff --cached --quiet`), skip the commit.
+   - Commit message:
+     - **SMALL**: `chore: <short description of change>` (e.g.: `chore: adjust log level in order service`).
+     - **LARGE + PASS**: `feat|fix|refactor: <description> + test {flow_id}` according to the nature of the change.
+     - **LARGE + PARTIAL PASS / FAIL**: Do NOT commit. Report and return for correction.
+   - The commit may trigger pre-commit hooks (ruff, mypy, pytest). If it breaks, do NOT use `--no-verify` — enter the diagnostic loop (step 4a), fix, and try the commit again.
 
 8. **Push**
-   - So executar se a etapa 7 efetivamente criou um novo commit. Se foi pulada (nada staged) ou bloqueada (GRANDE + falha), NAO empurrar.
-   - Confirmar que a branch atual tem upstream: se `git rev-parse --abbrev-ref --symbolic-full-name @{u}` falhar, usar `git push -u origin HEAD`. Caso contrario, `git push`.
-   - NUNCA usar `--force` ou `--force-with-lease` aqui. Push de force so com pedido explicito do usuario e nunca em `master`/`main`.
-   - Se o push falhar por divergencia com o remoto (`non-fast-forward`), parar, reportar e perguntar antes de qualquer rebase/merge.
+   - Only execute if step 7 actually created a new commit. If it was skipped (nothing staged) or blocked (LARGE + failure), do NOT push.
+   - Confirm the current branch has upstream: if `git rev-parse --abbrev-ref --symbolic-full-name @{u}` fails, use `git push -u origin HEAD`. Otherwise, `git push`.
+   - NEVER use `--force` or `--force-with-lease` here. Force push only with explicit user request and never on `master`/`main`.
+   - If push fails due to remote divergence (`non-fast-forward`), stop, report and ask before any rebase/merge.
 
-## Restricoes obrigatorias
+## Mandatory restrictions
 
-- Nao criar feature/endpoint novo fora do escopo do flow.
-- Nao modificar arquivos em `docs/ai/`.
-- Nao hardcodar credenciais ou secrets.
-- Nao pular etapas dentro de uma execucao completa (1-6) mesmo se "parecer simples". A unica forma legitima de pular e via etapa 0 (classificada PEQUENA), que vai direto para a etapa 7.
-- Nao remover assertion ou maquiar teste so para passar.
-- Se o fluxo exigir servico externo indisponivel, registrar a divergencia claramente e propor mock/stub deterministico.
-- Respeitar a hierarquia de prioridade do `CLAUDE.md`: 1) CLAUDE.md, 2) ARCHITECTURE.md, 3) CODING_STANDARDS.md, 4) API_GUIDE.md, 5) TESTING_GUIDE.md.
+- Do not create new feature/endpoint outside the flow scope.
+- Do not modify files in `docs/ai/`.
+- Do not hardcode credentials or secrets.
+- Do not skip steps within a full execution (1-6) even if it "seems simple". The only legitimate way to skip is via step 0 (classified as SMALL), which goes directly to step 7.
+- Do not remove assertions or cover up tests just to pass.
+- If the flow requires an unavailable external service, clearly record the divergence and propose a deterministic mock/stub.
+- Respect the priority hierarchy of `CLAUDE.md`: 1) CLAUDE.md, 2) ARCHITECTURE.md, 3) CODING_STANDARDS.md, 4) API_GUIDE.md, 5) TESTING_GUIDE.md.

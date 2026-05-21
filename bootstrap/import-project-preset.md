@@ -1,93 +1,93 @@
 ---
 name: import-project-preset
-description: Importa o bootstrap-ai correto para o projeto atual de forma não destrutiva.
+description: Imports the correct bootstrap-ai into the current project non-destructively.
 ---
 
 # /import-project-preset
 
-Importa o preset correto do repositório `marcelsanches2/bootstrap-ai` para dentro do projeto atual.
+Imports the correct preset from the `marcelsanches2/bootstrap-ai` repository into the current project.
 
-Este arquivo é feito para ser copiado sozinho para um projeto novo/existente em:
+This file is designed to be copied on its own to a new/existing project at:
 
 ```txt
 .claude/commands/import-project-preset.md
 ```
 
-Depois rode no Claude Code:
+Then run in Claude Code:
 
 ```txt
 /import-project-preset
 ```
 
-## Objetivo
+## Objective
 
-1. Encontrar a raiz do projeto atual.
-2. Garantir que o repo `bootstrap-ai` existe localmente.
-3. Atualizar o repo `bootstrap-ai`.
-4. Analisar a stack real do projeto.
-5. Validar se algum preset cobre todas as tecnologias centrais detectadas.
-6. Se faltar cobertura, criar um preset novo específico para o cenário do projeto.
-7. Mostrar diff do que será importado.
-8. Aplicar o preset em modo não destrutivo.
-9. Verificar se os arquivos principais entraram.
+1. Find the root of the current project.
+2. Ensure the `bootstrap-ai` repo exists locally.
+3. Update the `bootstrap-ai` repo.
+4. Analyze the project's actual stack.
+5. Validate whether any preset covers all detected core technologies.
+6. If coverage is missing, create a new preset specific to the project's scenario.
+7. Show a diff of what will be imported.
+8. Apply the preset in non-destructive mode.
+9. Verify that core files were installed.
 
-## Regras duras
+## Hard Rules
 
-- Nunca sobrescrever arquivos existentes silenciosamente.
-- Não usar `--force`.
-- Se houver conflito, aceitar criação de `.kit-new`.
-- Não commitar automaticamente.
-- Não modificar código de produção.
-- Não rodar `/refactor` automaticamente; apenas explicar que ele é o próximo passo opcional.
+- Never overwrite existing files silently.
+- Do not use `--force`.
+- If there is a conflict, accept `.kit-new` creation.
+- Do not commit automatically.
+- Do not modify production code.
+- Do not run `/refactor` automatically; only explain that it is the optional next step.
 
-## Procedimento obrigatório
+## Mandatory Procedure
 
-### 0. Encontrar o diretório local do bootstrap-ai — EXECUTE PRIMEIRO
+### 0. Find the bootstrap-ai local directory — EXECUTE FIRST
 
-**Antes de QUALQUER outro passo**, leia a última linha deste arquivo. Ela contém um comentário HTML com o path absoluto do repo bootstrap-ai de onde este importer foi instalado:
+**Before ANY other step**, read the last line of this file. It contains an HTML comment with the absolute path of the bootstrap-ai repo from which this importer was installed:
 
 ```
-<!-- BOOTSTRAP_AI_SOURCE: /caminho/absoluto/para/bootstrap-ai -->
+<!-- BOOTSTRAP_AI_SOURCE: /absolute/path/to/bootstrap-ai -->
 ```
 
-**Ação imediata:**
+**Immediate action:**
 
-1. Leia o conteúdo da última linha deste arquivo
-2. Extraia o path após `BOOTSTRAP_AI_SOURCE: `
-3. Verifique se o diretório existe e tem `bin/bootstrap-ai` executável:
+1. Read the content of the last line of this file
+2. Extract the path after `BOOTSTRAP_AI_SOURCE: `
+3. Verify the directory exists and has an executable `bin/bootstrap-ai`:
 
 ```bash
 BOOTSTRAP_AI_DIR=$(grep -oP 'BOOTSTRAP_AI_SOURCE: \K[^\s>-]+' "$(dirname "$0")/import-project-preset.md" 2>/dev/null || echo "")
 if [ -z "$BOOTSTRAP_AI_DIR" ]; then
-  # Fallback: o próprio arquivo que estamos executando
+  # Fallback: the file we are currently executing
   BOOTSTRAP_AI_DIR=$(grep -oP 'BOOTSTRAP_AI_SOURCE: \K[^\s>-]+' "$0" 2>/dev/null || echo "")
 fi
 if [ -n "$BOOTSTRAP_AI_DIR" ] && [ -x "$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" ]; then
-  echo "✅ Bootstrap-ai local encontrado: $BOOTSTRAP_AI_DIR"
-  echo "   Pulando busca em workspaces — usando diretório local."
+  echo "✅ Local bootstrap-ai found: $BOOTSTRAP_AI_DIR"
+  echo "   Skipping workspace search — using local directory."
 else
-  echo "❌ Source embutido inválido ou ausente. Prosseguindo com busca."
+  echo "❌ Embedded source invalid or missing. Proceeding with search."
   BOOTSTRAP_AI_DIR=""
 fi
 ```
 
-**Se `BOOTSTRAP_AI_DIR` foi setado:** pule direto para o passo 3 (atualizar). O repo já existe localmente — **NÃO busque em workspaces, NÃO clone do GitHub.**
+**If `BOOTSTRAP_AI_DIR` was set:** skip straight to step 3 (update). The repo already exists locally — **DO NOT search workspaces, DO NOT clone from GitHub.**
 
-**Se `BOOTSTRAP_AI_DIR` ficou vazio:** continue no passo 2.
+**If `BOOTSTRAP_AI_DIR` is empty:** continue to step 2.
 
-### 1. Resolver raiz do projeto e detectar estado
+### 1. Resolve project root and detect state
 
-Execute:
+Run:
 
 ```bash
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 printf 'Project root: %s\n' "$ROOT"
 ```
 
-**Detectar se é pasta vazia (projeto do zero):**
+**Detect if it's an empty folder (new project):**
 
 ```bash
-# Contar arquivos relevantes (excluindo .git e ocultos)
+# Count relevant files (excluding .git and hidden)
 FILE_COUNT=$(find "$ROOT" -maxdepth 1 -type f ! -name '.*' | wc -l)
 DIR_COUNT=$(find "$ROOT" -maxdepth 1 -type d ! -name '.*' ! -name "$(basename "$ROOT")" | wc -l)
 HAS_STACK=false
@@ -96,32 +96,32 @@ for f in pubspec.yaml package.json pyproject.toml requirements.txt go.mod Gemfil
 done
 
 if [ "$FILE_COUNT" -eq 0 ] && [ "$DIR_COUNT" -eq 0 ] && [ "$HAS_STACK" = false ]; then
-  printf 'Pasta vazia detectada. Este é um projeto novo.\n'
-  printf 'Direcionando para /kickoff (onboarding completo).\n\n'
-  printf 'Carregue o command /kickoff do preset e execute-o.\n'
-  printf 'O /kickoff vai:\n'
-  printf '  1. Coletar requisitos (7 perguntas)\n'
-  printf '  2. Gerar PRODUCT_BRIEF.md\n'
-  printf '  3. Decidir a stack\n'
-  printf '  4. Oferecer design phase (se tem front)\n'
-  printf '  5. Aplicar o preset correto\n\n'
-  printf 'Após o /kickoff completar, este command já terá sido executado.\n'
-  # STOP HERE — não continue os passos abaixo
+  printf 'Empty folder detected. This is a new project.\n'
+  printf 'Redirecting to /kickoff (full onboarding).\n\n'
+  printf 'Load the /kickoff command from the preset and execute it.\n'
+  printf '/kickoff will:\n'
+  printf '  1. Collect requirements (7 questions)\n'
+  printf '  2. Generate PRODUCT_BRIEF.md\n'
+  printf '  3. Decide the stack\n'
+  printf '  4. Offer design phase (if frontend)\n'
+  printf '  5. Apply the correct preset\n\n'
+  printf 'After /kickoff completes, this command will already have been executed.\n'
+  # STOP HERE — do not continue the steps below
   return
 fi
 ```
 
-Se a pasta **não** está vazia, continue normalmente com o passo 2.
+If the folder is **not** empty, continue normally to step 2.
 
-### 2. Localizar ou clonar `bootstrap-ai`
+### 2. Locate or clone `bootstrap-ai`
 
-Procure nesta ordem (teste ambos os nomes `bootstrap-ai` e `bootstrap-ai`):
+Search in this order (test both names `bootstrap-ai` and `bootstrap-ai`):
 
 ```bash
-# 1. Variável de ambiente explícita
+# 1. Explicit environment variable
 $BOOTSTRAP_AI_PATH
 
-# 2. Workspace comum do usuário (onde ele provavelmente clonou)
+# 2. User's common workspace (where they likely cloned)
 $HOME/.openclaw/workspace/bootstrap-ai
 $HOME/workspace/bootstrap-ai
 $HOME/workspace/bootstrap-ai
@@ -142,27 +142,27 @@ $HOME/sources/bootstrap-ai
 $HOME/src/bootstrap-ai
 $HOME/src/bootstrap-ai
 
-# 3. Local padrão
+# 3. Default locations
 $HOME/.local/share/bootstrap-ai
 $HOME/.local/share/bootstrap-ai
 $HOME/bootstrap-ai
 $HOME/bootstrap-ai
 ```
 
-Use esta função de busca:
+Use this search function:
 
 ```bash
 find_bootstrap_ai() {
-  # Nomes aceitos
+  # Accepted names
   local names=("bootstrap-ai" "bootstrap-ai")
 
-  # 1. Variável de ambiente
+  # 1. Environment variable
   if [ -n "${BOOTSTRAP_AI_PATH:-}" ] && [ -x "${BOOTSTRAP_AI_PATH}/bin/bootstrap-ai" ]; then
     printf '%s\n' "$BOOTSTRAP_AI_PATH"
     return 0
   fi
 
-  # 2. Buscar em workspaces comuns do usuário
+  # 2. Search common user workspaces
   local workspace_dirs=(
     "$HOME/.openclaw/workspace"
     "$HOME/workspace"
@@ -183,7 +183,7 @@ find_bootstrap_ai() {
         return 0
       fi
     done
-    # Buscar um nível mais fundo
+    # Search one level deeper
     if [ -d "$ws" ]; then
       local found
       for name in "${names[@]}"; do
@@ -196,7 +196,7 @@ find_bootstrap_ai() {
     fi
   done
 
-  # 3. Locais padrão
+  # 3. Default locations
   for name in "${names[@]}"; do
     for d in "$HOME/.local/share/$name" "$HOME/$name"; do
       if [ -x "$d/bin/bootstrap-ai" ]; then
@@ -210,10 +210,10 @@ find_bootstrap_ai() {
 }
 ```
 
-Se não existir em nenhum local, clone:
+If not found in any location, clone:
 
 ```bash
-# Determinar workspace preferida do usuário
+# Determine user's preferred workspace
 WORKSPACE_DIR=""
 for d in "$HOME/workspace" "$HOME/code" "$HOME/projects" "$HOME/dev" "$HOME/work" "$HOME/repos"; do
   if [ -d "$d" ]; then
@@ -222,13 +222,13 @@ for d in "$HOME/workspace" "$HOME/code" "$HOME/projects" "$HOME/dev" "$HOME/work
   fi
 done
 
-# Fallback para workspace
+# Fallback to workspace
 if [ -z "$WORKSPACE_DIR" ]; then
   WORKSPACE_DIR="$HOME/workspace"
   mkdir -p "$WORKSPACE_DIR"
 fi
 
-printf 'Clonando bootstrap-ai em %s\n' "$WORKSPACE_DIR/bootstrap-ai"
+printf 'Cloning bootstrap-ai to %s\n' "$WORKSPACE_DIR/bootstrap-ai"
 if command -v gh >/dev/null 2>&1; then
   gh repo clone marcelsanches2/bootstrap-ai "$WORKSPACE_DIR/bootstrap-ai"
 else
@@ -236,62 +236,62 @@ else
 fi
 ```
 
-### 3. Atualizar `bootstrap-ai`
+### 3. Update `bootstrap-ai`
 
 ```bash
 cd "$BOOTSTRAP_AI_DIR"
 git pull --ff-only
 ```
 
-Se `git pull --ff-only` falhar, pare e reporte. Não faça merge/rebase automático.
+If `git pull --ff-only` fails, stop and report. Do not auto merge/rebase.
 
-### 4. Analisar stack e cobertura
+### 4. Analyze stack and coverage
 
-Antes de importar qualquer coisa, rode:
+Before importing anything, run:
 
 ```bash
 "$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" analyze "$ROOT"
 ```
 
-Isso detecta tecnologias centrais e bibliotecas estruturais por arquivos reais do projeto: `pubspec.yaml`, `pyproject.toml`, `requirements.txt`, `package.json`, `go.mod`, `Gemfile`, configs de framework, dependências e sinais de banco. Exemplos: `dio`, `riverpod`, `go_router`, `sqlalchemy`, `alembic`, `prisma`, `tanstack-query`, `sidekiq`, `chi`, `pgx`.
+This detects core technologies and structural libraries from the project's actual files: `pubspec.yaml`, `pyproject.toml`, `requirements.txt`, `package.json`, `go.mod`, `Gemfile`, framework configs, dependencies, and database signals. Examples: `dio`, `riverpod`, `go_router`, `sqlalchemy`, `alembic`, `prisma`, `tanstack-query`, `sidekiq`, `chi`, `pgx`.
 
-### 5. Selecionar ou criar preset específico
+### 5. Select or create specific preset
 
 ```bash
 KIT="$( $BOOTSTRAP_AI_DIR/bin/bootstrap-ai select "$ROOT" --create-missing --print-preset )"
-printf 'Preset selecionado: %s\n' "$KIT"
+printf 'Selected preset: %s\n' "$KIT"
 ```
 
-Regra:
+Rule:
 
-- se um preset existente cobre a stack e as bibliotecas estruturais → use esse preset
-- se a stack ou biblioteca estrutural não for coberta → crie novo preset via `generators/skill-creator/prompts/create-new-preset.md`
-- exemplos que criam preset novo: Rails, Go, Python+React no mesmo repo, React+Node API no mesmo repo, stack híbrida sem cobertura
+- If an existing preset covers the stack and structural libraries → use that preset
+- If the stack or structural library is not covered → create new preset via `generators/skill-creator/prompts/create-new-preset.md`
+- Examples that create a new preset: Rails, Go, Python+React in the same repo, React+Node API in the same repo, hybrid stack without coverage
 
-Ao criar um preset novo, siga rigorosamente os padrões de nomenclatura:
-- **Roles** (pessoas): `role-<disciplina>.md` ou `role-<stack>-<disciplina>.md`
-- **Reviews** (óticas técnicas): `review-<dominio>.md`
-- **Docs**: `UPPER_SNAKE_CASE.md` — guias com `_GUIDE`, referências sem sufixo
-- **Separação de responsabilidades**: cada arquivo faz UMA coisa
+When creating a new preset, strictly follow the naming conventions:
+- **Roles** (people): `role-<discipline>.md` or `role-<stack>-<discipline>.md`
+- **Reviews** (technical perspectives): `review-<domain>.md`
+- **Docs**: `UPPER_SNAKE_CASE.md` — guides with `_GUIDE`, references without suffix
+- **Separation of concerns**: each file does ONE thing
 
-### 6. Mostrar diff
+### 6. Show diff
 
 ```bash
 "$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" diff "$KIT" "$ROOT"
 ```
 
-Explique que:
+Explain that:
 
-- `Would create` = arquivos que serão criados
-- `Would skip identical` = já iguais
-- `Would conflict` = serão criados como `.kit-new`
+- `Would create` = files that will be created
+- `Would skip identical` = already identical
+- `Would conflict` = will be created as `.kit-new`
 
-### 7. Aplicar preset com substituição de placeholders
+### 7. Apply preset with placeholder substitution
 
-Detecte o nome do projeto antes de aplicar:
+Detect the project name before applying:
 
 ```bash
-# Detectar nome do projeto
+# Detect project name
 PROJECT_NAME=""
 if [ -f "$ROOT/package.json" ]; then
   PROJECT_NAME=$(python3 -c "import json; print(json.load(open('$ROOT/package.json')).get('name',''))" 2>/dev/null)
@@ -306,13 +306,13 @@ printf 'Project name: %s\n' "$PROJECT_NAME"
 "$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" apply "$KIT" "$ROOT" --refresh --project-name "$PROJECT_NAME"
 ```
 
-Isso substitui `{{PROJECT_NAME}}` em todos os arquivos `.md`, `.yaml`, `.yml`, `.txt`, `.json`, `.toml` do preset pelo nome real do projeto.
+This replaces `{{PROJECT_NAME}}` in all `.md`, `.yaml`, `.yml`, `.txt`, `.json`, `.toml` files from the preset with the actual project name.
 
-Não use `--force`.
+Do not use `--force`.
 
-### 8. Verificar importação
+### 8. Verify import
 
-Verifique se existem:
+Check that these exist:
 
 ```txt
 $ROOT/CLAUDE.md
@@ -324,24 +324,24 @@ $ROOT/plans/
 $ROOT/.bootstrap-ai.lock
 ```
 
-Execute:
+Run:
 
 ```bash
 test -f "$ROOT/.claude/commands/refactor.md" && echo "refactor OK"
 test -f "$ROOT/.bootstrap-ai.lock" && echo "lock OK"
 ```
 
-### 8.5. Sincronizar Design System com o projeto
+### 8.5. Sync Design System with the project
 
-**Objetivo:** Se o projeto já tem tokens visuais (cores, tipografia, espaçamento), reescrever `docs/ai/DESIGN_SYSTEM.md` para refletir a identidade real do projeto em vez do template genérico.
+**Objective:** If the project already has visual tokens (colors, typography, spacing), rewrite `docs/ai/DESIGN_SYSTEM.md` to reflect the project's real identity instead of the generic template.
 
-**Quando executar:** Sempre que o preset aplicar um `DESIGN_SYSTEM.md`. Não executar para backends (node-backend, python-backend) pois não têm UI.
+**When to run:** Whenever the preset applies a `DESIGN_SYSTEM.md`. Do not run for backends (node-backend, python-backend) since they have no UI.
 
-#### 8.5.1. Detectar tokens existentes por stack
+#### 8.5.1. Detect existing tokens by stack
 
-Escanee os arquivos abaixo na raiz do projeto. Se encontrar valores reais, extraia.
+Scan the files below in the project root. If you find real values, extract them.
 
-**Flutter** — procure em:
+**Flutter** — look in:
 
 ```
 lib/app/theme/app_colors.dart
@@ -351,13 +351,13 @@ lib/app/theme/app_spacing.dart
 pubspec.yaml (google_fonts dependency)
 ```
 
-Extraia:
+Extract:
 
-- **Cores:** valores `Color(0xFF...)`, `ColorScheme(…)` com `primary`, `secondary`, `surface`, `error`, `onPrimary`, etc.
-- **Tipografia:** fontes via `GoogleFonts.*`, `TextStyle(fontFamily: ...)`
-- **Espaçamento:** constantes numéricas em classes de spacing/radius
+- **Colors:** `Color(0xFF...)` values, `ColorScheme(…)` with `primary`, `secondary`, `surface`, `error`, `onPrimary`, etc.
+- **Typography:** fonts via `GoogleFonts.*`, `TextStyle(fontFamily: ...)`
+- **Spacing:** numeric constants in spacing/radius classes
 
-**React/Web** — procure em:
+**React/Web** — look in:
 
 ```
 tailwind.config.ts / tailwind.config.js
@@ -367,85 +367,85 @@ src/styles/tokens.ts
 src/app/globals.css (CSS custom properties: --color-*, --font-*, --space-*)
 ```
 
-Extraia:
+Extract:
 
-- **Cores:** valores do `theme.colors` no Tailwind, ou `var(--color-*)` em CSS
-- **Tipografia:** `theme.fontFamily`, Google Fonts imports, CSS `font-family`
-- **Espaçamento:** `theme.spacing`, `theme.borderRadius`
+- **Colors:** values from `theme.colors` in Tailwind, or `var(--color-*)` in CSS
+- **Typography:** `theme.fontFamily`, Google Fonts imports, CSS `font-family`
+- **Spacing:** `theme.spacing`, `theme.borderRadius`
 
-**Outras stacks:** pule este passo.
+**Other stacks:** skip this step.
 
-#### 8.5.2. Decisão baseada no resultado do scan
+#### 8.5.2. Decision based on scan result
 
-| Resultado | Ação |
+| Result | Action |
 |---|---|
-| **Encontrou tokens completos** (cores + tipografia + espaçamento) | Reescreva `docs/ai/DESIGN_SYSTEM.md` substituindo as seções genéricas pelos valores reais do projeto. Mantenha a estrutura do documento (seções, regras, componentes), apenas troque os valores. Adicione nota: "Tokens sincronizados do design system existente em `[arquivo_fonte]`". |
-| **Encontrou parcial** (ex: tem cores mas sem tipografia) | Reescreva apenas as seções onde encontrou valores. Deixe genérico onde não achou. Adicione nota indicando o que foi sincronizado e o que ainda é template. |
-| **Não encontrou nada** | Mantenha o `DESIGN_SYSTEM.md` genérico do preset. Pergunte ao usuário: "Seu projeto não tem design system definido. Quer personalizar as cores e tipografia agora? (s/n)". Se sim, rode `/design-phase` no modo "extract". |
+| **Found complete tokens** (colors + typography + spacing) | Rewrite `docs/ai/DESIGN_SYSTEM.md` replacing generic sections with the project's real values. Keep the document structure (sections, rules, components), only swap the values. Add note: "Tokens synced from existing design system in `[source_file]`". |
+| **Found partial** (e.g.: has colors but no typography) | Rewrite only the sections where values were found. Leave generic where nothing was found. Add note indicating what was synced and what is still template. |
+| **Found nothing** | Keep the generic `DESIGN_SYSTEM.md` from the preset. Ask the user: "Your project doesn't have a defined design system. Would you like to customize colors and typography now? (y/n)". If yes, run `/design-phase` in "extract" mode. |
 
-#### 8.5.3. Formato da reescrita
+#### 8.5.3. Rewrite format
 
-Ao reescrever, mantenha:
+When rewriting, keep:
 
-- A mesma estrutura de seções do template original
-- Os mesmos nomes de tokens semânticos (primary, secondary, surface, etc.)
-- As regras e boas práticas do template
-- A linguagem (pt-BR ou en) do template original
+- The same section structure as the original template
+- The same semantic token names (primary, secondary, surface, etc.)
+- The rules and best practices from the template
+- The language (en or pt-BR) of the original template
 
-Substitua apenas:
+Only replace:
 
-- Valores hex/RGB de cores pelos valores reais
-- Nomes de fontes pelas fontes reais
-- Valores de espaçamento/radius pelos valores reais
-- Exemplos de código que referenciam cores/fontes específicas
+- Hex/RGB color values with real values
+- Font names with real fonts
+- Spacing/radius values with real values
+- Code examples that reference specific colors/fonts
 
-#### 8.5.4. Exemplo de saída
-
-```txt
-🎨 Design System sincronizado:
-   Cores: 12 tokens extraídos de lib/app/theme/app_colors.dart
-   Tipografia: 3 fontes de GoogleFonts (Inter, Saira, Tourney)
-   Espaçamento: 6 tokens de app_spacing.dart
-   Arquivo reescrito: docs/ai/DESIGN_SYSTEM.md
-```
-
-Ou:
+#### 8.5.4. Output example
 
 ```txt
-🎨 Design System: nenhum token encontrado no projeto.
-   Template genérico mantido em docs/ai/DESIGN_SYSTEM.md.
-   Para personalizar, rode /design-phase.
+🎨 Design System synced:
+   Colors: 12 tokens extracted from lib/app/theme/app_colors.dart
+   Typography: 3 fonts from GoogleFonts (Inter, Saira, Tourney)
+   Spacing: 6 tokens from app_spacing.dart
+   File rewritten: docs/ai/DESIGN_SYSTEM.md
 ```
 
-### 8.6. Customizar guides com bibliotecas detectadas
+Or:
 
-**Objetivo:** As bibliotecas estruturais detectadas no passo 4 (analyze) devem refletir nos guides aplicados. Um preset genérico fala de "state management" sem dizer qual — se o projeto usa Riverpod, os guides devem mencionar Riverpod especificamente.
+```txt
+🎨 Design System: no tokens found in the project.
+   Generic template kept in docs/ai/DESIGN_SYSTEM.md.
+   To customize, run /design-phase.
+```
 
-**Quando executar:** Sempre, tanto para projetos existentes quanto para projetos novos (após /kickoff definir a stack). Funciona em TODOS os presets.
+### 8.6. Customize guides with detected libraries
 
-#### 8.6.1. Fonte dos dados
+**Objective:** The structural libraries detected in step 4 (analyze) should be reflected in the applied guides. A generic preset talks about "state management" without saying which — if the project uses Riverpod, the guides should mention Riverpod specifically.
 
-Use as libs detectadas pelo `bin/bootstrap-ai analyze` no passo 4. O analyze retorna uma lista de bibliotecas estruturais encontradas no projeto.
+**When to run:** Always, both for existing projects and new projects (after /kickoff defines the stack). Works across ALL presets.
 
-Para projetos novos (via /kickoff), use as libs que o /kickoff definiu ao selecionar/inicializar a stack.
+#### 8.6.1. Data source
 
-#### 8.6.2. Mapeamento lib → guide → customização
+Use the libs detected by `bin/bootstrap-ai analyze` in step 4. The analyze returns a list of structural libraries found in the project.
 
-Para cada lib detectada, identifique quais guides devem ser customizados e o que injetar:
+For new projects (via /kickoff), use the libs that /kickoff defined when selecting/initializing the stack.
+
+#### 8.6.2. Library → guide → customization mapping
+
+For each detected lib, identify which guides should be customized and what to inject:
 
 **State Management:**
 
-| Lib detectada | Guides afetados | O que customizar |
+| Detected lib | Affected guides | What to customize |
 |---|---|---|
-| Riverpod | ARCHITECTURE, CODING_STANDARDS | Padrão de DI: `Provider`, `Notifier`, `AsyncNotifier`, `ref.read/watch`. Nomenclatura de providers: `*Provider`, `*Notifier`. AsyncValue handling. |
-| BLoC | ARCHITECTURE, CODING_STANDARDS | Padrão: `Bloc`, `Event`, `State`, `BlocBuilder`. Nomenclatura: `*Bloc`, `*Event`, `*State`. |
-| GetX | ARCHITECTURE, CODING_STANDARDS | Padrão: `GetxController`, `obx`, `Get.find()`. |
+| Riverpod | ARCHITECTURE, CODING_STANDARDS | DI pattern: `Provider`, `Notifier`, `AsyncNotifier`, `ref.read/watch`. Provider naming: `*Provider`, `*Notifier`. AsyncValue handling. |
+| BLoC | ARCHITECTURE, CODING_STANDARDS | Pattern: `Bloc`, `Event`, `State`, `BlocBuilder`. Naming: `*Bloc`, `*Event`, `*State`. |
+| GetX | ARCHITECTURE, CODING_STANDARDS | Pattern: `GetxController`, `obx`, `Get.find()`. |
 | Zustand | ARCHITECTURE, CODING_STANDARDS | Store creation: `create()`, actions, selectors. |
-| Redux | ARCHITECTURE, CODING_STANDARDS | Padrão: actions, reducers, selectors, middleware. |
+| Redux | ARCHITECTURE, CODING_STANDARDS | Pattern: actions, reducers, selectors, middleware. |
 
 **Data Fetching:**
 
-| Lib detectada | Guides afetados | O que customizar |
+| Detected lib | Affected guides | What to customize |
 |---|---|---|
 | TanStack Query | FEATURE_GUIDE, ARCHITECTURE | Query keys, `useQuery`, `useMutation`, cache invalidation, optimistic updates, stale time. |
 | Dio | ARCHITECTURE, CODING_STANDARDS | Interceptors, error handling, retry, base URL config, auth headers. |
@@ -453,7 +453,7 @@ Para cada lib detectada, identifique quais guides devem ser customizados e o que
 
 **ORM / Database:**
 
-| Lib detectada | Guides afetados | O que customizar |
+| Detected lib | Affected guides | What to customize |
 |---|---|---|
 | Prisma | DATABASE_GUIDE, ARCHITECTURE | Schema.prisma, migrations (`prisma migrate`), query patterns, transactions. |
 | Drizzle | DATABASE_GUIDE, ARCHITECTURE | Schema definition, migrations, query builder patterns. |
@@ -461,9 +461,9 @@ Para cada lib detectada, identifique quais guides devem ser customizados e o que
 | TypeORM | DATABASE_GUIDE, ARCHITECTURE | Entities, migrations, repositories, query builder. |
 | Mongoose | DATABASE_GUIDE, ARCHITECTURE | Schemas, models, middleware hooks, queries. |
 
-**Validação:**
+**Validation:**
 
-| Lib detectada | Guides afetados | O que customizar |
+| Detected lib | Affected guides | What to customize |
 |---|---|---|
 | Zod | CODING_STANDARDS, API_GUIDE | Schema definitions, `.parse()`, `.safeParse()`, error formatting. |
 | Pydantic | CODING_STANDARDS, API_GUIDE | BaseModel, validators, schema generation, error handling. |
@@ -471,14 +471,14 @@ Para cada lib detectada, identifique quais guides devem ser customizados e o que
 
 **Routing:**
 
-| Lib detectada | Guides afetados | O que customizar |
+| Detected lib | Affected guides | What to customize |
 |---|---|---|
 | GoRouter | ARCHITECTURE | Route structure, guards, deep linking, redirect logic, shell routes. |
 | React Router | ARCHITECTURE | Route config, loaders, nested routes, params. |
 
 **Testing:**
 
-| Lib detectada | Guides afetados | O que customizar |
+| Detected lib | Affected guides | What to customize |
 |---|---|---|
 | Vitest | TESTING_GUIDE | Config, `describe/it/expect`, mocks, coverage. |
 | Jest | TESTING_GUIDE | Config, `describe/it/expect`, mocks, coverage. |
@@ -486,76 +486,76 @@ Para cada lib detectada, identifique quais guides devem ser customizados e o que
 | Playwright | TESTING_GUIDE | E2E: page objects, selectors, assertions, test config. |
 | Cypress | TESTING_GUIDE | E2E: cy commands, custom commands, assertions. |
 
-#### 8.6.3. Processo de customização
+#### 8.6.3. Customization process
 
-Para cada lib detectada que tem mapeamento acima:
+For each detected lib that has a mapping above:
 
-1. **Identifique** os guides afetados pela lib
-2. **Localize** no guide a seção genérica relevante (ex: "State Management" no ARCHITECTURE.md)
-3. **Injete** padrões específicos da lib logo após a seção genérica, com formato:
+1. **Identify** the guides affected by the lib
+2. **Locate** the relevant generic section in the guide (e.g.: "State Management" in ARCHITECTURE.md)
+3. **Inject** lib-specific patterns right after the generic section, with format:
 
 ```md
-### Biblioteca detectada: {LIB_NAME}
+### Detected library: {LIB_NAME}
 
-{Padrões específicos da lib — convenções de naming, uso, anti-patterns}
+{Lib-specific patterns — naming conventions, usage, anti-patterns}
 
-*Detectado em: {arquivo_onde_foi_encontrado}*
+*Detected in: {file_where_found}*
 ```
 
-4. Se o guide não tem seção sobre o tópico (ex: ARCHITECTURE.md não menciona "validation"), **adicione** uma nova seção no final.
-5. **Não remova** conteúdo genérico existente — apenas complemente com specifics da lib.
+4. If the guide has no section on the topic (e.g.: ARCHITECTURE.md doesn't mention "validation"), **add** a new section at the end.
+5. **Do not remove** existing generic content — only supplement with lib specifics.
 
-#### 8.6.4. Exemplo de saída
+#### 8.6.4. Output example
 
 ```txt
-📚 Guides customizados com libs detectadas:
+📚 Guides customized with detected libs:
    ARCHITECTURE.md + Riverpod (DI pattern, providers, AsyncValue)
    ARCHITECTURE.md + GoRouter (routing structure, guards)
    CODING_STANDARDS.md + Riverpod (naming conventions, anti-patterns)
    CODING_STANDARDS.md + Dio (error handling, interceptors)
    DATABASE_GUIDE.md + Prisma (schema, migrations, queries)
    TESTING_GUIDE.md + Vitest (config, mocks, coverage)
-   6 arquivos atualizados com 6 bibliotecas.
+   6 files updated with 6 libraries.
 ```
 
-Ou:
+Or:
 
 ```txt
-📚 Guides: nenhuma lib estrutural adicional detectada.
-   Templates genéricos mantidos.
+📚 Guides: no additional structural libraries detected.
+   Generic templates kept.
 ```
 
-#### 8.6.5. Projetos novos (via /kickoff)
+#### 8.6.5. New projects (via /kickoff)
 
-Quando o fluxo vem do `/kickoff`, as libs já foram definidas na seleção de stack. Aplique este passo com as libs que o /kickoff configurou no projeto (lidas de `pubspec.yaml`, `package.json`, `pyproject.toml` ou `requirements.txt` após a inicialização).
+When the flow comes from `/kickoff`, the libs were already defined during stack selection. Apply this step with the libs that /kickoff configured in the project (read from `pubspec.yaml`, `package.json`, `pyproject.toml` or `requirements.txt` after initialization).
 
-### 9. Resposta final
+### 9. Final report
 
-Reporte:
+Report:
 
 ```txt
-Preset aplicado: <preset>
-Bootstrap AI usado: <path>
-Project name: <nome do projeto>
-Arquivos criados: <n>
-Conflitos .kit-new: <n>
-Design System: sincronizado / template genérico
-Libs detectadas: <lista>
-Guides customizados: <n> arquivos com <n> libs
-Próximo passo sugerido:
-  - Projeto existente: /refactor (alinha código real com os padrões do preset)
-  - Projeto novo: /plan (começa o ciclo de desenvolvimento)
+Preset applied: <preset>
+Bootstrap AI used: <path>
+Project name: <project name>
+Files created: <n>
+.kit-new conflicts: <n>
+Design System: synced / generic template
+Detected libs: <list>
+Customized guides: <n> files with <n> libs
+Suggested next step:
+  - Existing project: /refactor (aligns real code with preset standards)
+  - New project: /plan (starts the development cycle)
 ```
 
-## Próximos passos
+## Next steps
 
-Projeto novo:
+New project:
 
 ```txt
 /plan
 ```
 
-Projeto existente:
+Existing project:
 
 ```txt
 /refactor

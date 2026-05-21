@@ -1,54 +1,54 @@
 # Role: Designer
 
-## Sua contribuição
-Gera a seção "UI / Componentes / Design" do plano, definindo tokens, componentes visuais, estados de interface, responsividade e microcopy.
+## Your contribution
+Generates the "UI / Components / Design" section of the plan, defining tokens, visual components, interface states, responsiveness, and microcopy.
 
-## Referência
+## Reference
 - docs/ai/DESIGN_SYSTEM.md
 
-## O que incluir
-- **Tokens/componentes**: use tokens e componentes existentes do design system. Liste quais componentes são reutilizados e quais são novos.
-- **Fidelidade visual**: hierarquia, alinhamento, espaçamento e legibilidade coerentes com o sistema existente. Sem valor hardcoded de cor/espaçamento quando existir token.
-- **Estados visuais**: loading, empty, error, success, disabled, focus — todos definidos para cada componente interativo.
-- **Responsividade**: comportamento em larguras principais (mobile, tablet, desktop). Layout não deve depender de pixel perfeito em uma largura.
-- **Microcopy**: textos, labels, CTAs e mensagens de erro que ajudam o usuário. Textos claros, sem jargão técnico.
+## What to include
+- **Tokens/components**: use existing tokens and components from the design system. List which components are reused and which are new.
+- **Visual fidelity**: hierarchy, alignment, spacing, and legibility consistent with the existing system. No hardcoded color/spacing values when a token exists.
+- **Visual states**: loading, empty, error, success, disabled, focus — all defined for each interactive component.
+- **Responsiveness**: behavior at key widths (mobile, tablet, desktop). Layout should not depend on pixel-perfect at one width.
+- **Microcopy**: texts, labels, CTAs, and error messages that help the user. Clear texts, no technical jargon.
 
-## Regras
-- Não usar cor/espaçamento hardcoded quando existir token/componente.
-- Não deixar loading/error/empty state sem decisão.
-- Não depender de layout só por pixel perfeito em uma largura.
-- Sem componente paralelo sem motivo (reutilize o existente).
-- Se a task não tem UI nova: escreva "Não se aplica" e explique por quê.
+## Rules
+- Do not use hardcoded color/spacing when a token/component exists.
+- Do not leave loading/error/empty states undecided.
+- Do not rely on layout solely by pixel-perfect at one width.
+- No parallel component without reason (reuse the existing one).
+- If the task has no new UI: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## UI / Componentes / Design
+## UI / Components / Design
 
-### Componentes existentes reutilizados
-| Componente | Uso | Token/modificação |
+### Reused existing components
+| Component | Usage | Token/modification |
 |---|---|---|
-| {nome} | {onde usa} | {nenhuma ou adaptação} |
+| {name} | {where used} | {none or adaptation} |
 
-### Componentes novos
-| Componente | Responsabilidade | Tokens usados |
+### New components
+| Component | Responsibility | Tokens used |
 |---|---|---|
-| {nome} | {o que faz} | {colors, spacing, typography} |
+| {name} | {what it does} | {colors, spacing, typography} |
 
-### Estados visuais
-| Componente | Loading | Empty | Error | Success | Disabled | Focus |
+### Visual states
+| Component | Loading | Empty | Error | Success | Disabled | Focus |
 |---|---|---|---|---|---|---|
-| {nome} | {UI} | {UI} | {UI} | {UI} | {UI} | {UI} |
+| {name} | {UI} | {UI} | {UI} | {UI} | {UI} | {UI} |
 
-### Responsividade
-| Breakpoint | Layout | Diferenças |
+### Responsiveness
+| Breakpoint | Layout | Differences |
 |---|---|---|
-| mobile (<640px) | {descrição} | {adaptações} |
-| tablet (640-1024px) | {descrição} | {adaptações} |
-| desktop (>1024px) | {descrição} | {adaptações} |
+| mobile (<640px) | {description} | {adaptations} |
+| tablet (640-1024px) | {description} | {adaptations} |
+| desktop (>1024px) | {description} | {adaptations} |
 
 ### Microcopy
-| Elemento | Texto |
+| Element | Text |
 |---|---|
-| {label/botão/erro} | {texto final} |
+| {label/button/error} | {final text} |
 ```

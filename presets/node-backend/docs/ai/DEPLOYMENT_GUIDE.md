@@ -1,6 +1,6 @@
 # Deployment Guide
 
-Deploy, env vars e rollback para Node.js backend.
+Deploy, env vars, and rollback for Node.js backend.
 
 ## Environment variables
 
@@ -19,7 +19,7 @@ const envSchema = z.object({
 export const config = envSchema.parse(process.env);
 ```
 
-Sempre `.env.example` atualizado. Nunca commitar `.env`.
+Always keep `.env.example` updated. Never commit `.env`.
 
 ## Build
 
@@ -73,17 +73,17 @@ WantedBy=multi-user.target
 ## Deploy checklist
 
 1. `npx prisma migrate deploy`
-2. Reiniciar serviço
-3. Verificar healthcheck
-4. Monitorar 15 minutos
+2. Restart service
+3. Verify healthcheck
+4. Monitor for 15 minutes
 
 ## Rollback
 
-1. Detectar problema.
-2. `git revert <commit>` ou checkout anterior.
-3. Rebuild e redeploy.
-4. Se migration: `npx prisma migrate resolve --rolled-back <migration>` se necessário.
-5. Verificar healthcheck.
+1. Detect the problem.
+2. `git revert <commit>` or checkout previous version.
+3. Rebuild and redeploy.
+4. If migration: `npx prisma migrate resolve --rolled-back <migration>` if needed.
+5. Verify healthcheck.
 
 ## Graceful shutdown
 
@@ -96,22 +96,22 @@ process.on('SIGTERM', async () => {
 });
 ```
 
-## Regras duras
+## Hard rules
 
-- Nunca deployar sem migration com downgrade.
-- Nunca `NODE_ENV=development` em produção.
-- Nunca servir sem HTTPS.
-- Nunca hardcodar env vars.
-- Sempre ter rollback testado.
+- Never deploy without a migration with downgrade path.
+- Never `NODE_ENV=development` in production.
+- Never serve without HTTPS.
+- Never hardcode env vars.
+- Always have a tested rollback.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any of the rules below.
 
-- **Nunca deployar sem migration com downgrade**: Toda migration precisa de caminho de rollback documentado.
-- **Nunca `NODE_ENV=development` em produção**: Ambiente de produção deve ter `NODE_ENV=production`.
-- **Nunca servir sem HTTPS**: TLS é obrigatório em produção.
-- **Nunca hardcodar env vars**: Usar env vars via Zod validation.
-- **Sempre ter rollback testado**: Rollback deve ser validado antes de deploy.
-- **Sempre `.env.example` atualizado**: Nunca commitar `.env` real.
-- **Sempre graceful shutdown**: Tratar SIGTERM para fechar conexões corretamente.
+- **Never deploy without a migration with downgrade**: Every migration needs a documented rollback path.
+- **Never `NODE_ENV=development` in production**: Production environment must have `NODE_ENV=production`.
+- **Never serve without HTTPS**: TLS is mandatory in production.
+- **Never hardcode env vars**: Use env vars via Zod validation.
+- **Always have a tested rollback**: Rollback must be validated before deploy.
+- **Always keep `.env.example` updated**: Never commit real `.env`.
+- **Always graceful shutdown**: Handle SIGTERM to close connections properly.

@@ -1,33 +1,33 @@
 # Architecture
 
-Estrutura de diretórios e arquitetura do projeto Python backend.
+Directory structure and architecture for the Python backend project.
 
-## Visão geral
+## Overview
 
-Projeto backend em Python com FastAPI, seguindo arquitetura em camadas com separação clara de responsabilidades.
+Python backend project with FastAPI, following a layered architecture with clear separation of responsibilities.
 
-Fluxo de dados:
+Data flow:
 
 ```
-Request → Router → Schema (validação) → Service → Repository → Model → Banco
+Request → Router → Schema (validation) → Service → Repository → Model → Database
                                     ↓
                                  Response Schema
 ```
 
-Cada camada tem uma responsabilidade única. Não pular camadas.
+Each layer has a single responsibility. Do not skip layers.
 
-## Estrutura de diretórios
+## Directory structure
 
 ```
-<raiz>/
-├── app/                        # Código fonte principal
+<root>/
+├── app/                        # Main source code
 │   ├── __init__.py
-│   ├── main.py                 # Entry point FastAPI
+│   ├── main.py                 # FastAPI entry point
 │   ├── config.py               # Settings via pydantic-settings
 │   ├── database.py             # Engine, session factory, base model
-│   ├── dependencies.py         # Dependências injetáveis (get_db, get_current_user, etc.)
+│   ├── dependencies.py         # Injectable dependencies (get_db, get_current_user, etc.)
 │   │
-│   ├── routers/                # Definição de rotas (controllers)
+│   ├── routers/                # Route definitions (controllers)
 │   │   ├── __init__.py
 │   │   ├── auth.py
 │   │   ├── users.py
@@ -38,25 +38,25 @@ Cada camada tem uma responsabilidade única. Não pular camadas.
 │   │   ├── auth.py
 │   │   └── users.py
 │   │
-│   ├── services/               # Lógica de negócio
+│   ├── services/               # Business logic
 │   │   ├── __init__.py
 │   │   ├── auth.py
 │   │   └── users.py
 │   │
-│   ├── repositories/           # Acesso a dados (queries, ORM)
+│   ├── repositories/           # Data access (queries, ORM)
 │   │   ├── __init__.py
 │   │   └── users.py
 │   │
-│   ├── models/                 # SQLAlchemy models (tabelas)
+│   ├── models/                 # SQLAlchemy models (tables)
 │   │   ├── __init__.py
-│   │   ├── base.py             # Base declarativa, mixins
+│   │   ├── base.py             # Declarative base, mixins
 │   │   └── users.py
 │   │
-│   ├── middleware/             # Middleware customizado
+│   ├── middleware/             # Custom middleware
 │   │   ├── __init__.py
 │   │   └── logging.py
 │   │
-│   └── utils/                  # Funções utilitárias
+│   └── utils/                  # Utility functions
 │       ├── __init__.py
 │       └── security.py
 │
@@ -65,28 +65,28 @@ Cada camada tem uma responsabilidade única. Não pular camadas.
 │   ├── env.py
 │   └── alembic.ini
 │
-├── tests/                      # Testes
-│   ├── conftest.py             # Fixtures compartilhadas
+├── tests/                      # Tests
+│   ├── conftest.py             # Shared fixtures
 │   ├── unit/
 │   ├── integration/
 │   └── e2e/
 │
-├── scripts/                    # Scripts auxiliares (seed, deploy, etc.)
-├── pyproject.toml              # Config do projeto (deps, lint, mypy)
+├── scripts/                    # Helper scripts (seed, deploy, etc.)
+├── pyproject.toml              # Project config (deps, lint, mypy)
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .env.example
-└── .env                        # NÃO commitar
+└── .env                        # Do NOT commit
 ```
 
-## Camadas e responsabilidades
+## Layers and responsibilities
 
 ### Router (Controller)
 
-- Recebe HTTP request, chama service, retorna HTTP response.
-- Usa schemas Pydantic para validação de entrada/saída.
-- Não contém lógica de negócio.
-- Não acessa models ou banco diretamente.
+- Receives HTTP request, calls service, returns HTTP response.
+- Uses Pydantic schemas for input/output validation.
+- Does not contain business logic.
+- Does not access models or database directly.
 
 ```python
 # routers/users.py
@@ -120,10 +120,10 @@ async def list_users(
 
 ### Schema (Pydantic)
 
-- Validação e serialização de dados.
-- Define contrato da API (request/response).
-- Pode ter métodos auxiliares de transformação.
-- Não acessa banco.
+- Data validation and serialization.
+- Defines API contract (request/response).
+- May have helper transformation methods.
+- Does not access database.
 
 ```python
 # schemas/users.py
@@ -140,7 +140,7 @@ class UserCreate(BaseModel):
     @classmethod
     def password_min_length(cls, v: str) -> str:
         if len(v) < 8:
-            raise ValueError("Senha deve ter pelo menos 8 caracteres")
+            raise ValueError("Password must be at least 8 characters")
         return v
 
 class UserResponse(BaseModel):
@@ -158,13 +158,13 @@ class UserList(BaseModel):
     limit: int
 ```
 
-### Service (Lógica de negócio)
+### Service (Business logic)
 
-- Orquestra a lógica de negócio.
-- Chama repository para acessar dados.
-- Pode chamar services externos, filas, cache.
-- Não conhece HTTP (sem request/response).
-- Não escreve queries SQL diretamente (usa repository).
+- Orchestrates business logic.
+- Calls repository to access data.
+- May call external services, queues, cache.
+- Does not know HTTP (no request/response).
+- Does not write SQL queries directly (uses repository).
 
 ```python
 # services/users.py
@@ -181,7 +181,7 @@ class UserService:
     async def create(self, payload: UserCreate) -> dict:
         existing = await self.repo.get_by_email(payload.email)
         if existing:
-            raise ValueError("Email já cadastrado")
+            raise ValueError("Email already registered")
 
         hashed = hash_password(payload.password)
         user = await self.repo.create(
@@ -197,12 +197,12 @@ class UserService:
         return await self.repo.list_paginated(skip=skip, limit=limit)
 ```
 
-### Repository (Acesso a dados)
+### Repository (Data access)
 
-- Queries e operações no banco.
-- Retorna models SQLAlchemy ou dicts simples.
-- Não contém lógica de negócio.
-- Pode usar ORM ou queries raw para performance.
+- Queries and database operations.
+- Returns SQLAlchemy models or simple dicts.
+- Does not contain business logic.
+- May use ORM or raw queries for performance.
 
 ```python
 # repositories/users.py
@@ -243,10 +243,10 @@ class UserRepository:
 
 ### Model (SQLAlchemy)
 
-- Define tabela e colunas.
-- Tipagem forte com Mapped.
-- Mixins para campos comuns (id, created_at, updated_at).
-- Não contém lógica de negócio.
+- Defines table and columns.
+- Strong typing with Mapped.
+- Mixins for common fields (id, created_at, updated_at).
+- Does not contain business logic.
 
 ```python
 # models/base.py
@@ -269,15 +269,15 @@ class IDMixin:
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 ```
 
-## Injeção de dependência
+## Dependency injection
 
-FastAPI usa `Depends()` para DI. Use para:
+FastAPI uses `Depends()` for DI. Use for:
 
-- Sessão de banco: `Depends(get_db)`
-- Usuário autenticado: `Depends(get_current_user)`
+- Database session: `Depends(get_db)`
+- Authenticated user: `Depends(get_current_user)`
 - Config: `Depends(get_settings)`
 
-Services recebam dependências no construtor, não via import global.
+Services should receive dependencies in the constructor, not via global import.
 
 ```python
 # dependencies.py
@@ -294,9 +294,9 @@ def get_settings() -> Settings:
     return Settings()
 ```
 
-## Configuração
+## Configuration
 
-Use `pydantic-settings` para configuração:
+Use `pydantic-settings` for configuration:
 
 ```python
 # config.py
@@ -311,58 +311,58 @@ class Settings(BaseSettings):
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 ```
 
-Nunca hardcodar configuração. Nunca acessar `os.environ` diretamente — passe pelo Settings.
+Never hardcode configuration. Never access `os.environ` directly — go through Settings.
 
-## Convenções de nomenclatura
+## Naming conventions
 
-| Elemento | Convenção | Exemplo |
+| Element | Convention | Example |
 |---|---|---|
-| Arquivo Python | snake_case | `user_service.py` |
-| Classe | PascalCase | `UserService` |
-| Função/método | snake_case | `create_user()` |
-| Constante | UPPER_SNAKE | `MAX_RETRIES` |
-| Variável | snake_case | `user_count` |
-| Rota / endpoint | kebab-case | `/api/v1/user-profiles` |
-| Tabela | snake_case plural | `user_profiles` |
-| Coluna | snake_case | `created_at` |
-| Migration | auto-gerada | `add_user_profiles_table` |
-| Variável de ambiente | UPPER_SNAKE | `DATABASE_URL` |
+| Python file | snake_case | `user_service.py` |
+| Class | PascalCase | `UserService` |
+| Function/method | snake_case | `create_user()` |
+| Constant | UPPER_SNAKE | `MAX_RETRIES` |
+| Variable | snake_case | `user_count` |
+| Route / endpoint | kebab-case | `/api/v1/user-profiles` |
+| Table | plural snake_case | `user_profiles` |
+| Column | snake_case | `created_at` |
+| Migration | auto-generated | `add_user_profiles_table` |
+| Environment variable | UPPER_SNAKE | `DATABASE_URL` |
 
 ## Anti-patterns
 
-- Router chamando `db.execute()` diretamente — pula service e repository.
-- Service importando `Request` ou `Response` do FastAPI — acoplamento HTTP.
-- Model com lógica de negócio — é dado, não comportamento.
-- Repository com validação Pydantic — cada camada tem seu papel.
-- `from app.main import app` em testes — use fixtures.
-- Query N+1 em loop — sempre eager load ou select_related.
-- `session.commit()` no repository — quem commita é o service que orquestra.
-- Import circular — use TYPE_CHECKING e string annotations.
+- Router calling `db.execute()` directly — skips service and repository.
+- Service importing `Request` or `Response` from FastAPI — HTTP coupling.
+- Model with business logic — it's data, not behavior.
+- Repository with Pydantic validation — each layer has its role.
+- `from app.main import app` in tests — use fixtures.
+- N+1 query in loop — always eager load or select_related.
+- `session.commit()` in repository — the service that orchestrates should commit.
+- Circular import — use TYPE_CHECKING and string annotations.
 
-## Regras duras
+## Hard rules
 
-- Não pular camadas. Router → Service → Repository → Model. Sempre.
-- Não commitar sem migration quando alterar model.
-- Não usar `session.commit()` em repository — deixe para o service.
-- Não hardcodar configuração — use Settings.
-- Não importar models em routers — use schemas.
-- Não usar sync SQLAlchemy em projeto async — use `AsyncSession`.
-- Não criar dependência circular entre módulos.
+- Do not skip layers. Router → Service → Repository → Model. Always.
+- Do not commit without migration when changing a model.
+- Do not use `session.commit()` in repository — leave it to the service.
+- Do not hardcode configuration — use Settings.
+- Do not import models in routers — use schemas.
+- Do not use sync SQLAlchemy in an async project — use `AsyncSession`.
+- Do not create circular dependencies between modules.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Não pular camadas**: Router → Service → Repository → Model, sempre nesta ordem.
-- **Migration obrigatória com model**: Não commitar alteração em model sem migration correspondente.
-- **Service é dono do commit**: Não usar `session.commit()` em repository.
-- **Config via Settings**: Não hardcodar configuração; não acessar `os.environ` diretamente.
-- **Schemas em routers**: Não importar models em routers — use schemas Pydantic.
-- **AsyncSession obrigatório**: Não usar sync SQLAlchemy em projeto async.
-- **Sem dependência circular**: Não criar dependência circular entre módulos; use `TYPE_CHECKING`.
-- **Router sem lógica de negócio**: Router não contém lógica de negócio nem acessa banco diretamente.
-- **Service sem HTTP**: Service não importa `Request`/`Response` do FastAPI.
-- **Model sem comportamento**: Model define tabela/colunas, não contém lógica de negócio.
-- **Repository sem validação**: Repository não faz validação Pydantic.
-- **Evitar N+1**: Query em loop deve usar eager load ou select_related.
-- **Não commitar `.env`**: Arquivo `.env` nunca entra no versionamento.
+- **Do not skip layers**: Router → Service → Repository → Model, always in this order.
+- **Mandatory migration with model**: Do not commit model changes without a corresponding migration.
+- **Service owns the commit**: Do not use `session.commit()` in repository.
+- **Config via Settings**: Do not hardcode configuration; do not access `os.environ` directly.
+- **Schemas in routers**: Do not import models in routers — use Pydantic schemas.
+- **AsyncSession mandatory**: Do not use sync SQLAlchemy in an async project.
+- **No circular dependencies**: Do not create circular dependencies between modules; use `TYPE_CHECKING`.
+- **Router without business logic**: Router does not contain business logic nor accesses database directly.
+- **Service without HTTP**: Service does not import `Request`/`Response` from FastAPI.
+- **Model without behavior**: Model defines table/columns, does not contain business logic.
+- **Repository without validation**: Repository does not do Pydantic validation.
+- **Avoid N+1**: Query in loop must use eager load or select_related.
+- **Do not commit `.env`**: `.env` file never goes into version control.

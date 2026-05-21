@@ -1,10 +1,10 @@
 # Testing Guide
 
-Padrões de teste para Python backend com pytest.
+Testing standards for Python backend with pytest.
 
 ## Framework
 
-pytest com fixtures async via pytest-asyncio.
+pytest with async fixtures via pytest-asyncio.
 
 ```toml
 [tool.pytest.ini_options]
@@ -13,26 +13,26 @@ testpaths = ["tests"]
 addopts = "-v --tb=short"
 ```
 
-## Estrutura de diretórios
+## Directory structure
 
 ```
 tests/
-├── conftest.py             # Fixtures globais
-├── unit/                   # Testes unitários (service, utils)
+├── conftest.py             # Global fixtures
+├── unit/                   # Unit tests (service, utils)
 │   ├── test_user_service.py
 │   └── test_security.py
-├── integration/            # Testes de integração (API + DB real)
+├── integration/            # Integration tests (API + real DB)
 │   ├── test_users_api.py
 │   └── test_auth_api.py
-└── e2e/                    # Testes end-to-end
+└── e2e/                    # End-to-end tests
     └── test_order_flow.py
 ```
 
-## Convenções
+## Conventions
 
-- Arquivo: `test_<module>.py`
-- Classe: `Test<Feature>` (opcional, agrupar relacionados)
-- Função: `test_<acao>_<cenario>_<resultado_esperado>()`
+- File: `test_<module>.py`
+- Class: `Test<Feature>` (optional, group related tests)
+- Function: `test_<action>_<scenario>_<expected_result>()`
 
 ```python
 class TestUserService:
@@ -93,7 +93,7 @@ def sample_user_payload():
     return {"name": "Test User", "email": "test@example.com", "password": "secret123"}
 ```
 
-## Testes por camada
+## Tests by layer
 
 ### Unit (service)
 
@@ -139,7 +139,7 @@ async def test_list_users_returns_paginated(client, db_session):
     assert data["total"] == 25
 ```
 
-## Massa de dados
+## Test data
 
 ### Factories
 
@@ -162,27 +162,27 @@ async def create_user(session: AsyncSession, **overrides) -> User:
     return user
 ```
 
-### Regras de massa
+### Data rules
 
-- Dados determinísticos: mesmo teste, mesmo resultado.
-- Email único por teste: usar UUID ou timestamp.
-- Não usar dados aleatórios (random, faker em teste que quebra).
-- Não depender de ordem de execução.
-- Limpar estado entre testes (rollback no fixture).
+- Deterministic data: same test, same result.
+- Unique email per test: use UUID or timestamp.
+- Do not use random data (random, faker in tests that break).
+- Do not depend on execution order.
+- Clear state between tests (rollback in fixture).
 
 ## Mocks
 
-### Quando mockar
+### When to mock
 
-- Serviços externos (email, payment gateway, SMS).
-- Time e datas específicas.
+- External services (email, payment gateway, SMS).
+- Specific time and dates.
 - File system.
 
-### Quando NÃO mockar
+### When NOT to mock
 
-- Banco de dados (usar DB de teste real).
-- Validação Pydantic (testar com input real).
-- Próprio código sendo testado.
+- Database (use real test DB).
+- Pydantic validation (test with real input).
+- The code being tested itself.
 
 ```python
 from unittest.mock import AsyncMock, patch
@@ -194,13 +194,13 @@ async def test_send_welcome_email_called_on_create(client, sample_user_payload):
         mock_email.assert_called_once()
 ```
 
-## Cobertura
+## Coverage
 
 ```bash
 pytest --cov=app --cov-report=term-missing
 ```
 
-Mínimo esperado:
+Expected minimums:
 - Services: 80%
 - Repositories: 70%
 - Routers: 80%
@@ -209,46 +209,46 @@ Mínimo esperado:
 
 ## Anti-patterns
 
-- Não testar implementação, testar comportamento.
-- Não usar `sleep` para esperar async — usar `await`.
-- Não criar arquivo temporário sem cleanup.
-- Não depender de ordem de testes.
-- Não usar `mock.patch` em código que não é externo.
-- Não pular teste com `@pytest.skip` sem issue registrada.
+- Do not test implementation, test behavior.
+- Do not use `sleep` to wait for async — use `await`.
+- Do not create temporary file without cleanup.
+- Do not depend on test order.
+- Do not use `mock.patch` on code that is not external.
+- Do not skip test with `@pytest.skip` without a registered issue.
 
-## Comandos
+## Commands
 
 ```bash
-pytest                              # Todos
-pytest tests/unit/                  # Unitários
-pytest tests/integration/           # Integração
-pytest -x                           # Parar no primeiro falho
-pytest --lf                         # Repetir últimos falhos
-pytest tests/unit/test_user_service.py -k "create"  # Filtro
-pytest --cov=app --cov-report=html  # Coverage com HTML
+pytest                              # All
+pytest tests/unit/                  # Unit
+pytest tests/integration/           # Integration
+pytest -x                           # Stop at first failure
+pytest --lf                         # Repeat last failures
+pytest tests/unit/test_user_service.py -k "create"  # Filter
+pytest --cov=app --cov-report=html  # Coverage with HTML
 ```
 
-## Regras duras
+## Hard rules
 
-- Não remover assertion para fazer teste passar.
-- Não usar `assert True` ou `pass` como teste.
-- Não usar dados aleatórios em teste determinístico.
-- Não chamar serviço externo real em teste.
-- Não depender de ordem de execução.
-- Não commitar sem pelo menos testes unitários da mudança.
+- Do not remove assertions to make tests pass.
+- Do not use `assert True` or `pass` as a test.
+- Do not use random data in deterministic tests.
+- Do not call real external services in tests.
+- Do not depend on execution order.
+- Do not commit without at least unit tests for the change.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Não weaken assertions**: Não remover assertion para fazer teste passar.
-- **Sem teste vazio**: Não usar `assert True` ou `pass` como corpo de teste.
-- **Dados determinísticos**: Não usar dados aleatórios (`random`, `faker`) em teste determinístico.
-- **Sem serviço externo real**: Não chamar serviço externo real em teste; usar mock.
-- **Independência de ordem**: Testes não podem depender de ordem de execução.
-- **Testes unitários obrigatórios**: Não commitar sem pelo menos testes unitários da mudança.
-- **Não mockar DB**: Banco de dados em teste deve ser real (DB de teste), não mockado.
-- **Não mockar validação Pydantic**: Testar Pydantic com input real, não com mock.
-- **Não usar `sleep` para async**: Usar `await`, nunca `sleep` para esperar operação assíncrona.
-- **Cleanup de arquivos temporários**: Não criar arquivo temporário sem cleanup.
-- **Skip com issue**: Não pular teste com `@pytest.skip` sem issue registrada.
+- **Do not weaken assertions**: Do not remove assertions to make tests pass.
+- **No empty test**: Do not use `assert True` or `pass` as test body.
+- **Deterministic data**: Do not use random data (`random`, `faker`) in deterministic tests.
+- **No real external service**: Do not call real external services in tests; use mocks.
+- **Order independence**: Tests cannot depend on execution order.
+- **Mandatory unit tests**: Do not commit without at least unit tests for the change.
+- **Do not mock DB**: Database in tests should be real (test DB), not mocked.
+- **Do not mock Pydantic validation**: Test Pydantic with real input, not with mocks.
+- **Do not use `sleep` for async**: Use `await`, never `sleep` to wait for async operations.
+- **Temporary file cleanup**: Do not create temporary files without cleanup.
+- **Skip with issue**: Do not skip test with `@pytest.skip` without a registered issue.

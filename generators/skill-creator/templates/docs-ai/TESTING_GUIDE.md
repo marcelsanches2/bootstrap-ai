@@ -1,24 +1,24 @@
 # Testing Guide
 
-Padrões de teste para {{PROJECT_NAME}}.
+Testing standards for {{PROJECT_NAME}}.
 
 ## Framework
 
 {{TEST_FRAMEWORK}}
 
-## Estrutura de diretórios de teste
+## Test directory structure
 
 ```
 {{TEST_DIRECTORY_TREE}}
 ```
 
-## Convenções de nomenclatura
+## Naming conventions
 
-- Arquivos: `test_<unit>.py` / `<unit>.test.ts` / `<unit>_test.dart`
-- Descreção: nome do módulo + cenário
-- Organização: Arrange → Act → Assert
+- Files: `test_<unit>.py` / `<unit>.test.ts` / `<unit>_test.dart`
+- Description: module name + scenario
+- Organization: Arrange → Act → Assert
 
-## Tipos de teste
+## Test types
 
 {{TEST_TYPES}}
 
@@ -26,11 +26,11 @@ Padrões de teste para {{PROJECT_NAME}}.
 
 {{FIXTURES_GUIDE}}
 
-## Cobertura
+## Coverage
 
 {{COVERAGE_RULES}}
 
-## O que testar por camada
+## What to test per layer
 
 {{TEST_PER_LAYER}}
 
@@ -38,14 +38,14 @@ Padrões de teste para {{PROJECT_NAME}}.
 
 {{TEST_ANTI_PATTERNS}}
 
-## Comandos
+## Commands
 
 {{TEST_COMMANDS}}
 
-## Regras duras
+## Hard rules
 
-- Não teste implementação, teste comportamento.
-- Não use dados aleatórios em testes determinísticos.
-- Não chame serviços externos reais em teste.
-- Não remova assertion para fazer teste passar.
-- Não deixe teste dependente de ordem de execução.
+- Test behavior, not implementation.
+- Do not use random data in deterministic tests.
+- Do not call real external services in tests.
+- Do not remove assertions to make tests pass.
+- Do not leave tests dependent on execution order.

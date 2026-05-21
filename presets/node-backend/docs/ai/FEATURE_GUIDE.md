@@ -1,10 +1,10 @@
 # Feature Guide
 
-Como desenvolver features novas no Node.js backend.
+How to develop new features in the Node.js backend.
 
-## Nova feature passo a passo
+## New feature step by step
 
-### 1. Atualizar Prisma schema
+### 1. Update Prisma schema
 
 ```prisma
 model Order {
@@ -108,20 +108,20 @@ export const OrdersController = {
 router.post('/', authMiddleware, validate(createOrderSchema), OrdersController.create);
 ```
 
-## Regras duras
+## Hard rules
 
-- Sempre: schema → migration → repository → service → controller → route → teste.
-- Nunca pular camada.
-- Nunca criar endpoint sem Zod schema.
-- Nunca criar tabela sem migration.
-- Nunca criar feature sem teste.
+- Always: schema → migration → repository → service → controller → route → test.
+- Never skip a layer.
+- Never create endpoints without Zod schema.
+- Never create tables without migration.
+- Never create features without tests.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any of the rules below.
 
-- **Ordem obrigatória**: schema → migration → repository → service → controller → route → teste — nunca pular.
-- **Nunca pular camada**: Cada camada tem responsabilidade própria; não combinar.
-- **Nunca criar endpoint sem Zod schema**: Todo endpoint precisa de validação com Zod.
-- **Nunca criar tabela sem migration**: Toda mudança no banco passa por migration.
-- **Nunca criar feature sem teste**: Toda feature deve ter pelo menos teste da mudança.
+- **Mandatory order**: schema → migration → repository → service → controller → route → test — never skip.
+- **Never skip a layer**: Each layer has its own responsibility; do not combine.
+- **Never create endpoints without Zod schema**: Every endpoint needs Zod validation.
+- **Never create tables without migration**: Every database change goes through migration.
+- **Never create features without tests**: Every feature must have at least tests for the change.

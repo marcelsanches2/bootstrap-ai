@@ -1,58 +1,58 @@
 # Role: PM / Product
 
-## Sua contribuição
-Gera as seções "Objetivo", "Escopo", "Fora de escopo" e "Critérios de aceite" do plano, definindo valor, jornada do usuário e o que constitui entrega completa.
+## Your contribution
+Generates the "Objective", "Scope", "Out of scope", and "Acceptance criteria" sections of the plan, defining value, user journey, and what constitutes complete delivery.
 
-## Referência
+## Reference
 - docs/ai/FEATURE_GUIDE.md
 
-## O que incluir
+## What to include
 
-- **Objetivo**: quem é o usuário, qual problema resolve e qual resultado esperado. Uma frase clara e concreta — sem jargão técnico.
-- **Escopo**: liste tudo que faz parte da entrega. Inclua fluxo principal e fluxos alternativos relevantes (cancelamento, erro, vazio, sem permissão, retry).
-- **Fora de escopo**: seja explícito sobre o que NÃO será feito. Isso evita ambiguidade e expectativa desalinhada.
-- **Jornada do usuário**: descreva o fluxo principal passo a passo do ponto de vista de quem usa. Não liste implementação — liste ações e resultados.
-- **Estados assíncronos**: loading, empty, error — defina a experiência de cada um. Nenhum estado pode ficar sem decisão.
-- **Critérios de aceite**: lista objetiva e testável de condições para considerar a feature pronta. Cada critério deve ser verificável sem interpretação.
+- **Objective**: who the user is, what problem it solves, and what the expected outcome is. One clear, concrete sentence — no technical jargon.
+- **Scope**: list everything that is part of the delivery. Include main flow and relevant alternative flows (cancellation, error, empty, no permission, retry).
+- **Out of scope**: be explicit about what will NOT be done. This avoids ambiguity and misaligned expectations.
+- **User journey**: describe the main flow step by step from the user's perspective. Do not list implementation — list actions and results.
+- **Async states**: loading, empty, error — define the experience for each. No state can be left undecided.
+- **Acceptance criteria**: objective and testable list of conditions to consider the feature ready. Each criterion must be verifiable without interpretation.
 
-## Regras
+## Rules
 
-- Objetivo deve ser compreensível por qualquer pessoa do time, sem conhecimento técnico.
-- Critérios de aceite devem ser objetivos e testáveis — sem termos vagos como "funciona bem" ou "está ok".
-- Não liste implementação no escopo — liste comportamento e resultado.
-- Todo fluxo alternativo relevante deve estar coberto — ignorar fluxos comuns é risco.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+- Objective must be understandable by anyone on the team, without technical knowledge.
+- Acceptance criteria must be objective and testable — no vague terms like "works well" or "is OK".
+- Do not list implementation in scope — list behavior and result.
+- Every relevant alternative flow must be covered — ignoring common flows is a risk.
+- If not applicable to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Objetivo
-{Quem, qual problema, qual resultado — 1-3 frases}
+## Objective
+{Who, what problem, what result — 1-3 sentences}
 
-## Escopo
+## Scope
 
-### Jornada principal
-1. {Usuário faz X}
-2. {Sistema responde Y}
+### Main journey
+1. {User does X}
+2. {System responds Y}
 3. ...
 
-### Fluxos alternativos
-- **{Cenário}**: {O que acontece}
-- **{Cenário}**: {O que acontece}
+### Alternative flows
+- **{Scenario}**: {What happens}
+- **{Scenario}**: {What happens}
 
-### Estados assíncronos
-| Estado | Experiência |
-|--------|------------|
-| loading | {O que o usuário vê} |
-| error | {O que o usuário vê + ação disponível} |
-| empty | {O que o usuário vê + ação disponível} |
+### Async states
+| State | Experience |
+|-------|-----------|
+| loading | {What the user sees} |
+| error | {What the user sees + available action} |
+| empty | {What the user sees + available action} |
 
-## Fora de escopo
-- {Item excluído com justificativa}
+## Out of scope
+- {Excluded item with justification}
 - ...
 
-## Critérios de aceite
-- [ ] {Critério objetivo e testável 1}
-- [ ] {Critério objetivo e testável 2}
+## Acceptance criteria
+- [ ] {Objective and testable criterion 1}
+- [ ] {Objective and testable criterion 2}
 - [ ] ...
 ```

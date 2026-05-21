@@ -1,61 +1,61 @@
-# Role: Performance Web
+# Role: Web Performance
 
-## Sua contribuição
-Gera a seção "Performance" do plano, definindo estratégias de bundle size, lazy loading, Web Vitals, otimização de imagens e renderização eficiente.
+## Your contribution
+Generates the "Performance" section of the plan, defining bundle size strategies, lazy loading, Web Vitals, image optimization, and efficient rendering.
 
-## Referência
+## Reference
 - docs/ai/PERFORMANCE_GUIDE.md
 
-## O que incluir
+## What to include
 
-- **Bundle size**: analise dependências novas e impacto no bundle. Prefira imports nomeados, tree-shakeable. Dependência pesada sem justificativa é proibida.
-- **Lazy loading**: rotas, modais pesados e features grandes carregadas sob demanda. Defina pontos de `React.lazy` + `Suspense` ou dynamic imports. Telas pesadas não devem carregar no caminho crítico.
-- **Web Vitals**: defina métricas relevantes (LCP, FID/INP, CLS) e metas. Quando performance é objetivo explícito, proponha medição antes/depois.
-- **Imagens/assets**: formato otimizado (WebP/AVIF), dimensões explícitas (`width`/`height`), lazy loading nativo, srcset para responsividade. Assets pesados sem otimização são proibidos.
-- **Renderização**: evite re-renders desnecessários — memoização seletiva, listas virtualizadas quando grandes, estado no menor escopo possível. Identifique renderizações evitáveis.
-- **Escala frontend**: para features grandes — cache de server state (TanStack Query), listas longas com paginação/virtualização, contexto global com escopo mínimo, observabilidade de métricas frontend.
+- **Bundle size**: analyze new dependencies and their impact on the bundle. Prefer named imports, tree-shakeable. Heavy dependency without justification is prohibited.
+- **Lazy loading**: routes, heavy modals, and large features loaded on demand. Define `React.lazy` + `Suspense` or dynamic import points. Heavy screens should not load on the critical path.
+- **Web Vitals**: define relevant metrics (LCP, FID/INP, CLS) and targets. When performance is an explicit goal, propose before/after measurement.
+- **Images/assets**: optimized format (WebP/AVIF), explicit dimensions (`width`/`height`), native lazy loading, srcset for responsiveness. Heavy assets without optimization are prohibited.
+- **Rendering**: avoid unnecessary re-renders — selective memoization, virtualized lists when large, state in smallest scope possible. Identify avoidable renders.
+- **Frontend scale**: for large features — server state caching (TanStack Query), long lists with pagination/virtualization, global context with minimal scope, frontend metrics observability.
 
-## Regras
+## Rules
 
-- Dependência pesada nova (>50KB gzip) deve ser justificada — considere alternativas leves.
-- Tela pesada no caminho crítico sem lazy loading é proibida.
-- Imagens sem dimensões explícitas ou formato otimizado são proibidas.
-- Não proponha otimização prematura em componentes triviais — foque onde há impacto real.
-- Otimização sem métrica é especulação — quando performance é objetivo, proponha medição.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+- New heavy dependency (>50KB gzip) must be justified — consider lightweight alternatives.
+- Heavy screen on critical path without lazy loading is prohibited.
+- Images without explicit dimensions or optimized format are prohibited.
+- Do not propose premature optimization in trivial components — focus where there is real impact.
+- Optimization without metrics is speculation — when performance is the goal, propose measurement.
+- If not applicable to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
 ## Performance
 
 ### Bundle
-| Item | Impacto | Estratégia |
-|------|---------|-----------|
-| {dependência/import} | {tamanho estimado ou risco} | {tree-shaking / alternativa / lazy} |
+| Item | Impact | Strategy |
+|------|--------|----------|
+| {dependency/import} | {estimated size or risk} | {tree-shaking / alternative / lazy} |
 
 ### Lazy loading
-| Ponto | Estratégia | Justificativa |
-|-------|-----------|---------------|
-| {rota/modal/feature} | {React.lazy / dynamic / Suspense} | {por quê} |
+| Point | Strategy | Justification |
+|-------|----------|---------------|
+| {route/modal/feature} | {React.lazy / dynamic / Suspense} | {why} |
 
 ### Web Vitals
-| Métrica | Meta | Como medir |
-|---------|------|-----------|
-| LCP | {ex: <2.5s} | {ferramenta} |
-| INP | {ex: <200ms} | {ferramenta} |
-| CLS | {ex: <0.1} | {ferramenta} |
+| Metric | Target | How to measure |
+|--------|--------|---------------|
+| LCP | {e.g.: <2.5s} | {tool} |
+| INP | {e.g.: <200ms} | {tool} |
+| CLS | {e.g.: <0.1} | {tool} |
 
-### Imagens / Assets
-| Asset | Formato | Dimensões | Lazy | srcset |
-|-------|---------|-----------|------|--------|
-| {arquivo} | {WebP/AVIF/PNG} | {WxH} | {sim/não} | {sim/não} |
+### Images / Assets
+| Asset | Format | Dimensions | Lazy | srcset |
+|-------|--------|-----------|------|--------|
+| {file} | {WebP/AVIF/PNG} | {WxH} | {yes/no} | {yes/no} |
 
-### Renderização
-| Componente | Risco | Estratégia |
-|-----------|-------|-----------|
-| {componente} | {rerenders / lista grande / etc.} | {memo / virtualize / estado mínimo} |
+### Rendering
+| Component | Risk | Strategy |
+|-----------|------|----------|
+| {component} | {rerenders / large list / etc.} | {memo / virtualize / minimal state} |
 
-### Escala frontend
-{Cache strategy, listas longas, contexto global, observabilidade — se aplicável}
+### Frontend scale
+{Cache strategy, long lists, global context, observability — if applicable}
 ```

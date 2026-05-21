@@ -1,61 +1,61 @@
-# Role: QA / Testes
+# Role: QA / Tests
 
-## Sua contribuição
-Gera a seção "Testes" do plano, definindo cenários de teste unit, integration, API e E2E com massa determinística.
+## Your contribution
+Generates the "Tests" section of the plan, defining unit, integration, API, and E2E test scenarios with deterministic test data.
 
-## Referência
+## Reference
 - docs/ai/TESTING_GUIDE.md
 
-## O que incluir
-- **Testes unitários**: cenários de caminho feliz para lógica de negócio (input válido → output esperado). Liste funções/módulos a testar.
-- **Cenários negativos**: cubra status codes 400, 401, 403, 404, 409, 422 com inputs específicos que causam cada erro.
-- **Massa de dados determinística**: defina seeds, factories ou fixtures. Testes não dependem de produção, relógio real sem controle ou rede externa sem mock.
-- **Testes de paginação**: quando houver endpoint de lista, teste skip/limit, página vazia, limites.
-- **Edge cases**: lista vazia, campo no tamanho máximo, null, undefined, tipos incorretos.
-- **Contrato API**: verifique campos e tipos do response. Dados sensíveis (password, token) NÃO aparecem na resposta.
-- **Mocks para serviços externos**: defina quais serviços externos são mockados e como.
-- **Independência**: testes não dependem de ordem de execução.
-- **Estratégia de execução**: comando para rodar (ex.: `vitest`, `vitest --coverage`) e quando (pre-commit, CI).
+## What to include
+- **Unit tests**: happy path scenarios for business logic (valid input → expected output). List functions/modules to test.
+- **Negative scenarios**: cover status codes 400, 401, 403, 404, 409, 422 with specific inputs that cause each error.
+- **Deterministic test data**: define seeds, factories, or fixtures. Tests must not depend on production, uncontrolled real clocks, or external networks without mocks.
+- **Pagination tests**: when there's a list endpoint, test skip/limit, empty page, boundaries.
+- **Edge cases**: empty list, field at maximum length, null, undefined, incorrect types.
+- **API contract**: verify response fields and types. Sensitive data (password, token) must NOT appear in the response.
+- **Mocks for external services**: define which external services are mocked and how.
+- **Independence**: tests must not depend on execution order.
+- **Execution strategy**: command to run (e.g., `vitest`, `vitest --coverage`) and when (pre-commit, CI).
 
-## Regras
-- Caminho feliz sem teste é BLOCKER.
-- Contrato API não verificável é BLOCKER.
-- Dados sensíveis em response é BLOCKER.
-- Testes não podem depender de produção, relógio real sem controle ou rede externa sem mock.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Happy path without test is a BLOCKER.
+- Unverifiable API contract is a BLOCKER.
+- Sensitive data in response is a BLOCKER.
+- Tests must not depend on production, uncontrolled real clocks, or external networks without mocks.
+- If it doesn't apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Testes
+## Tests
 
-### Estratégia
+### Strategy
 - **Runner**: {vitest/jest}
-- **Quando rodar**: {pre-commit / CI / manual}
+- **When to run**: {pre-commit / CI / manual}
 
-### Testes unitários
-| Módulo | Cenário | Input | Output esperado |
-|--------|---------|-------|-----------------|
-| {módulo} | caminho feliz | {input} | {output} |
-| {módulo} | {cenário negativo} | {input} | {erro esperado} |
+### Unit tests
+| Module | Scenario | Input | Expected output |
+|--------|----------|-------|----------------|
+| {module} | happy path | {input} | {output} |
+| {module} | {negative scenario} | {input} | {expected error} |
 
-### Testes de integração / API
-| Endpoint | Método | Cenário | Status esperado | Validação |
-|----------|--------|---------|-----------------|-----------|
-| {path} | {verbo} | {cenário} | {status} | {o que verificar} |
+### Integration / API tests
+| Endpoint | Method | Scenario | Expected status | Validation |
+|----------|--------|----------|----------------|------------|
+| {path} | {verb} | {scenario} | {status} | {what to verify} |
 
 ### Edge cases
-- {edge case 1}: {comportamento esperado}
-- {edge case 2}: {comportamento esperado}
+- {edge case 1}: {expected behavior}
+- {edge case 2}: {expected behavior}
 
-### Massa de dados
-- {seed/factory/fixture}: {descrição}
+### Test data
+- {seed/factory/fixture}: {description}
 
 ### Mocks
-| Serviço | Ferramenta | Comportamento mockado |
-|---------|-----------|----------------------|
-| {serviço} | {ferramenta} | {comportamento} |
+| Service | Tool | Mocked behavior |
+|---------|------|----------------|
+| {service} | {tool} | {behavior} |
 
-### Dados sensíveis
-- Campos que NÃO devem aparecer em response: {lista}
+### Sensitive data
+- Fields that must NOT appear in response: {list}
 ```

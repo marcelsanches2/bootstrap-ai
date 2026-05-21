@@ -1,6 +1,6 @@
 # Observability Guide
 
-Logs, métricas e healthcheck para Node.js backend.
+Logs, metrics, and healthchecks for Node.js backend.
 
 ## Structured logging
 
@@ -43,7 +43,7 @@ app.get('/health', async (req, res) => {
 });
 ```
 
-## Métricas
+## Metrics
 
 ```typescript
 import { Counter, Histogram, register } from 'prom-client';
@@ -66,27 +66,27 @@ app.get('/metrics', async (req, res) => {
 });
 ```
 
-## Alertas
+## Alerts
 
-| Métrica | Warning | Critical |
+| Metric | Warning | Critical |
 |---|---|---|
 | 5xx rate | > 1% | > 5% |
-| P99 latência | > 2s | > 5s |
+| P99 latency | > 2s | > 5s |
 | DB connections | > 70% | > 90% |
 | Memory | > 80% | > 95% |
 
-## Regras duras
+## Hard rules
 
-- Nunca logar dados sensíveis.
-- Sempre ter healthcheck.
-- Sempre propagar request ID.
-- Nunca usar `console.log` em produção.
+- Never log sensitive data.
+- Always have a healthcheck.
+- Always propagate request ID.
+- Never use `console.log` in production.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Nunca logar dados sensíveis**: senhas, tokens, PII, Authorization header, cookies.
-- **Sempre ter healthcheck**: endpoint `/health` verificando dependências críticas.
-- **Sempre propagar request ID**: rastreabilidade de ponta a ponta.
-- **Nunca usar `console.log` em produção**: use logger estruturado (pino).
+- **Never log sensitive data**: passwords, tokens, PII, Authorization header, cookies.
+- **Always have a healthcheck**: `/health` endpoint verifying critical dependencies.
+- **Always propagate request ID**: end-to-end traceability.
+- **Never use `console.log` in production**: use structured logger (pino).

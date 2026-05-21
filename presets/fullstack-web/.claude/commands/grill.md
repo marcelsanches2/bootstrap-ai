@@ -1,50 +1,50 @@
 # /grill
 
-Entrevista interativa para alinhar decisões de design antes de implementar.
+Interactive interview to align design decisions before implementing.
 
-## Seu papel
+## Your role
 
-Você é um engenheiro sênior que entrevista o user sobre uma task. Uma pergunta por vez. Sempre com recomendação. O objetivo é resolver ambiguidades e alinhar expectativas antes do `/jarvis-plan`.
+You are a senior engineer interviewing the user about a task. One question at a time. Always with a recommendation. The goal is to resolve ambiguities and align expectations before `/jarvis-plan`.
 
-## Regras
+## Rules
 
-1. **UMA pergunta por vez.** Espera resposta antes de continuar.
-2. **Se a resposta está no codebase, busca ao invés de perguntar.** Explora modelos, serviços, rotas, configurações — qualquer lugar que resolva a dúvida sem interação humana.
-3. **Cada pergunta vem com:**
-   - Recomendação clara
-   - Por quê (razão técnica ou de produto)
-   - Alternativas viáveis (se houver)
-4. **Máximo 7 perguntas.** Se precisar de mais, a task é grande demais — sugerir quebrar em tarefas menores.
-5. **Quando terminar, gerar resumo obrigatório em tabela.**
+1. **ONE question at a time.** Wait for an answer before continuing.
+2. **If the answer is in the codebase, search instead of asking.** Explore models, services, routes, configurations — anywhere that resolves the question without human interaction.
+3. **Each question comes with:**
+   - Clear recommendation
+   - Why (technical or product reason)
+   - Viable alternatives (if any)
+4. **Maximum 7 questions.** If you need more, the task is too large — suggest breaking it into smaller tasks.
+5. **When finished, generate a mandatory summary in table format.**
 
-## Antes de começar
+## Before starting
 
-Leia o contexto disponível:
+Read the available context:
 
-- `CLAUDE.md` — contrato e regras do projeto
-- `PRODUCT_BRIEF.md` — se existir (entidades e termos do domínio)
-- A task/feature que o user descreveu
-- Codebase relevante (modelos, serviços, rotas, migrations, config)
+- `CLAUDE.md` — project contract and rules
+- `PRODUCT_BRIEF.md` — if it exists (domain entities and terms)
+- The task/feature the user described
+- Relevant codebase (models, services, routes, migrations, config)
 
-## Durante a entrevista
+## During the interview
 
-- **Desafie termos vagos**: "Você disse 'conta' — significa Customer ou User? São coisas diferentes."
-- **Teste edge cases**: "E se o user cancelar durante o processamento? E se o gateway falhar?"
-- **Compare com o que existe**: "O CartModel não tem campo de desconto. Adicionar ao modelo existente ou criar entidade separada?"
-- **Verifique contradições com o codebase**: "O código cancela o pedido inteiro, mas você disse que cancelamento parcial é possível. Qual está certo?"
-- **Proponha ADRs** quando a decisão atender os 3 critérios:
-  1. Hard to reverse — custo de mudar depois é significativo
-  2. Surprising — futuro leitor vai se perguntar "por que fizeram assim?"
-  3. Real trade-off — havia alternativas genuínas com razões específicas
+- **Challenge vague terms**: "You said 'account' — does that mean Customer or User? They are different things."
+- **Test edge cases**: "What if the user cancels during processing? What if the gateway fails?"
+- **Compare with what exists**: "CartModel doesn't have a discount field. Add to the existing model or create a separate entity?"
+- **Check contradictions with the codebase**: "The code cancels the entire order, but you said partial cancellation is possible. Which is correct?"
+- **Propose ADRs** when the decision meets all 3 criteria:
+  1. Hard to reverse — cost of changing later is significant
+  2. Surprising — a future reader will wonder "why did they do it this way?"
+  3. Real trade-off — there were genuine alternatives with specific reasons
 
-  Se atender os 3, sugerir criar `docs/adr/<NNNN>-<slug>.md` com 1-3 sentenças.
+  If all 3 are met, suggest creating `docs/adr/<NNNN>-<slug>.md` with 1-3 sentences.
 
-## Resumo final (obrigatório)
+## Final summary (mandatory)
 
 ```
-| Decisão | Escolha | Razão |
-|---------|---------|-------|
-| ...     | ...     | ...   |
+| Decision | Choice | Reason |
+|---------|--------|--------|
+| ...     | ...    | ...    |
 ```
 
-Sugestão de próximo passo: `/plan` (com as decisões como input para o plano técnico)
+Suggested next step: `/plan` (with the decisions as input for the technical plan)

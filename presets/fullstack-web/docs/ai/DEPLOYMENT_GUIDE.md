@@ -1,14 +1,14 @@
-# Guia de Deploy — Fullstack Web
+# Deployment Guide — Fullstack Web
 
-Deploy, env vars, build, hosting e rollback para aplicação fullstack.
+Deploy, env vars, build, hosting, and rollback for fullstack applications.
 
 ---
 
-## Variáveis de ambiente
+## Environment variables
 
-### Validação com Zod
+### Validation with Zod
 
-Use um schema Zod para validar env vars na inicialização. Para fullstack frameworks (Next.js/Remix), separe variáveis públicas das privadas:
+Use a Zod schema to validate env vars on startup. For fullstack frameworks (Next.js/Remix), separate public from private variables:
 
 ```typescript
 // shared/config/env.ts
@@ -23,25 +23,25 @@ const envSchema = z.object({
   CORS_ORIGINS: z.string().default(''),
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 
-  // Público (prefixo framework)
+  // Public (framework prefix)
   NEXT_PUBLIC_API_URL: z.string().url(),    // Next.js
-  // VITE_API_URL: z.string().url(),        // Vite (SPA separada)
+  // VITE_API_URL: z.string().url(),        // Vite (separate SPA)
 });
 
 export const config = envSchema.parse(process.env);
 ```
 
-### Convenções por framework
+### Conventions by framework
 
-| Framework | Público (embarcado no bundle) | Servidor |
+| Framework | Public (embedded in bundle) | Server |
 |---|---|---|
-| **Next.js** | `NEXT_PUBLIC_*` | Sem prefixo (server-only) |
-| **Remix** | `PUBLIC_*` / `VITE_*` | Sem prefixo (loader/action) |
-| **Vite SPA** | `VITE_*` | — (backend separado) |
+| **Next.js** | `NEXT_PUBLIC_*` | No prefix (server-only) |
+| **Remix** | `PUBLIC_*` / `VITE_*` | No prefix (loader/action) |
+| **Vite SPA** | `VITE_*` | — (separate backend) |
 
 ### `.env.example`
 
-Mantenha `.env.example` atualizado com todas as chaves, sem valores sensíveis:
+Keep `.env.example` updated with all keys, without sensitive values:
 
 ```bash
 # .env.example
@@ -58,51 +58,51 @@ LOG_LEVEL=info
 NEXT_PUBLIC_API_URL=
 NEXT_PUBLIC_APP_TITLE=
 
-# Client (Vite — se SPA separada)
+# Client (Vite — if separate SPA)
 # VITE_API_URL=
 # VITE_APP_TITLE=
 ```
 
-**Nunca** coloque segredo em variáveis públicas (`NEXT_PUBLIC_*`, `VITE_*`).  
-**Nunca** commite `.env` real.
+**Never** put secrets in public variables (`NEXT_PUBLIC_*`, `VITE_*`).
+**Never** commit real `.env`.
 
 ---
 
 ## Build
 
-### Next.js — fullstack (frontend + servidor)
+### Next.js — fullstack (frontend + server)
 
 ```bash
-npx next build    # Produz .next/ (frontend + server bundle)
-npx next start    # Inicia servidor Node.js com a app
+npx next build    # Produces .next/ (frontend + server bundle)
+npx next start    # Starts Node.js server with the app
 ```
 
 ### Remix — fullstack
 
 ```bash
-npx remix build   # Produz build/ (client + server)
-npx remix start   # Inicia servidor Node.js
+npx remix build   # Produces build/ (client + server)
+npx remix start   # Starts Node.js server
 ```
 
-### SPA separada + backend separado
+### Separate SPA + separate backend
 
 ```bash
 # Frontend (Vite)
-npx vite build    # Produz dist/
+npx vite build    # Produces dist/
 
 # Backend
 npm run build     # tsc → dist/
 npm run start     # node dist/index.js
 ```
 
-### Configuração de build — Vite
+### Build configuration — Vite
 
 ```typescript
 // vite.config.ts
 export default defineConfig({
   build: {
     outDir: 'dist',
-    sourcemap: true, // para debug, NÃO servir publicamente
+    sourcemap: true, // for debugging, do NOT serve publicly
     rollupOptions: {
       output: {
         manualChunks: {
@@ -119,7 +119,7 @@ export default defineConfig({
 
 ## Docker
 
-### Fullstack — imagem única (recomendado para Next.js/Remix)
+### Fullstack — single image (recommended for Next.js/Remix)
 
 ```dockerfile
 FROM node:20-slim AS builder
@@ -132,17 +132,17 @@ RUN npx prisma generate
 
 FROM node:20-slim
 WORKDIR /app
-COPY --from=builder /app/.next ./.next           # ou /app/build para Remix
+COPY --from=builder /app/.next ./.next           # or /app/build for Remix
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/public ./public
 USER node
 EXPOSE 3000
-CMD ["node_modules/.bin/next", "start"]           # ou remix start
+CMD ["node_modules/.bin/next", "start"]           # or remix start
 ```
 
-### Separado — frontend (nginx) + backend (Node)
+### Separate — frontend (nginx) + backend (Node)
 
 **Frontend:**
 
@@ -185,62 +185,62 @@ CMD ["node", "dist/index.js"]
 
 ---
 
-## CDN e Cache
+## CDN and Cache
 
-### Assets estáticos
+### Static assets
 
-- Arquivos em `assets/` são versionados pelo hash no nome (automático pelo framework).
-- Cache longo para assets com hash (1 ano é seguro).
-- HTML e entrypoint precisam permitir atualização rápida (cache curto ou no-cache).
+- Files in `assets/` are versioned by hash in the name (automatic by the framework).
+- Long cache for assets with hash (1 year is safe).
+- HTML and entrypoint need to allow quick updates (short cache or no-cache).
 
-### Nginx — configuração de cache
+### Nginx — cache configuration
 
 ```nginx
-# Assets com hash — cache agressivo
+# Assets with hash — aggressive cache
 location /assets/ {
   expires 1y;
   add_header Cache-Control "public, immutable";
 }
 
-# HTML — sem cache
+# HTML — no cache
 location / {
   try_files $uri $uri/ /index.html;
   add_header Cache-Control "no-cache, no-store, must-revalidate";
 }
 ```
 
-### Contrato frontend/backend
+### Frontend/backend contract
 
-Ao alterar contrato de API:
+When changing API contract:
 
-1. Comunique breaking changes entre as equipes.
-2. Se possível, versione a API (`/v2/users`).
-3. Cache antigo no client pode mostrar dados desatualizados — considere invalidação.
+1. Communicate breaking changes between teams.
+2. If possible, version the API (`/v2/users`).
+3. Old client cache may show stale data — consider invalidation.
 
 ---
 
 ## Hosting
 
-### Vercel / Gerenciado (Next.js)
+### Vercel / Managed (Next.js)
 
 ```bash
 npm i -g vercel
-vercel           # Deploy preview
-vercel --prod    # Deploy produção
+vercel           # Preview deploy
+vercel --prod    # Production deploy
 ```
 
-Configurações:
+Settings:
 
-- Variáveis de ambiente em Settings → Environment Variables.
-- Preview deploy automático por branch.
-- Domínio customizado em Settings → Domains.
+- Environment variables in Settings → Environment Variables.
+- Automatic preview deploy per branch.
+- Custom domain in Settings → Domains.
 
-### VPS / Self-hosted com systemd
+### VPS / Self-hosted with systemd
 
 ```ini
 # /etc/systemd/system/app.service
 [Unit]
-Description=App Fullstack
+Description=Fullstack App
 After=network.target
 
 [Service]
@@ -268,9 +268,9 @@ sudo systemctl start app
 
 1. **Migrations** — `npx prisma migrate deploy`
 2. **Build** — `npm run build` (frontend + backend)
-3. **Deploy/restart** — imagem Docker ou `sudo systemctl restart app`
+3. **Deploy/restart** — Docker image or `sudo systemctl restart app`
 4. **Healthcheck** — `curl -f http://localhost:3000/api/health`
-5. **Monitorar** — acompanhe logs e métricas por 15 minutos
+5. **Monitor** — watch logs and metrics for 15 minutes
 
 ---
 
@@ -287,9 +287,9 @@ process.on('SIGTERM', async () => {
 
 ---
 
-## Compressão
+## Compression
 
-Habilite gzip ou brotli no servidor web:
+Enable gzip or brotli on the web server:
 
 ```nginx
 # Nginx
@@ -298,7 +298,7 @@ gzip_types text/plain text/css application/json application/javascript text/xml;
 gzip_min_length 1024;
 ```
 
-Para Vite, gere assets pré-comprimidos:
+For Vite, generate pre-compressed assets:
 
 ```typescript
 // vite.config.ts
@@ -311,9 +311,9 @@ export default defineConfig({
 
 ---
 
-## Headers de segurança — nível hosting/nginx
+## Security headers — hosting/nginx level
 
-> Para headers de middleware/aplicação, consulte `SECURITY_GUIDE.md`.
+> For middleware/application headers, see `SECURITY_GUIDE.md`.
 
 ```nginx
 add_header X-Frame-Options "SAMEORIGIN" always;
@@ -323,7 +323,7 @@ add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';" always;
 ```
 
-### SPA Fallback (apenas SPA sem SSR)
+### SPA Fallback (SPA without SSR only)
 
 ```nginx
 location / {
@@ -331,25 +331,25 @@ location / {
 }
 ```
 
-**Importante:** Não aplique fallback SPA em apps Next.js/Remix com SSR — o framework gerencia rotas no servidor.
+**Important:** Do not apply SPA fallback in Next.js/Remix SSR apps — the framework manages server-side routes.
 
 ---
 
 ## Rollback
 
-Plano de rollback deve cobrir:
+Rollback plan must cover:
 
-1. **Build anterior acessível** — mantenha artefato ou imagem Docker da versão anterior.
-2. **Rollback de env** — se mudou variável de ambiente, reverta junto.
-3. **Migration** — `npx prisma migrate resolve --rolled-back <migration>` se necessário.
-4. **API contract** — garanta que versão anterior funciona com dados migrados.
-5. **Cache do client** — usuários com versão antiga em cache podem ter comportamento inconsistente.
+1. **Previous build accessible** — keep artifact or Docker image of the previous version.
+2. **Env rollback** — if you changed an environment variable, revert it too.
+3. **Migration** — `npx prisma migrate resolve --rolled-back <migration>` if necessary.
+4. **API contract** — ensure previous version works with migrated data.
+5. **Client cache** — users with old cached version may have inconsistent behavior.
 
 ```bash
 # Docker rollback
 docker tag app:latest app:backup
 docker build -t app:latest .
-# Se der problema:
+# If something goes wrong:
 docker stop app-container
 docker run -d --name app-container -p 3000:3000 app:backup
 ```
@@ -358,37 +358,37 @@ docker run -d --name app-container -p 3000:3000 app:backup
 
 ## Anti-patterns
 
-- **Segredo em `NEXT_PUBLIC_*` ou `VITE_*`:** variáveis públicas são embarcadas no bundle e visíveis no browser.
-- **`.env` commitado:** sempre adicione ao `.gitignore`.
-- **`NODE_ENV=development` em produção:** muda comportamento de frameworks, erros e performance.
-- **Sem sourcemap em produção:** dificulta debug. Gere, mas não sirva publicamente.
-- **Cache agressivo em HTML:** impede atualização. Reserve cache longo para assets com hash.
-- **Deploy sem build check:** rode `npm run build` + `npm run lint` + `npx tsc --noEmit` antes de deploy.
-- **Fallback SPA em app com SSR:** quebra rotas server-rendered.
-- **Deploy sem migration com downgrade:** toda migration precisa de caminho de rollback documentado.
-- **Servir sem HTTPS:** nunca em produção.
-- **Hardcodar env vars:** use sempre variáveis de ambiente.
-- **Sem rollback planejado:** todo deploy deve ter forma de voltar.
+- **Secret in `NEXT_PUBLIC_*` or `VITE_*`:** public variables are embedded in the bundle and visible in the browser.
+- **Committed `.env`:** always add to `.gitignore`.
+- **`NODE_ENV=development` in production:** changes framework behavior, errors, and performance.
+- **No sourcemap in production:** makes debugging harder. Generate, but do not serve publicly.
+- **Aggressive cache on HTML:** prevents updates. Reserve long cache for assets with hash.
+- **Deploy without build check:** run `npm run build` + `npm run lint` + `npx tsc --noEmit` before deploy.
+- **SPA fallback in SSR app:** breaks server-rendered routes.
+- **Deploy without migration with downgrade:** every migration needs a documented rollback path.
+- **Serving without HTTPS:** never in production.
+- **Hardcoded env vars:** always use environment variables.
+- **No planned rollback:** every deploy must have a way to go back.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-### Segredos e env vars
-- **Segredo em `NEXT_PUBLIC_*` ou `VITE_*`**: variáveis públicas são embarcadas no bundle — nunca coloque segredo nelas.
-- **`.env` commitado**: `.env` real sempre no `.gitignore`.
-- **Hardcodar env vars**: use sempre variáveis de ambiente, nunca valores fixos no código.
+### Secrets and env vars
+- **Secret in `NEXT_PUBLIC_*` or `VITE_*`**: public variables are embedded in the bundle — never put secrets in them.
+- **Committed `.env`**: real `.env` always in `.gitignore`.
+- **Hardcoded env vars**: always use environment variables, never fixed values in code.
 
-### Build e deploy
-- **Deploy sem build check**: rode `npm run build` + `npm run lint` + `npx tsc --noEmit` antes de deploy.
-- **Sem rollback planejado**: todo deploy deve ter forma de voltar (imagem anterior, migration rollback).
-- **Deploy sem migration com downgrade**: toda migration precisa de caminho de rollback documentado.
+### Build and deploy
+- **Deploy without build check**: run `npm run build` + `npm run lint` + `npx tsc --noEmit` before deploy.
+- **No planned rollback**: every deploy must have a way to go back (previous image, migration rollback).
+- **Deploy without migration with downgrade**: every migration needs a documented rollback path.
 
-### Produção
-- **`NODE_ENV=development` em produção**: muda comportamento de frameworks, erros e performance — proibido.
-- **Servir sem HTTPS**: nunca em produção.
-- **Fallback SPA em app com SSR**: quebra rotas server-rendered (Next.js/Remix).
+### Production
+- **`NODE_ENV=development` in production**: changes framework behavior, errors, and performance — prohibited.
+- **Serving without HTTPS**: never in production.
+- **SPA fallback in SSR app**: breaks server-rendered routes (Next.js/Remix).
 
-### Cache e assets
-- **Cache agressivo em HTML**: impede atualização. Reserve cache longo para assets com hash.
-- **Sem sourcemap em produção**: dificulta debug. Gere, mas não sirva publicamente.
+### Cache and assets
+- **Aggressive cache on HTML**: prevents updates. Reserve long cache for assets with hash.
+- **No sourcemap in production**: makes debugging harder. Generate, but do not serve publicly.

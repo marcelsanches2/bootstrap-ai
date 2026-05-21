@@ -1,51 +1,51 @@
-# Role: Acessibilidade
+# Role: Accessibility
 
-## Sua contribuição
-Gera a seção "Acessibilidade" do plano, definindo requisitos de semântica, teclado, foco, labels, contraste e ARIA para a feature.
+## Your contribution
+Generates the "Accessibility" section of the plan, defining semantics, keyboard, focus, labels, contrast, and ARIA requirements for the feature.
 
-## Referência
+## Reference
 - docs/ai/ACCESSIBILITY_GUIDE.md
 
-## O que incluir
-- **Semântica HTML**: elementos corretos para ações (`<button>`, `<a>`), navegação (`<nav>`, `<main>`, `<header>`) e estrutura (`<section>`, `<article>`, headings). Nunca `div`/`span` substituindo controle interativo sem motivo.
-- **Navegação por teclado**: Tab, Enter/Espaço, Escape e ordem de foco lógica. Toda ação funcional por teclado.
-- **Labels**: nomes acessíveis para inputs, botões e ícones (aria-label, aria-labelledby, visible label). Nenhum controle invisível para leitor de tela.
-- **Contraste**: texto, bordas funcionais e estado de foco com contraste adequado (mínimo WCAG AA).
-- **ARIA/foco dinâmico**: modal, toast, erro inline e live region quando aplicável. Foco gerenciado em abertura/fechamento de modal/diálogo.
+## What to include
+- **HTML semantics**: correct elements for actions (`<button>`, `<a>`), navigation (`<nav>`, `<main>`, `<header>`), and structure (`<section>`, `<article>`, headings). Never `div`/`span` substituting an interactive control without reason.
+- **Keyboard navigation**: Tab, Enter/Space, Escape, and logical focus order. Every action must be functional by keyboard.
+- **Labels**: accessible names for inputs, buttons, and icons (aria-label, aria-labelledby, visible label). No control invisible to screen readers.
+- **Contrast**: text, functional borders, and focus state with adequate contrast (minimum WCAG AA).
+- **ARIA/dynamic focus**: modal, toast, inline error, and live region when applicable. Focus managed on modal/dialog open/close.
 
-## Regras
-- Ação que só funciona com mouse é bloqueante.
-- Controle invisível para leitor de tela é bloqueante.
-- Não quebrar navegação por teclado existente.
-- Se a task não tem HTML/UI novo: escreva "Não se aplica" e explique por quê.
+## Rules
+- Action that only works with mouse is blocking.
+- Control invisible to screen reader is blocking.
+- Do not break existing keyboard navigation.
+- If the task has no new HTML/UI: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Acessibilidade
+## Accessibility
 
-### Semântica HTML
-| Elemento | Tag usada | Justificativa |
+### HTML semantics
+| Element | Tag used | Justification |
 |---|---|---|
-| {componente/área} | {tag HTML} | {por quê} |
+| {component/area} | {HTML tag} | {why} |
 
-### Navegação por teclado
-| Interação | Teclas | Comportamento |
+### Keyboard navigation
+| Interaction | Keys | Behavior |
 |---|---|---|
-| {ação} | {Tab/Enter/Escape/...} | {o que acontece} |
+| {action} | {Tab/Enter/Escape/...} | {what happens} |
 
 ### Labels
-| Controle | Nome acessível | Método |
+| Control | Accessible name | Method |
 |---|---|---|
-| {input/botão/ícone} | {texto} | {aria-label / visible label / aria-labelledby} |
+| {input/button/icon} | {text} | {aria-label / visible label / aria-labelledby} |
 
-### Contraste
-| Elemento | Cor texto | Cor fundo | Ratio | Conforme |
+### Contrast
+| Element | Text color | Background color | Ratio | Compliant |
 |---|---|---|---|---|
-| {elemento} | {cor} | {cor} | {ratio} | {AA/AAA} |
+| {element} | {color} | {color} | {ratio} | {AA/AAA} |
 
-### ARIA e foco dinâmico
-| Componente dinâmico | ARIA role/attribute | Gerenciamento de foco |
+### ARIA and dynamic focus
+| Dynamic component | ARIA role/attribute | Focus management |
 |---|---|---|
-| {modal/toast/erro} | {role/aria-live/...} | {para onde foco vai} |
+| {modal/toast/error} | {role/aria-live/...} | {where focus goes} |
 ```

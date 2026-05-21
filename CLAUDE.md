@@ -1,152 +1,152 @@
 # CLAUDE.md — bootstrap-ai
 
-## Projeto
+## Project
 
-Repositório de presets de lifecycle para projetos com Claude Code.
+Lifecycle preset repository for projects with Claude Code.
 
-Cada preset é um pacote autocontido que instala processo operacional em um projeto alvo:
+Each preset is a self-contained package that installs an operational process into a target project:
 
 ```txt
-/jarvis-plan → implementação → /jarvis-test-flow → /ship
+/jarvis-plan → implementation → /jarvis-test-flow → /ship
 ```
 
-Os presets NÃO são bibliotecas. São conjuntos de arquivos que vivem dentro do projeto consumidor em `.claude/commands/` e `docs/ai/`.
+Presets are NOT libraries. They are sets of files that live inside the consumer project in `.claude/commands/` and `docs/ai/`.
 
-## Estrutura do repositório
+## Repository Structure
 
 ```
 bootstrap-ai/
-├── CLAUDE.md                    # Este arquivo — contrato do próprio bootstrap-ai
-├── README.md                    # Documentação pública
-├── manifest.yaml                # Configuração central: presets, detecção, defaults
-├── bin/bootstrap-ai                      # CLI Python (556 linhas) — detect, diff, apply, validate, create, analyze, select
-├── presets/                        # Presets por tecnologia
-│   ├── flutter-app/             # Mobile Flutter — baseado no pacebattle_app@master
+├── CLAUDE.md                    # This file — bootstrap-ai's own contract
+├── README.md                    # Public documentation
+├── manifest.yaml                # Central configuration: presets, detection, defaults
+├── bin/bootstrap-ai                      # Python CLI (556 lines) — detect, diff, apply, validate, create, analyze, select
+├── presets/                        # Per-technology presets
+│   ├── flutter-app/             # Flutter mobile — based on pacebattle_app@master
 │   ├── python-backend/          # FastAPI/Python backend
 │   ├── react-web/               # React web frontend
 │   ├── node-backend/            # Node/TypeScript backend
-│   └── fullstack-web/           # Fullstack monolito (Next.js, Remix, Nuxt, SvelteKit)
-├── common/                      # Recursos compartilhados entre presets
-│   └── commands/                # Comandos genéricos (grill, ship, refactor, kickoff, etc.)
-├── generators/skill-creator/    # Gerador de novos presets
-│   ├── prompts/                 # Instruções para criação de preset, docs, roles, jarvis-test-flow
-│   └── templates/               # Templates com placeholders para gerar arquivos
-├── bootstrap/                   # Importer de arquivo único
-│   ├── import-project-preset.md    # Skill Claude Code para importar preset
-│   └── import-project-preset.sh    # Script shell alternativo
-└── docs/                        # Diagramas e assets visuais
+│   └── fullstack-web/           # Fullstack monolith (Next.js, Remix, Nuxt, SvelteKit)
+├── common/                      # Shared resources across presets
+│   └── commands/                # Generic commands (grill, ship, refactor, kickoff, etc.)
+├── generators/skill-creator/    # New preset generator
+│   ├── prompts/                 # Instructions for creating preset, docs, roles, jarvis-test-flow
+│   └── templates/               # Templates with placeholders for generating files
+├── bootstrap/                   # Single-file importer
+│   ├── import-project-preset.md    # Claude Code skill to import preset
+│   └── import-project-preset.sh    # Alternative shell script
+└── docs/                        # Diagrams and visual assets
 ```
 
-## Anatomia de um preset
+## Preset Anatomy
 
-Cada preset em `presets/<nome>/` contém:
+Each preset in `presets/<name>/` contains:
 
 ```
-presets/<nome>/
-├── CLAUDE.md                              # Contrato do projeto consumidor (não deste repo)
-├── manifest.yaml                          # Metadados: detecção, required_files, roles, library_tags
+presets/<name>/
+├── CLAUDE.md                              # Consumer project contract (not this repo)
+├── manifest.yaml                          # Metadata: detection, required_files, roles, library_tags
 ├── plans/.gitkeep
 ├── .claude/
 │   ├── settings.json                      # Hooks: PostToolUse → lint, Stop → jarvis-test-flow
 │   └── commands/
-│       ├── jarvis-plan.md          # Planejamento unificado (1 pass de LLM)
-│       ├── jarvis-test-flow.md     # Validação E2E incremental
-│       ├── design-phase.md         # Setup do design system visual
-│       ├── grill.md                # Entrevista interativa de alinhamento
-│       ├── kickoff.md              # Inicialização do projeto
-│       ├── refactor.md             # Refatoração segura incremental
-│       ├── ship.md                 # Checklist final
+│       ├── jarvis-plan.md          # Unified planning (1 LLM pass)
+│       ├── jarvis-test-flow.md     # Incremental E2E validation
+│       ├── design-phase.md         # Visual design system setup
+│       ├── grill.md                # Interactive alignment interview
+│       ├── kickoff.md              # Project initialization
+│       ├── refactor.md             # Incremental safe refactoring
+│       ├── ship.md                 # Final checklist
 │       └── product_roles/
-│           ├── role-*.md           # Contribuidores: geram seções do plano
-│           └── review-*.md         # Contribuidores: geram seções de domínio
+│           ├── role-*.md           # Contributors: generate plan sections
+│           └── review-*.md         # Contributors: generate domain sections
 └── docs/ai/
-    ├── ARCHITECTURE.md                    # Estrutura e camadas
-    ├── CODING_STANDARDS.md                # Padrões de código
-    ├── TESTING_GUIDE.md                   # Padrões de teste
+    ├── ARCHITECTURE.md                    # Structure and layers
+    ├── CODING_STANDARDS.md                # Code standards
+    ├── TESTING_GUIDE.md                   # Testing standards
     └── <stack-specific guides>            # API, DB, Security, Design, etc.
 ```
 
-## Lifecycle de desenvolvimento (no projeto consumidor)
+## Development Lifecycle (in the consumer project)
 
 ```
-/grill                      → entrevista interativa (standalone, opt-in)
-/jarvis-plan                → planejamento unificado (grill integrado condicional)
-(desenvolve)                → hook PostToolUse roda lint rápido a cada edição
-/jarvis-test-flow           → validação E2E incremental (automático via hook Stop)
-/ship                       → checklist final (manual)
+/grill                      → interactive interview (standalone, opt-in)
+/jarvis-plan                → unified planning (grill integrated conditionally)
+(develops)                  → PostToolUse hook runs quick lint on every edit
+/jarvis-test-flow           → incremental E2E validation (automatic via Stop hook)
+/ship                       → final checklist (manual)
 ```
 
 ## CLI (bin/bootstrap-ai)
 
-Comandos principais:
+Main commands:
 
 ```bash
-./bin/bootstrap-ai detect /path/do/projeto              # Detecta stack do projeto
-./bin/bootstrap-ai analyze /path/do/projeto             # Detecta stack + bibliotecas estruturais
-./bin/bootstrap-ai select /path/do/projeto              # Seleciona preset por stack detectada
-./bin/bootstrap-ai diff auto /path/do/projeto           # Mostra diff sem aplicar
-./bin/bootstrap-ai apply auto /path/do/projeto          # Aplica preset no projeto
-./bin/bootstrap-ai apply auto /path/do/projeto --refresh # Aplica com refresh dos docs
-./bin/bootstrap-ai validate <preset-name>                  # Valida integridade de um preset
-./bin/bootstrap-ai create <nome> --from "descrição"     # Cria novo preset via skill-creator
-./bin/bootstrap-ai install-importer /path/do/projeto    # Instala importer de arquivo único
+./bin/bootstrap-ai detect /path/to/project              # Detects project stack
+./bin/bootstrap-ai analyze /path/to/project             # Detects stack + structural libraries
+./bin/bootstrap-ai select /path/to/project              # Selects preset by detected stack
+./bin/bootstrap-ai diff auto /path/to/project           # Shows diff without applying
+./bin/bootstrap-ai apply auto /path/to/project          # Applies preset to project
+./bin/bootstrap-ai apply auto /path/to/project --refresh # Applies with docs refresh
+./bin/bootstrap-ai validate <preset-name>                  # Validates preset integrity
+./bin/bootstrap-ai create <name> --from "description"     # Creates new preset via skill-creator
+./bin/bootstrap-ai install-importer /path/to/project    # Installs single-file importer
 ```
 
-Política de escrita:
-- Arquivo ausente → cria
-- Arquivo igual → ignora
-- Arquivo diferente → cria `<arquivo>.kit-new` (nunca sobrescreve sem `--force`)
+Write policy:
+- Missing file → create
+- Identical file → skip
+- Different file → create `<file>.kit-new` (never overwrites without `--force`)
 
-## Detecção de stack
+## Stack Detection
 
-Cada preset tem regras de detecção no `manifest.yaml`:
+Each preset has detection rules in `manifest.yaml`:
 
-- `detects.any`: presença de qualquer arquivo listado
-- `detects.contains`: conteúdo obrigatório em arquivo específico
-- `detects.prefer_if`: desempate entre presets conflitantes (ex: node-backend vs react-web ambos têm package.json)
+- `detects.any`: presence of any listed file
+- `detects.contains`: required content in a specific file
+- `detects.prefer_if`: tiebreaker between conflicting presets (e.g.: node-backend vs react-web both have package.json)
 
-## Bibliotecas estruturais
+## Structural Libraries
 
-Além da stack principal, o `analyze` detecta bibliotecas que definem arquitetura:
+Beyond the main stack, `analyze` detects libraries that define architecture:
 
 - **Flutter**: dio, riverpod, go_router, freezed, drift, firebase
 - **React**: tanstack-query, zustand, redux, react-router, zod, react-hook-form
 - **Python**: sqlalchemy, alembic, pydantic, celery, fastapi
 - **Node**: prisma, drizzle, zod
 
-Biblioteca estrutural não coberta pelo preset selecionado → cria preset novo automaticamente via `skill-creator`.
+Structural library not covered by the selected preset → creates a new preset automatically via `skill-creator`.
 
-## Regras de qualidade para presets
+## Quality Rules for Presets
 
-- `jarvis-plan.md`: mínimo 180 linhas
-- `jarvis-test-flow.md`: mínimo 200 linhas
-- Cada `role-*.md`: mínimo 80 linhas
-- Cada `docs/ai/*.md`: mínimo 100 linhas
-- `CLAUDE.md`: mínimo 80 linhas
-- Nenhum arquivo pode ser placeholder vazio
+- `jarvis-plan.md`: minimum 180 lines
+- `jarvis-test-flow.md`: minimum 200 lines
+- Each `role-*.md`: minimum 80 lines
+- Each `docs/ai/*.md`: minimum 100 lines
+- `CLAUDE.md`: minimum 80 lines
+- No file can be an empty placeholder
 
-## Formato dos roles
+## Role Format
 
-Roles são contribuidores que geram seções do plano. Cada role DEVE ter:
-- Objetivo (1 frase)
-- Referência (docs/ai específicos que consulta)
-- Entrada esperada (o que recebe da task/plano)
-- Formato de saída (template da seção que gera)
-- Regra dura (restrição absoluta)
+Roles are contributors that generate plan sections. Each role MUST have:
+- Objective (1 sentence)
+- Reference (specific docs/ai it consults)
+- Expected input (what it receives from the task/plan)
+- Output format (template of the section it generates)
+- Hard rule (absolute restriction)
 
 ## Hooks (settings.json)
 
-Todo preset tem 2 hooks:
+Every preset has 2 hooks:
 
-1. **PostToolUse (Edit|Write|MultiEdit)**: lint/typecheck rápido da stack a cada edição
-2. **Stop**: se houver `git diff` em arquivos da stack, força `/jarvis-test-flow` antes de encerrar
+1. **PostToolUse (Edit|Write|MultiEdit)**: quick lint/typecheck of the stack on every edit
+2. **Stop**: if there's a `git diff` in stack files, forces `/jarvis-test-flow` before ending
 
-## Regras deste repositório
+## Repository Rules
 
-- Não commitar `.env`, `.bootstrap-ai.lock`, `.refresh-reports/` ou `*.kit-new`
-- Não usar `--force` em projetos existentes sem revisar diff
-- Não criar preset sem `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan.md` e `jarvis-test-flow.md`
-- Manter `common/` como fallback genérico — preset específico sempre sobrepõe
-- Todo preset novo deve passar em `./bin/bootstrap-ai validate <nome>`
-- Templates do `skill-creator` devem ter conteúdo real, não placeholder vazio
-- README.md é documentação pública para consumidores — CLAUDE.md é contrato interno do repo
+- Do not commit `.env`, `.bootstrap-ai.lock`, `.refresh-reports/` or `*.kit-new`
+- Do not use `--force` on existing projects without reviewing the diff
+- Do not create a preset without `manifest.yaml`, `settings.json`, `CLAUDE.md`, `jarvis-plan.md` and `jarvis-test-flow.md`
+- Keep `common/` as a generic fallback — specific preset always overrides
+- Every new preset must pass `./bin/bootstrap-ai validate <name>`
+- `skill-creator` templates must have real content, not empty placeholders
+- README.md is public documentation for consumers — CLAUDE.md is the repo's internal contract

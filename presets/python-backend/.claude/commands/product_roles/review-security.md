@@ -1,86 +1,86 @@
 # Role: Security Designer
 
-## Sua contribuição
-Gera a seção "Segurança" do plano, cobrindo autenticação, autorização, validação de input, proteção de dados sensíveis e rate limiting.
+## Your contribution
+Generates the "Security" section of the plan, covering authentication, authorization, input validation, sensitive data protection and rate limiting.
 
-## Referência
+## Reference
 - docs/ai/SECURITY_GUIDE.md
 
-## O que incluir
-- **Autenticação**: para cada endpoint protegido, especifique o mecanismo (`Depends(get_current_user)`, JWT). Defina expiração de tokens (access: 15min, refresh: 7d).
-- **Autorização**: verificação de role ou ownership. Qual role acessa qual recurso. Como verificar ownership (user_id no token vs recurso).
-- **Validação de input**: Pydantic com tipos, ranges, tamanhos, regex. Nenhum input sem validação.
-- **Senhas**: sempre hasheadas com bcrypt ou argon2. Nunca texto plano. Nunca logar.
-- **JWT**: expiração configurável, secrets via env vars, nunca hardcoded.
-- **Dados sensíveis em logs**: nenhum password, token, Authorization header, cookie ou PII sem mascaramento.
-- **Dados sensíveis em response**: nenhum password_hash, secret interno ou PII desnecessário.
-- **CORS**: origins explícitos. Nunca `*` em produção.
-- **Rate limiting**: em endpoints sensíveis — login, reset password, registro. Defina limites (ex: `5/minute`).
-- **Headers de segurança**: X-Content-Type-Options, HSTS, X-Frame-Options.
-- **SQL injection**: SQLAlchemy parametriza automaticamente, mas verificar raw queries. Nenhum eval/exec com input externo.
-- **Secrets**: sempre via env vars, nunca hardcoded.
-- **HTTPS**: obrigatório em produção.
+## What to include
+- **Authentication**: for each protected endpoint, specify the mechanism (`Depends(get_current_user)`, JWT). Define token expiration (access: 15min, refresh: 7d).
+- **Authorization**: role or ownership verification. Which role accesses which resource. How to verify ownership (user_id in token vs resource).
+- **Input validation**: Pydantic with types, ranges, sizes, regex. No input without validation.
+- **Passwords**: always hashed with bcrypt or argon2. Never plain text. Never logged.
+- **JWT**: configurable expiration, secrets via env vars, never hardcoded.
+- **Sensitive data in logs**: no password, token, Authorization header, cookie or PII without masking.
+- **Sensitive data in response**: no password_hash, internal secret or unnecessary PII.
+- **CORS**: explicit origins. Never `*` in production.
+- **Rate limiting**: on sensitive endpoints — login, reset password, registration. Define limits (e.g.: `5/minute`).
+- **Security headers**: X-Content-Type-Options, HSTS, X-Frame-Options.
+- **SQL injection**: SQLAlchemy parameterizes automatically, but verify raw queries. No eval/exec with external input.
+- **Secrets**: always via env vars, never hardcoded.
+- **HTTPS**: mandatory in production.
 
-## Regras
-- Todo endpoint protegido deve ter auth especificado.
-- Senha sempre hasheada, nunca em texto plano, nunca em log.
-- Input sempre validado com Pydantic.
-- Nenhum dado sensível em log ou response.
-- CORS nunca `*` em produção.
-- Secrets sempre via env vars.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Every protected endpoint must have auth specified.
+- Password always hashed, never plain text, never in log.
+- Input always validated with Pydantic.
+- No sensitive data in log or response.
+- CORS never `*` in production.
+- Secrets always via env vars.
+- If it does not apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Segurança
+## Security
 
-### Autenticação
-| Endpoint | Auth | Detalhe |
-|----------|------|---------|
-| POST /api/v1/auth/login | Público | Retorna access_token (15min) + refresh_token (7d) |
+### Authentication
+| Endpoint | Auth | Detail |
+|----------|------|--------|
+| POST /api/v1/auth/login | Public | Returns access_token (15min) + refresh_token (7d) |
 | GET /api/v1/{resource} | Depends(get_current_user) | JWT Bearer |
 | ... | ... | ... |
 
-### Autorização
-| Recurso | Role necessária | Ownership check |
-|---------|----------------|-----------------|
-| {recurso} | {role} | {como verificar} |
+### Authorization
+| Resource | Required role | Ownership check |
+|----------|--------------|-----------------|
+| {resource} | {role} | {how to verify} |
 
-### Validação de input
-| Endpoint | Campos validados | Regras |
-|----------|-----------------|--------|
-| POST /api/v1/{resource} | {campos} | {tamanho, range, regex} |
+### Input validation
+| Endpoint | Validated fields | Rules |
+|----------|-----------------|-------|
+| POST /api/v1/{resource} | {fields} | {size, range, regex} |
 
-### Senhas e tokens
+### Passwords and tokens
 - Hash: {bcrypt/argon2}
 - Access token TTL: {15min}
 - Refresh token TTL: {7d}
 - Secret via: env var `{JWT_SECRET}`
 
 ### Rate limiting
-| Endpoint | Limite | Implementação |
-|----------|--------|---------------|
+| Endpoint | Limit | Implementation |
+|----------|-------|----------------|
 | POST /api/v1/auth/login | 5/minute | {decorator/middleware} |
 | POST /api/v1/auth/register | 3/minute | {decorator/middleware} |
 
 ### CORS
-- Origins permitidas: `{lista}`
-- Nunca `*` em produção: ✓
+- Allowed origins: `{list}`
+- Never `*` in production: ✓
 
-### Headers de segurança
+### Security headers
 - X-Content-Type-Options: nosniff
 - Strict-Transport-Security: max-age=31536000
 - X-Frame-Options: DENY
 
-### Proteção de dados sensíveis
-- **Logs**: nenhum password, token, PII sem mascaramento
-- **Response**: nenhum password_hash, secret interno
-- **Banco**: PII criptografado quando necessário
+### Sensitive data protection
+- **Logs**: no password, token, PII without masking
+- **Response**: no password_hash, internal secret
+- **Database**: PII encrypted when necessary
 
-### Checklist de produção
-- [ ] HTTPS obrigatório
-- [ ] Secrets via env vars (nunca hardcoded)
-- [ ] Nenhum eval/exec com input externo
-- [ ] Raw queries verificadas contra SQL injection
+### Production checklist
+- [ ] HTTPS mandatory
+- [ ] Secrets via env vars (never hardcoded)
+- [ ] No eval/exec with external input
+- [ ] Raw queries verified against SQL injection
 ```

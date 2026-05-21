@@ -1,58 +1,58 @@
 # Role: API
 
-## Sua contribuição
-Gera a seção "API" do plano, definindo endpoints, contratos, status codes, schemas e padrões REST completos.
+## Your contribution
+Generates the "API" section of the plan, defining endpoints, contracts, status codes, schemas, and complete REST patterns.
 
-## Referência
+## Reference
 - docs/ai/API_GUIDE.md
 
-## O que incluir
-- **Endpoints**: tabela completa com verbo HTTP, path, descrição. Verbo correto (GET leitura, POST criação, PUT/PATCH atualização, DELETE remoção).
-- **Paths**: plural, kebab-case, máximo 2 níveis de nesting. Versionamento presente (`/api/v1/`).
-- **Request schema**: Zod schema definido com tipos e validação para cada endpoint.
-- **Response schema**: tipada, sem campos sensíveis (passwordHash, token), sem campo booleano `success`.
-- **Status codes**: corretos por verbo (201 POST, 204 DELETE, 404/409/422). Tabela de erros padronizada (code/message/field).
-- **Paginação**: em endpoints de lista (skip/limit ou cursor).
-- **Auth**: especificada em endpoints protegidos (middleware, role).
-- **Rate limiting**: em endpoints sensíveis (login, reset).
-- **Lógica de negócio**: no service, nunca no controller.
+## What to include
+- **Endpoints**: complete table with HTTP verb, path, description. Correct verb (GET for reads, POST for creates, PUT/PATCH for updates, DELETE for removals).
+- **Paths**: plural, kebab-case, maximum 2 levels of nesting. Versioning present (`/api/v1/`).
+- **Request schema**: Zod schema defined with types and validation for each endpoint.
+- **Response schema**: typed, no sensitive fields (passwordHash, token), no boolean `success` field.
+- **Status codes**: correct per verb (201 POST, 204 DELETE, 404/409/422). Standardized error table (code/message/field).
+- **Pagination**: on list endpoints (skip/limit or cursor).
+- **Auth**: specified on protected endpoints (middleware, role).
+- **Rate limiting**: on sensitive endpoints (login, reset).
+- **Business logic**: in the service, never in the controller.
 
-## Regras
-- Endpoint sem schema de request/response é bloqueante.
-- Dados sensíveis em response são bloqueantes.
-- Auth faltando em endpoint protegido é bloqueante.
-- Sem campo booleano `success` no response.
-- Se a task não envolve API nova/alterada: escreva "Não se aplica" e explique por quê.
+## Rules
+- Endpoint without request/response schema is blocking.
+- Sensitive data in response is blocking.
+- Missing auth on protected endpoint is blocking.
+- No boolean `success` field in response.
+- If the task does not involve new/changed API: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
 ## API
 
 ### Endpoints
-| Verbo | Path | Descrição | Auth | Rate limit |
+| Verb | Path | Description | Auth | Rate limit |
 |---|---|---|---|---|
-| {VERB} | {/api/v1/path} | {o que faz} | {público/auth/role} | {sim/não} |
+| {VERB} | {/api/v1/path} | {what it does} | {public/auth/role} | {yes/no} |
 
 ### Request schemas
-| Endpoint | Schema | Campos obrigatórios | Validações |
+| Endpoint | Schema | Required fields | Validations |
 |---|---|---|---|
-| {VERB /path} | {nome do schema} | {campos} | {regras} |
+| {VERB /path} | {schema name} | {fields} | {rules} |
 
 ### Response schemas
 | Endpoint | Status | Body |
 |---|---|---|
-| {VERB /path} | {200/201/...} | {campos e tipos} |
+| {VERB /path} | {200/201/...} | {fields and types} |
 
-### Paginação
-| Endpoint | Método | Parâmetros | Default |
+### Pagination
+| Endpoint | Method | Parameters | Default |
 |---|---|---|---|
-| {GET /path} | {skip/limit ou cursor} | {params} | {valores} |
+| {GET /path} | {skip/limit or cursor} | {params} | {values} |
 
-### Erros padronizados
-| Status | Code | Message | Quando |
+### Standardized errors
+| Status | Code | Message | When |
 |---|---|---|---|
-| {400} | {VALIDATION_ERROR} | {mensagem} | {cenário} |
-| {401} | {UNAUTHORIZED} | {mensagem} | {cenário} |
+| {400} | {VALIDATION_ERROR} | {message} | {scenario} |
+| {401} | {UNAUTHORIZED} | {message} | {scenario} |
 | ... | ... | ... | ... |
 ```

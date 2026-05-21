@@ -1,63 +1,63 @@
-# Role: QA Web
+# Role: Web QA
 
-## Sua contribuição
-Gera a seção "Testes" do plano, definindo testes unitários, de componente e E2E necessários com ferramentas específicas (Vitest/Jest, Playwright/Cypress).
+## Your contribution
+Generates the "Tests" section of the plan, defining unit, component, and E2E tests needed with specific tools (Vitest/Jest, Playwright/Cypress).
 
-## Referência
+## Reference
 - docs/ai/TESTING_GUIDE.md
 
-## O que incluir
+## What to include
 
-- **Testes unitários**: funções puras, hooks customizados e utilitários. Defina o que testar e o comportamento esperado. Use Vitest ou Jest conforme o projeto.
-- **Testes de componente**: componentes React com comportamento — renderização condicional, interações, props. Use Testing Library (RTL) para testar comportamento visível ao usuário, não detalhes de implementação.
-- **Testes E2E**: jornadas críticas do usuário com Playwright ou Cypress. Defina o fluxo, pré-condições e asserções. Todo fluxo crítico deve ter E2E ou justificativa explícita.
-- **Mocks determinísticos**: APIs mockadas de forma estável com MSW ou equivalente. Testes não devem depender de rede real.
-- **Cenários negativos**: erro de API, dados vazios, permissão negada, validação de form — além do caminho feliz.
-- **Validação de build**: lint, typecheck e build como gate de qualidade antes/depois da implementação.
+- **Unit tests**: pure functions, custom hooks, and utilities. Define what to test and expected behavior. Use Vitest or Jest as per the project.
+- **Component tests**: React components with behavior — conditional rendering, interactions, props. Use Testing Library (RTL) to test user-visible behavior, not implementation details.
+- **E2E tests**: critical user journeys with Playwright or Cypress. Define the flow, preconditions, and assertions. Every critical flow must have E2E or explicit justification.
+- **Deterministic mocks**: APIs mocked in a stable way with MSW or equivalent. Tests must not depend on real network.
+- **Negative scenarios**: API error, empty data, permission denied, form validation — beyond the happy path.
+- **Build validation**: lint, typecheck, and build as quality gates before/after implementation.
 
-## Regras
+## Rules
 
-- Teste comportamento visível ao usuário, não detalhes internos do componente.
-- Todo fluxo crítico deve ter E2E — se não tem, justifique.
-- Mocks devem ser determinísticos — sem depender de API real ou timing.
-- Não ignore cenários negativos — erro, vazio e validação são obrigatórios quando relevantes.
-- Scripts de validação (lint, typecheck, build) devem ser comandos explícitos.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+- Test user-visible behavior, not internal component details.
+- Every critical flow must have E2E — if not, justify.
+- Mocks must be deterministic — no dependency on real API or timing.
+- Do not ignore negative scenarios — error, empty, and validation are mandatory when relevant.
+- Validation scripts (lint, typecheck, build) must be explicit commands.
+- If not applicable to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Testes
+## Tests
 
-### Validação de build
-- Lint: `{comando}`
-- Typecheck: `{comando}`
-- Build: `{comando}`
+### Build validation
+- Lint: `{command}`
+- Typecheck: `{command}`
+- Build: `{command}`
 
-### Testes unitários
-| Arquivo | O que testa | Casos |
-|---------|------------|-------|
-| {name}.test.ts | {responsabilidade} | {casos: happy path, edge cases} |
+### Unit tests
+| File | What it tests | Cases |
+|------|--------------|-------|
+| {name}.test.ts | {responsibility} | {cases: happy path, edge cases} |
 
-### Testes de componente
-| Arquivo | Componente | Comportamentos testados |
-|---------|-----------|------------------------|
-| {Name}.test.tsx | {Componente} | {renderização, interações, estados} |
+### Component tests
+| File | Component | Behaviors tested |
+|------|-----------|-----------------|
+| {Name}.test.tsx | {Component} | {rendering, interactions, states} |
 
-### Testes E2E
-| Fluxo | Pré-condição | Passos | Asserções |
-|-------|-------------|--------|-----------|
-| {nome do fluxo} | {estado inicial} | {passos do usuário} | {o que verifica} |
+### E2E tests
+| Flow | Precondition | Steps | Assertions |
+|------|-------------|-------|------------|
+| {flow name} | {initial state} | {user steps} | {what it verifies} |
 
 ### Mocks
-| API/Recurso | Ferramenta | Comportamento mockado |
-|-------------|-----------|----------------------|
-| {endpoint} | {MSW / handler} | {resposta simulada} |
+| API/Resource | Tool | Mocked behavior |
+|-------------|------|----------------|
+| {endpoint} | {MSW / handler} | {simulated response} |
 
-### Cenários negativos
-| Cenário | Onde testa | Resultado esperado |
-|---------|-----------|-------------------|
-| erro de API | {teste} | {UI de erro + retry} |
-| dados vazios | {teste} | {empty state} |
-| validação | {teste} | {mensagem de erro} |
+### Negative scenarios
+| Scenario | Where tested | Expected result |
+|----------|-------------|----------------|
+| API error | {test} | {error UI + retry} |
+| empty data | {test} | {empty state} |
+| validation | {test} | {error message} |
 ```

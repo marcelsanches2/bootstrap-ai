@@ -1,52 +1,52 @@
-# Role: Arquiteto
+# Role: Architect
 
-## Sua contribuição
-Gera a seção "Arquitetura proposta" e o "Plano incremental" do plano, definindo camadas, dependências, injeção de dependência, configuração e estrutura de diretórios.
+## Your contribution
+Generates the "Proposed architecture" section and the "Incremental plan" of the plan, defining layers, dependencies, dependency injection, configuration and directory structure.
 
-## Referência
+## Reference
 - docs/ai/ARCHITECTURE.md
 
-## O que incluir
-- **Boundaries**: descreva a separação de responsabilidades entre camadas (API/router, domínio/service, dados/repository, infra). Indique quais responsabilidades ficam em cada camada e por quê.
-- **Direção de dependências**: mostre que dependências apontam para dentro (domínio não depende de detalhe externo). Identifique pontos onde isso pode ser violado.
-- **Nomes e estrutura**: proponha nomes de arquivos, módulos e classes que indiquem claramente sua responsabilidade. Evite nomes genéricos como `utils.py` ou `helpers.py`.
-- **Extensibilidade pragmática**: explique como a solução permite crescer para o próximo caso provável sem abstração prematura. Nenhum framework paralelo nem abstração sem uso real.
-- **Validação técnica**: indique quais formas de validação (teste, build, lint) são coerentes com o risco da mudança.
-- **Plano incremental**: liste as etapas de implementação em ordem, indicando dependências entre elas. Cada etapa deve ser implementável de forma independente e testável por si só.
+## What to include
+- **Boundaries**: describe the separation of responsibilities between layers (API/router, domain/service, data/repository, infra). Indicate which responsibilities belong in each layer and why.
+- **Dependency direction**: show that dependencies point inward (domain does not depend on external details). Identify points where this could be violated.
+- **Names and structure**: propose file, module and class names that clearly indicate their responsibility. Avoid generic names like `utils.py` or `helpers.py`.
+- **Pragmatic extensibility**: explain how the solution allows growing for the next likely case without premature abstraction. No parallel framework or abstraction without real use.
+- **Technical validation**: indicate which forms of validation (test, build, lint) are coherent with the risk of the change.
+- **Incremental plan**: list the implementation steps in order, indicating dependencies between them. Each step must be independently implementable and testable on its own.
 
-## Regras
-- Nenhuma camada deve pular outra (ex: router não acessa banco diretamente).
-- Domínio nunca importa framework, ORM, HTTP client ou SDK externo.
-- Não criar abstração antes de existir pelo menos um uso real.
-- Configuração via Settings (pydantic-settings), nunca hardcoded.
-- Transações devem ter fronteira explícita.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- No layer may skip another (e.g.: router does not access database directly).
+- Domain never imports framework, ORM, HTTP client or external SDK.
+- Do not create abstraction before at least one real use exists.
+- Configuration via Settings (pydantic-settings), never hardcoded.
+- Transactions must have explicit boundaries.
+- If it does not apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Arquitetura proposta
+## Proposed architecture
 
-### Camadas
-| Camada | Responsabilidade | Exemplos |
-|--------|-----------------|----------|
-| API/Router | Recebe HTTP, valida borda, chama service, retorna response | routers/*.py |
-| Service/Domain | Lógica de negócio, orquestração, transações | services/*.py |
-| Repository/Data | Queries, acesso a banco, mapeamento ORM | repositories/*.py |
+### Layers
+| Layer | Responsibility | Examples |
+|-------|---------------|----------|
+| API/Router | Receives HTTP, validates edge, calls service, returns response | routers/*.py |
+| Service/Domain | Business logic, orchestration, transactions | services/*.py |
+| Repository/Data | Queries, database access, ORM mapping | repositories/*.py |
 | Infra | Config, DI, logging, external clients | core/, dependencies.py |
-| Models | Definição de tabelas, sem lógica | models/*.py |
-| Schemas | Contratos Pydantic (request/response), separados de models | schemas/*.py |
+| Models | Table definitions, no logic | models/*.py |
+| Schemas | Pydantic contracts (request/response), separated from models | schemas/*.py |
 
-### Dependências (direção)
-{Diagrama ou lista textual mostrando que dependências apontam para dentro}
+### Dependencies (direction)
+{Diagram or textual list showing that dependencies point inward}
 
-### Injeção de dependência
-{Como dependências são injetadas: constructors, FastAPI Depends, factories}
+### Dependency injection
+{How dependencies are injected: constructors, FastAPI Depends, factories}
 
-### Configuração
-{Quais Settings, env vars, como é carregado}
+### Configuration
+{Which Settings, env vars, how it is loaded}
 
-### Estrutura de diretórios
+### Directory structure
 ```
 app/
 ├── core/
@@ -58,18 +58,18 @@ app/
 └── dependencies.py
 ```
 
-## Plano incremental
+## Incremental plan
 
-### Etapa 1: {nome}
-- **O quê**: {descrição}
-- **Arquivos**: {lista}
-- **Validação**: {como testar}
+### Step 1: {name}
+- **What**: {description}
+- **Files**: {list}
+- **Validation**: {how to test}
 
-### Etapa 2: {nome}
-- **Depende de**: Etapa 1
-- **O quê**: {descrição}
-- **Arquivos**: {lista}
-- **Validação**: {como testar}
+### Step 2: {name}
+- **Depends on**: Step 1
+- **What**: {description}
+- **Files**: {list}
+- **Validation**: {how to test}
 
-{... etapas subsequentes}
+{... subsequent steps}
 ```

@@ -1,115 +1,115 @@
 # /kickoff
 
-Inicializa um projeto do zero: coleta requisitos, gera product brief, decide stack e direciona para o preset correto.
+Initializes a project from scratch: collects requirements, generates product brief, decides stack and directs to the correct preset.
 
-## Quando usar
+## When to use
 
-- Projeto é uma pasta vazia ou quase vazia (só `.git`)
-- Usuário diz "novo projeto", "começar do zero", "quero criar um app"
-- `/import-project-preset` detectou pasta vazia
+- Project is an empty or nearly empty folder (only `.git`)
+- User says "new project", "start from scratch", "I want to create an app"
+- `/import-project-preset` detected an empty folder
 
-**NÃO usar quando** o projeto já tem stack definida (arquivos de código, package.json, pubspec.yaml, etc.). Nesses casos, use `/import-project-preset` direto.
-
----
-
-## Fase 1 — Clarify Requirements
-
-Faça **uma pergunta por vez**. Espere a resposta antes de seguir. Não proponha implementação durante esta fase.
-
-### Pergunta 1 — Problema
-```
-Qual problema este projeto resolve? Quem experiencia esse problema e com que frequência?
-```
-
-### Pergunta 2 — Usuários
-```
-Quem são os usuários primários? Seja específico — "empreendedores solo construindo SaaS" não "desenvolvedores".
-```
-
-### Pergunta 3 — Features do V1
-```
-Quais são as 3 features mais importantes para a versão 1? Em ordem de prioridade.
-```
-
-### Pergunta 4 — Fora de escopo
-```
-O que está explicitamente FORA de escopo para esta versão?
-```
-
-### Pergunta 5 — Stack e restrições técnicas
-```
-Tem preferência de stack técnica? Tem restrições (deadline, orçamento, precisa integrar com algo específico)?
-```
-
-### Pergunta 6 — Plataforma
-```
-Qual plataforma? Web, mobile (iOS/Android), desktop, API-only, CLI?
-```
-
-### Pergunta 7 — Sucesso
-```
-O que significa sucesso 30 dias depois do lançamento? Seja mensurável.
-```
-
-Após as 7 respostas, valide com o usuário:
-
-```
-Resumo dos requisitos:
-
-1. Problema: [resumo]
-2. Usuários: [resumo]
-3. Features V1: [lista]
-4. Fora de escopo: [lista]
-5. Stack: [resumo + restrições]
-6. Plataforma: [resumo]
-7. Sucesso: [resumo]
-
-Isso está correto? Posso seguir para o product brief?
-```
-
-**Não salve nada até o usuário confirmar.**
+**Do NOT use when** the project already has a defined stack (code files, package.json, pubspec.yaml, etc.). In those cases, use `/import-project-preset` directly.
 
 ---
 
-## Fase 2 — Product Brief
+## Phase 1 — Clarify Requirements
 
-Gere `PRODUCT_BRIEF.md` na raiz do projeto com:
+Ask **one question at a time**. Wait for the answer before proceeding. Do not propose implementation during this phase.
+
+### Question 1 — Problem
+```
+What problem does this project solve? Who experiences this problem and how often?
+```
+
+### Question 2 — Users
+```
+Who are the primary users? Be specific — "solo entrepreneurs building SaaS" not "developers."
+```
+
+### Question 3 — V1 Features
+```
+What are the 3 most important features for version 1? In priority order.
+```
+
+### Question 4 — Out of scope
+```
+What is explicitly OUT OF SCOPE for this version?
+```
+
+### Question 5 — Stack and technical constraints
+```
+Do you have a preferred tech stack? Any constraints (deadline, budget, need to integrate with something specific)?
+```
+
+### Question 6 — Platform
+```
+Which platform? Web, mobile (iOS/Android), desktop, API-only, CLI?
+```
+
+### Question 7 — Success
+```
+What does success look like 30 days after launch? Be measurable.
+```
+
+After the 7 answers, validate with the user:
+
+```
+Requirements summary:
+
+1. Problem: [summary]
+2. Users: [summary]
+3. V1 Features: [list]
+4. Out of scope: [list]
+5. Stack: [summary + constraints]
+6. Platform: [summary]
+7. Success: [summary]
+
+Is this correct? Can I proceed to the product brief?
+```
+
+**Do not save anything until the user confirms.**
+
+---
+
+## Phase 2 — Product Brief
+
+Generate `PRODUCT_BRIEF.md` at the project root with:
 
 ```markdown
 # Product Brief — {{PROJECT_NAME}}
 
-## Problema
-[1 parágrafo: problema, quem, frequência]
+## Problem
+[1 paragraph: problem, who, frequency]
 
-## Usuários alvo
-[descrição específica]
+## Target users
+[specific description]
 
-## Features do V1 (prioridade)
-1. [feature] — [1 frase]
-2. [feature] — [1 frase]
-3. [feature] — [1 frase]
+## V1 Features (priority)
+1. [feature] — [1 sentence]
+2. [feature] — [1 sentence]
+3. [feature] — [1 sentence]
 
-## Fora de escopo (V1)
+## Out of scope (V1)
 - [item]
 - [item]
 
-## Stack técnica
-| Camada | Tecnologia | Por quê |
+## Tech stack
+| Layer | Technology | Why |
 |---|---|---|
-| [camada] | [tech] | [1 frase] |
+| [layer] | [tech] | [1 sentence] |
 
-## Plataforma
-[plataforma(s)]
+## Platform
+[platform(s)]
 
-## Critérios de sucesso (30 dias)
-- [critério mensurável]
-- [critério mensurável]
+## Success criteria (30 days)
+- [measurable criterion]
+- [measurable criterion]
 
-## Questões abertas
-- [se houver, senão "Nenhuma"]
+## Open questions
+- [if any, otherwise "None"]
 ```
 
-Salve os requisitos também em `.hermes/requirements.json`:
+Also save the requirements in `.hermes/requirements.json`:
 
 ```json
 {
@@ -129,91 +129,91 @@ Salve os requisitos também em `.hermes/requirements.json`:
 
 ---
 
-## Fase 3 — Choose Stack
+## Phase 3 — Choose Stack
 
-Baseado nas respostas (especialmente pergunta 5 e 6), decida a stack:
+Based on the answers (especially question 5 and 6), decide the stack:
 
-### Tabela de mapeamento
+### Mapping table
 
-| Plataforma | Stack sugerida | Preset correspondente |
+| Platform | Suggested stack | Corresponding preset |
 |---|---|---|
 | Mobile iOS/Android | Flutter + Dart | `flutter-app` |
 | Web app (frontend) | React + TypeScript + Vite | `react-web` |
 | API / Backend | Node + TypeScript + Express | `node-backend` |
 | API / Backend (Python) | Python + FastAPI | `python-backend` |
 | Full-stack web | React frontend + Node backend | `react-web` + `node-backend` |
-| Desktop | Electron (React) ou Flutter desktop | depende |
-| CLI | Go, Rust ou Python puro | criar novo |
+| Desktop | Electron (React) or Flutter desktop | depends |
+| CLI | Go, Rust or pure Python | create new |
 
-### Regras de decisão
+### Decision rules
 
-1. Se o usuário especificou stack → use a preferência dele
-2. Se não especificou → sugira baseado na tabela acima
-3. Se não tem preset correspondente → avise que vai criar um novo via `skill-creator`
-4. Apresente a decisão:
+1. If the user specified a stack → use their preference
+2. If not specified → suggest based on the table above
+3. If there is no corresponding preset → warn that a new one will be created via `skill-creator`
+4. Present the decision:
 
 ```
-Stack decidida: [stack]
-Preset: [nome do preset ou "será criado novo"]
+Decided stack: [stack]
+Preset: [preset name or "will be created new"]
 
-Tem front-end? [SIM/NÃO]
+Has front-end? [YES/NO]
 ```
 
 ---
 
-## Fase 4 — Design Phase (condicional)
+## Phase 4 — Design Phase (conditional)
 
-**Pergunte:** "Este projeto tem interface visual? Se sim, quer definir o design system agora?"
+**Ask:** "Does this project have a visual interface? If so, do you want to define the design system now?"
 
-### Se SIM → direcione para `/design-phase`
+### If YES → direct to `/design-phase`
 
-Explique as opções:
-1. **"Tenho Figma"** → `/design-phase` vai extrair tokens do link
-2. **"Quero que crie"** → `/design-phase` vai gerar design system do zero
-3. **"Depois"** → pula, pode rodar `/design-phase` a qualquer momento
+Explain the options:
+1. **"I have Figma"** → `/design-phase` will extract tokens from the link
+2. **"I want you to create it"** → `/design-phase` will generate a design system from scratch
+3. **"Later"** → skip, can run `/design-phase` at any time
 
-### Se NÃO → pule para preset apply
+### If NO → skip to preset apply
 
 ---
 
-## Fase 5 — Kit Apply
+## Phase 5 — Kit Apply
 
-Após design phase (ou se pulou), aplique o preset:
+After design phase (or if skipped), apply the preset:
 
 ```bash
-# Se o preset existe
+# If the preset exists
 [BOOTSTRAP_AI_DIR]/bin/bootstrap-ai apply [preset-name] [project-dir] --project-name "[PROJECT_NAME]"
 
-# Se não existe, crie primeiro
-[BOOTSTRAP_AI_DIR]/bin/bootstrap-ai create [preset-name] --from "[descrição da stack]"
+# If it doesn't exist, create first
+[BOOTSTRAP_AI_DIR]/bin/bootstrap-ai create [preset-name] --from "[stack description]"
 [BOOTSTRAP_AI_DIR]/bin/bootstrap-ai apply [preset-name] [project-dir] --project-name "[PROJECT_NAME]"
 ```
 
 ---
 
-## Resumo final
+## Final summary
 
-Após tudo concluído, mostre:
+After everything is complete, show:
 
 ```
-Projeto inicializado: {{PROJECT_NAME}}
+Project initialized: {{PROJECT_NAME}}
 ────────────────────────────────
 Product Brief: PRODUCT_BRIEF.md
-Requisitos: .hermes/requirements.json
-Preset aplicado: [preset-name]
-Design system: [SIM - docs/ai/DESIGN_SYSTEM.md | NÃO]
+Requirements: .hermes/requirements.json
+Preset applied: [preset-name]
+Design system: [YES - docs/ai/DESIGN_SYSTEM.md | NO]
 
-Próximos passos:
-1. /plan — criar primeiro plano técnico
-2. /jarvis-plan — gerar plano com perspectivas embutidas (manual)
-3. Implementar plano
-4. /ship — checklist de entrega
+Next steps:
+1. /plan — create first technical plan
+2. /jarvis-plan — generate plan with built-in perspectives (manual)
+3. Implement plan
+4. /ship — delivery checklist
 ```
 
 ## Pitfalls
 
-- Não pule perguntas. 7 perguntas, todas respondidas.
-- Não proponha solução técnica durante clarify. Redirecione: "Vamos terminar os requisitos primeiro."
-- Se o usuário não souber responder, marque como `[QUESTÃO ABERTA: ...]` — não invente.
-- Não crie preset novo sem antes verificar se um existente serve. Use `analyze` para confirmar.
-- DESIGN_SYSTEM.md existente (da design phase) NÃO deve ser sobrescrito pelo preset genérico.
+- Do not skip questions. 7 questions, all answered.
+- Do not propose technical solutions during clarify. Redirect: "Let's finish requirements first."
+- If the user can't answer, mark as `[OPEN QUESTION: ...]` — do not invent.
+- Do not create a new preset without first checking if an existing one works. Use `analyze` to confirm.
+- Existing DESIGN_SYSTEM.md (from design phase) must NOT be overwritten by the generic preset.

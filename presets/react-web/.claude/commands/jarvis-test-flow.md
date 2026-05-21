@@ -1,113 +1,113 @@
 ---
-description: Valida um fluxo E2E garantindo massa deterministica, testes de componente, verificacao de acessibilidade e relatorio atualizado.
+description: Validates an E2E flow ensuring deterministic test data, component tests, accessibility verification and updated report.
 ---
 
 # /jarvis-test-flow
 
-Valida um fluxo end-to-end do app React Web {{PROJECT_NAME}}. Argumento opcional: `flow_id` (ex.: `user_login`, `product_list`, `checkout_flow`).
+Validates an end-to-end flow of the React Web app {{PROJECT_NAME}}. Optional argument: `flow_id` (e.g.: `user_login`, `product_list`, `checkout_flow`).
 
-## Sequencia obrigatoria
+## Mandatory sequence
 
-0. **Avaliar tamanho da task**
-   - Inspecionar `git diff --stat HEAD` e a natureza dos arquivos tocados em `src/`, `public/`, `package.json`, `tsconfig.json`, `*.config.*`.
-   - **GRANDE** (rodar pipeline completo, etapas 1-8): nova pagina/rota, novo componente de feature, mudanca em estado global, integracao de API nova, mudanca em design system, formulario complexo, mudanca que afeta fluxo do usuario ponta a ponta.
-   - **PEQUENA** (pular para etapa 7): typo, ajuste de CSS isolado, comentario, ajuste fino em componente sem mudanca de comportamento, refactor sem mudanca de comportamento observavel, ajuste de copia/texto.
-   - **Em duvida**: perguntar ao usuario antes de classificar (uma frase: "task X — pequena ou grande?"). Nao chutar.
-   - Reportar a classificacao numa linha antes de prosseguir (ex: `task: PEQUENA — so ajuste de cor no botao`).
+0. **Assess task size**
+   - Inspect `git diff --stat HEAD` and the nature of the touched files in `src/`, `public/`, `package.json`, `tsconfig.json`, `*.config.*`.
+   - **LARGE** (run full pipeline, steps 1-8): new page/route, new feature component, global state change, new API integration, design system change, complex form, change affecting end-to-end user flow.
+   - **SMALL** (skip to step 7): typo, isolated CSS adjustment, comment, minor component tweak without behavior change, refactor without observable behavior change, copy/text adjustment.
+   - **In doubt**: ask the user before classifying (one sentence: "task X — small or large?"). Do not guess.
+   - Report the classification in one line before proceeding (e.g.: `task: SMALL — just button color adjustment`).
 
-1. **Determinar o `flow_id`**
-   - Se foi passado como argumento, usar.
-   - Se nao, inferir pelo `git diff --name-only HEAD` (qual pagina/feature foi tocada). Mapear `src/pages/<X>/` ou `src/features/<X>/` -> `<X>_*` flow. Se ambiguo, perguntar ao usuario antes de seguir.
+1. **Determine the `flow_id`**
+   - If passed as argument, use it.
+   - If not, infer from `git diff --name-only HEAD` (which page/feature was touched). Map `src/pages/<X>/` or `src/features/<X>/` → `<X>_*` flow. If ambiguous, ask the user before proceeding.
 
-2. **Inventariar massa (mocks deterministicos)**
-   - Localizar mocks/handlers que cobrem o flow_id:
+2. **Inventory test data (deterministic mocks)**
+   - Locate mocks/handlers that cover the flow_id:
      - `src/mocks/*.ts`
      - `src/__mocks__/*.ts`
-     - `msw/handlers/*.ts` ou `src/mocks/handlers/*.ts`
+     - `msw/handlers/*.ts` or `src/mocks/handlers/*.ts`
      - `test/fixtures/*.ts`
      - `test/factories/*.ts`
-   - Validar que os dados esperados existem (cruzar com asserts dos testes em `src/` e `test/`).
-   - Se faltar massa, criar mock/handler deterministico seguindo `docs/ai/TESTING_GUIDE.md` e `docs/ai/ARCHITECTURE.md`. Sem random (usar valores fixos), sem chamada de rede real, sem `setTimeout` em teste.
-   - Garantir que testes usam mock da API (MSW, jest.mock, etc) e nunca chamam backend real.
-   - Garantir que environment vars estao sobrescritas para ambiente de teste se necessario.
+   - Validate that expected data exists (cross-reference with test assertions in `src/` and `test/`).
+   - If test data is missing, create deterministic mock/handler following `docs/ai/TESTING_GUIDE.md` and `docs/ai/ARCHITECTURE.md`. No randomness (use fixed values), no real network calls, no `setTimeout` in tests.
+   - Ensure tests use API mocks (MSW, jest.mock, etc.) and never call the real backend.
+   - Ensure environment variables are overridden for test environment if needed.
 
-3. **Inventariar teste**
-   - Procurar `src/**/{flow_id}*.test.{ts,tsx}` ou `test/**/{flow_id}*.test.{ts,tsx}` que cubra o flow.
-   - Verificar se existe um relatorio de revisao (`plans/*_revisao.md`, `docs/revisao_*.md` ou similar) gerado pelo `/jarvis-plan` para o mesmo fluxo. Se existir, extrair os **Cenarios E2E sugeridos** da secao correspondente e considera-los como requisitos minimos de cobertura alem dos cenarios proprios do test-flow.
-   - Se nao existir, prosseguir normalmente.
-   - Se nao existir teste, criar seguindo `docs/ai/TESTING_GUIDE.md` com o runner configurado (jest, vitest) e Testing Library. Usar mocks deterministicos. Teste deve cobrir: caminho feliz, loading states, error states, empty states, validacao de formulario, navegacao.
-   - Validar que o teste cobre as etapas criticas e usa os dados deterministicos da massa.
+3. **Inventory tests**
+   - Find `src/**/{flow_id}*.test.{ts,tsx}` or `test/**/{flow_id}*.test.{ts,tsx}` that cover the flow.
+   - Check if there is a review report (`plans/*_review.md`, `docs/review_*.md` or similar) generated by `/jarvis-plan` for the same flow. If it exists, extract the **Suggested E2E Scenarios** from the corresponding section and consider them as minimum coverage requirements in addition to the test-flow's own scenarios.
+   - If not, proceed normally.
+   - If no test exists, create following `docs/ai/TESTING_GUIDE.md` with the configured runner (jest, vitest) and Testing Library. Use deterministic mocks. Test must cover: happy path, loading states, error states, empty states, form validation, navigation.
+   - Validate that the test covers the critical steps and uses the deterministic test data.
 
-4. **Executar o pipeline**
-   - Detectar package manager por lockfile: `pnpm-lock.yaml` -> pnpm, `yarn.lock` -> yarn, `bun.lockb` -> bun, senao npm.
-   - Detectar scripts disponiveis em `package.json`.
-   - Rodar na seguinte ordem:
-     - `[pkg-manager] install` (se houve mudanca em dependencies no `package.json`).
-     - `[pkg-manager] run lint` (se existir script lint) — bloqueia se introduzir erros novos.
-     - `npx tsc --noEmit` ou `[pkg-manager] run typecheck` (se existir) — bloqueia se introduzir erros de tipo novos.
-     - `[pkg-manager] test` (unit + component tests) — bloqueia se quebrar.
-     - `[pkg-manager] run test:e2e` (se existirem testes e2e com Playwright/Cypress) — bloqueia se quebrar.
-     - `[pkg-manager] run build` (production build) — bloqueia se quebrar.
-     - Lighthouse/axe audit, se configurado — nao bloqueia mas reporta warnings.
-   - **Se qualquer comando falhar, entrar no loop de diagnostico (etapa 4a) antes de prosseguir.** Nao maquiar, nao silenciar warning, nao remover assertion.
+4. **Execute the pipeline**
+   - Detect package manager by lockfile: `pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn, `bun.lockb` → bun, otherwise npm.
+   - Detect available scripts in `package.json`.
+   - Run in the following order:
+     - `[pkg-manager] install` (if there were dependency changes in `package.json`).
+     - `[pkg-manager] run lint` (if lint script exists) — blocks if it introduces new errors.
+     - `npx tsc --noEmit` or `[pkg-manager] run typecheck` (if it exists) — blocks if it introduces new type errors.
+     - `[pkg-manager] test` (unit + component tests) — blocks if broken.
+     - `[pkg-manager] run test:e2e` (if E2E tests exist with Playwright/Cypress) — blocks if broken.
+     - `[pkg-manager] run build` (production build) — blocks if broken.
+     - Lighthouse/axe audit, if configured — does not block but reports warnings.
+   - **If any command fails, enter the diagnostic loop (step 4a) before proceeding.** Do not mask, silence warnings, or remove assertions.
 
-4a. **Loop de diagnostico e correcao** (acionado quando algo na etapa 4 ou no pre-commit hook da etapa 7 falha)
-   - **Diagnosticar**: ler atentamente a saida de erro completa. Classificar a causa em uma das categorias:
-     - `ambiente`: Node version incorreta, node_modules corrompido, dependencia ausente, cache corrompido, navegador/Playwright nao instalado.
-     - `mock/massa`: dado deterministico faltando, divergencia entre mock e assertion, handler MSW nao cobre endpoint esperado, mock desatualizado vs contrato real da API.
-     - `teste`: assertion invalida, seletor quebrado (data-testid removido), `act()` warning, async sem `waitFor`, snapshot desatualizado, teste dependente de ordem, cleanup incompleto.
-     - `codigo`: regressao real introduzida pela mudanca da task, componente nao renderiza, hook com dependencia errada, estado inconsistente, prop faltando.
-     - `tipagem`: `any` onde nao deveria, `@ts-ignore` escondendo bug, interface de props desatualizada, tipo assertion insegura (`as`).
-     - `build`: import nao resolvido, chunk error, env variable faltando no build, circular dependency, CSS module quebrado.
-     - `acessibilidade`: contraste insuficiente, label faltando em input, aria attribute incorreto, foco perdido em modal/dialog.
-   - **Planejar**: escrever 1-3 frases descrevendo: (a) qual e a causa-raiz hipotetica, (b) qual a correcao minima proposta, (c) qual arquivo sera tocado. Nao comecar a editar sem isso.
-   - **Corrigir**: aplicar somente a correcao minima planejada. Sem refactor adicional, sem "limpar de quebra".
-   - **Re-rodar**: executar de novo o(s) comando(s) que falhou(aram), na mesma ordem da etapa 4.
-   - **Limite de 3 tentativas por causa-raiz**. Se a mesma causa reaparecer ao 3 ciclo, ou se a correcao exigir mudancas fora do escopo da task original (ex.: refatorar estado global, criar pagina nova), parar e escalar para o usuario com: causa observada, o que foi tentado, proxima hipotese.
-   - **Criterios para parar e escalar imediatamente** (sem esperar 3 tentativas):
-     - A correcao exigiria modificar `docs/ai/*` ou outro arquivo proibido pelas restricoes.
-     - A correcao exigiria criar pagina/componente/rota fora do escopo do flow_id.
-     - O erro indica problema de infraestrutura (build tool quebrado, dependencia nao instala).
-     - Tentativas anteriores divergem (causa muda a cada rodada -> sinal de que o diagnostico esta raso).
-   - Registrar todas as causas e correcoes tentadas na tabela "Problemas encontrados / correcoes" do report (etapa 5), inclusive em caso de PASSOU.
+4a. **Diagnostic and correction loop** (triggered when something in step 4 or the pre-commit hook in step 7 fails)
+   - **Diagnose**: carefully read the complete error output. Classify the cause into one of the categories:
+     - `environment`: wrong Node version, corrupted node_modules, missing dependency, corrupted cache, browser/Playwright not installed.
+     - `mock/data`: missing deterministic data, divergence between mock and assertion, MSW handler doesn't cover expected endpoint, outdated mock vs real API contract.
+     - `test`: invalid assertion, broken selector (removed data-testid), `act()` warning, async without `waitFor`, outdated snapshot, order-dependent test, incomplete cleanup.
+     - `code`: real regression introduced by the task change, component not rendering, hook with wrong dependency, inconsistent state, missing prop.
+     - `typing`: `any` where it shouldn't be, `@ts-ignore` hiding bug, outdated props interface, unsafe type assertion (`as`).
+     - `build`: unresolved import, chunk error, missing env variable in build, circular dependency, broken CSS module.
+     - `accessibility`: insufficient contrast, missing label on input, incorrect aria attribute, focus lost in modal/dialog.
+   - **Plan**: write 1-3 sentences describing: (a) what the hypothetical root cause is, (b) what the proposed minimal fix is, (c) which file will be touched. Do not start editing without this.
+   - **Fix**: apply only the planned minimal fix. No additional refactoring, no "cleaning up while at it".
+   - **Re-run**: execute the failed command(s) again, in the same order as step 4.
+   - **Limit of 3 attempts per root cause**. If the same cause reappears on the 3rd cycle, or if the fix requires changes outside the scope of the original task (e.g.: refactoring global state, creating a new page), stop and escalate to the user with: observed cause, what was attempted, next hypothesis.
+   - **Criteria for stopping and escalating immediately** (without waiting for 3 attempts):
+     - The fix would require modifying `docs/ai/*` or another file prohibited by the restrictions.
+     - The fix would require creating page/component/route outside the flow_id scope.
+     - The error indicates an infrastructure problem (broken build tool, dependency won't install).
+     - Previous attempts diverge (cause changes each run → sign of shallow diagnosis).
+   - Record all causes and attempted corrections in the "Issues found / corrections" table of the report (step 5), even if PASSED.
 
-5. **Gerar relatorio**
-   - Escrever ou atualizar `docs/test_report_{flow_id}.md` com:
-     - Data, branch, classificacao (GRANDE/PEQUENA), estrategia, package manager detectado
-     - Ferramentas detectadas (linter, typechecker, test runner, e2e runner, build tool)
-     - Massa criada/validada (tabela com mocks, handlers, dados usados)
-     - Comandos executados (tabela: comando, resultado)
-     - Fluxo validado (tabela: etapa, validacao)
-     - Problemas encontrados / correcoes (tabela: causa, correcao)
-     - Status final: **PASSOU**, **PASSOU PARCIALMENTE**, ou **FALHOU**
-     - Arquivos criados/modificados
-     - Como rodar de novo
+5. **Generate report**
+   - Write or update `docs/test_report_{flow_id}.md` with:
+     - Date, branch, classification (LARGE/SMALL), strategy, detected package manager
+     - Detected tools (linter, typechecker, test runner, e2e runner, build tool)
+     - Test data created/validated (table with mocks, handlers, data used)
+     - Commands executed (table: command, result)
+     - Validated flow (table: step, validation)
+     - Issues found / corrections (table: cause, correction)
+     - Final status: **PASSED**, **PARTIALLY PASSED**, or **FAILED**
+     - Files created/modified
+     - How to run again
 
-6. **Encerrar**
-   - Reportar uma linha de resumo + caminho do relatorio em `docs/`.
+6. **Finish**
+   - Report a one-line summary + report path in `docs/`.
 
 7. **Commit**
-   - Executar `git add src/ public/ docs/ package.json tsconfig.json [pnpm-lock.yaml|yarn.lock|bun.lockb|package-lock.json]`.
-   - Se nada foi staged (`git diff --cached --quiet`), pular o commit.
-   - Mensagem do commit:
-     - **PEQUENA**: `chore: <descricao curta da mudanca>` (ex: `chore: ajusta cor do botao no header`).
-     - **GRANDE + PASSOU**: `feat|fix|refactor: <descricao> + test {flow_id}` conforme natureza da mudanca.
-     - **GRANDE + PASSOU PARCIALMENTE / FALHOU**: NAO commitar. Reportar e devolver para correcao.
-   - O commit pode disparar pre-commit hooks (lint, typecheck, test). Se quebrar, NAO usar `--no-verify` — entrar no loop de diagnostico (etapa 4a), corrigir, e tentar o commit de novo.
+   - Run `git add src/ public/ docs/ package.json tsconfig.json [pnpm-lock.yaml|yarn.lock|bun.lockb|package-lock.json]`.
+   - If nothing was staged (`git diff --cached --quiet`), skip the commit.
+   - Commit message:
+     - **SMALL**: `chore: <short description of change>` (e.g.: `chore: adjust button color in header`).
+     - **LARGE + PASSED**: `feat|fix|refactor: <description> + test {flow_id}` according to the nature of the change.
+     - **LARGE + PARTIALLY PASSED / FAILED**: DO NOT commit. Report and return for correction.
+   - The commit may trigger pre-commit hooks (lint, typecheck, test). If it breaks, DO NOT use `--no-verify` — enter the diagnostic loop (step 4a), fix, and try the commit again.
 
 8. **Push**
-   - So executar se a etapa 7 efetivamente criou um novo commit. Se foi pulada (nada staged) ou bloqueada (GRANDE + falha), NAO empurrar.
-   - Confirmar que a branch atual tem upstream: se `git rev-parse --abbrev-ref --symbolic-full-name @{u}` falhar, usar `git push -u origin HEAD`. Caso contrario, `git push`.
-   - NUNCA usar `--force` ou `--force-with-lease` aqui. Push de force so com pedido explicito do usuario e nunca em `master`/`main`.
-   - Se o push falhar por divergencia com o remoto (`non-fast-forward`), parar, reportar e perguntar antes de qualquer rebase/merge.
+   - Only execute if step 7 actually created a new commit. If it was skipped (nothing staged) or blocked (LARGE + failure): DO NOT push.
+   - Confirm the current branch has upstream: if `git rev-parse --abbrev-ref --symbolic-full-name @{u}` fails, use `git push -u origin HEAD`. Otherwise, `git push`.
+   - NEVER use `--force` or `--force-with-lease` here. Force push only with explicit user request and never on `master`/`main`.
+   - If push fails due to divergence with remote (`non-fast-forward`), stop, report and ask before any rebase/merge.
 
-## Restricoes obrigatorias
+## Mandatory restrictions
 
-- Nao criar feature/pagina/componente novo fora do escopo do flow.
-- Nao modificar arquivos em `docs/ai/`.
-- Nao hardcodar credenciais, API keys ou secrets.
-- Nao pular etapas dentro de uma execucao completa (1-6) mesmo se "parecer simples". A unica forma legitima de pular e via etapa 0 (classificada PEQUENA), que vai direto para a etapa 7.
-- Nao remover assertion ou maquiar teste so para passar.
-- Nao aprovar build quebrado.
-- Se o fluxo exige backend real indisponivel, registrar divergencia e propor mock/handler deterministico.
-- Respeitar a hierarquia de prioridade do `CLAUDE.md`: 1) CLAUDE.md, 2) ARCHITECTURE.md, 3) CODING_STANDARDS.md, 4) FEATURE_GUIDE.md, 5) DESIGN_SYSTEM.md, 6) TESTING_GUIDE.md.
+- Do not create feature/page/component outside the flow scope.
+- Do not modify files in `docs/ai/`.
+- Do not hardcode credentials, API keys, or secrets.
+- Do not skip steps within a full execution (1-6) even if they "seem simple." The only legitimate skip is via step 0 (classified SMALL), which goes directly to step 7.
+- Do not remove assertions or mask tests just to pass.
+- Do not approve a broken build.
+- If the flow requires an unavailable real backend, record the divergence and propose a deterministic mock/handler.
+- Respect the priority hierarchy of `CLAUDE.md`: 1) CLAUDE.md, 2) ARCHITECTURE.md, 3) CODING_STANDARDS.md, 4) FEATURE_GUIDE.md, 5) DESIGN_SYSTEM.md, 6) TESTING_GUIDE.md.

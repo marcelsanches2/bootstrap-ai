@@ -1,45 +1,45 @@
 # Architecture
 
-Estrutura de diretórios e arquitetura do projeto Node.js backend.
+Directory structure and architecture for the Node.js backend project.
 
-## Visão geral
+## Overview
 
-Projeto backend em Node.js com TypeScript, seguindo arquitetura em camadas com separação clara de responsabilidades.
+Node.js backend project with TypeScript, following a layered architecture with clear separation of responsibilities.
 
-Fluxo de dados:
-
-```
-Request → Router/Controller → Schema (Zod validation) → Service → Repository → Model → Banco
-```
-
-## Estrutura de diretórios
+Data flow:
 
 ```
-<raiz>/
+Request → Router/Controller → Schema (Zod validation) → Service → Repository → Model → Database
+```
+
+## Directory structure
+
+```
+<root>/
 ├── src/
 │   ├── index.ts                  # Entry point (Express/Fastify)
 │   ├── config/
 │   │   ├── index.ts              # Config via env vars (zod validated)
 │   │   └── database.ts           # Prisma client singleton
 │   │
-│   ├── routes/                   # Definição de rotas
+│   ├── routes/                   # Route definitions
 │   │   ├── index.ts              # Router aggregator
 │   │   ├── auth.routes.ts
 │   │   └── users.routes.ts
 │   │
-│   ├── controllers/              # Handlers HTTP
+│   ├── controllers/              # HTTP handlers
 │   │   ├── auth.controller.ts
 │   │   └── users.controller.ts
 │   │
-│   ├── schemas/                  # Zod schemas (validação)
+│   ├── schemas/                  # Zod schemas (validation)
 │   │   ├── auth.schema.ts
 │   │   └── users.schema.ts
 │   │
-│   ├── services/                 # Lógica de negócio
+│   ├── services/                 # Business logic
 │   │   ├── auth.service.ts
 │   │   └── users.service.ts
 │   │
-│   ├── repositories/             # Acesso a dados (Prisma queries)
+│   ├── repositories/             # Data access (Prisma queries)
 │   │   ├── users.repository.ts
 │   │   └── orders.repository.ts
 │   │
@@ -56,9 +56,9 @@ Request → Router/Controller → Schema (Zod validation) → Service → Reposi
 │       └── express.d.ts
 │
 ├── prisma/
-│   ├── schema.prisma             # Schema do banco
-│   ├── migrations/               # Migrations auto-geradas
-│   └── seed.ts                   # Dados iniciais
+│   ├── schema.prisma             # Database schema
+│   ├── migrations/               # Auto-generated migrations
+│   └── seed.ts                   # Initial data
 │
 ├── tests/
 │   ├── setup.ts                  # Test setup
@@ -69,10 +69,10 @@ Request → Router/Controller → Schema (Zod validation) → Service → Reposi
 ├── package.json
 ├── tsconfig.json
 ├── .env.example
-└── .env                          # NÃO commitar
+└── .env                          # Do NOT commit
 ```
 
-## Camadas e responsabilidades
+## Layers and responsibilities
 
 ### Route → Controller
 
@@ -131,7 +131,7 @@ export class UsersService {
 
   async create(data: CreateUserInput) {
     const existing = await this.prisma.user.findUnique({ where: { email: data.email } });
-    if (existing) throw new AppError('CONFLICT', 'Email já cadastrado', 409);
+    if (existing) throw new AppError('CONFLICT', 'Email already registered', 409);
 
     const passwordHash = await hashPassword(data.password);
     return this.prisma.user.create({
@@ -150,7 +150,7 @@ export class UsersService {
 }
 ```
 
-### Repository Pattern (quando Prisma direto não basta)
+### Repository Pattern (when direct Prisma is not enough)
 
 ```typescript
 // repositories/orders.repository.ts
@@ -172,7 +172,7 @@ export class OrdersRepository {
 }
 ```
 
-## Configuração
+## Configuration
 
 ```typescript
 // config/index.ts
@@ -189,51 +189,51 @@ const envSchema = z.object({
 export const config = envSchema.parse(process.env);
 ```
 
-## Convenções de nomenclatura
+## Naming conventions
 
-| Elemento | Convenção | Exemplo |
+| Element | Convention | Example |
 |---|---|---|
-| Arquivo | kebab-case | user-service.ts |
-| Classe | PascalCase | UsersService |
-| Função | camelCase | createUser() |
-| Constante | UPPER_SNAKE | MAX_RETRIES |
-| Interface | PascalCase + I prefix opcional | UserProfile |
+| File | kebab-case | user-service.ts |
+| Class | PascalCase | UsersService |
+| Function | camelCase | createUser() |
+| Constant | UPPER_SNAKE | MAX_RETRIES |
+| Interface | PascalCase + I prefix optional | UserProfile |
 | Type | PascalCase | OrderStatus |
 | Enum | PascalCase | OrderStatus.Pending |
-| Tabela | PascalCase (Prisma) | User, Order |
-| Campo | camelCase (Prisma) | createdAt |
-| Rota | kebab-case | /api/v1/user-profiles |
+| Table | PascalCase (Prisma) | User, Order |
+| Field | camelCase (Prisma) | createdAt |
+| Route | kebab-case | /api/v1/user-profiles |
 
 ## Anti-patterns
 
-- Controller com lógica de negócio — pertence ao service.
-- Service com req/res — não conhece HTTP.
-- Raw SQL quando Prisma resolve — só raw para performance crítica.
-- `any` em TypeScript — usar tipo específico ou `unknown`.
-- Import circular — usar dependency injection.
-- Console.log em produção — usar logger estruturado.
+- Controller with business logic — belongs in the service.
+- Service with req/res — does not know HTTP.
+- Raw SQL when Prisma works — only raw for critical performance.
+- `any` in TypeScript — use specific type or `unknown`.
+- Circular import — use dependency injection.
+- Console.log in production — use structured logger.
 
-## Regras duras
+## Hard rules
 
-- Não pular camadas. Controller → Service → Repository → Prisma.
-- Não usar `any` sem justificativa documentada.
-- Não commitar sem `tsc --noEmit` passando.
-- Não criar endpoint sem Zod schema de request e response.
-- Não hardcodar config — usar env vars via zod.
-- Não usar `require()` — sempre ES modules ou import.
+- Do not skip layers. Controller → Service → Repository → Prisma.
+- Do not use `any` without documented justification.
+- Do not commit without `tsc --noEmit` passing.
+- Do not create endpoints without Zod schema for request and response.
+- Do not hardcode config — use env vars via zod.
+- Do not use `require()` — always ES modules or import.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any of the rules below.
 
-- **Não pular camadas**: Controller → Service → Repository → Prisma — respeitar sempre o fluxo.
-- **Não usar `any` sem justificativa documentada**: Usar tipo específico ou `unknown`.
-- **Não commitar sem `tsc --noEmit` passando**: Type checking deve estar limpo antes de commit.
-- **Não criar endpoint sem Zod schema**: Todo endpoint precisa de schema de request e response.
-- **Não hardcodar config**: Usar env vars via Zod validação.
-- **Não usar `require()`**: Sempre ES modules ou import.
-- **Controller não deve ter lógica de negócio**: Lógica pertence ao service.
-- **Service não deve conhecer req/res**: Não importar nada de HTTP no service.
-- **Não usar raw SQL quando Prisma resolve**: Só raw para performance crítica.
-- **Não usar import circular**: Usar dependency injection.
-- **Não usar `console.log` em produção**: Usar logger estruturado.
+- **Do not skip layers**: Controller → Service → Repository → Prisma — always respect the flow.
+- **Do not use `any` without documented justification**: Use specific type or `unknown`.
+- **Do not commit without `tsc --noEmit` passing**: Type checking must be clean before commit.
+- **Do not create endpoints without Zod schema**: Every endpoint needs request and response schema.
+- **Do not hardcode config**: Use env vars via Zod validation.
+- **Do not use `require()`**: Always ES modules or import.
+- **Controller must not have business logic**: Logic belongs in the service.
+- **Service must not know req/res**: Do not import anything HTTP in the service.
+- **Do not use raw SQL when Prisma works**: Only raw for critical performance.
+- **Do not use circular imports**: Use dependency injection.
+- **Do not use `console.log` in production**: Use structured logger.

@@ -1,93 +1,93 @@
 # Role: Delivery
 
-## Sua contribuição
-Gera a seção "Deploy e entrega" do plano, cobrindo env vars, CI/CD, rollback, configuração de infra e procedimentos de deploy.
+## Your contribution
+Generates the "Deploy and delivery" section of the plan, covering env vars, CI/CD, rollback, infra configuration and deploy procedures.
 
-## Referência
+## Reference
 - docs/ai/DEPLOYMENT_GUIDE.md
 - docs/ai/ARCHITECTURE.md
 
-## O que incluir
-- **Escopo da entrega**: o que entra e o que NÃO entra nesta entrega. Sem ambiguidade.
-- **Arquivos alterados**: lista com caminhos completos de todos os arquivos que serão criados ou modificados.
-- **Dependências externas**: novos pacotes, serviços, APIs ou integrações necessárias.
-- **Migrations**: migration incluída com upgrade() e downgrade() completos. Testada.
-- **Rollback**: procedimento concreto para reverter se der errado. Inclua comandos (ex: `alembic downgrade -1` + redeploy versão anterior).
-- **Procedure de deploy**: ordem de execução, variáveis novas, pré-requisitos.
-- **Env vars**: documente todas as variáveis de ambiente novas em `.env.example` com valor exemplo e descrição.
-- **Breaking changes**: se houver, versionamento de API obrigatório. Liste explicitamente.
-- **Configuração de infra**: alterações em nginx, systemd, docker, supervisor — o que muda e por quê.
-- **Critérios de aceite de entrega**: como saber que o deploy funcionou ( smoke test, healthcheck, verificação manual).
-- **Riscos e mitigações**: riscos identificados com ações mitigadoras.
-- **Comunicação necessária**: quando a API muda, quem precisa ser avisado (front, mobile, outro time).
+## What to include
+- **Delivery scope**: what is included and what is NOT included in this delivery. No ambiguity.
+- **Changed files**: list with full paths of all files that will be created or modified.
+- **External dependencies**: new packages, services, APIs or integrations needed.
+- **Migrations**: migration included with complete upgrade() and downgrade(). Tested.
+- **Rollback**: concrete procedure to revert if something goes wrong. Include commands (e.g.: `alembic downgrade -1` + redeploy previous version).
+- **Deploy procedure**: execution order, new variables, prerequisites.
+- **Env vars**: document all new environment variables in `.env.example` with example value and description.
+- **Breaking changes**: if any, API versioning is mandatory. List explicitly.
+- **Infra configuration**: changes to nginx, systemd, docker, supervisor — what changes and why.
+- **Delivery acceptance criteria**: how to know the deploy worked (smoke test, healthcheck, manual verification).
+- **Risks and mitigations**: identified risks with mitigating actions.
+- **Required communication**: when the API changes, who needs to be notified (front, mobile, other teams).
 
-## Regras
-- Todo plano que toca banco deve ter migration com upgrade E downgrade.
-- Nenhum breaking change sem versionamento de API.
-- Toda env var nova documentada em `.env.example`.
-- Sem segredos hardcoded — tudo via env vars.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Every plan that touches the database must have a migration with upgrade AND downgrade.
+- No breaking change without API versioning.
+- Every new env var documented in `.env.example`.
+- No hardcoded secrets — everything via env vars.
+- If it does not apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Deploy e entrega
+## Deploy and delivery
 
-### Escopo da entrega
-**Inclui:**
+### Delivery scope
+**Includes:**
 - {Item 1}
 - {Item 2}
 
-**Não inclui:**
-- {Item excluído 1}
+**Does not include:**
+- {Excluded item 1}
 
-### Arquivos alterados
-- `caminho/arquivo1.py` — {o que faz}
-- `caminho/arquivo2.py` — {o que faz}
+### Changed files
+- `path/file1.py` — {what it does}
+- `path/file2.py` — {what it does}
 
-### Dependências externas
-| Dependência | Versão | Uso |
-|-------------|--------|-----|
-| {pacote/serviço} | {versão} | {para quê} |
+### External dependencies
+| Dependency | Version | Usage |
+|-----------|---------|-------|
+| {package/service} | {version} | {for what} |
 
 ### Migrations
-- `alembic/versions/xxx_descricao.py`
-  - upgrade(): {o que faz}
-  - downgrade(): {o que faz}
-  - Testado: {sim/não + como}
+- `alembic/versions/xxx_description.py`
+  - upgrade(): {what it does}
+  - downgrade(): {what it does}
+  - Tested: {yes/no + how}
 
 ### Rollback
-1. {Passo 1 — ex: `alembic downgrade -1`}
-2. {Passo 2 — ex: redeploy versão anterior}
-3. {Passo 3 — ex: verificar healthcheck}
+1. {Step 1 — e.g.: `alembic downgrade -1`}
+2. {Step 2 — e.g.: redeploy previous version}
+3. {Step 3 — e.g.: verify healthcheck}
 
-### Procedure de deploy
-1. {Passo 1}
-2. {Passo 2}
+### Deploy procedure
+1. {Step 1}
+2. {Step 2}
 3. ...
 
-### Env vars novas
-| Variável | Exemplo | Descrição | Obrigatória? |
-|----------|---------|-----------|-------------|
-| `VAR_NAME` | `valor_exemplo` | {o que controla} | sim/não |
+### New env vars
+| Variable | Example | Description | Required? |
+|----------|---------|-------------|-----------|
+| `VAR_NAME` | `example_value` | {what it controls} | yes/no |
 
 ### Breaking changes
-{Nenhuma OU lista com detalhes e versionamento}
+{None OR list with details and versioning}
 
-### Configuração de infra
-- **nginx**: {mudança ou "nenhuma"}
-- **systemd**: {mudança ou "nenhuma"}
-- **docker**: {mudança ou "nenhuma"}
+### Infra configuration
+- **nginx**: {change or "none"}
+- **systemd**: {change or "none"}
+- **docker**: {change or "none"}
 
-### Critérios de aceite de entrega
-- [ ] {Critério verificável 1}
-- [ ] {Critério verificável 2}
+### Delivery acceptance criteria
+- [ ] {Verifiable criterion 1}
+- [ ] {Verifiable criterion 2}
 
-### Riscos e mitigações
-| Risco | Probabilidade | Mitigação |
-|-------|--------------|-----------|
-| {Risco} | {alta/média/baixa} | {Ação} |
+### Risks and mitigations
+| Risk | Probability | Mitigation |
+|------|------------|------------|
+| {Risk} | {high/medium/low} | {Action} |
 
-### Comunicação necessária
-- {Quem precisa ser avisado e do quê}
+### Required communication
+- {Who needs to be notified and about what}
 ```

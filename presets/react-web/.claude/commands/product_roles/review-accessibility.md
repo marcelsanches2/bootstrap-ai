@@ -1,59 +1,59 @@
-# Role: Acessibilidade
+# Role: Accessibility
 
-## Sua contribuição
-Gera a seção "Acessibilidade" do plano, definindo navegação por teclado, ARIA, gestão de foco, HTML semântico e suporte a leitores de tela.
+## Your contribution
+Generates the "Accessibility" section of the plan, defining keyboard navigation, ARIA, focus management, semantic HTML, and screen reader support.
 
-## Referência
+## Reference
 - docs/ai/ACCESSIBILITY_GUIDE.md
 
-## O que incluir
+## What to include
 
-- **HTML semântico**: elementos corretos para cada ação, navegação e estrutura — `<button>` para ações, `<nav>` para navegação, `<main>` para conteúdo, headings hierárquicos. Nunca use `div`/`span` onde um elemento semântico é mais apropriado.
-- **Navegação por teclado**: Tab order lógico, Enter/Space ativam controles, Escape fecha modais/drawers. Defina o fluxo completo por teclado — nenhuma ação pode depender só de mouse.
-- **Labels acessíveis**: todo input, botão e ícone deve ter nome acessível (`aria-label`, `aria-labelledby`, `<label>` associado, `alt` em imagens). Nenhum controle pode ser invisível para leitor de tela.
-- **Gestão de foco**: para modais, toasts, erro inline e conteúdo dinâmico — onde o foco vai ao abrir/fechar, como retornar ao trigger.
-- **ARIA dinâmico**: `aria-live`, `role="alert"`, `aria-expanded`, `aria-hidden` — quando e como usar para anunciar mudanças de estado.
-- **Contraste e visibilidade**: estados de foco visíveis, contraste mínimo de texto e bordas funcionais. Defina como o foco é indicado visualmente.
+- **Semantic HTML**: correct elements for every action, navigation, and structure — `<button>` for actions, `<nav>` for navigation, `<main>` for content, hierarchical headings. Never use `div`/`span` where a semantic element is more appropriate.
+- **Keyboard navigation**: logical Tab order, Enter/Space activate controls, Escape closes modals/drawers. Define the complete keyboard flow — no action can depend solely on mouse.
+- **Accessible labels**: every input, button, and icon must have an accessible name (`aria-label`, `aria-labelledby`, associated `<label>`, `alt` on images). No control can be invisible to screen readers.
+- **Focus management**: for modals, toasts, inline errors, and dynamic content — where focus goes on open/close, how to return to trigger.
+- **Dynamic ARIA**: `aria-live`, `role="alert"`, `aria-expanded`, `aria-hidden` — when and how to use them to announce state changes.
+- **Contrast and visibility**: visible focus states, minimum text and functional border contrast. Define how focus is visually indicated.
 
-## Regras
+## Rules
 
-- Toda ação interativa deve funcionar por teclado — sem exceção.
-- Nunca substitua elemento semântico por `div` com click handler.
-- Controles sem label acessível são proibidos.
-- Modal/dialog sem gestão de foco e trap são proibidos.
-- Estados dinâmicos (erro, toast, loading) devem ser anunciados via ARIA live regions.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+- Every interactive action must work by keyboard — no exceptions.
+- Never replace a semantic element with a `div` with a click handler.
+- Controls without accessible labels are prohibited.
+- Modal/dialog without focus management and trap are prohibited.
+- Dynamic states (error, toast, loading) must be announced via ARIA live regions.
+- If not applicable to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Acessibilidade
+## Accessibility
 
-### HTML semântico
-| Elemento | Uso | Justificativa |
-|----------|-----|---------------|
-| {tag} | {onde} | {por quê} |
+### Semantic HTML
+| Element | Usage | Justification |
+|---------|-------|---------------|
+| {tag} | {where} | {why} |
 
-### Navegação por teclado
-| Ação | Tecla | Comportamento |
-|------|-------|---------------|
-| {ação} | {Tab/Enter/Escape/Space} | {o que acontece} |
+### Keyboard navigation
+| Action | Key | Behavior |
+|--------|-----|----------|
+| {action} | {Tab/Enter/Escape/Space} | {what happens} |
 
-### Labels acessíveis
-| Controle | Nome acessível | Método |
-|----------|---------------|--------|
-| {elemento} | {texto visível ou descritivo} | {aria-label / label / alt} |
+### Accessible labels
+| Control | Accessible name | Method |
+|---------|----------------|--------|
+| {element} | {visible or descriptive text} | {aria-label / label / alt} |
 
-### Gestão de foco
-| Contexto | Foco ao abrir | Foco ao fechar |
-|----------|--------------|----------------|
-| {modal/drawer/erro} | {para onde vai} | {onde retorna} |
+### Focus management
+| Context | Focus on open | Focus on close |
+|---------|--------------|----------------|
+| {modal/drawer/error} | {where it goes} | {where it returns} |
 
-### ARIA dinâmico
-| Elemento | Atributo | Valor | Quando |
-|----------|----------|-------|--------|
-| {elemento} | aria-live / role / aria-expanded | {valor} | {trigger} |
+### Dynamic ARIA
+| Element | Attribute | Value | When |
+|---------|-----------|-------|------|
+| {element} | aria-live / role / aria-expanded | {value} | {trigger} |
 
-### Contraste e foco visual
-{Como o foco é indicado, contraste mínimo garantido}
+### Contrast and visual focus
+{How focus is indicated, minimum contrast guaranteed}
 ```

@@ -7,17 +7,17 @@ ROOT="$(cd "$TARGET" && (git rev-parse --show-toplevel 2>/dev/null || pwd))"
 log() { printf '[bootstrap-ai-import] %s\n' "$*"; }
 fail() { printf '[bootstrap-ai-import] erro: %s\n' "$*" >&2; exit 1; }
 
-# Nomes aceitos: novo (bootstrap-ai) e antigo (bootstrap-ai)
+# Accepted names: new (bootstrap-ai) and old (bootstrap-ai)
 _KIT_NAMES=("bootstrap-ai" "bootstrap-ai")
 
 find_bootstrap_ai() {
-  # 1. Variável de ambiente explícita
+  # 1. Explicit environment variable
   if [ -n "${BOOTSTRAP_AI_PATH:-}" ] && [ -x "${BOOTSTRAP_AI_PATH}/bin/bootstrap-ai" ]; then
     printf '%s\n' "$BOOTSTRAP_AI_PATH"
     return 0
   fi
 
-  # 2. Workspaces comuns do usuário
+  # 2. Common user workspaces
   local workspace_dirs=(
     "$HOME/workspace"
     "$HOME/code"
@@ -31,14 +31,14 @@ find_bootstrap_ai() {
   )
 
   for ws in "${workspace_dirs[@]}"; do
-    # Direto na raiz da workspace (testa ambos os nomes)
+    # Directly at workspace root (tests both names)
     for name in "${_KIT_NAMES[@]}"; do
       if [ -x "$ws/$name/bin/bootstrap-ai" ]; then
         printf '%s\n' "$ws/$name"
         return 0
       fi
     done
-    # Um nível mais fundo (ex: workspace/group/bootstrap-ai)
+    # One level deeper (e.g.: workspace/group/bootstrap-ai)
     if [ -d "$ws" ]; then
       local found
       for name in "${_KIT_NAMES[@]}"; do
@@ -51,7 +51,7 @@ find_bootstrap_ai() {
     fi
   done
 
-  # 3. Locais padrão (ambos os nomes)
+  # 3. Default locations (both names)
   for name in "${_KIT_NAMES[@]}"; do
     for d in "$HOME/.local/share/$name" "$HOME/$name"; do
       if [ -x "$d/bin/bootstrap-ai" ]; then
@@ -65,20 +65,20 @@ find_bootstrap_ai() {
 }
 
 find_workspace_dir() {
-  # Procura workspace existente na ordem de preferência
+  # Search for existing workspace in preference order
   for d in "$HOME/workspace" "$HOME/code" "$HOME/projects" "$HOME/dev" "$HOME/work" "$HOME/repos" "$HOME/development" "$HOME/sources" "$HOME/src"; do
     if [ -d "$d" ]; then
       printf '%s\n' "$d"
       return 0
     fi
   done
-  # Cria workspace padrão se não existir nenhuma
+  # Create default workspace if none exists
   mkdir -p "$HOME/workspace"
   printf '%s\n' "$HOME/workspace"
 }
 
 detect_project_name() {
-  # Tenta detectar o nome do projeto alvo para substituição de placeholders
+  # Try to detect the target project name for placeholder substitution
   local root="$1"
   # 1. package.json "name"
   if [ -f "$root/package.json" ]; then
@@ -98,11 +98,11 @@ detect_project_name() {
     name=$(grep -m1 '^name[[:space:]]*=' "$root/pyproject.toml" 2>/dev/null | sed 's/^name[[:space:]]*=[[:space:]]*//' | tr -d '"' | tr -d "'")
     if [ -n "$name" ]; then printf '%s\n' "$name"; return 0; fi
   fi
-  # 4. Fallback: nome do diretório
+  # 4. Fallback: directory name
   printf '%s\n' "$(basename "$root")"
 }
 
-# Se já temos BOOTSTRAP_AI_DIR válido (passado via env ou source embutido), pula busca
+# If we already have a valid BOOTSTRAP_AI_DIR (passed via env or embedded source), skip search
 if [ -n "${BOOTSTRAP_AI_DIR:-}" ] && [ -x "${BOOTSTRAP_AI_DIR}/bin/bootstrap-ai" ]; then
   log "usando BOOTSTRAP_AI_DIR pré-configurado: $BOOTSTRAP_AI_DIR"
 elif BOOTSTRAP_AI_DIR="$(find_bootstrap_ai)"; then
@@ -130,7 +130,7 @@ log "kit selecionado: $KIT"
 log "diff não destrutivo"
 "$BOOTSTRAP_AI_DIR/bin/bootstrap-ai" diff "$KIT" "$ROOT"
 
-# Detecta nome do projeto para substituir placeholders
+# Detect project name to replace placeholders
 PROJECT_NAME="$(detect_project_name "$ROOT")"
 log "nome do projeto detectado: $PROJECT_NAME"
 

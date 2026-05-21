@@ -1,114 +1,114 @@
 # derive-docs-ai.md
 
-Gere os guias em `docs/ai/` com conteúdo **específico para a stack** — não templates genéricos.
+Generate the guides in `docs/ai/` with content **specific to the stack** — not generic templates.
 
 ## Input
 
 - **Stack**: `{{DESCRIPTION}}`
-- **Nome do preset**: `{{PRESET_NAME}}`
-- **Tipo**: backend / frontend / mobile (inferir pela descrição)
+- **Preset name**: `{{PRESET_NAME}}`
+- **Type**: backend / frontend / mobile (infer from description)
 
-## Referência OBRIGATÓRIA
+## MANDATORY Reference
 
-Leia os docs/ai dos presets existentes **antes** de gerar. Use como barra de qualidade:
+Read the docs/ai of existing presets **before** generating. Use them as the quality bar:
 
-- `presets/python-backend/docs/ai/` — backend com API, DB, security, observability, scalability
-- `presets/react-web/docs/ai/` — frontend com design system, accessibility, performance
-- `presets/node-backend/docs/ai/` — mesmo padrão python-backend adaptado para Node/TypeScript
-- `presets/flutter-app/docs/ai/` — mobile com feature guide, design system
+- `presets/python-backend/docs/ai/` — backend with API, DB, security, observability, scalability
+- `presets/react-web/docs/ai/` — frontend with design system, accessibility, performance
+- `presets/node-backend/docs/ai/` — same pattern as python-backend adapted for Node/TypeScript
+- `presets/flutter-app/docs/ai/` — mobile with feature guide, design system
 
-**Barra de qualidade = os presets existentes.** Se o conteúdo que você gerar for mais curto ou mais genérico do que o que existe nesses presets, você falhou.
+**The quality bar = existing presets.** If the content you generate is shorter or more generic than what exists in those presets, you failed.
 
-## Regra #1: Stack-specific, não genérico
+## Rule #1: Stack-specific, not generic
 
-**RUIM (genérico):**
+**BAD (generic):**
 ```markdown
-## Nomenclatura
-- Use nomes descritivos para variáveis.
-- Funções devem ter nomes verbais.
+## Naming
+- Use descriptive names for variables.
+- Functions should have verbal names.
 ```
 
-**BOM (stack-specific):**
+**GOOD (stack-specific):**
 ```markdown
-## Nomenclatura
-- Controllers: `<Recurso>Controller` (`UserController`, `OrderController`)
-- Services: `<Recurso>Service` com métodos verbais (`findMany`, `create`, `update`)
-- Repositories: `<Recurso>Repository` — nunca use `*Impl` ou `*DAO`
-- Entidades Prisma: PascalCase no schema, camelCase nas queries
-- DTOs: `<Recurso>CreateDTO`, `<Recurso>UpdateDTO` — never reuse create DTO for update
+## Naming
+- Controllers: `<Resource>Controller` (`UserController`, `OrderController`)
+- Services: `<Resource>Service` with verbal methods (`findMany`, `create`, `update`)
+- Repositories: `<Resource>Repository` — never use `*Impl` or `*DAO`
+- Prisma entities: PascalCase in schema, camelCase in queries
+- DTOs: `<Resource>CreateDTO`, `<Resource>UpdateDTO` — never reuse create DTO for update
 ```
 
-**Cada seção deve mencionar:**
-- Ferramentas específicas da stack (Prisma, SQLAlchemy, Riverpod, etc.)
-- Comandos específicos (não "rode os testes", mas `pytest --cov=src -x`)
-- Anti-patterns com nome real (`N+1 no Prisma`, `god widget`, `setState cascade`)
-- Convenções de arquivo específicas (`<feature>/`, `use_case/`, `repository/`)
+**Every section should mention:**
+- Stack-specific tools (Prisma, SQLAlchemy, Riverpod, etc.)
+- Specific commands (not "run the tests", but `pytest --cov=src -x`)
+- Named anti-patterns (`N+1 in Prisma`, `god widget`, `setState cascade`)
+- Specific file conventions (`<feature>/`, `use_case/`, `repository/`)
 
-## Guias obrigatórios (toda stack)
+## Mandatory guides (all stacks)
 
-### ARCHITECTURE.md (~100-150 linhas)
+### ARCHITECTURE.md (~100-150 lines)
 
-Estrutura de diretórios da stack com:
-- Visão geral da arquitetura (layers, boundaries)
-- **Árvore de diretórios real** com descrição de cada pasta (ex: `controllers/`, `services/`, `repositories/`)
-- Camadas e responsabilidades com exemplos de onde cada coisa mora
-- Fluxo de dados (request → middleware → controller → service → repository → DB)
-- Padrões de injeção de dependência **específicos da stack** (DI container, constructor injection, provider pattern)
-- Convenções de nomenclatura de arquivos e pastas
-- Anti-patterns com exemplos do que NÃO fazer
+Stack directory structure with:
+- Architecture overview (layers, boundaries)
+- **Real directory tree** with description of each folder (e.g.: `controllers/`, `services/`, `repositories/`)
+- Layers and responsibilities with examples of where each thing lives
+- Data flow (request → middleware → controller → service → repository → DB)
+- **Stack-specific** dependency injection patterns (DI container, constructor injection, provider pattern)
+- File and folder naming conventions
+- Anti-patterns with examples of what NOT to do
 
-### CODING_STANDARDS.md (~80-120 linhas)
+### CODING_STANDARDS.md (~80-120 lines)
 
-Padrões de código com:
-- Linting e formatação: **ferramenta + config real** (ex: `ruff.toml`, `.eslintrc`, `analysis_options.yaml`)
-- Tipagem: convenções específicas (ex: `strict=True` no mypy, `noUncheckedIndexedAccess` no tsconfig)
-- Nomenclatura com exemplos **por tipo de artefato** (controller, service, model, DTO, test, etc.)
-- Tratamento de erros: **padrão específico da stack** (ex: custom error classes, error middleware, Result type)
-- Logging: **biblioteca + formato** (ex: structlog, winston, logger.setLevel)
-- Comentários: o que documentar e o que não documentar
-- Imports: ordem, aliasing, barrel exports
-- Proibições específicas da stack (ex: "nunca use `any` em TypeScript", "nunca use `setState` com callback em Flutter")
+Code standards with:
+- Linting and formatting: **real tool + config** (e.g.: `ruff.toml`, `.eslintrc`, `analysis_options.yaml`)
+- Typing: specific conventions (e.g.: `strict=True` in mypy, `noUncheckedIndexedAccess` in tsconfig)
+- Naming with examples **by artifact type** (controller, service, model, DTO, test, etc.)
+- Error handling: **stack-specific pattern** (e.g.: custom error classes, error middleware, Result type)
+- Logging: **library + format** (e.g.: structlog, winston, logger.setLevel)
+- Comments: what to document and what not to document
+- Imports: order, aliasing, barrel exports
+- Stack-specific prohibitions (e.g.: "never use `any` in TypeScript", "never use `setState` with callback in Flutter")
 
-### TESTING_GUIDE.md (~80-120 linhas)
+### TESTING_GUIDE.md (~80-120 lines)
 
-Padrões de teste com:
-- **Framework de teste + comando exato** (`pytest -x --cov`, `flutter test --coverage`, `vitest run`)
-- Estrutura de diretórios de teste (co-location vs espelho)
-- Convenções de nomenclatura (test files, describe blocks, test names)
-- Fixtures/factories/mocks **específicos da stack** (ex: `factory_boy`, `msw`, `mocktail`)
-- Cobertura mínima esperada e como medi-la
-- O que testar por camada (unit → integration → E2E)
-- Anti-patterns de teste específicos
-- **Separação de responsabilidades**: este é o ÚNICO guide que fala de testes. Nenhum outro guide deve ter seções de teste.
+Testing standards with:
+- **Test framework + exact command** (`pytest -x --cov`, `flutter test --coverage`, `vitest run`)
+- Test directory structure (co-location vs mirror)
+- Naming conventions (test files, describe blocks, test names)
+- **Stack-specific** fixtures/factories/mocks (e.g.: `factory_boy`, `msw`, `mocktail`)
+- Minimum expected coverage and how to measure it
+- What to test per layer (unit → integration → E2E)
+- Stack-specific test anti-patterns
+- **Separation of concerns**: this is the ONLY guide that talks about testing. No other guide should have testing sections.
 
-## Guias por tipo de stack
+## Guides by stack type
 
-### Backend (gerar TODOS)
+### Backend (generate ALL)
 
-- **API_GUIDE.md** (~80-120 linhas): convenções REST, versionamento, payload, status codes, paginação, errors, documentação automática (Swagger/OpenAPI), rate limiting — tudo com exemplos da stack
-- **DATABASE_GUIDE.md** (~80-120 linhas): ORM/query builder **específico** (Prisma, SQLAlchemy, TypeORM), migrations, índices, N+1, transações, constraints, seeds, conexões/pool — com comandos reais
-- **SECURITY_GUIDE.md** (~60-100 linhas): auth (JWT/session/OAuth), autorização (RBAC/ABAC), PII, criptografia, input validation, CORS, headers, secrets management — com bibliotecas da stack
-- **OBSERVABILITY_GUIDE.md** (~60-100 linhas): structured logging **com biblioteca real**, métricas, healthcheck endpoint, tracing, alertas, incident response
-- **SCALABILITY_GUIDE.md** (~80-120 linhas): concorrência (async/worker), cache (Redis/Memcached), filas, rate limiting, connection pool, bulkhead, circuit breaker, graceful shutdown — tudo específico da stack
-- **DEPLOYMENT_GUIDE.md** (~60-80 linhas): env vars, build, deploy, rollback, healthcheck, monitoring — com ferramentas reais
+- **API_GUIDE.md** (~80-120 lines): REST conventions, versioning, payload, status codes, pagination, errors, auto-documentation (Swagger/OpenAPI), rate limiting — all with stack examples
+- **DATABASE_GUIDE.md** (~80-120 lines): **specific** ORM/query builder (Prisma, SQLAlchemy, TypeORM), migrations, indexes, N+1, transactions, constraints, seeds, connections/pool — with real commands
+- **SECURITY_GUIDE.md** (~60-100 lines): auth (JWT/session/OAuth), authorization (RBAC/ABAC), PII, encryption, input validation, CORS, headers, secrets management — with stack libraries
+- **OBSERVABILITY_GUIDE.md** (~60-100 lines): structured logging **with real library**, metrics, healthcheck endpoint, tracing, alerts, incident response
+- **SCALABILITY_GUIDE.md** (~80-120 lines): concurrency (async/worker), cache (Redis/Memcached), queues, rate limiting, connection pool, bulkhead, circuit breaker, graceful shutdown — all stack-specific
+- **DEPLOYMENT_GUIDE.md** (~60-80 lines): env vars, build, deploy, rollback, healthcheck, monitoring — with real tools
 
-### Frontend (gerar TODOS)
+### Frontend (generate ALL)
 
-- **DESIGN_SYSTEM.md** (~80-120 linhas): tokens (cores, tipografia, espaçamento), componentes, temas, estados, responsividade, iconografia — com lib de CSS/componentes da stack
-- **ACCESSIBILITY_GUIDE.md** (~60-100 linhas): semântica, ARIA, contraste, teclado, screen readers, formulários — com ferramentas de teste (axe, lighthouse)
-- **PERFORMANCE_GUIDE.md** (~60-100 linhas): bundle analysis, code splitting, lazy loading, imagens, cache, Web Vitals — com ferramentas reais da stack
-- **DEPLOYMENT_GUIDE.md** (~60-80 linhas): build, env vars, CDN, rollback, preview deploy
+- **DESIGN_SYSTEM.md** (~80-120 lines): tokens (colors, typography, spacing), components, themes, states, responsiveness, iconography — with the stack's CSS/component library
+- **ACCESSIBILITY_GUIDE.md** (~60-100 lines): semantics, ARIA, contrast, keyboard, screen readers, forms — with testing tools (axe, lighthouse)
+- **PERFORMANCE_GUIDE.md** (~60-100 lines): bundle analysis, code splitting, lazy loading, images, cache, Web Vitals — with real stack tools
+- **DEPLOYMENT_GUIDE.md** (~60-80 lines): build, env vars, CDN, rollback, preview deploy
 
-### Mobile (gerar TODOS)
+### Mobile (generate ALL)
 
-- **DESIGN_SYSTEM.md** (~80-120 linhas): tokens, componentes, temas, estados, plataformas (iOS/Android)
-- **FEATURE_GUIDE.md** (~80-100 linhas): feature-first, clean architecture, DI, state management, navegação — com lib específica (Riverpod, BLoC, etc.)
+- **DESIGN_SYSTEM.md** (~80-120 lines): tokens, components, themes, states, platforms (iOS/Android)
+- **FEATURE_GUIDE.md** (~80-100 lines): feature-first, clean architecture, DI, state management, navigation — with specific lib (Riverpod, BLoC, etc.)
 
-## Regras de qualidade
+## Quality rules
 
-1. **Cada seção deve mencionar ferramentas/bibliotecas reais da stack** — nunca "framework de teste", mas "pytest com fixtures do factory_boy"
-2. **Incluir comandos exatos** — não "rode os testes", mas `pytest --cov=src --cov-report=term-missing -x`
-3. **Incluir anti-patterns com "Não faça X, faça Y"** — específicos da stack
-4. **Mínimo 60 linhas por guia, ideal 80-120** — se ficou mais curto que os presets de referência, está incompleto
-5. **Nenhum guia além de TESTING_GUIDE deve falar de testes** — separação de responsabilidades
-6. **Usar `{{PROJECT_NAME}}`** onde o nome do projeto for referenciado
+1. **Every section must mention real stack tools/libraries** — never "test framework", but "pytest with factory_boy fixtures"
+2. **Include exact commands** — not "run the tests", but `pytest --cov=src --cov-report=term-missing -x`
+3. **Include anti-patterns with "Don't do X, do Y"** — stack-specific
+4. **Minimum 60 lines per guide, ideally 80-120** — if it's shorter than the reference presets, it's incomplete
+5. **No guide other than TESTING_GUIDE should talk about testing** — separation of concerns
+6. **Use `{{PROJECT_NAME}}`** where the project name is referenced

@@ -1,10 +1,10 @@
 # Testing Guide
 
-Padrões de teste para Node.js backend com TypeScript.
+Testing standards for Node.js backend with TypeScript.
 
 ## Framework
 
-Vitest (ou Jest) com TypeScript.
+Vitest (or Jest) with TypeScript.
 
 ```typescript
 // vitest.config.ts
@@ -20,7 +20,7 @@ export default defineConfig({
 });
 ```
 
-## Estrutura
+## Structure
 
 ```
 tests/
@@ -33,10 +33,10 @@ tests/
     └── order-flow.test.ts
 ```
 
-## Convenções
+## Conventions
 
-- Arquivo: `<module>.test.ts`
-- Describe: nome do módulo
+- File: `<module>.test.ts`
+- Describe: module name
 - Test: `should <behavior> when <condition>`
 
 ```typescript
@@ -93,29 +93,29 @@ vi.mock('../src/services/email.service', () => ({
 }));
 ```
 
-## Comandos
+## Commands
 
 ```bash
 vitest                    # Watch mode
 vitest run                # Single run
-vitest run --coverage     # Com coverage
+vitest run --coverage     # With coverage
 vitest run --reporter=verbose
 ```
 
-## Regras duras
+## Hard rules
 
-- Não remover assertion para fazer passar.
-- Não usar `any` em testes.
-- Não depender de ordem de execução.
-- Não chamar serviço externo real.
-- Não commitar sem pelo menos testes da mudança.
+- Do not remove assertions to make tests pass.
+- Do not use `any` in tests.
+- Do not depend on execution order.
+- Do not call real external services.
+- Do not commit without at least tests for the change.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any of the rules below.
 
-- **Não remover assertion para fazer passar**: Teste deve validar comportamento real.
-- **Não usar `any` em testes**: Usar tipos específicos ou `unknown`.
-- **Não depender de ordem de execução**: Cada teste deve ser independente e isolado.
-- **Não chamar serviço externo real**: Usar mocks para dependências externas.
-- **Não commitar sem testes da mudança**: Pelo menos testes unitários do código alterado.
+- **Do not remove assertions to make tests pass**: Tests must validate real behavior.
+- **Do not use `any` in tests**: Use specific types or `unknown`.
+- **Do not depend on execution order**: Each test must be independent and isolated.
+- **Do not call real external services**: Use mocks for external dependencies.
+- **Do not commit without tests for the change**: At least unit tests for the changed code.

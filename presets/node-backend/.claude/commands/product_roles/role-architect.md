@@ -1,61 +1,61 @@
-# Role: Arquiteto
+# Role: Architect
 
-## Sua contribuição
-Gera as seções "Arquitetura proposta" e "Plano incremental" do plano, definindo camadas, dependências, DI, configuração e estrutura de diretórios.
+## Your contribution
+Generates the "Proposed architecture" and "Incremental plan" sections of the plan, defining layers, dependencies, DI, configuration, and directory structure.
 
-## Referência
+## Reference
 - docs/ai/ARCHITECTURE.md
 
-## O que incluir
-- **Boundaries**: descreva a separação de responsabilidades entre camadas (API/domínio, dados, infra). Indique qual código mora em cada camada e por quê.
-- **Direção de dependências**: mostre que dependências apontam para dentro (domínio não depende de detalhes externos como framework, ORM ou SDK).
-- **Nomes e estrutura**: proponha nomes de arquivos, módulos e classes que indiquem responsabilidade clara. Use kebab-case para arquivos, PascalCase para classes, camelCase para funções.
-- **Extensibilidade pragmática**: garanta que a estrutura permite crescer para o próximo caso provável sem abstração prematura. Nenhum framework paralelo ou abstração inútil.
-- **Configuração**: defina como variáveis de ambiente são carregadas e validadas (ex.: Zod schema de env).
-- **Validação técnica**: indique quais ferramentas de validação (build, lint, testes) são coerentes com o risco da mudança.
-- **Plano incremental**: liste as etapas de implementação em ordem de dependência, cada etapa com escopo claro e resultado verificável.
+## What to include
+- **Boundaries**: describe the separation of responsibilities between layers (API/domain, data, infra). Indicate which code lives in each layer and why.
+- **Dependency direction**: show that dependencies point inward (domain does not depend on external details like framework, ORM, or SDK).
+- **Names and structure**: propose file, module, and class names that indicate clear responsibility. Use kebab-case for files, PascalCase for classes, camelCase for functions.
+- **Pragmatic extensibility**: ensure the structure allows growing toward the next probable case without premature abstraction. No parallel framework or useless abstraction.
+- **Configuration**: define how environment variables are loaded and validated (e.g., Zod env schema).
+- **Technical validation**: indicate which validation tools (build, lint, tests) are coherent with the change's risk.
+- **Incremental plan**: list the implementation steps in dependency order, each step with clear scope and verifiable result.
 
-## Regras
-- Domínio nunca importa Express/Fastify/Nest, ORM, fetch/axios ou SDK externo.
-- DTO/schema de API não é entidade de domínio.
-- Não criar abstração antes de existir pelo menos um uso real.
-- Transações devem ter fronteira explícita.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Domain never imports Express/Fastify/Nest, ORM, fetch/axios, or external SDKs.
+- API DTO/schema is not a domain entity.
+- Do not create abstractions before at least one real usage exists.
+- Transactions must have explicit boundaries.
+- If it doesn't apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Arquitetura proposta
+## Proposed architecture
 
-### Camadas
-| Camada | Responsabilidade | Exemplos de arquivos |
-|--------|-----------------|---------------------|
-| {camada} | {responsabilidade} | {arquivos} |
+### Layers
+| Layer | Responsibility | Example files |
+|-------|---------------|---------------|
+| {layer} | {responsibility} | {files} |
 
-### Dependências
-{Diagrama ou descrição textual da direção de dependências}
+### Dependencies
+{Diagram or textual description of dependency direction}
 
-### Configuração
-- Variáveis de ambiente: {lista com nomes e validação}
-- Como carregar: {método}
+### Configuration
+- Environment variables: {list with names and validation}
+- How to load: {method}
 
-### Nomes e estrutura
-{Árvore de diretórios proposta com nomes de arquivos}
+### Names and structure
+{Proposed directory tree with file names}
 
-### Extensibilidade
-{Como a estrutura suporta o próximo caso provável}
+### Extensibility
+{How the structure supports the next probable case}
 
-## Plano incremental
+## Incremental plan
 
-### Etapa 1 — {nome}
-- **Escopo**: {o que faz}
-- **Arquivos**: {lista}
-- **Validação**: {como verificar}
+### Step 1 — {name}
+- **Scope**: {what it does}
+- **Files**: {list}
+- **Validation**: {how to verify}
 
-### Etapa 2 — {nome}
-- **Escopo**: {o que faz}
-- **Arquivos**: {lista}
-- **Validação**: {como verificar}
+### Step 2 — {name}
+- **Scope**: {what it does}
+- **Files**: {list}
+- **Validation**: {how to verify}
 
-{... mais etapas conforme necessário}
+{... more steps as needed}
 ```

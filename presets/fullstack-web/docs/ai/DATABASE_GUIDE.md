@@ -1,6 +1,6 @@
 # Database Guide
 
-Padrões de banco de dados com Prisma ORM + PostgreSQL.
+Database patterns with Prisma ORM + PostgreSQL.
 
 ## Prisma Setup
 
@@ -51,37 +51,37 @@ model User {
 ## Queries
 
 ```typescript
-// Criar
+// Create
 const user = await prisma.user.create({
   data: { email, name, passwordHash },
   select: { id: true, name: true, email: true, createdAt: true },
 });
 
-// Buscar por ID
+// Find by ID
 const user = await prisma.user.findUnique({ where: { id } });
 
-// Buscar com include (eager loading)
+// Find with include (eager loading)
 const order = await prisma.order.findUnique({
   where: { id: orderId },
   include: { items: true, user: { select: { id: true, name: true } } },
 });
 
-// Paginação
+// Pagination
 const [items, total] = await Promise.all([
   prisma.user.findMany({ skip, limit, orderBy: { id: 'asc' } }),
   prisma.user.count(),
 ]);
 
-// Transação
+// Transaction
 const [order, account] = await prisma.$transaction([
   prisma.order.create({ data: orderData }),
   prisma.account.update({ where: { id: accountId }, data: { balance: { decrement: amount } } }),
 ]);
 
-// Interactive transaction (para lógica entre steps)
+// Interactive transaction (for logic between steps)
 await prisma.$transaction(async (tx) => {
   const account = await tx.account.findUnique({ where: { id: accountId } });
-  if (!account || account.balance < amount) throw new AppError('CONFLICT', 'Saldo insuficiente', 409);
+  if (!account || account.balance < amount) throw new AppError('CONFLICT', 'Insufficient balance', 409);
   await tx.account.update({ where: { id: accountId }, data: { balance: { decrement: amount } } });
   await tx.order.create({ data: orderData });
 });
@@ -90,25 +90,25 @@ await prisma.$transaction(async (tx) => {
 ## Migrations
 
 ```bash
-# Criar migration
+# Create migration
 npx prisma migrate dev --name add_orders_table
 
-# Aplicar em produção
+# Apply in production
 npx prisma migrate deploy
 
-# Reset (desenvolvimento)
+# Reset (development)
 npx prisma migrate reset
 
 # Status
 npx prisma migrate status
 ```
 
-Regras:
-- Sempre revisar migration gerada antes de aplicar.
-- Não editar migration aplicada — criar nova.
-- Testar rollback (revert) antes de deploy.
+Rules:
+- Always review generated migration before applying.
+- Do not edit applied migration — create a new one.
+- Test rollback (revert) before deploy.
 
-## Índices
+## Indexes
 
 ```prisma
 model Order {
@@ -124,10 +124,10 @@ model Order {
 
 ## N+1
 
-Prisma faz eager loading com `include`:
+Prisma does eager loading with `include`:
 
 ```typescript
-// ❌ N+1 manual
+// ❌ Manual N+1
 const users = await prisma.user.findMany();
 for (const u of users) {
   const orders = await prisma.order.findMany({ where: { userId: u.id } });
@@ -154,30 +154,30 @@ async function main() {
 main().finally(() => prisma.$disconnect());
 ```
 
-## Regras duras
+## Hard rules
 
-- Não usar SELECT * — sempre `select` explícito em endpoints.
-- Não fazer N+1 — usar `include`.
-- Não commitar migration sem testar.
-- Não criar tabela sem índice em FK.
-- Não usar offset em tabela grande — cursor.
-- Não logar dados sensíveis.
+- Do not use SELECT * — always explicit `select` in endpoints.
+- Do not do N+1 — use `include`.
+- Do not commit migration without testing.
+- Do not create table without index on FK.
+- Do not use offset on large table — use cursor.
+- Do not log sensitive data.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
 ### Queries
-- **Não usar `SELECT *`**: sempre `select` explícito em endpoints.
-- **Não fazer N+1**: usar `include` para eager loading.
-- **Não usar offset em tabela grande**: use cursor quando volume justificar.
+- **Do not use `SELECT *`**: always explicit `select` in endpoints.
+- **Do not do N+1**: use `include` for eager loading.
+- **Do not use offset on large table**: use cursor when volume justifies it.
 
 ### Migrations
-- **Não editar migration aplicada**: crie nova migration.
-- **Não commitar migration sem testar**: teste rollback antes de deploy.
+- **Do not edit applied migration**: create a new migration.
+- **Do not commit migration without testing**: test rollback before deploy.
 
 ### Schema
-- **Não criar tabela sem índice em FK**: toda foreign key precisa índice.
+- **Do not create table without index on FK**: every foreign key needs an index.
 
-### Segurança
-- **Não logar dados sensíveis**: senhas, tokens, PII nunca aparecem em logs.
+### Security
+- **Do not log sensitive data**: passwords, tokens, PII must never appear in logs.

@@ -1,41 +1,41 @@
 # derive-jarvis-test-flow.md
 
-Gere o `jarvis-test-flow.md` específico para a stack.
+Generate the `jarvis-test-flow.md` specific to the stack.
 
 ## Input
 
 - **Stack**: `{{DESCRIPTION}}`
-- **Nome dO preset**: `{{PRESET_NAME}}`
-- **Tipo**: backend / frontend / mobile (inferir pela descrição)
+- **Preset name**: `{{PRESET_NAME}}`
+- **Type**: backend / frontend / mobile (infer from description)
 
-## Referência
+## Reference
 
-Leia os jarvis-test-flow dos presets existentes antes de gerar:
+Read the jarvis-test-flow from existing presets before generating:
 
-- `presets/flutter-app/.claude/commands/jarvis-test-flow.md` (~11k chars, mobile com Figma validation)
-- `presets/python-backend/.claude/commands/jarvis-test-flow.md` (~9k chars, backend com pytest/ruff/mypy/alembic)
-- `presets/react-web/.claude/commands/jarvis-test-flow.md` (~9.5k chars, frontend com testing-library/MSW/tsc)
-- `presets/node-backend/.claude/commands/jarvis-test-flow.md` (~9.6k chars, backend com jest|vitest/tsc/prisma)
+- `presets/flutter-app/.claude/commands/jarvis-test-flow.md` (~11k chars, mobile with Figma validation)
+- `presets/python-backend/.claude/commands/jarvis-test-flow.md` (~9k chars, backend with pytest/ruff/mypy/alembic)
+- `presets/react-web/.claude/commands/jarvis-test-flow.md` (~9.5k chars, frontend with testing-library/MSW/tsc)
+- `presets/node-backend/.claude/commands/jarvis-test-flow.md` (~9.6k chars, backend with jest|vitest/tsc/prisma)
 
-## Estrutura obrigatória
+## Mandatory structure
 
-O jarvis-test-flow DEVE seguir esta estrutura (mesma dos presets existentes):
+The jarvis-test-flow MUST follow this structure (same as existing presets):
 
 ```
-0. Avaliar tamanho da task (GRANDE/PEQUENA)
-1. Determinar flow_id
-2. Inventariar massa (fixtures/mocks deterministicos)
-3. Inventariar teste (com cross-ref ao jarvis-plan)
-4. Executar pipeline (lint → typecheck → test → migration → build → healthcheck)
-4a. Loop de diagnóstico e correcao (classifica causa, planeja, corrige, max 3 tentativas)
-5. Gerar relatório em docs/test_report_{flow_id}.md
-6. Encerrar
-7. Commit (so se PASSOU, nunca --no-verify)
-8. Push (nunca force, pergunta antes de rebase)
-+ Restrições obrigatórias
+0. Evaluate task size (LARGE/SMALL)
+1. Determine flow_id
+2. Inventory test data (fixtures/deterministic mocks)
+3. Inventory tests (with cross-ref to jarvis-plan)
+4. Execute pipeline (lint → typecheck → test → migration → build → healthcheck)
+4a. Diagnosis and correction loop (classify cause, plan, correct, max 3 attempts)
+5. Generate report in docs/test_report_{flow_id}.md
+6. Finish
+7. Commit (only if PASSED, never --no-verify)
+8. Push (never force, ask before rebase)
++ Mandatory restrictions
 ```
 
-## Adaptações por tipo
+## Adaptations by type
 
 ### Backend
 
@@ -46,11 +46,11 @@ Pipeline:
 - Test runner (pytest/jest/vitest/go test/etc)
 - Migration validation (alembic/prisma/goose/typeorm/etc)
 - Production build
-- Healthcheck local
+- Local healthcheck
 
-Causas de diagnóstico: ambiente, fixture/massa, teste, código, migration, contrato API, tipagem
+Diagnosis causes: environment, fixture/data, test, code, migration, API contract, typing
 
-Diretórios monitorados no Stop hook: `src/`, `app/`, `tests/`, `test/`, migrations dir, config files
+Directories monitored in Stop hook: `src/`, `app/`, `tests/`, `test/`, migrations dir, config files
 
 ### Frontend
 
@@ -59,13 +59,13 @@ Pipeline:
 - Linter (eslint/stylelint/etc)
 - Typechecker (tsc)
 - Test runner (jest/vitest + testing-library)
-- E2E tests (Playwright/Cypress, se existir)
+- E2E tests (Playwright/Cypress, if exists)
 - Production build
-- Lighthouse/axe audit (se configurado)
+- Lighthouse/axe audit (if configured)
 
-Causas de diagnóstico: ambiente, mock/massa, teste, código, tipagem, build, acessibilidade
+Diagnosis causes: environment, mock/data, test, code, typing, build, accessibility
 
-Diretórios monitorados: `src/`, `public/`, `package.json`, `tsconfig.json`
+Monitored directories: `src/`, `public/`, `package.json`, `tsconfig.json`
 
 ### Mobile
 
@@ -73,33 +73,33 @@ Pipeline:
 - Dependency install (pub get/pod install/gradle)
 - Analyzer (flutter analyze / swiftlint / ktlint)
 - Test runner (flutter test / XCTest / instrumentation)
-- Integration test no device/simulator
+- Integration test on device/simulator
 - Production build
 
-Causas de diagnóstico: ambiente, mock/massa, teste, código, design (Figma comparison)
+Diagnosis causes: environment, mock/data, test, code, design (Figma comparison)
 
-Diretórios monitorados: `lib/`, `integration_test/`, `pubspec.yaml`, etc.
+Monitored directories: `lib/`, `integration_test/`, `pubspec.yaml`, etc.
 
-## Qualidade mínima
+## Minimum quality
 
-- **Barra de qualidade = presets existentes** (~9000+ chars). Se ficou mais curto, está incompleto.
-- Pipeline com **comandos reais da stack** (ex: `ruff check . --fix`, `flutter test --coverage`, `npx prisma migrate status`) — nunca genéricos
-- Loop de diagnóstico com causas específicas da stack e exemplos concretos de correção
-- Commit/push com as mesmas regras duras dos presets existentes
-- Restrições obrigatórias completas
-- Incluir tabela de classificação de causas com ação para cada tipo
+- **Quality bar = existing presets** (~9000+ chars). If it's shorter, it's incomplete.
+- Pipeline with **real stack commands** (e.g.: `ruff check . --fix`, `flutter test --coverage`, `npx prisma migrate status`) — never generic
+- Diagnosis loop with stack-specific causes and concrete correction examples
+- Commit/push with the same hard rules as existing presets
+- Complete mandatory restrictions
+- Include cause classification table with action for each type
 
-## Exemplo de conteúdo stack-specific
+## Example of stack-specific content
 
-**RUIM:**
+**BAD:**
 ```
 4. Execute test runner
-   Se falhar, verifique o erro e corrija.
+   If it fails, check the error and fix it.
 ```
 
-**BOM:**
+**GOOD:**
 ```
-4. Executar pipeline
+4. Execute pipeline
 
 ```bash
 cd $ROOT

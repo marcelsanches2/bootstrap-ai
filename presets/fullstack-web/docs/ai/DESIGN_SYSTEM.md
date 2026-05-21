@@ -1,57 +1,57 @@
 # Design System
 
-## Objetivo
+## Objective
 
-Garantir consistência visual e reduzir retrabalho sem bloquear evolução do produto.
+Ensure visual consistency and reduce rework without blocking product evolution.
 
 ## Tokens
 
-Use tokens centralizados para:
+Use centralized tokens for:
 
-- cor
-- tipografia
-- espaçamento
-- raio
-- sombra
+- color
+- typography
+- spacing
+- border radius
+- shadow
 - z-index
 - breakpoints
 
-Valor hardcoded só é aceitável se o projeto ainda não tem token correspondente e o plano propõe consolidar depois.
+Hardcoded values are only acceptable if the project doesn't yet have a corresponding token and the plan proposes consolidating later.
 
-## Componentes
+## Components
 
-Componentes reutilizáveis devem ter:
+Reusable components must have:
 
-- estados: default, hover, focus, disabled, loading, error quando aplicável
-- variações nomeadas por intenção, não por cor solta
-- acessibilidade embutida
-- API de props simples
+- states: default, hover, focus, disabled, loading, error when applicable
+- variations named by intent, not by loose color
+- built-in accessibility
+- simple props API
 
 ## Layout
 
-- Mobile, tablet e desktop quando aplicável.
-- Não assuma uma única largura.
-- Defina comportamento de overflow, truncamento e empty states.
+- Mobile, tablet, and desktop when applicable.
+- Do not assume a single width.
+- Define overflow, truncation, and empty state behavior.
 
 ## UX states
 
-Toda tela/fluxo assíncrono precisa decidir:
+Every async screen/flow must decide:
 
 - loading
 - empty
 - error
 - success
-- permission denied quando aplicável
+- permission denied when applicable
 
-## Regra visual
+## Visual rule
 
-Não aceite UI "funcional mas feia" em entrega de produto. Se o plano não define visual suficiente para implementar com qualidade, marque pendência.
+Do not accept "functional but ugly" UI in product delivery. If the plan doesn't define enough visual detail to implement with quality, flag it as a pending item.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Não usar valor hardcoded quando existe token correspondente**: cor, espaçamento, tipografia devem vir do design system.
-- **Não assumir uma única largura**: layout deve funcionar em mobile, tablet e desktop quando aplicável.
-- **Não aceitar UI "funcional mas feia"**: se o plano não define visual suficiente, marque pendência.
-- **Toda tela/fluxo assíncrono deve decidir estados de UI**: loading, empty, error, success, permission denied.
+- **Do not use hardcoded values when a corresponding token exists**: color, spacing, typography must come from the design system.
+- **Do not assume a single width**: layout must work on mobile, tablet, and desktop when applicable.
+- **Do not accept "functional but ugly" UI**: if the plan doesn't define enough visual detail, flag it as a pending item.
+- **Every async screen/flow must decide UI states**: loading, empty, error, success, permission denied.

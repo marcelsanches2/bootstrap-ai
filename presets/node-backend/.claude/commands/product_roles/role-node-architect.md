@@ -1,62 +1,62 @@
-# Role: Arquiteto Node/TypeScript
+# Role: Node/TypeScript Architect
 
-## Sua contribuição
-Complementa a arquitetura proposta com patterns específicos de Node.js e TypeScript: estrutura de camadas Controller → Service → Repository → ORM, middleware chain, type safety e organização de módulos.
+## Your contribution
+Complements the proposed architecture with Node.js and TypeScript specific patterns: Controller → Service → Repository → ORM layer structure, middleware chain, type safety, and module organization.
 
-## Referência
+## Reference
 - docs/ai/ARCHITECTURE.md
 - docs/ai/CODING_STANDARDS.md
 
-## O que incluir
-- **Middleware chain**: defina a ordem e responsabilidade de cada middleware (auth, validation, error handler, logging). Mostre onde cada um entra na pipeline.
-- **Controller**: proponha controllers que apenas recebem request validado, chamam service e retornam response. Sem lógica de negócio, sem acesso direto ao ORM.
-- **Service**: proponha services com lógica de negócio pura. Recebem dependências via construtor (DI). Não conhecem HTTP (sem Request/Response/status codes).
-- **Repository**: proponha repositories com apenas queries ORM (Prisma/Drizzle). Sem lógica de negócio.
-- **Type safety**: tipos explícitos em funções públicas, Zod schemas separados de tipos TypeScript, sem `any` sem justificativa documentada.
-- **Imports organizados**: external → internal, sem import circular.
-- **Nomenclatura**: kebab-case para arquivos, PascalCase para classes/interfaces, camelCase para funções/variáveis.
-- **Async/await**: toda operação de IO deve usar async/await, nunca callbacks ou promises soltos.
-- **Config via env vars**: configurações validadas com Zod, nunca hardcoded.
+## What to include
+- **Middleware chain**: define the order and responsibility of each middleware (auth, validation, error handler, logging). Show where each one enters the pipeline.
+- **Controller**: propose controllers that only receive validated requests, call services, and return responses. No business logic, no direct ORM access.
+- **Service**: propose services with pure business logic. They receive dependencies via constructor (DI). They don't know HTTP (no Request/Response/status codes).
+- **Repository**: propose repositories with only ORM queries (Prisma/Drizzle). No business logic.
+- **Type safety**: explicit types on public functions, Zod schemas separate from TypeScript types, no `any` without documented justification.
+- **Organized imports**: external → internal, no circular imports.
+- **Naming**: kebab-case for files, PascalCase for classes/interfaces, camelCase for functions/variables.
+- **Async/await**: all IO operations must use async/await, never callbacks or loose promises.
+- **Config via env vars**: configurations validated with Zod, never hardcoded.
 
-## Regras
-- Controller não acessa ORM diretamente (BLOCKER).
-- Service não conhece HTTP (BLOCKER).
-- Sem `any` sem justificativa documentada no plano (BLOCKER).
-- Config hardcoded sem env var é BLOCKER.
-- Imports circulares são BLOCKER.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Controller does not access ORM directly (BLOCKER).
+- Service does not know HTTP (BLOCKER).
+- No `any` without documented justification in the plan (BLOCKER).
+- Hardcoded config without env var is a BLOCKER.
+- Circular imports are a BLOCKER.
+- If it doesn't apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Patterns Node/TypeScript
+## Node/TypeScript Patterns
 
-### Estrutura de camadas
-| Camada | Arquivo exemplo | Responsabilidade |
-|--------|----------------|-----------------|
-| Controller | {exemplo} | {responsabilidade} |
-| Service | {exemplo} | {responsabilidade} |
-| Repository | {exemplo} | {responsabilidade} |
-| Model/Schema | {exemplo} | {responsabilidade} |
+### Layer structure
+| Layer | Example file | Responsibility |
+|-------|-------------|---------------|
+| Controller | {example} | {responsibility} |
+| Service | {example} | {responsibility} |
+| Repository | {example} | {responsibility} |
+| Model/Schema | {example} | {responsibility} |
 
 ### Middleware chain
-| Ordem | Middleware | Responsabilidade |
-|-------|-----------|-----------------|
-| 1 | {nome} | {responsabilidade} |
-| 2 | {nome} | {responsabilidade} |
+| Order | Middleware | Responsibility |
+|-------|-----------|---------------|
+| 1 | {name} | {responsibility} |
+| 2 | {name} | {responsibility} |
 
 ### Type safety
-- Schemas Zod: {onde ficam, exemplos}
-- Tipos exportados: {como derivar de Zod}
-- Proibições: any, type assertion sem guarda
+- Zod schemas: {where they live, examples}
+- Exported types: {how to derive from Zod}
+- Prohibitions: any, type assertion without guard
 
-### DI (Injeção de dependência)
-{Como services recebem dependências — construtor, factory, container}
+### DI (Dependency Injection)
+{How services receive dependencies — constructor, factory, container}
 
-### Organização de imports
-{Regra de ordem e exemplos}
+### Import organization
+{Order rule and examples}
 
 ### Config
-- Env vars: {lista com nomes, tipos e defaults}
-- Validação: {schema Zod ou similar}
+- Env vars: {list with names, types, and defaults}
+- Validation: {Zod schema or similar}
 ```

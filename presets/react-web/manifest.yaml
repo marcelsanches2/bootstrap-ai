@@ -1,55 +1,57 @@
 name: react-web
-version: 1
-description: "React web lifecycle preset"
-
-required_files:
-  - CLAUDE.md
-  - .claude/settings.json
-  - .claude/commands/jarvis-plan.md
-  - .claude/commands/grill.md
-  - .claude/commands/ship.md
-  - .claude/commands/refactor.md
-  - .claude/commands/kickoff.md
-  - .claude/commands/design-phase.md
-  - .claude/commands/jarvis-test-flow.md
-  - .claude/commands/product_roles/role-architect.md
-  - .claude/commands/product_roles/role-frontend-architect.md
-  - .claude/commands/product_roles/role-designer.md
-  - .claude/commands/product_roles/role-web-qa.md
-  - .claude/commands/product_roles/role-pm.md
-  - .claude/commands/product_roles/role-delivery.md
-  - .claude/commands/product_roles/review-accessibility.md
-  - .claude/commands/product_roles/review-performance.md
-  - docs/ai/ARCHITECTURE.md
-  - docs/ai/CODING_STANDARDS.md
-  - docs/ai/DESIGN_SYSTEM.md
-  - docs/ai/ACCESSIBILITY_GUIDE.md
-  - docs/ai/PERFORMANCE_GUIDE.md
-  - docs/ai/DEPLOYMENT_GUIDE.md
-  - docs/ai/TESTING_GUIDE.md
-  - docs/ai/FEATURE_GUIDE.md
-
-tech_tags:
-  - node
-  - typescript
+version: 1.0.0
+description: React + TypeScript preset for modern web applications with Vite or Next.js
+author: bootstrap-ai
+tags:
   - react
-  - next
+  - typescript
   - vite
-  - tailwind
-
-library_tags:
-  - axios
-  - tanstack-query
-  - react-query
-  - zustand
-  - redux
-  - redux-toolkit
-  - react-router
-  - zod
-  - react-hook-form
-  - jest
-  - vitest
-  - playwright
-  - cypress
-  - eslint
-  - prettier
+  - nextjs
+  - frontend
+  - web
+stack:
+  framework: react
+  language: typescript
+  buildTool:
+    - vite
+    - next
+  styling: tailwindcss
+  stateManagement:
+    - zustand
+    - tanstack-query
+  testing:
+    - vitest
+    - testing-library
+    - playwright
+  forms:
+    - react-hook-form
+    - zod
+features:
+  - component architecture with feature-based organization
+  - centralized data fetching with TanStack Query
+  - forms with validation via React Hook Form + Zod
+  - design system with Tailwind CSS tokens
+  - accessibility with Radix UI or equivalent
+  - performance with lazy loading and virtualized lists
+  - deployment for Vite (static) and Next.js (SSR/SSG)
+  - security headers and cache configuration
+  - E2E testing with Playwright
+  - CI/CD ready
+commands:
+  - jarvis-plan
+  - jarvis-test-flow
+  - grill
+  - kickoff
+  - ship
+  - refactor
+  - design-phase
+roles:
+  - role-architect
+  - role-frontend-architect
+  - role-designer
+  - role-web-qa
+  - role-pm
+  - role-delivery
+reviews:
+  - review-accessibility
+  - review-performance

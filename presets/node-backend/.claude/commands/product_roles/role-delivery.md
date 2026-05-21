@@ -1,70 +1,70 @@
 # Role: Delivery
 
-## Sua contribuição
-Gera a seção "Deploy e entrega" do plano, cobrindo env vars, CI/CD, rollback, procedimento de deploy e riscos.
+## Your contribution
+Generates the "Deploy and delivery" section of the plan, covering env vars, CI/CD, rollback, deploy procedure, and risks.
 
-## Referência
+## Reference
 - docs/ai/DEPLOYMENT_GUIDE.md
 
-## O que incluir
-- **Escopo de entrega**: o que entra nesta entrega (arquivos com caminho completo) e o que NÃO entra.
-- **Dependências externas**: pacotes npm novos, serviços, integrações. Identifique cada uma.
-- **Migrations**: migração de banco incluída, testada, com caminho de rollback/downgrade documentado.
-- **Rollback**: procedimento claro de rollback se algo der errado em produção.
-- **Deploy procedure**: passo a passo do deploy (comando, CI/CD pipeline, ou manual).
-- **Env vars novas**: cada variável nova documentada em `.env.example` com nome, tipo, descrição e valor default quando aplicável.
-- **Breaking changes**: se houver, documente e garanta versionamento (ex.: /api/v2/).
-- **Critérios de aceite de entrega**: como validar que o deploy foi bem-sucedido.
-- **Riscos e mitigações**: riscos identificados com ações mitigadoras concretas.
+## What to include
+- **Delivery scope**: what goes into this delivery (files with full paths) and what does NOT.
+- **External dependencies**: new npm packages, services, integrations. Identify each one.
+- **Migrations**: database migration included, tested, with documented rollback/downgrade path.
+- **Rollback**: clear rollback procedure if something goes wrong in production.
+- **Deploy procedure**: step-by-step deploy (command, CI/CD pipeline, or manual).
+- **New env vars**: each new variable documented in `.env.example` with name, type, description, and default value when applicable.
+- **Breaking changes**: if any, document and ensure versioning (e.g., /api/v2/).
+- **Delivery acceptance criteria**: how to validate that the deploy was successful.
+- **Risks and mitigations**: identified risks with concrete mitigating actions.
 
-## Regras
-- Sem rollback definido é BLOCKER.
-- Breaking change sem versionamento é BLOCKER.
-- Dependência externa não mapeada é BLOCKER.
-- Toda env var nova deve estar em `.env.example`.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- No defined rollback is a BLOCKER.
+- Breaking change without versioning is a BLOCKER.
+- Unmapped external dependency is a BLOCKER.
+- Every new env var must be in `.env.example`.
+- If it doesn't apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Deploy e entrega
+## Deploy and delivery
 
-### Arquivos alterados/criados
-- `{caminho/completo/do/arquivo}` — {o que faz}
+### Changed/created files
+- `{full/file/path}` — {what it does}
 
-### Dependências externas
-| Pacote/Serviço | Versão | Motivo |
-|----------------|--------|--------|
-| {nome} | {versão} | {motivo} |
+### External dependencies
+| Package/Service | Version | Reason |
+|----------------|---------|--------|
+| {name} | {version} | {reason} |
 
 ### Migrations
-- **Up**: {comando ou descrição}
-- **Down**: {comando ou descrição}
-- **Rollback de dados**: {como reverter se necessário}
+- **Up**: {command or description}
+- **Down**: {command or description}
+- **Data rollback**: {how to revert if needed}
 
-### Env vars novas
-| Nome | Tipo | Default | Descrição |
-|------|------|---------|-----------|
-| {NOME} | {tipo} | {default} | {descrição} |
+### New env vars
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| {NAME} | {type} | {default} | {description} |
 
 ### Deploy procedure
-1. {passo}
-2. {passo}
-3. {passo}
+1. {step}
+2. {step}
+3. {step}
 
 ### Rollback
-1. {passo}
-2. {passo}
+1. {step}
+2. {step}
 
 ### Breaking changes
-{Nenhuma / lista com versionamento}
+{None / list with versioning}
 
-### Critérios de aceite de entrega
-- [ ] {critério}
-- [ ] {critério}
+### Delivery acceptance criteria
+- [ ] {criterion}
+- [ ] {criterion}
 
-### Riscos e mitigações
-| Risco | Probabilidade | Mitigação |
-|-------|--------------|-----------|
-| {risco} | {alta/média/baixa} | {ação} |
+### Risks and mitigations
+| Risk | Probability | Mitigation |
+|------|------------|-----------|
+| {risk} | {high/medium/low} | {action} |
 ```

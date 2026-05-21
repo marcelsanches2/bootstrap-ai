@@ -1,14 +1,14 @@
 # Coding Standards
 
-Padrões de código para Python backend.
+Code standards for Python backend.
 
-## Formatação e linting
+## Formatting and linting
 
-### Ferramentas
+### Tools
 
-- **Formatter**: `ruff format` (substitui black)
-- **Linter**: `ruff check` (substitui flake8, isort, pyupgrade)
-- **Type checker**: `mypy --strict` ou `pyright`
+- **Formatter**: `ruff format` (replaces black)
+- **Linter**: `ruff check` (replaces flake8, isort, pyupgrade)
+- **Type checker**: `mypy --strict` or `pyright`
 
 ### pyproject.toml
 
@@ -31,7 +31,7 @@ warn_return_any = true
 disallow_untyped_defs = true
 ```
 
-### Comandos
+### Commands
 
 ```bash
 ruff check . --fix
@@ -39,11 +39,11 @@ ruff format .
 mypy app/
 ```
 
-Rodar antes de todo commit.
+Run before every commit.
 
-## Tipagem
+## Typing
 
-Sempre tipar funções públicas:
+Always type public functions:
 
 ```python
 async def get_user(user_id: int) -> User | None:
@@ -53,29 +53,29 @@ users: list[User] = []
 config: dict[str, Any] = {}
 ```
 
-Type hints modernos (3.12+): `X | Y` ao invés de `Union[X, Y]`.
+Modern type hints (3.12+): `X | Y` instead of `Union[X, Y]`.
 
-Nunca usar `Any` sem justificativa documentada.
+Never use `Any` without documented justification.
 
-Usar `from __future__ import annotations` para forward refs.
+Use `from __future__ import annotations` for forward refs.
 
-## Nomenclatura
+## Naming
 
-| Elemento | Convenção | Exemplo |
+| Element | Convention | Example |
 |---|---|---|
-| Módulo/arquivo | snake_case | user_service.py |
-| Classe | PascalCase | UserService |
-| Função/método | snake_case | create_user() |
-| Constante | UPPER_SNAKE | MAX_RETRIES |
-| Booleano | is_/has_/can_ | is_active, has_permission |
+| Module/file | snake_case | user_service.py |
+| Class | PascalCase | UserService |
+| Function/method | snake_case | create_user() |
+| Constant | UPPER_SNAKE | MAX_RETRIES |
+| Boolean | is_/has_/can_ | is_active, has_permission |
 | Enum | PascalCase class | UserRole.admin |
-| Pydantic schema | PascalCase + sufixo | UserCreate, UserResponse |
-| Tabela SQL | snake_case plural | user_profiles |
-| Coluna SQL | snake_case | created_at |
+| Pydantic schema | PascalCase + suffix | UserCreate, UserResponse |
+| SQL table | plural snake_case | user_profiles |
+| SQL column | snake_case | created_at |
 
-## Tratamento de erros
+## Error handling
 
-Hierarquia de exceções customizadas:
+Custom exception hierarchy:
 
 ```python
 class AppError(Exception):
@@ -86,18 +86,18 @@ class AppError(Exception):
 
 class NotFoundError(AppError):
     def __init__(self, resource: str, id: int | str):
-        super().__init__(code="NOT_FOUND", message=f"{resource} não encontrado", status=404)
+        super().__init__(code="NOT_FOUND", message=f"{resource} not found", status=404)
 ```
 
-Regras:
-- Nunca `except Exception: pass`.
-- Levantar AppError para erros de negócio.
-- Logar antes de converter para response.
-- Deixar inesperados escaparem para handler global.
+Rules:
+- Never `except Exception: pass`.
+- Raise AppError for business errors.
+- Log before converting to response.
+- Let unexpected exceptions escape to global handler.
 
 ## Logging
 
-Structured logging com structlog:
+Structured logging with structlog:
 
 ```python
 logger = structlog.get_logger()
@@ -105,29 +105,29 @@ logger.info("user_created", user_id=user.id, email=user.email)
 logger.error("payment_failed", order_id=order.id, error=str(e))
 ```
 
-Níveis: DEBUG (dev), INFO (eventos de negócio), WARNING (anômalo recuperável), ERROR (atenção), CRITICAL (inoperante).
+Levels: DEBUG (dev), INFO (business events), WARNING (recoverable anomaly), ERROR (attention), CRITICAL (inoperable).
 
-**Nunca logar**: senhas, tokens, PII, bodies completos em produção.
+**Never log**: passwords, tokens, PII, complete bodies in production.
 
-## Comentários
+## Comments
 
-Comentar o "por quê", não o "quê".
+Comment the "why", not the "what".
 
 ```python
-# ✓ Bom: explica decisão
-# Pessimistic lock aqui por race condition no saldo (incidente #123)
+# ✓ Good: explains decision
+# Pessimistic lock here due to race condition on balance (incident #123)
 await session.execute(select(Account).where(...).with_for_update())
 
-# ✗ Ruim: repete código
+# ✗ Bad: repeats code
 # select account
 await session.execute(select(Account).where(...))
 ```
 
-Não comentar código morto — delete e use git.
+Do not comment dead code — delete and use git.
 
 ## Imports
 
-Ordem: stdlib → third-party → local. Separados por linha em branco.
+Order: stdlib → third-party → local. Separated by blank line.
 
 ```python
 from __future__ import annotations
@@ -141,69 +141,69 @@ from app.schemas.users import UserCreate
 from app.services.users import UserService
 ```
 
-Regras:
-- Um import por linha para `from ... import ...`.
-- Nunca `from app.models import *`.
-- Nunca import circular — use TYPE_CHECKING.
+Rules:
+- One import per line for `from ... import ...`.
+- Never `from app.models import *`.
+- Never circular import — use TYPE_CHECKING.
 
 ## Async
 
-Sempre async para IO:
+Always async for IO:
 
 ```python
 result = await session.execute(query)
 response = await http_client.post(url, json=data)
 ```
 
-Nunca bloquear o event loop:
+Never block the event loop:
 
 ```python
-import requests  # ❌ em async, use httpx
-time.sleep(5)    # ❌ em async, use asyncio.sleep
+import requests  # ❌ in async, use httpx
+time.sleep(5)    # ❌ in async, use asyncio.sleep
 ```
 
-Banco sempre async:
+Database always async:
 
 ```python
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 engine = create_async_engine("postgresql+asyncpg://...")
 ```
 
-## Proibições
+## Prohibitions
 
 - `from app.models import *`
 - `except Exception: pass`
-- `time.sleep()` em async
-- `requests` em async (use `httpx`)
-- `os.environ["KEY"]` direto (use Settings)
+- `time.sleep()` in async
+- `requests` in async (use `httpx`)
+- `os.environ["KEY"]` directly (use Settings)
 - `eval()`, `exec()`
-- `pickle` para serialização
-- `subprocess` com input do usuário
-- `# noqa` sem justificativa
+- `pickle` for serialization
+- `subprocess` with user input
+- `# noqa` without justification
 
-## Regras duras
+## Hard rules
 
-- Não commitar sem passar ruff + mypy.
-- Não usar `Any` sem documentar por quê.
-- Não logar dados sensíveis.
-- Não usar sync IO em código async.
-- Não importar com `*`.
-- Não deixar `except: pass`.
-- Não hardcodar configuração.
+- Do not commit without passing ruff + mypy.
+- Do not use `Any` without documenting why.
+- Do not log sensitive data.
+- Do not use sync IO in async code.
+- Do not import with `*`.
+- Do not leave `except: pass`.
+- Do not hardcode configuration.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Lint obrigatório pré-commit**: Não commitar sem passar `ruff check` + `ruff format` + `mypy`.
-- **`Any` documentado**: Não usar `Any` sem justificativa documentada.
-- **Não logar dados sensíveis**: Nunca logar senhas, tokens, PII ou bodies completos em produção.
-- **Async sem bloqueio**: Não usar sync IO (`requests`, `time.sleep`) em código async.
-- **Sem import curinga**: Não usar `from ... import *`.
-- **Sem `except: pass`**: Nunca usar `except Exception: pass`.
-- **Config via Settings**: Não usar `os.environ["KEY"]` diretamente; use Settings.
-- **Sem `eval`/`exec`**: Proibido `eval()`, `exec()`.
-- **Sem `pickle` para serialização**: Proibido `pickle` para serialização.
-- **Sem `subprocess` com input do usuário**: Proibido `subprocess` com input não sanitizado.
-- **Sem `# noqa` sem justificativa**: Todo `# noqa` deve ter motivo documentado.
-- **Sem código morto comentado**: Delete e use git; não comente código morto.
+- **Mandatory pre-commit lint**: Do not commit without passing `ruff check` + `ruff format` + `mypy`.
+- **Documented `Any`**: Do not use `Any` without documented justification.
+- **Do not log sensitive data**: Never log passwords, tokens, PII or complete bodies in production.
+- **Async without blocking**: Do not use sync IO (`requests`, `time.sleep`) in async code.
+- **No wildcard import**: Do not use `from ... import *`.
+- **No `except: pass`**: Never use `except Exception: pass`.
+- **Config via Settings**: Do not use `os.environ["KEY"]` directly; use Settings.
+- **No `eval`/`exec`**: Prohibited `eval()`, `exec()`.
+- **No `pickle` for serialization**: Prohibited `pickle` for serialization.
+- **No `subprocess` with user input**: Prohibited `subprocess` with unsanitized input.
+- **No `# noqa` without justification**: Every `# noqa` must have documented reason.
+- **No commented dead code**: Delete and use git; do not comment dead code.

@@ -1,70 +1,70 @@
-# Role: Segurança
+# Role: Security
 
-## Sua contribuição
-Gera a seção "Segurança" do plano, definindo auth, autorização, validação, proteção de dados sensíveis e proteção contra ataques.
+## Your contribution
+Generates the "Security" section of the plan, defining auth, authorization, validation, sensitive data protection, and attack protection.
 
-## Referência
+## Reference
 - docs/ai/SECURITY_GUIDE.md
 
-## O que incluir
-- **Autenticação**: endpoints protegidos com middleware de auth. Fluxo de login/refresh/token.
-- **Autorização**: verificação de role ou ownership em cada operação sensível.
-- **Validação de input**: Zod em todas as entradas de boundary (controller, API route).
-- **Senhas**: hasheadas com bcrypt, nunca texto plano.
-- **JWT**: com expiração (access 15min, refresh 7d). Refresh token rotation.
-- **Dados sensíveis em logs**: nenhum token, senha, Authorization header, cookie ou PII sem mascaramento.
-- **Dados sensíveis em response**: nenhum passwordHash, token ou PII exposto.
-- **CORS**: origins explícitos, nunca `*`.
-- **Rate limiting**: em login, reset e endpoints sensíveis.
-- **Security headers**: Helmet configurado.
-- **SQL injection**: queries parametrizadas (Prisma já faz por padrão).
-- **Code injection**: sem `eval`/`Function` com input do usuário.
-- **Secrets**: via env vars, nunca hardcoded.
-- **HTTPS**: em produção.
+## What to include
+- **Authentication**: protected endpoints with auth middleware. Login/refresh/token flow.
+- **Authorization**: role or ownership check on each sensitive operation.
+- **Input validation**: Zod on all boundary inputs (controller, API route).
+- **Passwords**: hashed with bcrypt, never plain text.
+- **JWT**: with expiration (access 15min, refresh 7d). Refresh token rotation.
+- **Sensitive data in logs**: no tokens, passwords, Authorization headers, cookies, or PII without masking.
+- **Sensitive data in response**: no passwordHash, token, or exposed PII.
+- **CORS**: explicit origins, never `*`.
+- **Rate limiting**: on login, reset, and sensitive endpoints.
+- **Security headers**: Helmet configured.
+- **SQL injection**: parameterized queries (Prisma does this by default).
+- **Code injection**: no `eval`/`Function` with user input.
+- **Secrets**: via env vars, never hardcoded.
+- **HTTPS**: in production.
 
-## Regras
-- Auth faltando em endpoint protegido é bloqueante.
-- Senha em texto plano é bloqueante.
-- PII em log é bloqueante.
-- CORS com `*` em produção é bloqueante.
-- Nunca commitar secrets, tokens, dumps, `.env` real ou credenciais.
-- Se a task não tem superfície de segurança nova: escreva "Não se aplica" e explique por quê.
+## Rules
+- Missing auth on protected endpoint is blocking.
+- Password in plain text is blocking.
+- PII in logs is blocking.
+- CORS with `*` in production is blocking.
+- Never commit secrets, tokens, dumps, real `.env`, or credentials.
+- If the task has no new security surface: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
-## Segurança
+## Security
 
-### Autenticação e autorização
+### Authentication and authorization
 | Endpoint | Auth | Role/Ownership | Middleware |
 |---|---|---|---|
-| {VERB /path} | {público/protegido} | {regra} | {nome do middleware} |
+| {VERB /path} | {public/protected} | {rule} | {middleware name} |
 
-### Validação de input
-| Endpoint | Schema | Campos validados |
+### Input validation
+| Endpoint | Schema | Validated fields |
 |---|---|---|
-| {VERB /path} | {Zod schema} | {campos + regras} |
+| {VERB /path} | {Zod schema} | {fields + rules} |
 
-### Dados sensíveis
-| Dado | Armazenamento | Em log | Em response |
+### Sensitive data
+| Data | Storage | In logs | In response |
 |---|---|---|---|
-| {senha/token/PII} | {hash/encrypt} | {mascarado/não loga} | {não retorna} |
+| {password/token/PII} | {hash/encrypt} | {masked/not logged} | {not returned} |
 
 ### CORS
-| Ambiente | Origins | Methods | Headers |
+| Environment | Origins | Methods | Headers |
 |---|---|---|---|
-| {dev/prod} | {URLs} | {métodos} | {headers} |
+| {dev/prod} | {URLs} | {methods} | {headers} |
 
 ### Rate limiting
-| Endpoint | Limite | Janela | Estratégia |
+| Endpoint | Limit | Window | Strategy |
 |---|---|---|---|
-| {path} | {N requests} | {tempo} | {IP/user} |
+| {path} | {N requests} | {time} | {IP/user} |
 
 ### Security headers
-{headers configurados via Helmet ou manual}
+{headers configured via Helmet or manually}
 
 ### Secrets
-| Variável | Uso | Nunca hardcoded |
+| Variable | Usage | Never hardcoded |
 |---|---|---|
-| {NOME} | {para quê} | {confirmado} |
+| {NAME} | {what for} | {confirmed} |
 ```

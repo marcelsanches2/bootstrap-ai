@@ -1,38 +1,38 @@
 # Role: Backend Architect
 
-## Sua contribuição
-Complementa a arquitetura com patterns Python específicos: camada Router → Service → Repository → Model, injeção de dependência, async/sync, FastAPI patterns e convenções estruturais.
+## Your contribution
+Complements the architecture with specific Python patterns: Router → Service → Repository → Model layer, dependency injection, async/sync, FastAPI patterns and structural conventions.
 
-## Referência
+## Reference
 - docs/ai/ARCHITECTURE.md
 - docs/ai/CODING_STANDARDS.md
 
-## O que incluir
-- **Separação de camadas**: detalhe o que cada camada faz — Router (apenas recebe HTTP, chama service, retorna response), Service (lógica de negócio, sem HTTP), Repository (apenas queries, sem lógica de negócio), Model (definição de tabela, sem lógica).
-- **Injeção de dependência**: como services recebem dependências no construtor, como repositories recebem session, como routers injetam via `Depends()`. Tudo centralizado em `dependencies.py`.
-- **Async/sync**: especifique onde usar async (toda operação de IO: banco, HTTP, arquivo) e onde sync é aceitável (CPU-bound puro em background). Nunca bloquear o event loop.
-- **Schemas vs Models**: Pydantic v2 para schemas de request/response, separados de models SQLAlchemy. Nenhum campo sensível em schema de response.
-- **Imports e nomenclatura**: ordem stdlib → third-party → local. snake_case para arquivos e funções, PascalCase para classes. `TYPE_CHECKING` para evitar imports circulares.
-- **Config via Settings**: pydantic-settings para toda configuração. Nunca hardcoded.
-- **Transações**: fronteira explícita. Repository nunca chama commit/rollback — delegado ao service.
+## What to include
+- **Layer separation**: detail what each layer does — Router (only receives HTTP, calls service, returns response), Service (business logic, no HTTP), Repository (only queries, no business logic), Model (table definition, no logic).
+- **Dependency injection**: how services receive dependencies in the constructor, how repositories receive session, how routers inject via `Depends()`. Everything centralized in `dependencies.py`.
+- **Async/sync**: specify where to use async (all IO operations: database, HTTP, file) and where sync is acceptable (pure CPU-bound in background). Never block the event loop.
+- **Schemas vs Models**: Pydantic v2 for request/response schemas, separated from SQLAlchemy models. No sensitive fields in response schema.
+- **Imports and naming**: order stdlib → third-party → local. snake_case for files and functions, PascalCase for classes. `TYPE_CHECKING` to avoid circular imports.
+- **Config via Settings**: pydantic-settings for all configuration. Never hardcoded.
+- **Transactions**: explicit boundary. Repository never calls commit/rollback — delegated to the service.
 
-## Regras
-- Router não contém lógica de negócio nem acessa models/banco diretamente.
-- Service não conhece HTTP (sem Request/Response/status codes).
-- Model não contém lógica de negócio.
-- Sem import circular (usar `TYPE_CHECKING`).
-- Nenhum sync em contexto async para IO.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Router does not contain business logic nor accesses models/database directly.
+- Service does not know HTTP (no Request/Response/status codes).
+- Model does not contain business logic.
+- No circular imports (use `TYPE_CHECKING`).
+- No sync in async context for IO.
+- If it does not apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Patterns Backend
+## Backend Patterns
 
-### Separação de camadas
-{Descreva o fluxo Router → Service → Repository → Model para cada endpoint/fluxo relevante}
+### Layer separation
+{Describe the Router → Service → Repository → Model flow for each relevant endpoint/flow}
 
-### Injeção de dependência
+### Dependency injection
 ```python
 # dependencies.py
 def get_repository(session: AsyncSession = Depends(get_session)) -> Repository:
@@ -43,19 +43,19 @@ def get_service(repo: Repository = Depends(get_repository)) -> Service:
 ```
 
 ### Async/sync
-| Operação | Padrão | Exemplo |
-|----------|--------|---------|
-| Banco de dados | async + AsyncSession | `await session.execute(...)` |
-| HTTP externo | async + httpx.AsyncClient | `async with httpx.AsyncClient() as client:` |
-| Arquivo local | sync ou aiofiles | conforme volume |
-| CPU-bound | run_in_executor | para processamento pesado |
+| Operation | Pattern | Example |
+|-----------|---------|---------|
+| Database | async + AsyncSession | `await session.execute(...)` |
+| External HTTP | async + httpx.AsyncClient | `async with httpx.AsyncClient() as client:` |
+| Local file | sync or aiofiles | depending on volume |
+| CPU-bound | run_in_executor | for heavy processing |
 
 ### Schemas (Pydantic v2)
-{Liste schemas de request e response para cada endpoint, com tipos, validação e exemplos}
+{List request and response schemas for each endpoint, with types, validation and examples}
 
-### Nomenclatura e imports
-{Convenções específicas para arquivos novos}
+### Naming and imports
+{Specific conventions for new files}
 
-### Transações
-{Como delimitar transações em cada fluxo — onde começa, onde commita, onde faz rollback}
+### Transactions
+{How to delimit transactions in each flow — where it starts, where it commits, where it rolls back}
 ```

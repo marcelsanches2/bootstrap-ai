@@ -1,155 +1,155 @@
 # /design-phase
 
-Define o design system visual do projeto. Três modos: extrair do Figma, gerar do zero, ou pular.
+Defines the project's visual design system. Three modes: extract from Figma, generate from scratch, or skip.
 
-## Quando usar
+## When to use
 
-- Após `/kickoff` ter completado (PRODUCT_BRIEF.md existe)
-- Usuário diz "quero definir o design", "criar design system"
-- O preset aplicado tem `docs/ai/DESIGN_SYSTEM.md` genérico que precisa ser populado
+- After `/kickoff` has completed (PRODUCT_BRIEF.md exists)
+- User says "I want to define the design", "create design system"
+- The applied preset has a generic `docs/ai/DESIGN_SYSTEM.md` that needs to be populated
 
-## Pré-requisitos
+## Prerequisites
 
-- `PRODUCT_BRIEF.md` na raiz do projeto (com target users, features, plataforma)
-- Projeto já tem stack decidida (do kickoff ou detectada)
-
----
-
-## Passo 1 — Escolher modo
-
-Pergunte:
-
-```
-Como você quer definir o design system?
-
-1. "Tenho Figma" — vou extrair tokens e componentes do link
-2. "Crie pra mim" — vou gerar um design system baseado no product brief
-3. "Pula" — sem design system por agora (pode rodar depois)
-
-Responda 1, 2 ou 3.
-```
+- `PRODUCT_BRIEF.md` in the project root (with target users, features, platform)
+- Project already has a decided stack (from kickoff or detected)
 
 ---
 
-## Modo 1 — Figma (link fornecido)
+## Step 1 — Choose mode
 
-### Receber o link
+Ask:
 
 ```
-Cole o link do Figma (design system).
+How do you want to define the design system?
+
+1. "I have Figma" — I'll extract tokens and components from the link
+2. "Create it for me" — I'll generate a design system based on the product brief
+3. "Skip" — no design system for now (can run later)
+
+Answer 1, 2, or 3.
 ```
 
-### Extrair informações do link
+---
 
-Se o link é acessível (URL do Figma), leia a página e extraia:
+## Mode 1 — Figma (link provided)
 
-1. **Paleta de cores** — primária, secundária, neutros, feedback (success, warning, error, info)
-2. **Tipografia** — fontes, tamanhos, pesos para headings, body, labels, captions
-3. **Espaçamento** — scale (4, 8, 12, 16, 24, 32, 48, 64...)
+### Receive the link
+
+```
+Paste the Figma link (design system).
+```
+
+### Extract information from the link
+
+If the link is accessible (Figma URL), read the page and extract:
+
+1. **Color palette** — primary, secondary, neutrals, feedback (success, warning, error, info)
+2. **Typography** — fonts, sizes, weights for headings, body, labels, captions
+3. **Spacing** — scale (4, 8, 12, 16, 24, 32, 48, 64...)
 4. **Border radius** — tokens (none, sm, md, lg, full)
-5. **Shadows** — níveis (sm, md, lg)
-6. **Componentes** — nomes, variantes, props visuais (button, input, card, modal, toast, avatar, badge, etc.)
-7. **Breakpoints** — se for responsivo (mobile, tablet, desktop)
-8. **Ícones** — set/library usado
+5. **Shadows** — levels (sm, md, lg)
+6. **Components** — names, variants, visual props (button, input, card, modal, toast, avatar, badge, etc.)
+7. **Breakpoints** — if responsive (mobile, tablet, desktop)
+8. **Icons** — set/library used
 
-Se o link não for diretamente acessível, peça ao usuário para colar o conteúdo relevante (tokens, CSS, ou exportação JSON do design system).
+If the link is not directly accessible, ask the user to paste the relevant content (tokens, CSS, or JSON export from the design system).
 
-### Gerar arquivos
+### Generate files
 
 **`docs/ai/DESIGN_SYSTEM.md`**:
 ```markdown
 # Design System — {{PROJECT_NAME}}
 
-> Fonte: [Figma — link]
+> Source: [Figma — link]
 
 ## Tokens
 
-### Cores
-| Token | Valor | Uso |
+### Colors
+| Token | Value | Usage |
 |---|---|---|
-| --color-primary | [hex] | Ações primárias, CTAs |
-| --color-primary-hover | [hex] | Hover de ações primárias |
-| --color-secondary | [hex] | Ações secundárias |
-| --color-background | [hex] | Fundo principal |
-| --color-surface | [hex] | Cards, modais |
-| --color-text | [hex] | Texto principal |
-| --color-text-muted | [hex] | Texto secundário |
-| --color-border | [hex] | Bordas |
-| --color-success | [hex] | Feedback positivo |
-| --color-warning | [hex] | Feedback de alerta |
-| --color-error | [hex] | Feedback de erro |
-| --color-info | [hex] | Feedback informativo |
+| --color-primary | [hex] | Primary actions, CTAs |
+| --color-primary-hover | [hex] | Hover for primary actions |
+| --color-secondary | [hex] | Secondary actions |
+| --color-background | [hex] | Main background |
+| --color-surface | [hex] | Cards, modals |
+| --color-text | [hex] | Primary text |
+| --color-text-muted | [hex] | Secondary text |
+| --color-border | [hex] | Borders |
+| --color-success | [hex] | Positive feedback |
+| --color-warning | [hex] | Warning feedback |
+| --color-error | [hex] | Error feedback |
+| --color-info | [hex] | Info feedback |
 
-### Tipografia
-| Token | Font | Peso | Tamanho | Linha |
+### Typography
+| Token | Font | Weight | Size | Line height |
 |---|---|---|---|---|
 | --font-heading | [font] | [weight] | [sizes] | [height] |
 | --font-body | [font] | [weight] | [sizes] | [height] |
 | --font-mono | [font] | [weight] | [sizes] | [height] |
 
-### Espaçamento
-| Token | Valor |
+### Spacing
+| Token | Value |
 |---|---|
 | --space-1 | 4px |
 | --space-2 | 8px |
 | ... | ... |
 
 ### Border Radius
-| Token | Valor |
+| Token | Value |
 |---|---|
-| --radius-sm | [valor] |
-| --radius-md | [valor] |
-| --radius-lg | [valor] |
+| --radius-sm | [value] |
+| --radius-md | [value] |
+| --radius-lg | [value] |
 | --radius-full | 9999px |
 
-### Sombras
-| Token | Valor |
+### Shadows
+| Token | Value |
 |---|---|
-| --shadow-sm | [valor] |
-| --shadow-md | [valor] |
-| --shadow-lg | [valor] |
+| --shadow-sm | [value] |
+| --shadow-md | [value] |
+| --shadow-lg | [value] |
 
-## Componentes
+## Components
 
 ### Button
-- Variantes: primary, secondary, ghost, danger
-- Tamanhos: sm, md, lg
-- Estados: default, hover, active, disabled, loading
+- Variants: primary, secondary, ghost, danger
+- Sizes: sm, md, lg
+- States: default, hover, active, disabled, loading
 
 ### Input
-- Variantes: text, email, password, search, textarea
-- Estados: default, focus, error, disabled
+- Variants: text, email, password, search, textarea
+- States: default, focus, error, disabled
 
 ### Card
-- Variantes: default, elevated, outlined
-- Padding: [valor]
+- Variants: default, elevated, outlined
+- Padding: [value]
 
 ### Modal
-- Tamanhos: sm, md, lg
-- Overlay: [cor/opacity]
+- Sizes: sm, md, lg
+- Overlay: [color/opacity]
 
 ### Toast / Notification
-- Variantes: success, warning, error, info
-- Posição: [posição]
+- Variants: success, warning, error, info
+- Position: [position]
 
-### [Outros componentes do design]
+### [Other design components]
 
-## Breakpoints (se web)
-| Token | Valor | Colunas |
+## Breakpoints (if web)
+| Token | Value | Columns |
 |---|---|---|
-| --bp-mobile | [valor] | [n] |
-| --bp-tablet | [valor] | [n] |
-| --bp-desktop | [valor] | [n] |
+| --bp-mobile | [value] | [n] |
+| --bp-tablet | [value] | [n] |
+| --bp-desktop | [value] | [n] |
 
-## Regras de uso
+## Usage rules
 
-1. Sempre use tokens, nunca valores hardcoded
-2. Contraste mínimo WCAG AA (4.5:1 texto, 3:1 UI)
-3. Hover/focus sempre visíveis
-4. Dark mode: se aplicável, definir tokens invertidos
+1. Always use tokens, never hardcoded values
+2. Minimum WCAG AA contrast (4.5:1 text, 3:1 UI)
+3. Hover/focus always visible
+4. Dark mode: if applicable, define inverted tokens
 ```
 
-**`design/tokens.json`** (formato consumível por código):
+**`design/tokens.json`** (code-consumable format):
 ```json
 {
   "colors": {
@@ -180,93 +180,93 @@ Se o link não for diretamente acessível, peça ao usuário para colar o conte�
 
 ---
 
-## Modo 2 — Gerar do zero
+## Mode 2 — Generate from scratch
 
-Baseado no PRODUCT_BRIEF (target users, plataforma, features), gere um design system:
+Based on the PRODUCT_BRIEF (target users, platform, features), generate a design system:
 
-### Decisões automáticas
+### Automatic decisions
 
-1. **Tom visual** — baseado nos usuários:
-   - Profissional/B2B → clean, neutro, azul/cinza
-   - Consumer/social → vibrante, arredondado, cores quentes
-   - Dev/ferramenta → escuro, mono, verde/azul
-   - Saúde/fitness → energético, verde/laranja
-   - Finanças → sóbrio, azul/verde escuro
+1. **Visual tone** — based on users:
+   - Professional/B2B → clean, neutral, blue/gray
+   - Consumer/social → vibrant, rounded, warm colors
+   - Dev/tool → dark, mono, green/blue
+   - Health/fitness → energetic, green/orange
+   - Finance → sober, dark blue/green
 
-2. **Paleta** — gerar com harmonia:
-   - Escolha 1 cor primária baseada no tom
-   - Gere complementar/análoga para secundária
-   - Neutros: escala de cinza com leve tint da primária
-   - Feedback: verde (success), amarelo (warning), vermelho (error), azul (info)
+2. **Palette** — generate with harmony:
+   - Choose 1 primary color based on the tone
+   - Generate complementary/analogous for secondary
+   - Neutrals: gray scale with slight tint from primary
+   - Feedback: green (success), yellow (warning), red (error), blue (info)
 
-3. **Tipografia** — baseado na plataforma:
-   - Web: Inter ou Plus Jakarta Sans (body), Sora ou Space Grotesk (heading)
-   - Mobile: sistema nativa ou Inter/Plus Jakarta Sans
-   - Sempre definir fallbacks: `-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`
+3. **Typography** — based on platform:
+   - Web: Inter or Plus Jakarta Sans (body), Sora or Space Grotesk (heading)
+   - Mobile: native system or Inter/Plus Jakarta Sans
+   - Always define fallbacks: `-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`
 
-4. **Espaçamento** — base 4px (padrão 4, 8, 12, 16, 24, 32, 48, 64)
+4. **Spacing** — 4px base (standard 4, 8, 12, 16, 24, 32, 48, 64)
 
-5. **Border radius** — baseado no tom:
+5. **Border radius** — based on tone:
    - Clean: 6, 8, 12
    - Friendly: 8, 12, 16
    - Playful: 12, 16, 24
 
-6. **Componentes base** — sempre: Button, Input, Card, Modal, Toast, Avatar, Badge, Divider
+6. **Base components** — always: Button, Input, Card, Modal, Toast, Avatar, Badge, Divider
 
-### Mesmo formato de saída
+### Same output format
 
-Gere `docs/ai/DESIGN_SYSTEM.md` e `design/tokens.json` no mesmo formato do Modo 1.
+Generate `docs/ai/DESIGN_SYSTEM.md` and `design/tokens.json` in the same format as Mode 1.
 
-Adicione ao topo do DESIGN_SYSTEM.md:
+Add to the top of DESIGN_SYSTEM.md:
 
 ```markdown
-> Gerado automaticamente pelo bootstrap-ai. Personalize livremente.
+> Automatically generated by bootstrap-ai. Customize freely.
 ```
 
 ---
 
-## Modo 3 — Pula
+## Mode 3 — Skip
 
-Não gera design system. O preset genérico aplica `docs/ai/DESIGN_SYSTEM.md` padrão.
+Does not generate a design system. The generic preset applies the default `docs/ai/DESIGN_SYSTEM.md`.
 
-Avise:
+Notify:
 ```
-Design system pulado. Quando quiser definir, rode /design-phase a qualquer momento.
+Design system skipped. When you want to define it, run /design-phase at any time.
 ```
 
 ---
 
-## Após qualquer modo
+## After any mode
 
-### Atualizar CLAUDE.md do projeto
+### Update project CLAUDE.md
 
-Se `docs/ai/DESIGN_SYSTEM.md` foi criado, adicione ao CLAUDE.md do projeto:
+If `docs/ai/DESIGN_SYSTEM.md` was created, add to the project's CLAUDE.md:
 
 ```markdown
 ## Design System
 
-Fonte de verdade visual: `docs/ai/DESIGN_SYSTEM.md`
+Visual source of truth: `docs/ai/DESIGN_SYSTEM.md`
 Tokens: `design/tokens.json`
 
-Regras:
-- Use tokens, nunca valores hardcoded em CSS/estilos
-- Contraste mínimo WCAG AA
-- Componentes devem seguir as variantes documentadas
-- Qualquer mudança visual DEVE ser refletida no DESIGN_SYSTEM.md
+Rules:
+- Use tokens, never hardcoded values in CSS/styles
+- Minimum WCAG AA contrast
+- Components must follow documented variants
+- Any visual change MUST be reflected in DESIGN_SYSTEM.md
 ```
 
-### Verificar integridade
+### Verify integrity
 
-- `docs/ai/DESIGN_SYSTEM.md` existe e tem conteúdo real
-- `design/tokens.json` existe e é JSON válido
-- CLAUDE.md referencia o design system
+- `docs/ai/DESIGN_SYSTEM.md` exists and has real content
+- `design/tokens.json` exists and is valid JSON
+- CLAUDE.md references the design system
 
 ---
 
 ## Pitfalls
 
-- Não invente valores de cores/tipografia se tem Figma — use o que veio
-- Se o Figma link é inacessível, peça ao usuário para exportar os tokens
-- Tokens devem ser compatíveis com a stack (CSS vars pra web, Flutter ThemeExtension pra mobile, etc.)
-- Não sobrescreva `DESIGN_SYSTEM.md` existente sem confirmar com o usuário
-- Dark mode é opcional — só gere se o product brief mencionar
+- Do not invent color/typography values if you have Figma — use what was provided
+- If the Figma link is inaccessible, ask the user to export the tokens
+- Tokens must be compatible with the stack (CSS vars for web, Flutter ThemeExtension for mobile, etc.)
+- Do not overwrite existing `DESIGN_SYSTEM.md` without confirming with the user
+- Dark mode is optional — only generate if the product brief mentions it

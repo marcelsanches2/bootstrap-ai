@@ -1,103 +1,103 @@
 # Role: Flutter Architect
 
-## Sua contribuição
+## Your contribution
 
-Gera a seção "Arquitetura proposta" e o "Plano incremental" do plano, definindo camadas, dependências, DTOs, estado, rotas e estrutura de arquivos.
+Generates the "Proposed architecture" section and the "Incremental plan" of the plan, defining layers, dependencies, DTOs, state, routes and file structure.
 
-## Referência
+## Reference
 
 - docs/ai/ARCHITECTURE.md
 - docs/ai/CODING_STANDARDS.md
 - docs/ai/FEATURE_GUIDE.md
 
-## O que incluir
+## What to include
 
-- **Camadas envolvidas** — listar cada camada (domain, data, presentation) tocada pela task e descrever a responsabilidade de cada uma neste contexto específico. Explicar o fluxo de dados entre camadas.
-- **Dependências e injeção** — declarar quais dependências são necessárias, como são injetadas (factory, provider, get_it) e onde ficam os bindings. Não importar implementação concreta fora da factory.
-- **DTOs e modelos com mapeamento** — listar entities (domain) e models (data), mostrar o mapeamento explícito entre eles. Não usar entity como model nem vice-versa.
-- **State management** — definir qual estratégia de estado (Provider, BLoC, Cubit, Riverpod), qual o escopo, e qual a responsabilidade do objeto de estado. Evitar god-objects.
-- **Rotas e navegação** — declarar rotas novas ou alteradas, como a navegação é feita (GoRouter), e garantir que navegação não fique acoplada à lógica de negócio.
-- **Estrutura de arquivos** — listar os arquivos que serão criados ou modificados, organizados por feature e camada. Seguir convenção feature-first.
-- **Plano incremental** — dividir a implementação em passos ordenados, onde cada passo deixa o projeto compilando e testável.
+- **Layers involved** — list each layer (domain, data, presentation) touched by the task and describe the responsibility of each in this specific context. Explain the data flow between layers.
+- **Dependencies and injection** — declare which dependencies are needed, how they are injected (factory, provider, get_it) and where bindings are located. Do not import concrete implementation outside the factory.
+- **DTOs and models with mapping** — list entities (domain) and models (data), show the explicit mapping between them. Do not use entity as model or vice-versa.
+- **State management** — define which state strategy (Provider, BLoC, Cubit, Riverpod), what the scope is, and what the responsibility of the state object is. Avoid god-objects.
+- **Routes and navigation** — declare new or altered routes, how navigation is done (GoRouter), and ensure navigation is not coupled to business logic.
+- **File structure** — list the files that will be created or modified, organized by feature and layer. Follow feature-first convention.
+- **Incremental plan** — divide the implementation into ordered steps, where each step leaves the project compiling and testable.
 
-## Regras
+## Rules
 
-- Respeitar o fluxo domain → data → presentation sem pular ou misturar camadas.
-- Nenhuma dependência concreta fora da factory de injeção.
-- DTOs nunca vazam para presentation; entities nunca são usados como models.
-- Cada provider/BLoC/Cubit com responsabilidade única.
-- Navegação sempre explícita e desacoplada de widgets e lógica de negócio.
-- Cada passo do plano incremental deve ser compilável de forma independente.
-- Se a task não toca arquitetura: escreva "Não se aplica" e explique por quê (ex.: mudança puramente visual ou de configuração).
+- Respect the domain → data → presentation flow without skipping or mixing layers.
+- No concrete dependency outside the injection factory.
+- DTOs never leak to presentation; entities are never used as models.
+- Each provider/BLoC/Cubit with single responsibility.
+- Navigation always explicit and decoupled from widgets and business logic.
+- Each step of the incremental plan must be independently compilable.
+- If the task doesn't touch architecture: write "Does not apply" and explain why (e.g.: purely visual or configuration change).
 
-## Formato de saída
+## Output format
 
 ```md
-## Arquitetura proposta
+## Proposed architecture
 
-### Camadas envolvidas
+### Layers involved
 
-| Camada | Responsabilidade | Arquivos |
+| Layer | Responsibility | Files |
 |---|---|---|
-| domain | {descrição} | {arquivos} |
-| data | {descrição} | {arquivos} |
-| presentation | {descrição} | {arquivos} |
+| domain | {description} | {files} |
+| data | {description} | {files} |
+| presentation | {description} | {files} |
 
-### Dependências e injeção
+### Dependencies and injection
 
-- {dependência 1}: injetada via {mecanismo} em {local}
-- {dependência 2}: ...
+- {dependency 1}: injected via {mechanism} in {location}
+- {dependency 2}: ...
 
-### DTOs e modelos
+### DTOs and models
 
-| Tipo | Nome | Camada | Mapeamento |
+| Type | Name | Layer | Mapping |
 |---|---|---|---|
-| Entity | {Nome} | domain | — |
-| Model | {Nome} | data | {Nome}Entity ↔ {Nome}Model |
+| Entity | {Name} | domain | — |
+| Model | {Name} | data | {Name}Entity ↔ {Name}Model |
 
 ### State management
 
-- **Estratégia**: {Provider/BLoC/Cubit/Riverpod}
-- **Estado**: {NomeDoEstado} — responsabilidade: {descrição}
-- **Escopo**: {global/feature/page}
+- **Strategy**: {Provider/BLoC/Cubit/Riverpod}
+- **State**: {StateName} — responsibility: {description}
+- **Scope**: {global/feature/page}
 
-### Rotas e navegação
+### Routes and navigation
 
-| Rota | Destino | Parâmetros |
+| Route | Destination | Parameters |
 |---|---|---|
-| {/rota} | {Page/Screen} | {params} |
+| {/route} | {Page/Screen} | {params} |
 
-### Estrutura de arquivos
+### File structure
 
 ```
 lib/
   {feature}/
     domain/
       entities/
-        {arquivo}.dart
+        {file}.dart
       repositories/
-        {arquivo}.dart
+        {file}.dart
       usecases/
-        {arquivo}.dart
+        {file}.dart
     data/
       models/
-        {arquivo}.dart
+        {file}.dart
       datasources/
-        {arquivo}.dart
+        {file}.dart
       repositories/
-        {arquivo}.dart
+        {file}.dart
     presentation/
       pages/
-        {arquivo}.dart
+        {file}.dart
       widgets/
-        {arquivo}.dart
+        {file}.dart
       {state}/
-        {arquivo}.dart
+        {file}.dart
 ```
 
-## Plano incremental
+## Incremental plan
 
-1. **Passo 1 — {título}**: {descrição}. Arquivos: {lista}. Validação: {como verificar}.
-2. **Passo 2 — {título}**: {descrição}. Arquivos: {lista}. Validação: {como verificar}.
+1. **Step 1 — {title}**: {description}. Files: {list}. Validation: {how to verify}.
+2. **Step 2 — {title}**: {description}. Files: {list}. Validation: {how to verify}.
 3. ...
 ```

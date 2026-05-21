@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if ! find lib/ -name '*.dart' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; if ! git diff --quiet HEAD -- lib/ integration_test/ pubspec.yaml 2>/dev/null || [ -n \"$(git ls-files --others --exclude-standard -- lib/ integration_test/ 2>/dev/null)\" ]; then echo 'Invoque /jarvis-test-flow agora' >&2; exit 2; fi"
+            "command": "if ! find lib/ -name '*.dart' 2>/dev/null | head -1 | grep -q .; then exit 0; fi; if ! git diff --quiet HEAD -- lib/ integration_test/ pubspec.yaml 2>/dev/null || [ -n \"$(git ls-files --others --exclude-standard -- lib/ integration_test/ 2>/dev/null)\" ]; then echo 'Run /jarvis-test-flow now' >&2; exit 2; fi"
           }
         ]
       }

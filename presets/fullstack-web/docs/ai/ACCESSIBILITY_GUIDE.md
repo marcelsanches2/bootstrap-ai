@@ -1,50 +1,50 @@
-# Acessibilidade React Web
+# React Web Accessibility
 
-## Princípios
+## Principles
 
-Acessibilidade não é opcional nem fase final. Todo componente entregue deve ser navegável por teclado e compreensível por leitor de tela.
+Accessibility is not optional or a final phase. Every delivered component must be keyboard-navigable and screen-reader-comprehensible.
 
-## Mínimo obrigatório
+## Required minimum
 
-- HTML semântico antes de ARIA.
-- Botões são `<button>`; links são `<a>`.
-- Toda ação via mouse deve ser possível por teclado.
-- Foco visível e ordem de foco lógica.
-- Inputs com `<label>` associado (não apenas placeholder).
-- Erros de formulário anunciáveis e próximos do campo.
-- Contraste mínimo 4.5:1 para texto normal, 3:1 para texto grande.
+- Semantic HTML before ARIA.
+- Buttons are `<button>`; links are `<a>`.
+- Every mouse action must be possible via keyboard.
+- Visible focus and logical focus order.
+- Inputs with associated `<label>` (not just placeholder).
+- Form errors must be announcable and close to the field.
+- Minimum contrast 4.5:1 for normal text, 3:1 for large text.
 
-## Semântica e componentes
+## Semantics and components
 
-Prefira elementos nativos. Use ARIA apenas para complementar.
+Prefer native elements. Use ARIA only to complement.
 
 ```tsx
-// ✅ Certo: botão nativo com semântica automática
-<button onClick={handleSave}>Salvar</button>
+// ✅ Correct: native button with automatic semantics
+<button onClick={handleSave}>Save</button>
 
-// ❌ Errado: div sem semântica nenhuma
-<div onClick={handleSave}>Salvar</div>
+// ❌ Wrong: div with no semantics at all
+<div onClick={handleSave}>Save</div>
 ```
 
-Para componentes compostos (dropdowns, modais, tabs), use primitivas acessíveis:
+For composite components (dropdowns, modals, tabs), use accessible primitives:
 
-- `@radix-ui/react-*` — acesso livre, semântica completa
-- `@headlessui/react` — boa integração com Tailwind
-- `react-aria` — hooks focados em acessibilidade
+- `@radix-ui/react-*` — free access, complete semantics
+- `@headlessui/react` — good integration with Tailwind
+- `react-aria` — hooks focused on accessibility
 
-Não reinvente padrão WAI-ARIA se biblioteca consolidada resolve.
+Do not reinvent WAI-ARIA patterns if a consolidated library solves it.
 
-## Formulários
+## Forms
 
-### Labels e ajuda
+### Labels and help
 
 ```tsx
-<label htmlFor="email">E-mail</label>
+<label htmlFor="email">Email</label>
 <input id="email" type="email" aria-describedby="email-help" />
-<span id="email-help">Use seu e-mail corporativo</span>
+<span id="email-help">Use your corporate email</span>
 ```
 
-### Erros de campo
+### Field errors
 
 ```tsx
 <input
@@ -56,12 +56,12 @@ Não reinvente padrão WAI-ARIA se biblioteca consolidada resolve.
 {error && <span id="email-error" role="alert">{error}</span>}
 ```
 
-### Validação com React Hook Form + Zod
+### Validation with React Hook Form + Zod
 
 ```tsx
 const schema = z.object({
-  email: z.string().email('E-mail inválido'),
-  password: z.string().min(8, 'Mínimo 8 caracteres'),
+  email: z.string().email('Invalid email'),
+  password: z.string().min(8, 'Minimum 8 characters'),
 });
 
 const { register, formState: { errors } } = useForm({
@@ -80,72 +80,72 @@ const { register, formState: { errors } } = useForm({
 
 ## ARIA
 
-Use ARIA para complementar semântica, não para consertar HTML errado.
+Use ARIA to complement semantics, not to fix incorrect HTML.
 
-- `aria-label` quando texto visível não existe.
-- `aria-describedby` para ajuda/erro.
-- `aria-live="polite"` para feedback assíncrono (toast, status de loading).
-- `aria-live="assertive"` apenas para alertas críticos.
-- `aria-expanded`, `aria-controls` para dropdowns e collapsibles.
+- `aria-label` when no visible text exists.
+- `aria-describedby` for help/error.
+- `aria-live="polite"` for async feedback (toast, loading status).
+- `aria-live="assertive"` only for critical alerts.
+- `aria-expanded`, `aria-controls` for dropdowns and collapsibles.
 
-### Região live com TanStack Query
+### Live region with TanStack Query
 
 ```tsx
 <div aria-live="polite" aria-atomic="true">
-  {isLoading && 'Carregando dados...'}
-  {isError && 'Erro ao carregar. Tente novamente.'}
+  {isLoading && 'Loading data...'}
+  {isError && 'Error loading. Please try again.'}
 </div>
 ```
 
-## Modais e overlays
+## Modals and overlays
 
-Requisitos obrigatórios:
+Required:
 
-- Trap de foco dentro do modal enquanto aberto.
-- Escape fecha quando seguro (sem dados não salvos).
-- Foco move para o modal ao abrir.
-- Foco retorna ao elemento gatilho ao fechar.
-- Clique fora não deve destruir dados sem confirmação.
+- Focus trap inside modal while open.
+- Escape closes when safe (no unsaved data).
+- Focus moves to modal on open.
+- Focus returns to trigger element on close.
+- Click outside should not destroy data without confirmation.
 
-Use `@radix-ui/react-dialog` ou equivalente que resolve isso automaticamente:
+Use `@radix-ui/react-dialog` or equivalent that handles this automatically:
 
 ```tsx
 <Dialog.Root open={open} onOpenChange={setOpen}>
   <Dialog.Trigger asChild>
-    <button>Abrir</button>
+    <button>Open</button>
   </Dialog.Trigger>
   <Dialog.Portal>
     <Dialog.Overlay className="fixed inset-0 bg-black/50" />
     <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-      <Dialog.Title>Confirmar ação</Dialog.Title>
-      <Dialog.Description>Tem certeza que deseja continuar?</Dialog.Description>
-      {/* conteúdo */}
+      <Dialog.Title>Confirm action</Dialog.Title>
+      <Dialog.Description>Are you sure you want to continue?</Dialog.Description>
+      {/* content */}
     </Dialog.Content>
   </Dialog.Portal>
 </Dialog.Root>
 ```
 
-## Imagens e ícones
+## Images and icons
 
-- Imagens informativas precisam de `alt` descritivo.
-- Imagens decorativas usam `alt=""` e `aria-hidden="true"`.
-- Ícones clicáveis precisam de `aria-label` ou label visível.
+- Informative images need descriptive `alt`.
+- Decorative images use `alt=""` and `aria-hidden="true"`.
+- Clickable icons need `aria-label` or visible label.
 
 ```tsx
-// Ícone como botão
-<button aria-label="Fechar notificação" onClick={onClose}>
+// Icon as button
+<button aria-label="Close notification" onClick={onClose}>
   <XIcon aria-hidden="true" />
 </button>
 ```
 
-## Navegação e rotas
+## Navigation and routes
 
-- Use `<nav>` com `aria-label` para navegação principal.
-- Indique página ativa com `aria-current="page"`.
-- React Router: use `<Link>` do router, não `<a>` com onClick.
+- Use `<nav>` with `aria-label` for main navigation.
+- Indicate active page with `aria-current="page"`.
+- React Router: use `<Link>` from the router, not `<a>` with onClick.
 
 ```tsx
-<nav aria-label="Navegação principal">
+<nav aria-label="Main navigation">
   <ul>
     {links.map((link) => (
       <li key={link.path}>
@@ -161,44 +161,44 @@ Use `@radix-ui/react-dialog` ou equivalente que resolve isso automaticamente:
 </nav>
 ```
 
-## Ferramentas de verificação
+## Verification tools
 
 ```bash
-# Lint de acessibilidade com eslint-plugin-jsx-a11y
+# Accessibility lint with eslint-plugin-jsx-a11y
 npx eslint --rule 'jsx-a11y/*: error' src/
 ```
 
 ## Anti-patterns
 
-- **Div como botão:** não use `<div onClick>` para ações. Use `<button>`.
-- **Placeholder como label:** placeholder desaparece ao digitar e não substitui label.
-- **Overlay sem trap de foco:** tab sai do modal para conteúdo invisível.
-- **Cor como única indicação:** nunca use apenas cor para indicar erro/estado. Combine com ícone ou texto.
-- **aria-hidden em elemento focável:** se tem `aria-hidden`, não pode receber foco.
-- **Imagem sem alt:** alt vazio para decorativa, alt descritivo para informativa. Nunca omitir o atributo.
-- **Lista infinita sem anúncio:** paginação/scroll infinito precisa anunciar novos itens via `aria-live`.
+- **Div as button:** do not use `<div onClick>` for actions. Use `<button>`.
+- **Placeholder as label:** placeholder disappears on input and does not replace label.
+- **Overlay without focus trap:** tab exits modal to invisible content.
+- **Color as sole indication:** never use only color to indicate error/state. Combine with icon or text.
+- **aria-hidden on focusable element:** if it has `aria-hidden`, it cannot receive focus.
+- **Image without alt:** empty alt for decorative, descriptive alt for informative. Never omit the attribute.
+- **Infinite list without announcement:** pagination/infinite scroll must announce new items via `aria-live`.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-### Semântica e navegação
-- **Acessibilidade não é opcional nem fase final**: todo componente entregue deve ser navegável por teclado e compreensível por leitor de tela.
-- **Div como botão é proibido**: ações usam `<button>`, links usam `<a>`.
-- **Toda ação via mouse deve ser possível por teclado**: sem exceções.
+### Semantics and navigation
+- **Accessibility is not optional or a final phase**: every delivered component must be keyboard-navigable and screen-reader-comprehensible.
+- **Div as button is prohibited**: actions use `<button>`, links use `<a>`.
+- **Every mouse action must be possible via keyboard**: no exceptions.
 
-### Formulários
-- **Inputs com `<label>` associado**: nunca usar apenas placeholder como label.
-- **Erros de formulário devem ser anunciáveis e próximos do campo**: use `aria-invalid` e `aria-describedby`.
+### Forms
+- **Inputs with associated `<label>`**: never use only placeholder as label.
+- **Form errors must be announcable and close to the field**: use `aria-invalid` and `aria-describedby`.
 
 ### Visual
-- **Contraste mínimo 4.5:1 para texto normal, 3:1 para texto grande**: nunca usar apenas cor para indicar erro/estado.
-- **Imagem informativa precisa `alt` descritivo**: decorativa usa `alt=""` + `aria-hidden="true"`. Nunca omitir o atributo.
+- **Minimum contrast 4.5:1 for normal text, 3:1 for large text**: never use only color to indicate error/state.
+- **Informative image needs descriptive `alt`**: decorative uses `alt=""` + `aria-hidden="true"`. Never omit the attribute.
 
-### Modais e overlays
-- **Overlay sem trap de foco é proibido**: tab não pode sair do modal para conteúdo invisível.
+### Modals and overlays
+- **Overlay without focus trap is prohibited**: tab cannot exit modal to invisible content.
 
 ### ARIA
-- **Não reinventar padrão WAI-ARIA se biblioteca consolidada resolve**: use Radix, Headless UI ou react-aria.
-- **`aria-hidden` em elemento focável é proibido**: se tem `aria-hidden`, não pode receber foco.
-- **Lista infinita sem anúncio**: paginação/scroll infinito precisa anunciar novos itens via `aria-live`.
+- **Do not reinvent WAI-ARIA patterns if a consolidated library solves it**: use Radix, Headless UI, or react-aria.
+- **`aria-hidden` on focusable element is prohibited**: if it has `aria-hidden`, it cannot receive focus.
+- **Infinite list without announcement**: pagination/infinite scroll must announce new items via `aria-live`.

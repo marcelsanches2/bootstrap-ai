@@ -1,17 +1,17 @@
 # API Guide
 
-Convenções REST para APIs FastAPI.
+REST conventions for FastAPI APIs.
 
-## Versionamento
+## Versioning
 
-Prefixo de versão na URL:
+Version prefix in URL:
 
 ```
 /api/v1/users
 /api/v2/users
 ```
 
-No FastAPI:
+In FastAPI:
 
 ```python
 app = FastAPI()
@@ -19,40 +19,40 @@ v1_router = APIRouter(prefix="/api/v1")
 app.include_router(v1_router)
 ```
 
-Quando criar v2: mantenha v1 funcionando até migração completa. breaking change = versão nova.
+When creating v2: keep v1 working until complete migration. breaking change = new version.
 
-## Rotas
+## Routes
 
-### Convenção de endpoints
+### Endpoint convention
 
 ```
-GET    /api/v1/users          # Listar
-GET    /api/v1/users/:id      # Buscar por ID
-POST   /api/v1/users          # Criar
-PUT    /api/v1/users/:id      # Atualizar (completo)
-PATCH  /api/v1/users/:id      # Atualizar (parcial)
-DELETE /api/v1/users/:id      # Remover
+GET    /api/v1/users          # List
+GET    /api/v1/users/:id      # Find by ID
+POST   /api/v1/users          # Create
+PUT    /api/v1/users/:id      # Update (complete)
+PATCH  /api/v1/users/:id      # Update (partial)
+DELETE /api/v1/users/:id      # Remove
 ```
 
-### Nomenclatura
+### Naming
 
-- Recursos no plural: `/users`, `/orders`, `/products`
-- Kebab-case para compostos: `/user-profiles`, `/order-items`
-- Não usar verbos: `/createUser` ❌, `/users` com POST ✓
-- Não usar nested resources profundas (máx 2 níveis): `/users/:id/orders` ✓, `/users/:id/orders/:id/items` ❌
+- Resources in plural: `/users`, `/orders`, `/products`
+- Kebab-case for compounds: `/user-profiles`, `/order-items`
+- Do not use verbs: `/createUser` ❌, `/users` with POST ✓
+- Do not use deeply nested resources (max 2 levels): `/users/:id/orders` ✓, `/users/:id/orders/:id/items` ❌
 
 ## Request
 
-### Headers obrigatórios
+### Mandatory headers
 
 ```
 Content-Type: application/json
-Authorization: Bearer <token>    # quando autenticado
+Authorization: Bearer ***    # when authenticated
 ```
 
-### Paginação
+### Pagination
 
-Query params padrão:
+Standard query params:
 
 ```
 GET /api/v1/users?skip=0&limit=20&sort=created_at&order=desc
@@ -72,17 +72,17 @@ class PaginatedResponse(BaseModel, Generic[T]):
         return (self.skip + self.limit) < self.total
 ```
 
-Limites: `limit` mínimo 1, máximo 100, default 20. Rejeitar fora do range.
+Limits: `limit` minimum 1, maximum 100, default 20. Reject outside range.
 
-### Filtros
+### Filters
 
-Query params para filtros simples:
+Query params for simple filters:
 
 ```
 GET /api/v1/users?status=active&role=admin&created_after=2024-01-01
 ```
 
-Para filtros complexos, use POST com body:
+For complex filters, use POST with body:
 
 ```
 POST /api/v1/users/search
@@ -97,29 +97,29 @@ POST /api/v1/users/search
 
 ### Status codes
 
-| Código | Quando usar |
+| Code | When to use |
 |---|---|
-| 200 | Sucesso (GET, PUT, PATCH) |
-| 201 | Criado (POST) |
-| 204 | Sem conteúdo (DELETE) |
-| 400 | Validação de input falhou |
-| 401 | Não autenticado |
-| 403 | Autenticado mas sem permissão |
-| 404 | Recurso não encontrado |
-| 409 | Conflito (duplicado, estado inválido) |
+| 200 | Success (GET, PUT, PATCH) |
+| 201 | Created (POST) |
+| 204 | No content (DELETE) |
+| 400 | Input validation failed |
+| 401 | Not authenticated |
+| 403 | Authenticated but no permission |
+| 404 | Resource not found |
+| 409 | Conflict (duplicate, invalid state) |
 | 422 | Unprocessable entity (Pydantic validation) |
-| 429 | Rate limit excedido |
-| 500 | Erro interno inesperado |
+| 429 | Rate limit exceeded |
+| 500 | Unexpected internal error |
 
-### Formato de erro
+### Error format
 
-Consistente em toda a API:
+Consistent across the entire API:
 
 ```python
 class ErrorDetail(BaseModel):
     code: str           # "VALIDATION_ERROR", "NOT_FOUND", "CONFLICT"
-    message: str        # Mensagem humana
-    field: str | None = None  # Campo que causou o erro, se aplicável
+    message: str        # Human-readable message
+    field: str | None = None  # Field that caused the error, if applicable
 
 class ErrorResponse(BaseModel):
     error: ErrorDetail
@@ -131,13 +131,13 @@ Response:
 {
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Email já cadastrado",
+    "message": "Email already registered",
     "field": "email"
   }
 }
 ```
 
-### Error handler global
+### Global error handler
 
 ```python
 from fastapi import Request
@@ -159,16 +159,16 @@ async def app_error_handler(request: Request, exc: AppError):
     )
 ```
 
-Nos services, levante `AppError`:
+In services, raise `AppError`:
 
 ```python
-raise AppError(code="NOT_FOUND", message="Usuário não encontrado", status=404)
-raise AppError(code="CONFLICT", message="Email já cadastrado", status=409, field="email")
+raise AppError(code="NOT_FOUND", message="User not found", status=404)
+raise AppError(code="CONFLICT", message="Email already registered", status=409, field="email")
 ```
 
-## Validação de input
+## Input validation
 
-Sempre com Pydantic:
+Always with Pydantic:
 
 ```python
 from pydantic import BaseModel, EmailStr, field_validator, model_validator
@@ -185,40 +185,40 @@ class OrderCreate(BaseModel):
     @classmethod
     def items_not_empty(cls, v):
         if not v:
-            raise ValueError("Pedido deve ter pelo menos 1 item")
+            raise ValueError("Order must have at least 1 item")
         return v
 
     @model_validator(mode="after")
     def delivery_date_is_future(self):
         if self.delivery_date <= date.today():
-            raise ValueError("Data de entrega deve ser futura")
+            raise ValueError("Delivery date must be in the future")
         return self
 ```
 
-Não validar no router com `if/else`. Deixe no schema.
+Do not validate in the router with `if/else`. Leave it in the schema.
 
-## Serialização
+## Serialization
 
-### Não expor campos internos
+### Do not expose internal fields
 
 ```python
-# ❌ Nunca retornar password_hash, internal_id, etc.
+# ❌ Never return password_hash, internal_id, etc.
 class UserResponse(BaseModel):
     id: int
     name: str
     email: str
-    # password_hash intencionalmente omitido
+    # password_hash intentionally omitted
 
     model_config = {"from_attributes": True}
 ```
 
-### Datas em ISO 8601
+### Dates in ISO 8601
 
 ```python
-created_at: datetime  # serializa como "2024-01-15T10:30:00Z"
+created_at: datetime  # serializes as "2024-01-15T10:30:00Z"
 ```
 
-### Enums como string
+### Enums as string
 
 ```python
 class UserRole(str, Enum):
@@ -228,7 +228,7 @@ class UserRole(str, Enum):
 
 ## Rate limiting
 
-Use `slowapi` ou middleware customizado:
+Use `slowapi` or custom middleware:
 
 ```python
 from slowapi import Limiter
@@ -242,28 +242,28 @@ async def login(request: Request, payload: LoginRequest):
     ...
 ```
 
-## Documentação automática
+## Automatic documentation
 
-FastAPI gera OpenAPI/Swagger automaticamente em `/docs` e `/redoc`.
+FastAPI generates OpenAPI/Swagger automatically at `/docs` and `/redoc`.
 
-Personalize:
+Customize:
 
 ```python
 app = FastAPI(
-    title="API Nome",
+    title="API Name",
     version="1.0.0",
-    description="Descrição da API",
+    description="API description",
     docs_url="/docs",
     redoc_url="/redoc",
 )
 ```
 
-Adicione exemplos nos schemas:
+Add examples in schemas:
 
 ```python
 class UserCreate(BaseModel):
-    name: str = Field(..., description="Nome completo", examples=["João Silva"])
-    email: EmailStr = Field(..., description="Email válido", examples=["joao@email.com"])
+    name: str = Field(..., description="Full name", examples=["John Doe"])
+    email: EmailStr = Field(..., description="Valid email", examples=["john@email.com"])
 ```
 
 ## CORS
@@ -280,30 +280,30 @@ app.add_middleware(
 )
 ```
 
-Em produção: `allow_origins` com lista explícita, nunca `["*"]`.
+In production: `allow_origins` with explicit list, never `["*"]`.
 
-## Regras duras
+## Hard rules
 
-- Não usar status code 200 para tudo — use o código correto.
-- Não retornar `{"success": true}` — use status code + schema.
-- Não expor campos sensíveis em response (password_hash, tokens internos).
-- Não validar input no router com if/else — use Pydantic.
-- Não hardcodar URLs — use path params e named routes.
-- Não criar endpoint sem schema de request e response.
-- Não usar `str` para datas — use `datetime` ou `date`.
-- Não retornar trace de erro em produção.
+- Do not use status code 200 for everything — use the correct code.
+- Do not return `{"success": true}` — use status code + schema.
+- Do not expose sensitive fields in response (password_hash, internal tokens).
+- Do not validate input in router with if/else — use Pydantic.
+- Do not hardcode URLs — use path params and named routes.
+- Do not create endpoint without request and response schema.
+- Do not use `str` for dates — use `datetime` or `date`.
+- Do not return error trace in production.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Status code correto**: Não usar status code 200 para tudo; use o código HTTP correto.
-- **Schema de erro consistente**: Não retornar `{"success": true}`; use status code + ErrorResponse.
-- **Não expor campos sensíveis**: Nunca retornar password_hash, tokens internos ou campos sensíveis.
-- **Validação no schema**: Não validar input no router com `if/else`; use Pydantic.
-- **URLs não hardcoded**: Não hardcodar URLs; use path params e named routes.
-- **Endpoint com schema**: Não criar endpoint sem schema de request e response.
-- **Tipos corretos para datas**: Não usar `str` para datas; use `datetime` ou `date`.
-- **Sem trace em produção**: Não retornar stack trace de erro em produção.
-- **CORS restrito em produção**: `allow_origins` com lista explícita em produção, nunca `["*"]`.
-- **Paginação com limites**: `limit` mínimo 1, máximo 100, default 20; rejeitar fora do range.
+- **Correct status code**: Do not use status code 200 for everything; use the correct HTTP code.
+- **Consistent error schema**: Do not return `{"success": true}`; use status code + ErrorResponse.
+- **Do not expose sensitive fields**: Never return password_hash, internal tokens or sensitive fields.
+- **Validation in schema**: Do not validate input in router with `if/else`; use Pydantic.
+- **No hardcoded URLs**: Do not hardcode URLs; use path params and named routes.
+- **Endpoint with schema**: Do not create endpoint without request and response schema.
+- **Correct types for dates**: Do not use `str` for dates; use `datetime` or `date`.
+- **No trace in production**: Do not return error stack trace in production.
+- **Restricted CORS in production**: `allow_origins` with explicit list in production, never `["*"]`.
+- **Pagination with limits**: `limit` minimum 1, maximum 100, default 20; reject outside range.

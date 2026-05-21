@@ -1,67 +1,67 @@
 # CLAUDE.md
 
-Contrato principal para Claude Code no projeto {{PROJECT_NAME}}.
+Main contract for Claude Code in the {{PROJECT_NAME}} project.
 
-## Projeto
+## Project
 
-{{PROJECT_NAME}} é {{PROJECT_DESCRIPTION}}.
+{{PROJECT_NAME}} is {{PROJECT_DESCRIPTION}}.
 
-Stack principal:
+Main stack:
 
 {{STACK_LIST}}
 
-## Leitura sob demanda
+## On-demand reading
 
-Os arquivos em `docs/ai/` devem ser lidos conforme o tipo da tarefa. Não leia todos automaticamente — carregue apenas os relevantes.
+Files in `docs/ai/` should be read according to the task type. Do not read all automatically — only load the relevant ones.
 
-| Tipo de tarefa | Documento(s) a ler |
+| Task type | Document(s) to read |
 |---|---|
 {{READING_TABLE}}
 
-Se houver conflito entre documentos, a ordem de prioridade é:
+If there is a conflict between documents, the priority order is:
 
 {{PRIORITY_ORDER}}
 
-## Documentação no plano
+## Documentation in the plan
 
-No plano inicial de qualquer tarefa, informe explicitamente quais documentos de `docs/ai/` foram lidos antes de implementar. Isso garante rastreabilidade e alinhamento.
+In the initial plan for any task, explicitly state which documents from `docs/ai/` were read before implementing. This ensures traceability and alignment.
 
-## Prioridade atual
+## Current priority
 
-O projeto está em fase de fundação técnica.
+The project is in the technical foundation phase.
 
-Prioridade:
+Priority:
 
 {{PRIORITY_LIST}}
 
-Não implemente feature, fluxo ou visual final sem pedido explícito.
+Do not implement features, flows, or final visuals without an explicit request.
 
-## Regras obrigatórias
+## Mandatory rules
 
 {{RULES_LIST}}
 
-## Processo
+## Process
 
-Antes de alterar:
+Before making changes:
 
-1. inspecione a estrutura atual
-2. leia os documentos de `docs/ai/` relevantes para a tarefa (conforme a tabela de leitura sob demanda)
-3. entenda o escopo da tarefa
-4. descreva o plano brevemente
-5. implemente de forma incremental
+1. inspect the current structure
+2. read the relevant `docs/ai/` documents for the task (per the on-demand reading table)
+3. understand the task scope
+4. briefly describe the plan
+5. implement incrementally
 
-Depois de alterar:
+After making changes:
 
 {{AFTER_CHANGE_STEPS}}
 
-## Princípio de decisão
+## Decision principle
 
-Prefira:
+Prefer:
 
-- simples em vez de esperto
-- explícito em vez de mágico
-- incremental em vez de grande reescrita
-- arquitetura estável em vez de falsa velocidade
-- placeholders em vez de lógica fake espalhada
+- simple over clever
+- explicit over magic
+- incremental over large rewrites
+- stable architecture over false speed
+- placeholders over scattered fake logic
 
-Quando houver dúvida de produto, não invente. Aponte a decisão pendente.
+When in doubt about product decisions, do not make assumptions. Flag the pending decision.

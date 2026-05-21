@@ -1,171 +1,171 @@
 # Skill Creator: Create New Preset
 
-Crie um preset completo para uma nova tecnologia seguindo os padrões do Bootstrap AI.
+Create a complete preset for a new technology following Bootstrap AI standards.
 
 ## Input
 
-O usuário forneceu:
-- **Nome do preset**: `{{PRESET_NAME}}`
-- **Descrição da stack**: `{{DESCRIPTION}}`
+The user provided:
+- **Preset name**: `{{PRESET_NAME}}`
+- **Stack description**: `{{DESCRIPTION}}`
 
-## Referência
+## Reference
 
-Antes de gerar, leia os presets existentes para entender o padrão:
+Before generating, read existing presets to understand the pattern:
 
-1. `presets/flutter-app/` — preset mobile com design system, QA E2E
-2. `presets/python-backend/` — preset backend com API, DB, security, scalability
-3. `presets/react-web/` — preset frontend com design system, accessibility, performance
-4. `presets/node-backend/` — preset backend com TypeScript, tipagem, migrations
+1. `presets/flutter-app/` — mobile preset with design system, QA E2E
+2. `presets/python-backend/` — backend preset with API, DB, security, scalability
+3. `presets/react-web/` — frontend preset with design system, accessibility, performance
+4. `presets/node-backend/` — backend preset with TypeScript, typing, migrations
 
-Use o preset mais similar à stack descrita como base primária. Adapte de lá.
+Use the most similar preset to the described stack as the primary base. Adapt from there.
 
-## Padrões de nomenclatura (obrigatório)
+## Naming conventions (mandatory)
 
-Siga ESTES padrões — nenhum arquivo pode fugir deles:
+Follow THESE conventions — no file can deviate from them:
 
-### Roles e Reviews
+### Roles and Reviews
 
-| Tipo | Prefixo | Significado | Exemplos |
+| Type | Prefix | Meaning | Examples |
 |---|---|---|---|
-| **Papel** (pessoa que revisa) | `role-` | Uma pessoa com cargo definido | `role-architect.md`, `role-pm.md`, `role-designer.md`, `role-delivery.md` |
-| **Papel + stack** (pessoa específica) | `role-<stack>-` | Pessoa com especialidade de stack | `role-flutter-qa.md`, `role-web-qa.md`, `role-api-qa.md` |
-| **Domínio** (ótica técnica) | `review-` | Perspectiva de revisão, não cargo | `review-database.md`, `review-api.md`, `review-security.md`, `review-observability.md`, `review-scalability.md`, `review-accessibility.md`, `review-performance.md`, `review-testing.md` |
+| **Role** (person who reviews) | `role-` | A person with a defined position | `role-architect.md`, `role-pm.md`, `role-designer.md`, `role-delivery.md` |
+| **Role + stack** (specific person) | `role-<stack>-` | Person with stack expertise | `role-flutter-qa.md`, `role-web-qa.md`, `role-api-qa.md` |
+| **Domain** (technical perspective) | `review-` | Review perspective, not a position | `review-database.md`, `review-api.md`, `review-security.md`, `review-observability.md`, `review-scalability.md`, `review-accessibility.md`, `review-performance.md`, `review-testing.md` |
 
-**Sempre em inglês. Sempre kebab-case.**
+**Always in English. Always kebab-case.**
 
 ### docs/ai
 
-| Tipo | Padrão | Exemplos |
+| Type | Pattern | Examples |
 |---|---|---|
-| **Guia** (como fazer X) | `<DOMINIO>_GUIDE.md` | `API_GUIDE.md`, `TESTING_GUIDE.md`, `DATABASE_GUIDE.md` |
-| **Padrão/Referência** (o que é X) | `<CONCEITO>.md` | `ARCHITECTURE.md`, `CODING_STANDARDS.md`, `DESIGN_SYSTEM.md` |
+| **Guide** (how to do X) | `<DOMAIN>_GUIDE.md` | `API_GUIDE.md`, `TESTING_GUIDE.md`, `DATABASE_GUIDE.md` |
+| **Standard/Reference** (what is X) | `<CONCEPT>.md` | `ARCHITECTURE.md`, `CODING_STANDARDS.md`, `DESIGN_SYSTEM.md` |
 
-**Sempre UPPER_SNAKE_CASE. Sem prefixo `AI_`.**
+**Always UPPER_SNAKE_CASE. No `AI_` prefix.**
 
-### Separação de responsabilidades
+### Separation of concerns
 
-- Cada guide tem UMA responsabilidade — testing só em `TESTING_GUIDE`, nunca em `FEATURE_GUIDE` ou `CODING_STANDARDS`
-- Roles são perspectivas de revisão com objetivo + checklist (~47 linhas cada, sem boilerplate repetido)
-- review-testing é perspectiva do revisor, não regras de teste
+- Each guide has ONE responsibility — testing only in `TESTING_GUIDE`, never in `FEATURE_GUIDE` or `CODING_STANDARDS`
+- Roles are review perspectives with objective + checklist (~47 lines each, no repeated boilerplate)
+- review-testing is the reviewer's perspective, not test rules
 
-## Estrutura obrigatória
+## Mandatory structure
 
-Gere TODOS os arquivos abaixo. Nenhum pode ficar vazio ou placeholder.
+Generate ALL files below. None can be empty or placeholder.
 
-### Arquivos raiz
+### Root files
 
-1. **`CLAUDE.md`** — Contexto do projeto para a IA. Deve ter:
-   - Nome do projeto com `{{PROJECT_NAME}}`
-   - Stack principal (framework, linguagem, ORM, ferramentas)
-   - **Tabela de leitura sob demanda** — cada tipo de tarefa mapeia para os docs/ai relevantes (NÃO leia todos automaticamente)
-   - Prioridade atual (lista numerada)
-   - Regras obrigatórias específicas da stack
-   - Processo obrigatório para mudanças não triviais (plan → jarvis-plan → implementar → test-flow → ship)
-   - Princípio de decisão
+1. **`CLAUDE.md`** — Project context for AI. Must have:
+   - Project name with `{{PROJECT_NAME}}`
+   - Main stack (framework, language, ORM, tools)
+   - **On-demand reading table** — each task type maps to relevant docs/ai (do NOT read all automatically)
+   - Current priority (numbered list)
+   - Stack-specific mandatory rules
+   - Mandatory process for non-trivial changes (plan → jarvis-plan → implement → test-flow → ship)
+   - Decision principle
 
-2. **`manifest.yaml`** — Metadata do preset:
+2. **`manifest.yaml`** — Preset metadata:
    - `name`, `description`
-   - `required_files`: todos os arquivos gerados
-   - `library_tags`: bibliotecas estruturais da stack que devem forçar este preset
-   - `roles`: lista de todos os `role-*.md` e `review-*.md` gerados
+   - `required_files`: all generated files
+   - `library_tags`: stack structural libraries that should force this preset
+   - `roles`: list of all generated `role-*.md` and `review-*.md`
 
-3. **`plans/.gitkeep`** — Vazio.
+3. **`plans/.gitkeep`** — Empty.
 
 ### .claude/settings.json
 
-4. Use o template `templates/settings.json` e adapte:
-   - `PostToolUse` (Edit|Write|MultiEdit): comando de lint/typecheck da stack
-   - `Stop`: detecta mudanças em arquivos da stack e força /jarvis-test-flow
-   - `permissions.deny`: manter padrão (.env, rm -rf, git push --force)
+4. Use the `templates/settings.json` template and adapt:
+   - `PostToolUse` (Edit|Write|MultiEdit): stack lint/typecheck command
+   - `Stop`: detects changes in stack files and forces /jarvis-test-flow
+   - `permissions.deny`: keep default (.env, rm -rf, git push --force)
 
-### .claude/commands/ (comandos do lifecycle)
+### .claude/commands/ (lifecycle commands)
 
-5. **`jarvis-plan.md`** — Use o preset mais similar como base. Deve ter **smart role selection**:
-   - Passo de análise do plano → seleção condicional de roles
-   - Sempre carrega: architect + PM
-   - Condicionais: mapeia condições do plano para roles/reviews relevantes
-   - Formato: tabela `| Condição no plano | Role |`
-   - Vereditos, regras de bloqueio, formato de relatório, sanar pendências MAJOR
-   - ~60-100 linhas
+5. **`jarvis-plan.md`** — Use the most similar preset as base. Must have **smart role selection**:
+   - Plan analysis step → conditional role selection
+   - Always loads: architect + PM
+   - Conditionals: maps plan conditions to relevant roles/reviews
+   - Format: `| Plan condition | Role |` table
+   - Verdicts, blocking rules, report format, resolve MAJOR items
+   - ~60-100 lines
 
 
-7. **`refactor.md`** — Use o preset mais similar como base. Adapte seções de regras específicas da stack.
+7. **`refactor.md`** — Use the most similar preset as base. Adapt stack-specific rule sections.
 
-8. **`ship.md`** — Copiar de `templates/commands/ship.md` (genérico).
+8. **`ship.md`** — Copy from `templates/commands/ship.md` (generic).
 
-9. **`jarvis-test-flow.md`** — Use o preset mais similar como base. Deve ter:
-    - Fluxo completo de testes específico da stack
-    - Comandos de execução (ex: `flutter test`, `pytest`, `npm test`)
-    - Critérios de aprovação/reprovação
-    - Auto-fix quando possível
-    - ~150-300 linhas
+9. **`jarvis-test-flow.md`** — Use the most similar preset as base. Must have:
+    - Stack-specific complete test flow
+    - Execution commands (e.g.: `flutter test`, `pytest`, `npm test`)
+    - Pass/fail criteria
+    - Auto-fix when possible
+    - ~150-300 lines
 
 ### .claude/commands/product_roles/ (helpers + roles)
 
-10. **Helpers** (copiar diretamente de qualquer preset existente — são idênticos para toda stack):
+10. **Helpers** (copy directly from any existing preset — they are identical across all stacks):
     - `carregar-referencias.md`
     - `localizar-plano.md`
 
-11. **Roles genéricas** (copiar do preset mais similar — são idênticas para toda stack):
+11. **Generic roles** (copy from most similar preset — they are identical across all stacks):
     - `role-architect.md`
     - `role-pm.md`
     - `role-delivery.md`
 
-12. **Roles específicas da stack** (criar seguindo o padrão):
+12. **Stack-specific roles** (create following the pattern):
     - Frontend: `role-designer.md`
-    - Mobile: `role-designer.md`, `role-<stack>-qa.md` (ex: `role-flutter-qa.md`)
+    - Mobile: `role-designer.md`, `role-<stack>-qa.md` (e.g.: `role-flutter-qa.md`)
     - Web: `role-web-qa.md`
     - Backend: `role-api-qa.md`
 
-13. **Reviews genéricos** (copiar do preset mais similar quando aplicável):
+13. **Generic reviews** (copy from most similar preset when applicable):
     - Backend: `review-api.md`, `review-database.md`, `review-security.md`, `review-observability.md`, `review-scalability.md`
     - Frontend: `review-accessibility.md`, `review-performance.md`
-    - Todos: `review-testing.md`
+    - All: `review-testing.md`
 
-    **Cada role/review deve ter:**
-    - Objetivo (1 frase)
-    - Checklist com critérios marcáveis `[OK/PENDÊNCIA]`
-    - Regra dura (1 frase)
-    - ~40-50 linhas (SEM boilerplate de Entrada/Método/Saída)
+    **Each role/review must have:**
+    - Objective (1 sentence)
+    - Checklist with checkable criteria `[OK/PENDING]`
+    - Hard rule (1 sentence)
+    - ~40-50 lines (NO Input/Method/Output boilerplate)
 
-### docs/ai/ (guias AI)
+### docs/ai/ (AI guides)
 
-14. Gere todos os guias relevantes para a stack.
+14. Generate all guides relevant to the stack.
 
-    **Mínimo obrigatório (todo preset):**
-    - `ARCHITECTURE.md` — estrutura, boundaries, padrões de organização
-    - `CODING_STANDARDS.md` — naming, convenções, anti-patterns
-    - `TESTING_GUIDE.md` — estratégia, ferramentas, padrões de teste
+    **Mandatory minimum (all presets):**
+    - `ARCHITECTURE.md` — structure, boundaries, organization patterns
+    - `CODING_STANDARDS.md` — naming, conventions, anti-patterns
+    - `TESTING_GUIDE.md` — strategy, tools, testing patterns
 
-    **Adicionais por tipo de stack:**
+    **Additional by stack type:**
     - Backend: `API_GUIDE.md`, `DATABASE_GUIDE.md`, `SECURITY_GUIDE.md`, `OBSERVABILITY_GUIDE.md`, `SCALABILITY_GUIDE.md`, `DEPLOYMENT_GUIDE.md`
     - Frontend/Mobile: `DESIGN_SYSTEM.md`, `FEATURE_GUIDE.md`
     - Frontend Web: `ACCESSIBILITY_GUIDE.md`, `PERFORMANCE_GUIDE.md`, `DEPLOYMENT_GUIDE.md`
 
-    **Cada guide:**
-    - UMA responsabilidade (testing SÓ em TESTING_GUIDE)
-    - Genérico o suficiente para qualquer projeto daquela stack
-    - Usa `{{PROJECT_NAME}}` onde necessário
-    - ~80-150 linhas
+    **Each guide:**
+    - ONE responsibility (testing ONLY in TESTING_GUIDE)
+    - Generic enough for any project of that stack
+    - Uses `{{PROJECT_NAME}}` where needed
+    - ~80-150 lines
 
-## Qualidade mínima
+## Minimum quality
 
-- Nenhum arquivo pode ter apenas título ou "TODO".
-- Cada arquivo deve ter conteúdo substancial comparável aos presets existentes.
-- Roles/reviews: ~40-50 linhas cada (objetivo + checklist + regra dura).
-- Docs AI: ~80-150 linhas cada.
-- jarvis-test-flow: ~150-300 linhas.
-- jarvis-plan: ~60-100 linhas (com smart role selection).
-- CLAUDE.md: ~80-120 linhas.
-- Todos os arquivos seguem os padrões de nomenclatura definidos acima.
-- Separação de responsabilidades: cada arquivo faz UMA coisa.
+- No file can have only a title or "TODO".
+- Each file must have substantial content comparable to existing presets.
+- Roles/reviews: ~40-50 lines each (objective + checklist + hard rule).
+- Docs AI: ~80-150 lines each.
+- jarvis-test-flow: ~150-300 lines.
+- jarvis-plan: ~60-100 lines (with smart role selection).
+- CLAUDE.md: ~80-120 lines.
+- All files follow the naming conventions defined above.
+- Separation of concerns: each file does ONE thing.
 
-## Pós-criação
+## Post-creation
 
-Após gerar todos os arquivos:
+After generating all files:
 
-1. Valide que todos os nomes seguem os padrões (role-*, review-*, *_GUIDE.md, UPPER_SNAKE_CASE.md)
-2. Valide que não há conteúdo de testing fora de TESTING_GUIDE
-3. Valide que jarvis-plan tem smart role selection
-4. Valide que CLAUDE.md tem tabela de leitura sob demanda
-5. Reporte: arquivos criados, roles, reviews, guides, linhas por arquivo
+1. Validate that all names follow the conventions (role-*, review-*, *_GUIDE.md, UPPER_SNAKE_CASE.md)
+2. Validate that there is no testing content outside TESTING_GUIDE
+3. Validate that jarvis-plan has smart role selection
+4. Validate that CLAUDE.md has on-demand reading table
+5. Report: files created, roles, reviews, guides, lines per file

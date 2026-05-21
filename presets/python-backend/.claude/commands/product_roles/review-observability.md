@@ -1,83 +1,83 @@
 # Role: Observability Designer
 
-## Sua contribuição
-Gera a seção "Observabilidade" do plano, cobrindo logging estruturado, métricas, tracing, healthcheck e rastreabilidade para operação em produção.
+## Your contribution
+Generates the "Observability" section of the plan, covering structured logging, metrics, tracing, healthcheck and traceability for production operations.
 
-## Referência
+## Reference
 - docs/ai/OBSERVABILITY_GUIDE.md
 
-## O que incluir
-- **Logging estruturado**: quais eventos de negócio são logados, com qual contexto (order_id, user_id, etc.). Usar structlog. Nível de log para cada evento (info, warning, error).
-- **Dados sensíveis**: nenhum password, token, cookie ou PII nos logs. Mascarar quando necessário.
-- **Request ID**: propagação de X-Request-ID em todas as chamadas. Correlação entre logs de serviços diferentes.
-- **Métricas de latência**: P50, P95, P99 para endpoints novos. Como são coletados (middleware, decorator).
-- **Healthcheck**: endpoint `/health` atualizado quando nova dependência é adicionada (Redis, fila, serviço externo, banco). O que verificar em cada check.
-- **Métricas de negócio**: quando aplicável (orders/min, signups/min, conversion rate). Como são expostas.
-- **Alertas**: thresholds críticos (5xx rate, latência alta, pool de conexões esgotado). Para onde alertar.
-- **External calls**: timeout definido em toda chamada externa. Log de falha com contexto.
-- **Graceful shutdown**: tratamento de conexões abertas e workers em andamento ao receber SIGTERM.
-- **Tracing**: quando há múltiplas chamadas entre serviços, como rastrear o fluxo completo.
+## What to include
+- **Structured logging**: which business events are logged, with what context (order_id, user_id, etc.). Use structlog. Log level for each event (info, warning, error).
+- **Sensitive data**: no password, token, cookie or PII in logs. Mask when necessary.
+- **Request ID**: X-Request-ID propagation across all calls. Correlation between logs from different services.
+- **Latency metrics**: P50, P95, P99 for new endpoints. How they are collected (middleware, decorator).
+- **Healthcheck**: `/health` endpoint updated when a new dependency is added (Redis, queue, external service, database). What to verify in each check.
+- **Business metrics**: when applicable (orders/min, signups/min, conversion rate). How they are exposed.
+- **Alerts**: critical thresholds (5xx rate, high latency, exhausted connection pool). Where to alert.
+- **External calls**: timeout defined on every external call. Failure log with context.
+- **Graceful shutdown**: handling of open connections and in-progress workers on SIGTERM.
+- **Tracing**: when there are multiple calls between services, how to trace the complete flow.
 
-## Regras
-- Nenhum dado sensível nos logs.
-- Toda dependência nova deve ser refletida no healthcheck.
-- Toda chamada externa deve ter timeout e log de falha.
-- Eventos de negócio críticos devem ser logados com contexto.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- No sensitive data in logs.
+- Every new dependency must be reflected in the healthcheck.
+- Every external call must have timeout and failure log.
+- Critical business events must be logged with context.
+- If it does not apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Observabilidade
+## Observability
 
-### Logging estruturado
-| Evento | Nível | Contexto incluído | Trigger |
-|--------|-------|-------------------|---------|
+### Structured logging
+| Event | Level | Included context | Trigger |
+|-------|-------|-----------------|---------|
 | {order_created} | info | order_id, user_id, total | POST /orders 201 |
 | {order_failed} | error | order_id, user_id, reason | POST /orders 500 |
-| {payment_timeout} | warning | order_id, gateway, duration | timeout em chamada |
+| {payment_timeout} | warning | order_id, gateway, duration | timeout on call |
 
-**Formato**: structlog JSON
-**Campos proibidos**: password, token, cookie, PII sem máscara
+**Format**: structlog JSON
+**Prohibited fields**: password, token, cookie, unmasked PII
 
 ### Request ID
 - Header: `X-Request-ID`
-- Propagação: {middleware/decorator}
-- Log: incluído em todos os eventos do request
+- Propagation: {middleware/decorator}
+- Log: included in all events from the request
 
-### Métricas de latência
-| Endpoint | P50 esperado | P95 esperado | P99 esperado |
+### Latency metrics
+| Endpoint | Expected P50 | Expected P95 | Expected P99 |
 |----------|-------------|-------------|-------------|
 | {endpoint} | {ms} | {ms} | {ms} |
 
-**Coleta**: {middleware/decorador}
+**Collection**: {middleware/decorator}
 
 ### Healthcheck
 - `GET /health`
 - **Checks**:
-  - Database: {query simples, ex: SELECT 1}
+  - Database: {simple query, e.g.: SELECT 1}
   - {Redis}: {PING}
-  - {Serviço externo}: {como verificar}
-  - {Fila}: {conexão ativa}
+  - {External service}: {how to verify}
+  - {Queue}: {active connection}
 
-### Métricas de negócio
-| Métrica | Tipo | Label | Export |
-|---------|------|-------|--------|
+### Business metrics
+| Metric | Type | Label | Export |
+|--------|------|-------|--------|
 | {orders_total} | counter | status | /metrics |
 
-### Alertas
-| Alerta | Condição | Severidade | Canal |
-|--------|----------|-----------|-------|
-| High error rate | 5xx > 5% em 5min | critical | {slack/pagerduty} |
-| High latency | P95 > {ms} em 5min | warning | {slack} |
-| Pool exhausted | conexões > 90% | critical | {slack/pagerduty} |
+### Alerts
+| Alert | Condition | Severity | Channel |
+|-------|-----------|----------|---------|
+| High error rate | 5xx > 5% in 5min | critical | {slack/pagerduty} |
+| High latency | P95 > {ms} in 5min | warning | {slack} |
+| Pool exhausted | connections > 90% | critical | {slack/pagerduty} |
 
 ### External calls
-| Serviço | Timeout | Log de falha | Retry |
+| Service | Timeout | Failure log | Retry |
 |---------|---------|-------------|-------|
-| {gateway} | 30s | ✅ com request_id + duration | {policy} |
+| {gateway} | 30s | ✅ with request_id + duration | {policy} |
 
 ### Graceful shutdown
-- SIGTERM → {o que acontece: fecha conexões, completa requests em andamento, para workers}
-- Timeout de shutdown: {segundos}
+- SIGTERM → {what happens: closes connections, completes in-progress requests, stops workers}
+- Shutdown timeout: {seconds}
 ```

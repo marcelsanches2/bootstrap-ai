@@ -1,62 +1,119 @@
-# Performance Web
+# React Web Performance
 
-## Princípio
+## Metrics
 
-Otimize o que afeta experiência ou custo. Não transforme código simples em labirinto por micro-otimização.
+- LCP < 2.5s
+- FID / INP < 200ms
+- CLS < 0.1
+- TTFB < 800ms
+
+Values measured on real device or throttled connection, not localhost.
 
 ## Bundle
 
-- Dependência nova precisa considerar tamanho.
-- Use lazy loading para rotas/áreas pesadas.
-- Evite importar biblioteca inteira para uma função pequena.
+- Monitor bundle size on every relevant delivery.
+- Lazy load routes and heavy components.
+- Dynamic import for large dependencies (charts, editors).
+- Manual chunks to separate vendor code from app code.
+- Use tree-shakeable imports.
 
-## Renderização
+```tsx
+// Lazy route
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Settings = lazy(() => import('./pages/Settings'));
 
-- Evite estado duplicado que força renders desnecessários.
-- Virtualize listas grandes.
-- Debounce para busca/input que dispara rede.
-- Memoização precisa de motivo claro.
+function App() {
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <Routes>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings" element={<Settings />} />
+      </Routes>
+    </Suspense>
+  );
+}
+```
 
-## Imagens/assets
+```ts
+// Vite — manual chunks
+build: {
+  rollupOptions: {
+    output: {
+      manualChunks: {
+        vendor: ['react', 'react-dom'],
+        query: ['@tanstack/react-query'],
+        charts: ['recharts'],
+      },
+    },
+  },
+}
+```
 
-- Dimensões definidas quando possível.
-- Formato moderno quando o pipeline suporta.
-- Lazy load para imagens fora da dobra.
-- Não suba asset gigante sem compressão.
+## Rendering
 
-## Web Vitals
+- Avoid unnecessary re-renders.
+- `React.memo` with custom comparison when measured and justified.
+- `useMemo` for expensive calculations on large lists.
+- `useCallback` only when passed as prop to memoized child.
+- Virtualized list for 100+ items.
 
-Mudança que afeta primeira tela deve considerar:
+```tsx
+// Virtualized list
+import { useVirtualizer } from '@tanstack/react-virtual';
 
-- LCP
-- CLS
-- INP
+function LargeList({ items }: { items: Item[] }) {
+  const parentRef = useRef<HTMLDivElement>(null);
 
-## Medição
+  const virtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 48,
+  });
 
-Quando performance é objetivo da tarefa, o plano deve indicar métrica antes/depois ou ferramenta de validação.
+  return (
+    <div ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
+      <div style={{ height: virtualizer.getTotalSize() }}>
+        {virtualizer.getVirtualItems().map((virtualItem) => (
+          <div
+            key={virtualItem.key}
+            style={{
+              position: 'absolute',
+              top: virtualItem.start,
+              height: virtualItem.size,
+            }}
+          >
+            {items[virtualItem.index].name}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
 
-## Aplicações grandes
+## Images
 
-Quando a aplicação cresce, revise também:
+- Use `loading="lazy"` on images below the fold.
+- Use `srcset` / `sizes` for responsive images.
+- Use modern formats (WebP, AVIF) with fallback.
+- Do not upload uncompressed images.
 
-- divisão por rotas/features para reduzir bundle inicial
-- cache de server state com invalidação clara
-- listas grandes com paginação, infinite loading controlado ou virtualização
-- formulários grandes sem renderização global a cada tecla
-- provider/context em escopo pequeno para evitar rerender em árvore inteira
-- assets e dependências compartilhadas sem duplicação
-- observabilidade frontend: erro, rota, versão e Web Vitals quando aplicável
+## Anti-patterns
 
-Plano de frontend grande que só fala em componente visual e ignora dados/cache/renderização deve virar pendência em `review-performance`.
+- **Upload uncompressed images**: compress and use modern formats.
+- **Render 500+ items without virtualization**: use virtualized list.
+- **useMemo/useCallback on everything**: only with measurement and justification.
+- **Full import of large library**: use tree-shakeable or dynamic import.
+- **No bundle monitoring**: check size on every relevant delivery.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any below.
 
-- **Não subir asset gigante sem compressão**: imagens/assets grandes devem ser comprimidos antes.
-- **Não transformar código simples em labirinto por micro-otimização**: otimizar só o que afeta experiência ou custo real.
-- **Plano que ignora dados/cache/renderização é pendência**: plano de frontend grande deve cobrir bundle, cache, renderização e Web Vitals.
-- **Medição obrigatória quando performance é objetivo**: indicar métrica antes/depois ou ferramenta de validação.
-- **Lazy loading para rotas/áreas pesadas**: não carregar tudo no bundle inicial.
-- **Virtualizar listas grandes**: listas grandes não podem renderizar todos os itens de uma vez.
+- **Lazy load routes and heavy components**: use `React.lazy` + `Suspense` for non-critical routes.
+- **Dynamic import for large dependencies**: charts, editors, and heavy libs must be dynamically imported.
+- **Manual chunks to separate vendor from app**: configure in Vite/Next.js.
+- **Virtualized list for 100+ items**: do not render 100+ items in the DOM without virtualization.
+- **Monitor bundle size**: check on every relevant delivery.
+- **Use `loading="lazy"` on images below the fold**: mandatory.
+- **Use modern formats (WebP/AVIF) with fallback**: do not upload uncompressed images.

@@ -1,57 +1,69 @@
-# Design System
-
-## Objetivo
-
-Garantir consistência visual e reduzir retrabalho sem bloquear evolução do produto.
+# React Web Design System
 
 ## Tokens
 
-Use tokens centralizados para:
+Use tokens for consistent visual identity. Do not hardcode values.
 
-- cor
-- tipografia
-- espaçamento
-- raio
-- sombra
-- z-index
-- breakpoints
+```ts
+// tailwind.config.ts
+import type { Config } from 'tailwindcss';
 
-Valor hardcoded só é aceitável se o projeto ainda não tem token correspondente e o plano propõe consolidar depois.
+const config: Config = {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          50: '#eff6ff',
+          500: '#3b82f6',
+          700: '#1d4ed8',
+          900: '#1e3a8a',
+        },
+        surface: {
+          DEFAULT: '#ffffff',
+          muted: '#f9fafb',
+        },
+        text: {
+          DEFAULT: '#111827',
+          muted: '#6b7280',
+        },
+        danger: '#ef4444',
+        success: '#22c55e',
+        warning: '#f59e0b',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      spacing: {
+        xs: '0.25rem',
+        sm: '0.5rem',
+        md: '1rem',
+        lg: '1.5rem',
+        xl: '2rem',
+      },
+    },
+  },
+};
 
-## Componentes
+export default config;
+```
 
-Componentes reutilizáveis devem ter:
+## Components
 
-- estados: default, hover, focus, disabled, loading, error quando aplicável
-- variações nomeadas por intenção, não por cor solta
-- acessibilidade embutida
-- API de props simples
+Build from tokens. Do not bypass the design system.
 
-## Layout
+If it is not enough, propose extension. Do not work around it.
 
-- Mobile, tablet e desktop quando aplicável.
-- Não assuma uma única largura.
-- Defina comportamento de overflow, truncamento e empty states.
+## Anti-patterns
 
-## UX states
+- **Hardcoded color, font, or spacing value**: use a token.
+- **Local CSS for something the design system already provides**: extend the system if necessary.
+- **Duplicate component per screen**: reuse and compose.
 
-Toda tela/fluxo assíncrono precisa decidir:
+## Blocking rules
 
-- loading
-- empty
-- error
-- success
-- permission denied quando aplicável
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any below.
 
-## Regra visual
-
-Não aceite UI "funcional mas feia" em entrega de produto. Se o plano não define visual suficiente para implementar com qualidade, marque pendência.
-
-## Regras bloqueantes
-
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
-
-- **Usar tokens centralizados**: não usar valor hardcoded quando token correspondente existe no projeto.
-- **Não assumir uma única largura**: layout deve considerar mobile, tablet e desktop quando aplicável.
-- **Estados de UI obrigatórios**: toda tela/fluxo assíncrono deve tratar loading, empty, error e success.
-- **Não entregar UI "funcional mas feia"**: se o plano não define visual suficiente, marque pendência.
+- **Do not hardcode colors, fonts, or spacing**: always use tokens.
+- **Do not work around the design system**: if insufficient, extend it.
+- **Do not duplicate visual component per screen**: reuse and compose.

@@ -1,153 +1,153 @@
 ---
 name: jarvis-plan
-description: Planejamento unificado — explora codebase, grilla se necessário, gera plano técnico com todas as perspectivas embutidas para Node.js backend. Um pass de LLM.
+description: Unified planning — explores codebase, grills if needed, generates technical plan with all perspectives built in for Node.js backend. One LLM pass.
 ---
 
 # /jarvis-plan
 
-Gere o plano técnico definitivo para a task, com todas as perspectivas embutidas de primeira.
+Generate the definitive technical plan for the task, with all perspectives built in from the start.
 
-Não execute implementação. Não altere código de produção. Apenas planeje.
+Do not execute implementation. Do not alter production code. Only plan.
 
-## Sequência
-
----
-
-## 1. Entender a task
-
-Leia o contexto disponível:
-
-- `CLAUDE.md` — contrato do projeto, estrutura, convenções
-- `PRODUCT_BRIEF.md` — se existir, termos e entidades do domínio
-- A task descrita pelo usuário
-- Explore o codebase relevante (modelos, serviços, rotas, testes existentes)
-
-**Se a task for ambígua** — ative o grill (etapa 2).
-**Se a task for clara** — pule direto pra etapa 3.
+## Sequence
 
 ---
 
-## 2. Grill integrado (condicional)
+## 1. Understand the task
 
-Ative SOMENTE quando a task tiver:
+Read the available context:
 
-- Feature nova sem especificação clara
-- Múltiplas abordagens viáveis com trade-offs reais
-- Termos ambíguos que o codebase não resolve
-- Decisão de arquitetura irreversível
+- `CLAUDE.md` — project contract, structure, conventions
+- `PRODUCT_BRIEF.md` — if it exists, domain terms and entities
+- The task described by the user
+- Explore the relevant codebase (models, services, routes, existing tests)
 
-**Regras do grill:**
+**If the task is ambiguous** — activate grill (step 2).
+**If the task is clear** — skip directly to step 3.
 
-- **UMA pergunta por vez. Faça a pergunta e PARE. Sua resposta deve ser SOMENTE a pergunta — sem prólogo, sem explicação adicional. Espere o usuário responder antes de continuar.**
-- Cada pergunta com: recomendação + por quê + alternativa.
-- Máximo 7 perguntas. Se precisar de mais, a task é grande demais — sugira quebrar.
-- Se a resposta está no codebase, busque ao invés de perguntar.
-- Desafie termos vagos, teste edge cases, compare com o que existe.
-- Sugira ADR quando: hard to reverse + surprising + real trade-off.
+---
 
-**Quando o grill terminar, gere resumo em tabela:**
+## 2. Integrated grill (conditional)
+
+Activate ONLY when the task has:
+
+- New feature without clear specification
+- Multiple viable approaches with real trade-offs
+- Ambiguous terms that the codebase doesn't resolve
+- Irreversible architecture decision
+
+**Grill rules:**
+
+- **ONE question at a time. Ask the question and STOP. Your response should be ONLY the question — no prologue, no additional explanation. Wait for the user to answer before continuing.**
+- Each question with: recommendation + why + alternative.
+- Maximum 7 questions. If you need more, the task is too large — suggest breaking it.
+- If the answer is in the codebase, search instead of asking.
+- Challenge vague terms, test edge cases, compare with what exists.
+- Suggest ADR when: hard to reverse + surprising + real trade-off.
+
+**When the grill finishes, generate a summary in a table:**
 
 ```md
-| Decisão | Escolha | Razão |
-|---------|---------|-------|
-| ...     | ...     | ...   |
+| Decision | Choice | Reason |
+|---------|--------|--------|
+| ...     | ...    | ...    |
 ```
 
 ---
 
-## 3. Selecionar contribuidores
+## 3. Select contributors
 
-Selecione as roles relevantes para a task. Nenhuma é obrigatória.
+Select the roles relevant to the task. None are mandatory.
 
-| Condição na task | Role |
+| Task condition | Role |
 |---|---|
-| Escopo, requisitos, critérios de aceite, impacto em produto | `product_roles/role-pm.md` |
-| Estrutura, camadas, dependências, decisão arquitetural | `product_roles/role-architect.md` |
-| Endpoint, contrato HTTP, status code, schema, OpenAPI | `product_roles/review-api.md` |
-| Schema, migration, índice, query, ORM, constraint | `product_roles/review-database.md` |
-| Auth, autorização, secrets, PII, validação sensível, rate limit | `product_roles/review-security.md` |
-| Logs, métricas, tracing, healthcheck, incidente | `product_roles/review-observability.md` |
-| Volume, concorrência, cache, fila, pool, produção crítica | `product_roles/review-scalability.md` |
-| Fluxo testável, usecase, regra de negócio, integração | `product_roles/role-api-qa.md` |
-| Módulo, service, handler, middleware, plugin, camada Node | `product_roles/role-node-architect.md` |
+| Scope, requirements, acceptance criteria, product impact | `product_roles/role-pm.md` |
+| Structure, layers, dependencies, architectural decision | `product_roles/role-architect.md` |
+| Endpoint, HTTP contract, status code, schema, OpenAPI | `product_roles/review-api.md` |
+| Schema, migration, index, query, ORM, constraint | `product_roles/review-database.md` |
+| Auth, authorization, secrets, PII, sensitive validation, rate limit | `product_roles/review-security.md` |
+| Logs, metrics, tracing, healthcheck, incident | `product_roles/review-observability.md` |
+| Volume, concurrency, cache, queue, pool, critical production | `product_roles/review-scalability.md` |
+| Testable flow, use case, business rule, integration | `product_roles/role-api-qa.md` |
+| Module, service, handler, middleware, plugin, Node layer | `product_roles/role-node-architect.md` |
 | Deploy, env, CI/CD, release, rollback, infra | `product_roles/role-delivery.md` |
 
-**Se nenhuma condição se aplica** (ex: task de infra/config simples), gere o plano sem roles.
+**If no condition applies** (e.g., simple infra/config task), generate the plan without roles.
 
 ---
 
-## 4. Gerar plano com contribuições
+## 4. Generate plan with contributions
 
-Para cada role selecionada:
+For each selected role:
 
-1. Leia o arquivo da role
-2. Consulte as referências listadas na role
-3. Gere a seção conforme o "Formato de saída" da role
-4. Se a role diz "Não se aplica", inclua a seção com justificativa
+1. Read the role's file
+2. Consult the references listed in the role
+3. Generate the section per the role's "Output format"
+4. If the role says "Does not apply", include the section with justification
 
-**Montagem do plano:**
+**Plan assembly:**
 
-- Respeitar a ordem: PM → Architect → Stack-specific → Domain reviews → QA → Delivery
-- Deduplicar: se architect e QA ambos mencionam testes, QA vira dono da seção de testes
-- Cada seção com heading claro, sem sobreposição
-
----
-
-## 5. Regras bloqueantes
-
-Consulte a seção `## Regras bloqueantes` dos guides referenciados pelas roles selecionadas (etapa 3). O plano NÃO pode ser proposto se violar qualquer regra listada como bloqueante nesses guides.
-
-**Regra universal:** o plano deve ter comportamento de produto, não apenas lista de arquivos/classes.
-
-Se alguma regra for violada, corrija o plano antes de apresentar.
+- Respect the order: PM → Architect → Stack-specific → Domain reviews → QA → Delivery
+- Deduplicate: if architect and QA both mention tests, QA owns the test section
+- Each section with a clear heading, no overlap
 
 ---
 
-## 6. Formato final obrigatório
+## 5. Blocking rules
+
+Consult the `## Blocking rules` section of the guides referenced by the selected roles (step 3). The plan CANNOT be proposed if it violates any rule listed as blocking in those guides.
+
+**Universal rule:** the plan must have product behavior, not just a list of files/classes.
+
+If any rule is violated, fix the plan before presenting it.
+
+---
+
+## 6. Mandatory final format
 
 ```md
-# Plano: {título}
+# Plan: {title}
 
-Data: {YYYY-MM-DD}
+Date: {YYYY-MM-DD}
 
-## Objetivo
-{O que resolve, para quem, comportamento esperado}
+## Objective
+{What it solves, for whom, expected behavior}
 
-## Escopo / Fora de escopo
-{Incluído} / {Excluído}
+## Scope / Out of scope
+{Included} / {Excluded}
 
-## Critérios de aceite
-- [ ] {verificável}
+## Acceptance criteria
+- [ ] {verifiable}
 
-## Arquitetura
-{Seção do architect}
+## Architecture
+{Architect's section}
 
-## {Seções das roles selecionadas}
+## {Sections from selected roles}
 
-## Testes
-{Seção do QA}
+## Tests
+{QA section}
 
-## Plano incremental
-1. **Passo N — {título}**: {descrição}. Arquivos: {lista}. Validação: {como verificar}.
+## Incremental plan
+1. **Step N — {title}**: {description}. Files: {list}. Validation: {how to verify}.
 
-## Referências
-- `docs/ai/{arquivo}` — {por que}
+## References
+- `docs/ai/{file}` — {why}
 ```
 
 ---
 
-## 7. Salvar e aguardar aprovação — MODO INTERATIVO
+## 7. Save and wait for approval — INTERACTIVE MODE
 
-1. Salve o plano em `plans/YYYY-MM-DD-{slug}.md`
-2. Apresente o plano ao usuário
-3. **PARE.** Sua última linha deve ser EXATAMENTE uma pergunta: **"Plano aprovado? Responda 'sim' para implementar ou peça ajustes."**
-4. Não continue para implementação. Não gere código. Não faça mais nada até o usuário responder.
-5. Se o usuário pedir ajustes, atualize o plano, salve e faça a pergunta novamente.
+1. Save the plan to `plans/YYYY-MM-DD-{slug}.md`
+2. Present the plan to the user
+3. **STOP.** Your last line must be EXACTLY a question: **"Plan approved? Answer 'yes' to implement or request adjustments."**
+4. Do not proceed to implementation. Do not generate code. Do nothing else until the user responds.
+5. If the user requests adjustments, update the plan, save it, and ask the question again.
 
 ---
 
-## Regras
+## Rules
 
-- Um pass de LLM — sem rascunho seguido de revisão.
-- Se a informação estiver ausente, pergunte (grill) antes de assumir.
-- Não implemente. Não crie arquivos de produção.
+- One LLM pass — no draft followed by review.
+- If information is missing, ask (grill) before assuming.
+- Do not implement. Do not create production files.

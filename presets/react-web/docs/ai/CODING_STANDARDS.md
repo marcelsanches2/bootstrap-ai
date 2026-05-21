@@ -1,57 +1,57 @@
-# Padrões de Código React/TypeScript
+# React/TypeScript Code Standards
 
-## Princípios
+## Principles
 
-O código deve ser:
+Code must be:
 
-- simples e explícito
-- legível sem comentário excessivo
-- testável em isolado
-- modular e fácil de refatorar
+- simple and explicit
+- readable without excessive comments
+- testable in isolation
+- modular and easy to refactor
 
-Não criar abstrações antes de existir repetição real.
+Do not create abstractions before real repetition exists.
 
 ---
 
-## Nomeação
+## Naming
 
-Use nomes claros e específicos.
+Use clear and specific names.
 
-Bom:
+Good:
 
 ```ts
-useUserOrders       // hook que busca pedidos do usuário
-OrderCard           // componente visual de pedido
-formatCurrency      // utilidade de formatação
-userApi             // camada de API de usuário
-OrderStatus         // enum/union de status
+useUserOrders       // hook that fetches user orders
+OrderCard           // visual order component
+formatCurrency      // formatting utility
+userApi             // user API layer
+OrderStatus         // status enum/union
 ```
 
-Ruim:
+Bad:
 
 ```ts
-useData             // genérico demais
-Component1          // sem significado
-utils               // caixa de ferramentas sem critério
-api                 // mistura tudo
-stuff               // inaceitável
+useData             // too generic
+Component1          // no meaning
+utils               // toolbox without criteria
+api                 // mixes everything
+stuff               // unacceptable
 ```
 
 ---
 
 ## TypeScript
 
-### Regras obrigatórias
+### Mandatory rules
 
-- Tipar props, responses e eventos relevantes.
-- Evitar `any`; se inevitável, isole na borda e valide com Zod.
-- Preferir tipos explícitos para contratos públicos (props de componentes, parâmetros de hooks).
-- Usar `interface` para contratos de objeto, `type` para unions e utilitários.
+- Type props, responses, and relevant events.
+- Avoid `any`; if unavoidable, isolate at the boundary and validate with Zod.
+- Prefer explicit types for public contracts (component props, hook parameters).
+- Use `interface` for object contracts, `type` for unions and utilities.
 
-### Props de componente
+### Component props
 
 ```tsx
-// ✅ Certo: interface explícita
+// ✅ Correct: explicit interface
 interface UserCardProps {
   user: User;
   onEdit: (id: string) => void;
@@ -64,15 +64,15 @@ export function UserCard({ user, onEdit, isLoading = false }: UserCardProps) {
 ```
 
 ```tsx
-// ❌ Errado: props sem tipo ou com any
+// ❌ Wrong: untyped props or with any
 export function UserCard(props: any) {
   // ...
 }
 ```
 
-### Validação de dados externos
+### External data validation
 
-Sempre valide dados de API com Zod na borda:
+Always validate API data with Zod at the boundary:
 
 ```ts
 import { z } from 'zod';
@@ -85,7 +85,7 @@ const UserSchema = z.object({
 
 type User = z.infer<typeof UserSchema>;
 
-// Na camada de API
+// In the API layer
 async function fetchUser(id: string): Promise<User> {
   const response = await api.get(`/users/${id}`);
   return UserSchema.parse(response.data);
@@ -96,46 +96,46 @@ async function fetchUser(id: string): Promise<User> {
 
 ## React
 
-### Componentes
+### Components
 
-- Componentes pequenos e nomeados pela responsabilidade.
-- Props com nomes semânticos, não acopladas ao layout interno.
-- Um arquivo, um componente exportado (exceto subcomponentes coesos).
-- Não misturar regra de negócio com renderização.
+- Small components named by responsibility.
+- Props with semantic names, not coupled to internal layout.
+- One file, one exported component (except cohesive subcomponents).
+- Do not mix business logic with rendering.
 
 ### Hooks
 
-- Hook custom deve encapsular comportamento reutilizável real.
-- Hook que faz fetch deve usar TanStack Query, não `useEffect` + `useState`.
-- Não esconda side effects perigosos em hook com nome genérico.
+- Custom hook must encapsulate real reusable behavior.
+- Hook that fetches must use TanStack Query, not `useEffect` + `useState`.
+- Do not hide dangerous side effects in a generically named hook.
 
 ### useMemo / useCallback
 
-- Memoização só quando há custo/medição ou renderização problemática.
-- Não envolva tudo em `useMemo` por precaução.
+- Memoization only when there is cost/measurement or problematic rendering.
+- Do not wrap everything in `useMemo` as a precaution.
 
 ```tsx
-// ✅ Justificado: filtro pesado em lista grande
+// ✅ Justified: heavy filter on large list
 const filteredItems = useMemo(
   () => items.filter(complexFilter),
   [items, complexFilter]
 );
 
-// ❌ Desnecessário: criação de objeto simples
+// ❌ Unnecessary: simple object creation
 const style = useMemo(() => ({ color: 'red' }), []);
 ```
 
 ### useEffect
 
-- Evite `useEffect` para derivar estado que pode ser calculado diretamente.
-- `useEffect` é para sincronização com sistemas externos (API, DOM, timer).
-- Não use `useEffect` para reagir a mudanças de state do próprio componente.
+- Avoid `useEffect` to derive state that can be calculated directly.
+- `useEffect` is for synchronization with external systems (API, DOM, timer).
+- Do not use `useEffect` to react to the component's own state changes.
 
 ```tsx
-// ✅ Certo: cálculo direto
+// ✅ Correct: direct calculation
 const fullName = `${firstName} ${lastName}`;
 
-// ❌ Errado: effect desnecessário
+// ❌ Wrong: unnecessary effect
 useEffect(() => {
   setFullName(`${firstName} ${lastName}`);
 }, [firstName, lastName]);
@@ -143,19 +143,19 @@ useEffect(() => {
 
 ---
 
-## Estado
+## State
 
-### Escolha da solução
+### Choosing the solution
 
-| Tipo de estado | Solução |
+| State type | Solution |
 |---|---|
-| Local de componente | `useState` / `useReducer` |
-| Estado de formulário | React Hook Form |
-| Dados remotos/cache | TanStack Query |
-| Filtros e paginação | URL params (searchParams) |
-| Estado global raro | Zustand (ou Redux se já adotado) |
+| Component local | `useState` / `useReducer` |
+| Form state | React Hook Form |
+| Remote data/cache | TanStack Query |
+| Filters and pagination | URL params (searchParams) |
+| Rare global state | Zustand (or Redux if already adopted) |
 
-### Zustand — padrão de uso
+### Zustand — usage pattern
 
 ```ts
 // store/cart-store.ts
@@ -188,11 +188,11 @@ export const useCartStore = create<CartState>((set) => ({
 }));
 ```
 
-Não crie store global para estado que vive em uma página.
+Do not create a global store for state that lives on one page.
 
 ---
 
-## Data Fetching com TanStack Query
+## Data Fetching with TanStack Query
 
 ```tsx
 // hooks/use-orders.ts
@@ -219,26 +219,26 @@ export function useCreateOrder() {
 }
 ```
 
-### Regras TanStack Query
+### TanStack Query rules
 
-- `queryKey` deve ser único e incluir parâmetros relevantes.
-- `staleTime` explícito quando dado muda pouco.
-- `useMutation` com `invalidateQueries` para manter cache atualizado.
-- Tratar `isLoading`, `isError` e estado vazio em toda query.
-- Não duplicar lógica de fetch em componentes. Use hooks centralizados.
+- `queryKey` must be unique and include relevant parameters.
+- Explicit `staleTime` when data changes infrequently.
+- `useMutation` with `invalidateQueries` to keep cache updated.
+- Handle `isLoading`, `isError`, and empty state on every query.
+- Do not duplicate fetch logic in components. Use centralized hooks.
 
 ---
 
 ## Forms
 
-- Use React Hook Form + Zod para formulários com validação.
-- Erros por campo e erro geral devem ser representáveis.
-- Submit deve tratar loading e evitar duplo envio.
+- Use React Hook Form + Zod for forms with validation.
+- Per-field errors and general error must be representable.
+- Submit must handle loading and prevent double submission.
 
 ```tsx
 const schema = z.object({
-  name: z.string().min(2, 'Nome obrigatório'),
-  email: z.string().email('E-mail inválido'),
+  name: z.string().min(2, 'Name is required'),
+  email: z.string().email('Invalid email'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -256,7 +256,7 @@ function CreateUserForm() {
       <input {...register('name')} aria-invalid={!!errors.name} />
       {errors.name && <span role="alert">{errors.name.message}</span>}
       <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Criando...' : 'Criar'}
+        {isSubmitting ? 'Creating...' : 'Create'}
       </button>
     </form>
   );
@@ -265,86 +265,86 @@ function CreateUserForm() {
 
 ---
 
-## Estilo
+## Styling
 
-- Use tokens/classes/componentes do design system.
-- Tailwind CSS: prefira composição com `@apply` ou `cva` para variantes.
-- Evite inline style para regra visual reutilizável.
-- Não misture design system com workaround local sem comentário.
-
----
-
-## Arquivos
-
-- Um arquivo não deve ultrapassar 200-300 linhas sem justificativa.
-- Arquivo grande é sinal de responsabilidade mista.
+- Use tokens/classes/components from the design system.
+- Tailwind CSS: prefer composition with `@apply` or `cva` for variants.
+- Avoid inline styles for reusable visual rules.
+- Do not mix design system with local workarounds without a comment.
 
 ---
 
-## Dependências
+## Files
 
-Antes de adicionar dependência:
-
-1. Verifique se já existe alternativa no projeto.
-2. Avalie se é realmente necessária vs. browser API ou código simples.
-3. Verifique tamanho do bundle (`bundlephobia.com`).
-4. Verifique se é mantida ativamente.
-
-Não adicionar lib para uma função resolvida com stdlib/browser API.
+- A file should not exceed 200-300 lines without justification.
+- A large file is a sign of mixed responsibilities.
 
 ---
 
-## Comentários
+## Dependencies
 
-Comente apenas quando o código não for autoexplicativo.
+Before adding a dependency:
 
-Não usar comentários para explicar código ruim — melhore o código.
+1. Check if an alternative already exists in the project.
+2. Evaluate if it is truly necessary vs. browser API or simple code.
+3. Check bundle size (`bundlephobia.com`).
+4. Check if it is actively maintained.
+
+Do not add a lib for a function solvable with stdlib/browser API.
+
+---
+
+## Comments
+
+Comment only when code is not self-explanatory.
+
+Do not use comments to explain bad code — improve the code.
 
 ---
 
 ## Anti-patterns
 
-- **useEffect para sincronizar state do React:** se o dado deriva de props/state, calcule diretamente.
-- **Store global para estado local:** não use Zustand/Redux para dados que vivem em um componente.
-- **Chamada HTTP em componente:** use hook + TanStack Query.
-- **`any` em contrato público:** use Zod ou tipo explícito.
-- **Componente de 500 linhas:** separe em componentes menores.
-- **Prop drilling profundo:** se passou por 4+ níveis, considere context ou store.
-- **Duplicação de lógica entre componentes:** extraia para hook ou utilitário.
-- **Import barrel sem tree-shaking:** evite `index.ts` que re-exporta tudo em library code.
-- **Re-renderização sem memoização em lista grande:** use `key` estável e `React.memo` quando medido.
+- **useEffect to sync React state:** if data derives from props/state, calculate directly.
+- **Global store for local state:** do not use Zustand/Redux for data that lives in one component.
+- **HTTP call in component:** use hook + TanStack Query.
+- **`any` in public contract:** use Zod or explicit type.
+- **500-line component:** break into smaller components.
+- **Deep prop drilling:** if passing through 4+ levels, consider context or store.
+- **Duplicated logic between components:** extract to hook or utility.
+- **Barrel import without tree-shaking:** avoid `index.ts` that re-exports everything in library code.
+- **Re-render without memoization on large list:** use stable `key` and `React.memo` when measured.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any below.
 
 ### TypeScript
-- **Tipar props, responses e eventos**: contratos públicos devem ter tipos explícitos, nunca `any` sem isolamento e validação.
-- **Evitar `any`**: se inevitável, isolar na borda e validar com Zod.
-- **Validar dados de API com Zod na borda**: sempre valide dados externos na camada de API, nunca confie cegamente.
+- **Type props, responses, and events**: public contracts must have explicit types, never `any` without isolation and validation.
+- **Avoid `any`**: if unavoidable, isolate at the boundary and validate with Zod.
+- **Validate API data with Zod at the boundary**: always validate external data in the API layer, never trust blindly.
 
 ### React
-- **Não misturar regra de negócio com renderização**: componentes visuais não contêm lógica de negócio.
-- **Hook de fetch usa TanStack Query**: nunca `useEffect` + `useState` para data fetching.
-- **Não esconder side effects em hook genérico**: hooks devem ter nome e comportamento claros.
-- **Não usar useEffect para derivar estado do próprio componente**: calcule diretamente.
-- **Não usar useEffect para reagir a mudanças de state local**: useEffect é para sincronização com sistemas externos.
+- **Do not mix business logic with rendering**: visual components do not contain business logic.
+- **Fetch hook uses TanStack Query**: never `useEffect` + `useState` for data fetching.
+- **Do not hide side effects in generic hook**: hooks must have clear name and behavior.
+- **Do not use useEffect to derive the component's own state**: calculate directly.
+- **Do not use useEffect to react to local state changes**: useEffect is for synchronization with external systems.
 
-### Estado
-- **Não criar store global para estado local**: Zustand/Redux apenas para estado global real e raro.
+### State
+- **Do not create global store for local state**: Zustand/Redux only for truly global and rare state.
 
-### Estilo
-- **Usar tokens do design system**: não usar valores hardcoded quando token/componente existe.
-- **Não misturar design system com workaround local**: se necessário, documentar o motivo.
+### Styling
+- **Use design system tokens**: do not use hardcoded values when a token/component exists.
+- **Do not mix design system with local workaround**: if necessary, document the reason.
 
-### Dependências
-- **Não adicionar lib para função resolvida com stdlib/browser API**: avalie alternativas antes.
+### Dependencies
+- **Do not add lib for function solvable with stdlib/browser API**: evaluate alternatives first.
 
-### Código
-- **Não usar comentários para explicar código ruim**: melhore o código.
-- **Arquivo não deve ultrapassar 200-300 linhas sem justificativa**: arquivo grande é sinal de responsabilidade mista.
-- **Não duplicar lógica de fetch em componentes**: use hooks centralizados.
-- **Não criar abstrações antes de repetição real**: aguardar necessidade concreta.
-- **`any` em contrato público é proibido**: use Zod ou tipo explícito.
-- **Chamada HTTP em componente é proibida**: use hook + TanStack Query.
-- **Store global para estado local é proibido**: use estado local ou TanStack Query.
+### Code
+- **Do not use comments to explain bad code**: improve the code.
+- **File should not exceed 200-300 lines without justification**: large file is a sign of mixed responsibilities.
+- **Do not duplicate fetch logic in components**: use centralized hooks.
+- **Do not create abstractions before real repetition**: wait for concrete need.
+- **`any` in public contract is prohibited**: use Zod or explicit type.
+- **HTTP call in component is prohibited**: use hook + TanStack Query.
+- **Global store for local state is prohibited**: use local state or TanStack Query.

@@ -1,20 +1,20 @@
 # Coding Standards
 
-Padrões de código para {{PROJECT_NAME}}.
+Code standards for {{PROJECT_NAME}}.
 
-## Formatação e linting
+## Formatting and linting
 
 {{FORMATTING_TOOLS}}
 
-## Tipagem
+## Typing
 
 {{TYPING_RULES}}
 
-## Nomenclatura
+## Naming
 
 {{NAMING_RULES}}
 
-## Tratamento de erros
+## Error handling
 
 {{ERROR_HANDLING}}
 
@@ -22,21 +22,21 @@ Padrões de código para {{PROJECT_NAME}}.
 
 {{LOGGING_RULES}}
 
-## Comentários e documentação
+## Comments and documentation
 
 {{DOCUMENTATION_RULES}}
 
-## Imports e organização
+## Imports and organization
 
 {{IMPORT_RULES}}
 
-## Proibições
+## Prohibitions
 
 {{PROHIBITIONS}}
 
-## Regras duras
+## Hard rules
 
-- Não hardcodar secrets, credenciais ou URLs de ambiente.
-- Não usar `any` (ou equivalente) sem justificativa explícita.
-- Não commitar código que não passa no linter.
-- Não ignorar warnings de tipo sem documentar o motivo.
+- Do not hardcode secrets, credentials, or environment URLs.
+- Do not use `any` (or equivalent) without explicit justification.
+- Do not commit code that doesn't pass the linter.
+- Do not ignore type warnings without documenting the reason.

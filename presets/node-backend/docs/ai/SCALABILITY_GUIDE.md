@@ -1,168 +1,168 @@
-# Guia de Escalabilidade e Produção
+# Scalability and Production Guide
 
-## Objetivo
+## Objective
 
-Este documento força a revisão dos pontos que normalmente quebram quando uma aplicação sai do ambiente pequeno e começa a receber carga real: banco, concorrência, filas, cache, latência, throughput, limites e operação.
+This document forces a review of the points that typically break when an application leaves the small-scale environment and starts receiving real load: database, concurrency, queues, cache, latency, throughput, limits, and operations.
 
-Escalabilidade aqui não significa microservices por padrão. Significa saber onde o sistema vai falhar primeiro e deixar o plano preparado para diagnosticar, limitar e recuperar.
+Scalability here does not mean microservices by default. It means knowing where the system will fail first and keeping the plan prepared to diagnose, limit, and recover.
 
-## Banco de dados
+## Database
 
 ### Queries
 
-Verifique:
+Verify:
 
-- filtros usam colunas indexadas quando volume justificar
-- ordenação é determinística
-- paginação não degrada com offset profundo quando volume for alto
-- joins têm cardinalidade entendida
-- N+1 foi evitado
-- query crítica tem teste, `EXPLAIN` ou justificativa
+- filters use indexed columns when volume justifies it
+- ordering is deterministic
+- pagination does not degrade with deep offset when volume is high
+- joins have understood cardinality
+- N+1 has been avoided
+- critical query has a test, `EXPLAIN`, or justification
 
-### Índices
+### Indexes
 
-Índice deve existir para:
+An index should exist for:
 
-- lookup frequente por chave externa
-- unicidade que protege regra de negócio
-- paginação/ordenação crítica
-- filtros usados em endpoint quente
+- frequent lookup by foreign key
+- uniqueness that protects a business rule
+- critical pagination/ordering
+- filters used on a hot endpoint
 
-Não crie índice por reflexo. Índice acelera leitura e custa escrita, storage e manutenção.
+Do not create indexes by reflex. An index accelerates reads and costs writes, storage, and maintenance.
 
-### Crescimento de dados
+### Data growth
 
-Planos que criam ou expandem tabelas devem responder:
+Plans that create or expand tables must answer:
 
-- qual volume esperado em 3, 6 e 12 meses?
-- há retenção, arquivamento ou limpeza?
-- queries antigas continuam aceitáveis com 10x dados?
-- campos grandes ficam fora de tabela quente?
+- what is the expected volume in 3, 6, and 12 months?
+- is there retention, archiving, or cleanup?
+- will old queries remain acceptable with 10x data?
+- are large fields kept out of hot tables?
 
-## Concorrência e consistência
+## Concurrency and consistency
 
-Verifique operações com risco de corrida:
+Verify operations with race condition risk:
 
 - read-modify-write
-- criação com unicidade lógica
-- consumo de crédito/saldo/estoque
-- webhook reentregável
-- job que pode rodar em paralelo
-- retry automático
+- creation with logical uniqueness
+- credit/balance/inventory consumption
+- redeliverable webhook
+- job that can run in parallel
+- automatic retry
 
-Mitigações possíveis:
+Possible mitigations:
 
-- constraint única
-- lock otimista por versão
-- lock pessimista curto
-- transação bem delimitada
+- unique constraint
+- optimistic lock by version
+- short pessimistic lock
+- well-delimited transaction
 - idempotency key
 - outbox/inbox pattern
-- fila com deduplicação
+- queue with deduplication
 
-Regra: se duplicar a request causa efeito duplicado, o plano precisa tratar idempotência.
+Rule: if duplicating the request causes a duplicate effect, the plan must handle idempotency.
 
-## Pool, conexões e limites
+## Pool, connections, and limits
 
-Em produção, falha comum é esgotar recurso compartilhado.
+In production, a common failure is exhausting shared resources.
 
-Verifique:
+Verify:
 
-- pool de conexão com banco tem tamanho explícito
-- workers/processos não multiplicam conexões além do limite do banco
-- timeouts existem para banco, HTTP externo e fila
-- endpoint caro tem limite de payload, paginação ou rate limit
-- upload/exportação não carrega tudo em memória
-- backpressure existe para fila/job quando downstream degrada
+- database connection pool has explicit size
+- workers/processes do not multiply connections beyond the database limit
+- timeouts exist for database, external HTTP, and queues
+- expensive endpoints have payload limits, pagination, or rate limits
+- upload/export does not load everything into memory
+- backpressure exists for queue/job when downstream degrades
 
 ## Cache
 
-Cache só ajuda quando há estratégia de invalidação.
+Cache only helps when there's an invalidation strategy.
 
-Plano com cache deve definir:
+A plan with cache must define:
 
-- chave
+- key
 - TTL
-- escopo por usuário/tenant quando aplicável
-- invalidação
-- comportamento em cache miss
-- risco de dado stale
-- métrica de hit/miss quando relevante
+- scope per user/tenant when applicable
+- invalidation
+- behavior on cache miss
+- stale data risk
+- hit/miss metric when relevant
 
-Não use cache para esconder query ruim antes de entender a query.
+Do not use cache to hide a bad query before understanding the query.
 
-## Filas e jobs
+## Queues and jobs
 
-Para processamento assíncrono, verifique:
+For async processing, verify:
 
-- job é idempotente
-- payload é pequeno e versionado
-- retry tem limite e backoff
-- dead-letter ou estado de falha existe
-- concorrência máxima é definida
-- logs incluem job id e entidade afetada
-- backlog é monitorável
+- job is idempotent
+- payload is small and versioned
+- retry has a limit and backoff
+- dead-letter or failure state exists
+- max concurrency is defined
+- logs include job id and affected entity
+- backlog is monitorable
 
-## Integrações externas
+## External integrations
 
-Toda chamada externa crítica precisa de:
+Every critical external call needs:
 
-- timeout explícito
-- retry com backoff quando seguro
-- circuit breaker ou degradação controlada quando necessário
-- fallback/erro claro para usuário/cliente
-- métrica de latência e erro
-- teste de timeout/falha
+- explicit timeout
+- retry with backoff when safe
+- circuit breaker or controlled degradation when needed
+- clear fallback/error for the user/client
+- latency and error metrics
+- timeout/failure test
 
-## Performance de API
+## API performance
 
-Verifique:
+Verify:
 
-- payload não retorna campos desnecessários
-- endpoint de coleção tem paginação e limite máximo
-- serialização não domina custo
-- compressão faz sentido para resposta grande
-- operações caras não rodam no request síncrono sem necessidade
-- endpoint quente tem métrica de latência p95/p99 quando aplicável
+- payload does not return unnecessary fields
+- collection endpoint has pagination and max limit
+- serialization does not dominate cost
+- compression makes sense for large responses
+- expensive operations do not run in synchronous request unnecessarily
+- hot endpoint has p95/p99 latency metrics when applicable
 
-## Observabilidade para escala
+## Observability for scale
 
-Escala sem observabilidade vira chute.
+Scale without observability becomes guesswork.
 
-Mínimo para fluxo crítico:
+Minimum for critical flows:
 
-- latência por endpoint/job
-- taxa de erro por código/operação
-- contagem de requests/jobs
-- pool/conexões quando aplicável
-- backlog de fila
-- tempo de dependência externa
-- logs com request id/job id
+- latency per endpoint/job
+- error rate by code/operation
+- request/job count
+- pool/connections when applicable
+- queue backlog
+- external dependency time
+- logs with request id/job id
 
-## Anti-patterns bloqueantes
+## Blocking anti-patterns
 
-- Listar tabela crescente sem paginação.
-- Fazer `SELECT *` em endpoint público quente.
-- Usar offset profundo para feed grande sem reconhecer custo.
-- Criar job não idempotente com retry.
-- Fazer chamada externa sem timeout.
-- Resolver concorrência só "checando antes" sem constraint/transação.
-- Cache sem invalidação.
-- Exportação carregando tudo em memória.
-- Plano "vamos escalar depois" para fluxo já crítico.
+- Listing a growing table without pagination.
+- Doing `SELECT *` on a hot public endpoint.
+- Using deep offset for a large feed without acknowledging the cost.
+- Creating a non-idempotent job with retry.
+- Making an external call without timeout.
+- Solving concurrency only by "checking before" without constraint/transaction.
+- Cache without invalidation.
+- Export loading everything into memory.
+- "We'll scale later" plan for a flow that is already critical.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any of the rules below.
 
-- **Não listar tabela crescente sem paginação**: Todo endpoint de coleção deve ter paginação e limite máximo.
-- **Não fazer `SELECT *` em endpoint quente**: Usar `select` explícito para campos necessários.
-- **Não usar offset profundo sem reconhecer custo**: Para feeds grandes, usar cursor-based pagination.
-- **Não criar job não idempotente com retry**: Jobs com retry devem ser idempotentes.
-- **Não fazer chamada externa sem timeout**: Toda integração externa precisa de timeout explícito.
-- **Não resolver concorrência só com check prévio**: Usar constraint única, lock ou transação.
-- **Não usar cache sem invalidação**: Cache precisa de estratégia de invalidação definida.
-- **Não carregar tudo em memória em exportação**: Usar stream ou paginação para grandes volumes.
-- **Não postergar escala para fluxo já crítico**: Plano que toca fluxo crítico precisa tratar escala, limites e diagnóstico.
-- **Não usar cache para esconder query ruim**: Entender a query antes de cachear.
-- **Idempotência obrigatória se duplicar request causa efeito duplicado**: Tratar idempotência com key, constraint ou deduplicação.
+- **Do not list growing tables without pagination**: Every collection endpoint must have pagination and max limit.
+- **Do not do `SELECT *` on hot endpoints**: Use explicit `select` for needed fields.
+- **Do not use deep offset without acknowledging cost**: For large feeds, use cursor-based pagination.
+- **Do not create non-idempotent jobs with retry**: Jobs with retry must be idempotent.
+- **Do not make external calls without timeout**: Every external integration needs an explicit timeout.
+- **Do not solve concurrency only with prior check**: Use unique constraint, lock, or transaction.
+- **Do not use cache without invalidation**: Cache needs a defined invalidation strategy.
+- **Do not load everything into memory in exports**: Use streaming or pagination for large volumes.
+- **Do not postpone scale for flows that are already critical**: Plans touching critical flows must address scale, limits, and diagnostics.
+- **Do not use cache to hide bad queries**: Understand the query before caching.
+- **Idempotency is mandatory if duplicating a request causes a duplicate effect**: Handle idempotency with key, constraint, or deduplication.

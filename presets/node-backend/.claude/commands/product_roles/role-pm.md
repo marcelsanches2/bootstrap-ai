@@ -1,67 +1,67 @@
 # Role: Product Manager
 
-## Sua contribuição
-Gera as seções "Objetivo", "Escopo", "Fora de escopo" e "Critérios de aceite" do plano, descrevendo comportamento observável pelo usuário em linguagem de negócio.
+## Your contribution
+Generates the "Objective", "Scope", "Out of scope", and "Acceptance criteria" sections of the plan, describing user-observable behavior in business language.
 
-## Referência
+## Reference
 - docs/ai/FEATURE_GUIDE.md
 
-## O que incluir
-- **Objetivo**: uma frase clara em linguagem de negócio sobre o que a feature resolve e para quem.
-- **Escopo**:
-  - Fluxo principal (caminho feliz) documentado passo a passo.
-  - Fluxos alternativos (ex.: cancelamento, edição, retry).
-  - Error states documentados (duplicado, insuficiente, timeout, não encontrado).
-  - Loading states considerados.
-  - Empty states considerados (lista vazia, sem resultado).
-- **Fora de escopo**: liste explicitamente tudo que NÃO será feito nesta entrega. Evite ambiguidade entre dev e PM.
-- **Impacto em features existentes**: avalie o que muda em funcionalidades já em produção.
-- **Critérios de aceite**: lista explícita e testável. Cada critério deve ser verificável por um humano ou teste automatizado. Inclua dados de teste / massa necessária.
+## What to include
+- **Objective**: one clear sentence in business language about what the feature solves and for whom.
+- **Scope**:
+  - Main flow (happy path) documented step by step.
+  - Alternative flows (e.g., cancellation, editing, retry).
+  - Error states documented (duplicate, insufficient, timeout, not found).
+  - Loading states considered.
+  - Empty states considered (empty list, no results).
+- **Out of scope**: explicitly list everything that will NOT be done in this delivery. Avoid ambiguity between dev and PM.
+- **Impact on existing features**: assess what changes in features already in production.
+- **Acceptance criteria**: explicit and testable list. Each criterion must be verifiable by a human or automated test. Include test data / required fixtures.
 
-## Regras
-- Fluxo principal obrigatoriamente descrito. Sem ele o plano está incompleto (BLOCKER).
-- Critérios de aceite devem ser inequívocos — sem linguagem subjetiva (BLOCKER).
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Main flow must be described. Without it the plan is incomplete (BLOCKER).
+- Acceptance criteria must be unambiguous — no subjective language (BLOCKER).
+- If it doesn't apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Objetivo
-{1–2 frases: o que resolve, para quem, qual valor}
+## Objective
+{1–2 sentences: what it solves, for whom, what value}
 
-## Escopo
+## Scope
 
-### Fluxo principal
-1. {passo}
-2. {passo}
-3. {passo}
+### Main flow
+1. {step}
+2. {step}
+3. {step}
 
-### Fluxos alternativos
-- {cenário}: {comportamento}
-- {cenário}: {comportamento}
+### Alternative flows
+- {scenario}: {behavior}
+- {scenario}: {behavior}
 
 ### Error states
-- {erro}: {comportamento / mensagem}
-- {erro}: {comportamento / mensagem}
+- {error}: {behavior / message}
+- {error}: {behavior / message}
 
 ### Loading states
-- {onde}: {comportamento}
+- {where}: {behavior}
 
 ### Empty states
-- {onde}: {comportamento}
+- {where}: {behavior}
 
-### Impacto em features existentes
-- {feature}: {o que muda}
+### Impact on existing features
+- {feature}: {what changes}
 
-## Fora de escopo
+## Out of scope
 - {item 1}
 - {item 2}
 
-## Critérios de aceite
-- [ ] {critério testável 1}
-- [ ] {critério testável 2}
-- [ ] {critério testável 3}
+## Acceptance criteria
+- [ ] {testable criterion 1}
+- [ ] {testable criterion 2}
+- [ ] {testable criterion 3}
 
-### Dados de teste
-- {massa necessária para validar os critérios}
+### Test data
+- {fixtures needed to validate the criteria}
 ```

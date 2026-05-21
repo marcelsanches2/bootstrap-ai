@@ -1,31 +1,31 @@
 # Architecture
 
-Estrutura de diretórios e arquitetura do projeto {{PROJECT_NAME}}.
+Directory structure and architecture of the {{PROJECT_NAME}} project.
 
-## Visão geral
+## Overview
 
 {{ARCHITECTURE_OVERVIEW}}
 
-## Estrutura de diretórios
+## Directory structure
 
 ```
-<raiz>/
+<root>/
 {{DIRECTORY_TREE}}
 ```
 
-## Camadas e responsabilidades
+## Layers and responsibilities
 
 {{LAYERS_DESCRIPTION}}
 
-## Fluxo de dados
+## Data flow
 
 {{DATA_FLOW}}
 
-## Injeção de dependência
+## Dependency injection
 
 {{DI_PATTERN}}
 
-## Convenções de nomenclatura
+## Naming conventions
 
 {{NAMING_CONVENTIONS}}
 
@@ -33,10 +33,10 @@ Estrutura de diretórios e arquitetura do projeto {{PROJECT_NAME}}.
 
 {{ANTI_PATTERNS}}
 
-## Regras duras
+## Hard rules
 
-- Não pular camadas (ex: presentation não acessa data diretamente).
-- Não duplicar lógica entre módulos.
-- Não criar arquitetura paralela.
-- Não introduzir dependência circular.
-- Não vazar detalhes de implementação entre camadas.
+- Do not skip layers (e.g.: presentation does not access data directly).
+- Do not duplicate logic across modules.
+- Do not create parallel architecture.
+- Do not introduce circular dependencies.
+- Do not leak implementation details between layers.

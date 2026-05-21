@@ -1,14 +1,14 @@
-# Arquitetura Flutter
+# Flutter Architecture
 
-## Objetivo
+## Objective
 
-Organizar UI, estado, navegação e regras de apresentação sem transformar cada tela em framework próprio.
+Organize UI, state, navigation and presentation rules without turning each screen into its own framework.
 
 ---
 
 ## Stack
 
-O projeto utiliza:
+The project uses:
 
 - Flutter
 - Dart
@@ -18,16 +18,16 @@ O projeto utiliza:
 - Freezed
 - json_serializable
 
-A arquitetura segue uma abordagem:
+The architecture follows an approach that is:
 
 - feature-first
-- clean architecture pragmática
-- baixa complexidade inicial
-- preparada para escalar
+- pragmatic clean architecture
+- low initial complexity
+- prepared to scale
 
 ---
 
-## Estrutura recomendada
+## Recommended structure
 
 ```txt
 lib/
@@ -88,49 +88,49 @@ lib/
 
 ---
 
-## Camadas
+## Layers
 
-Cada feature pode ter as seguintes camadas:
+Each feature can have the following layers:
 
 ```txt
 presentation → application → domain
 data → domain
 ```
 
-Nem toda feature precisa ter todas as camadas desde o início.
+Not every feature needs to have all layers from the start.
 
-Não crie arquivos vazios sem necessidade.
+Do not create empty files without need.
 
 ### Presentation
 
-Responsável por:
+Responsible for:
 
 - pages
 - widgets
 - controllers
-- estado de tela
-- interação com o usuário
+- screen state
+- user interaction
 
-Não pode conter:
+Must not contain:
 
-- chamada direta a API
-- uso direto de Dio
-- parsing de DTO
-- regra de negócio complexa
-- acesso direto a datasource
+- direct API calls
+- direct Dio usage
+- DTO parsing
+- complex business logic
+- direct datasource access
 
-A presentation conversa com controllers/providers/usecases.
+Presentation communicates with controllers/providers/usecases.
 
 ### Application
 
-Responsável por:
+Responsible for:
 
-- orquestrar casos de uso
-- coordenar chamadas de repositórios
-- aplicar regras de aplicação
-- preparar dados para a camada de presentation
+- orchestrating use cases
+- coordinating repository calls
+- applying application rules
+- preparing data for the presentation layer
 
-Exemplos de use cases:
+Use case examples:
 
 - LoginUseCase
 - GetItemsUseCase
@@ -139,89 +139,89 @@ Exemplos de use cases:
 
 ### Domain
 
-Responsável por:
+Responsible for:
 
-- entidades
+- entities
 - value objects
-- contratos de repositórios (interfaces)
-- regras centrais de domínio
+- repository contracts (interfaces)
+- core domain rules
 
-Repositórios devem ser interfaces no domínio.
+Repositories must be interfaces in the domain.
 
-A camada de domínio não deve depender de Flutter, Dio ou detalhes externos.
+The domain layer must not depend on Flutter, Dio or external details.
 
 ### Data
 
-Responsável por:
+Responsible for:
 
-- implementações de repositórios
+- repository implementations
 - datasources
 - DTOs
-- chamadas HTTP
-- mapeamento de dados externos para entidades de domínio
+- HTTP calls
+- mapping external data to domain entities
 
-DTOs não podem vazar para fora da camada data.
+DTOs must not leak outside the data layer.
 
 ---
 
 ## Riverpod
 
-Riverpod deve ser usado para:
+Riverpod should be used for:
 
-- injeção de dependências
-- controllers de tela
-- estado assíncrono
-- providers globais
+- dependency injection
+- screen controllers
+- async state
+- global providers
 
-Providers globais ficam em:
+Global providers go in:
 
 ```txt
 lib/app/di/app_providers.dart
 ```
 
-Providers específicos de feature podem ficar dentro da própria feature quando a feature crescer.
+Feature-specific providers can stay within the feature itself when the feature grows.
 
-Não concentrar todos os providers do projeto em um único arquivo gigante.
+Do not concentrate all project providers in a single giant file.
 
 ---
 
 ## GoRouter
 
-A navegação deve ser centralizada em:
+Navigation must be centralized in:
 
 ```txt
 lib/app/router/app_router.dart
 lib/app/router/route_names.dart
 ```
 
-Pages não devem conhecer strings soltas de rota.
+Pages must not know loose route strings.
 
-Use constantes ou helpers centralizados.
+Use constants or centralized helpers.
 
 ---
 
 ## Dio
 
-Dio deve ser criado centralmente em:
+Dio must be created centrally in:
 
 ```txt
 lib/core/network/dio_client.dart
 ```
 
-Regras:
+Rules:
 
-- widgets não usam Dio
-- controllers não usam Dio diretamente
-- usecases não usam Dio diretamente
-- datasources podem usar Dio
-- repositories coordenam datasources
-- erros devem ser convertidos para Failure ou ApiResult
+- widgets do not use Dio
+- controllers do not use Dio directly
+- use cases do not use Dio directly
+- datasources may use Dio
+- repositories coordinate datasources
+- errors must be converted to Failure or ApiResult
 
 ---
 
-## Configuração de ambiente
+## Environment configuration
 
-Ambientes esperados:
+Expected environments:
 
 ```dart
 enum Environment {
@@ -231,7 +231,7 @@ enum Environment {
 }
 ```
 
-Config principal:
+Main config:
 
 ```dart
 class AppConfig {
@@ -240,45 +240,45 @@ class AppConfig {
 }
 ```
 
-Não implementar flavors reais antes de ser pedido.
+Do not implement real flavors before being requested.
 
-A estrutura deve apenas estar preparada.
+The structure should only be prepared.
 
 ---
 
-## Erros
+## Errors
 
-- Erro de API deve virar estado renderizável.
-- Erro externo deve ser convertido para estruturas internas: ApiException, Failure, ApiResult.
-- Mensagem técnica não deve vazar para a UI sem tratamento.
+- API errors must become renderable state.
+- External errors must be converted to internal structures: ApiException, Failure, ApiResult.
+- Technical messages must not leak to the UI without handling.
 
 ---
 
 ## Anti-patterns
 
-- Componente de 500 linhas fazendo fetch, regra, layout e formatação.
-- Controller com regra de domínio pesada.
-- DTO sendo usado em page/widget.
-- Strings de rotas espalhadas.
-- Temas hardcoded em várias telas.
-- Dependências não justificadas.
-- Overengineering prematuro.
-- Arquitetura por camada global para tudo.
+- 500-line component doing fetch, logic, layout and formatting.
+- Controller with heavy domain logic.
+- DTO being used in page/widget.
+- Route strings scattered around.
+- Hardcoded themes across multiple screens.
+- Unjustified dependencies.
+- Premature overengineering.
+- Global layer-by-layer architecture for everything.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Presentation não faz chamada direta a API/Dio/datasource**: camada de presentation deve conversar apenas com controllers/providers/usecases
-- **Presentation não faz parsing de DTO**: DTOs são responsabilidade exclusiva da camada data
-- **Presentation não contém regra de negócio complexa**: regras de domínio ficam nas camadas internas
-- **Domínio não depende de Flutter, Dio ou detalhes externos**: camada de domain deve ser pura Dart
-- **DTOs não vazam para fora da camada data**: DTOs ficam em data/dtos/ e são convertidos para entidades antes de sair
-- **Widgets não usam Dio**: widgets apenas renderizam UI e delegam ações
-- **Controllers não usam Dio diretamente**: controllers chamam usecases, nunca Dio
-- **Usecases não usam Dio diretamente**: usecases conversam com repositories
-- **Erros devem ser convertidos para Failure ou ApiResult**: erros externos não chegam crus à aplicação
-- **Mensagens técnicas não vazam para a UI sem tratamento**: erros devem ser tratados antes de exibir
-- **Não concentrar todos os providers em um único arquivo**: separar providers por feature quando crescer
-- **Pages não devem conhecer strings soltas de rota**: usar constantes ou helpers centralizados
-- **Não criar arquivos vazios sem necessidade**: criar apenas o necessário para a tarefa atual
+- **Presentation does not make direct API/Dio/datasource calls**: the presentation layer must communicate only with controllers/providers/usecases
+- **Presentation does not parse DTOs**: DTOs are the exclusive responsibility of the data layer
+- **Presentation does not contain complex business logic**: domain rules belong in inner layers
+- **Domain does not depend on Flutter, Dio or external details**: the domain layer must be pure Dart
+- **DTOs do not leak outside the data layer**: DTOs stay in data/dtos/ and are converted to entities before leaving
+- **Widgets do not use Dio**: widgets only render UI and delegate actions
+- **Controllers do not use Dio directly**: controllers call use cases, never Dio
+- **Use cases do not use Dio directly**: use cases communicate with repositories
+- **Errors must be converted to Failure or ApiResult**: external errors must not arrive raw to the application
+- **Technical messages must not leak to the UI without handling**: errors must be handled before displaying
+- **Do not concentrate all providers in a single file**: separate providers by feature when growing
+- **Pages must not know loose route strings**: use constants or centralized helpers
+- **Do not create empty files without need**: create only what is necessary for the current task

@@ -1,94 +1,94 @@
 # Role: Scalability Designer
 
-## Sua contribuição
-Gera a seção "Escala" do plano, cobrindo concorrência, filas, cache, pool de conexões e comportamento sob carga.
+## Your contribution
+Generates the "Scale" section of the plan, covering concurrency, queues, cache, connection pool and behavior under load.
 
-## Referência
+## Reference
 - docs/ai/SCALABILITY_GUIDE.md
 - docs/ai/DATABASE_GUIDE.md
 - docs/ai/OBSERVABILITY_GUIDE.md
 - docs/ai/DEPLOYMENT_GUIDE.md
 
-## O que incluir
-- **Volume e caminho quente**: identifique endpoints, jobs, queries que podem receber alto volume. Estimativa de RPS/throughput. Justifique se o volume é baixo.
-- **Banco e queries**: estratégia para queries em tabelas crescentes — paginação (offset para <1M, cursor para >1M), índices, N+1, filtros, ordenação. Custo de queries críticas.
-- **Concorrência e idempotência**: onde há read-modify-write, retries, webhooks, jobs paralelos, criação duplicada. Como mitigar: transação, constraint, lock pessimista (`with_for_update`), idempotency key.
-- **Limites e backpressure**: payload máximo, paginação com limites, rate limit, pool de conexões (tamanho, timeout), timeout em queries, fila com tamanho máximo, consumo de memória por request.
-- **Cache e invalidação**: se houver cache, defina chave, TTL, escopo (por usuário/tenant/global), estratégia de invalidação, stale data handling, métricas de hit/miss.
-- **Filas e jobs**: idempotência do job, retry/backoff policy, dead-letter queue, concorrência máxima de workers, backlog monitoring, logging por job_id.
-- **Integrações externas**: timeout, retry seguro (não duplicar efeito), degradação graceful, circuit breaker quando necessário, métricas de latência e erro, teste de falha.
-- **Observabilidade de escala**: latência P95/P99, taxa de erro, throughput, pool/conexões, backlog de filas — tudo com request/job ID para diagnóstico.
-- **Validação de performance**: teste concorrente, teste de query com volume, benchmark ou smoke test de carga quando a feature é crítica.
+## What to include
+- **Volume and hot path**: identify endpoints, jobs, queries that may receive high volume. RPS/throughput estimate. Justify if volume is low.
+- **Database and queries**: strategy for queries on growing tables — pagination (offset for <1M, cursor for >1M), indexes, N+1, filters, sorting. Cost of critical queries.
+- **Concurrency and idempotency**: where there is read-modify-write, retries, webhooks, parallel jobs, duplicate creation. How to mitigate: transaction, constraint, pessimistic lock (`with_for_update`), idempotency key.
+- **Limits and backpressure**: maximum payload, pagination with limits, rate limit, connection pool (size, timeout), query timeout, queue with maximum size, memory consumption per request.
+- **Cache and invalidation**: if there is cache, define key, TTL, scope (per user/tenant/global), invalidation strategy, stale data handling, hit/miss metrics.
+- **Queues and jobs**: job idempotency, retry/backoff policy, dead-letter queue, maximum worker concurrency, backlog monitoring, logging by job_id.
+- **External integrations**: timeout, safe retry (do not duplicate effect), graceful degradation, circuit breaker when necessary, latency and error metrics, failure test.
+- **Scale observability**: P95/P99 latency, error rate, throughput, pool/connections, queue backlog — all with request/job ID for diagnostics.
+- **Performance validation**: concurrent test, query test with volume, benchmark or load smoke test when the feature is critical.
 
-## Regras
-- Toda tabela crescente precisa de estratégia de paginação.
-- Saldo/estoque/crédito precisam de lock pessimista ou constraint transacional.
-- Toda chamada externa precisa de timeout e retry seguro.
-- Todo pool de conexões precisa de tamanho e timeout definidos.
-- Cache proposto sem invalidação não é aceitável.
-- Job que pode duplicar efeito precisa de idempotência.
-- Se não se aplica à task: escreva "Não se aplica" e explique por quê.
+## Rules
+- Every growing table needs a pagination strategy.
+- Balance/inventory/credit needs pessimistic lock or transactional constraint.
+- Every external call needs timeout and safe retry.
+- Every connection pool needs defined size and timeout.
+- Proposed cache without invalidation is not acceptable.
+- Job that can duplicate effect needs idempotency.
+- If it does not apply to the task: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```markdown
-## Escala
+## Scale
 
-### Volume e caminho quente
-| Endpoint/Job | RPS estimado | Caminho quente? | Justificativa |
-|-------------|-------------|----------------|---------------|
-| {endpoint} | {n} | sim/não | {motivo} |
+### Volume and hot path
+| Endpoint/Job | Estimated RPS | Hot path? | Justification |
+|-------------|--------------|-----------|---------------|
+| {endpoint} | {n} | yes/no | {reason} |
 
-### Banco e queries
-| Query | Tabela (crescimento) | Estratégia | Índices |
-|-------|---------------------|------------|---------|
-| {listagem X} | {tabela} (~{n}/mês) | paginação offset/cursor | {índices necessários} |
+### Database and queries
+| Query | Table (growth) | Strategy | Indexes |
+|-------|---------------|----------|---------|
+| {listing X} | {table} (~{n}/month) | offset/cursor pagination | {required indexes} |
 
-### Concorrência e idempotência
-| Operação | Risco | Mitigação |
-|----------|-------|-----------|
-| {operação} | {read-modify-write / retry duplicado} | {lock / constraint / idempotency key} |
+### Concurrency and idempotency
+| Operation | Risk | Mitigation |
+|-----------|------|------------|
+| {operation} | {read-modify-write / duplicate retry} | {lock / constraint / idempotency key} |
 
-### Limites e backpressure
-| Recurso | Limite | Configuração |
-|---------|--------|-------------|
-| Pool de conexões | {max_connections} | `pool_size={n}, max_overflow={n}` |
+### Limits and backpressure
+| Resource | Limit | Configuration |
+|----------|-------|---------------|
+| Connection pool | {max_connections} | `pool_size={n}, max_overflow={n}` |
 | Query timeout | {ms} | `statement_timeout` |
-| Payload máximo | {KB/MB} | {middleware/nginx} |
-| Paginação | limit max {n} | validação no schema |
-| Rate limit | {n}/{período} | {middleware/redis} |
-| Fila backlog | {max_size} | {configuração} |
+| Maximum payload | {KB/MB} | {middleware/nginx} |
+| Pagination | limit max {n} | validation in schema |
+| Rate limit | {n}/{period} | {middleware/redis} |
+| Queue backlog | {max_size} | {configuration} |
 
 ### Cache
-| Dado | Chave | TTL | Escopo | Invaliação |
-|------|-------|-----|--------|-----------|
-| {dado} | `{template}` | {segundos} | {global/user} | {evento/timeout} |
+| Data | Key | TTL | Scope | Invalidation |
+|------|-----|-----|-------|-------------|
+| {data} | `{template}` | {seconds} | {global/user} | {event/timeout} |
 
-{Se não houver cache: "Nenhum cache necessário para esta feature — justificativa: ..."}
+{If no cache: "No cache needed for this feature — justification: ..."}
 
-### Filas e jobs
-| Job | Idempotência | Retry | Backoff | Dead-letter | Concorrência máx |
-|-----|-------------|-------|---------|-------------|-----------------|
-| {job} | {chave} | {max retries} | {expo/random} | {queue} | {workers} |
+### Queues and jobs
+| Job | Idempotency | Retry | Backoff | Dead-letter | Max concurrency |
+|-----|------------|-------|---------|-------------|----------------|
+| {job} | {key} | {max retries} | {expo/random} | {queue} | {workers} |
 
-{Se não houver jobs: "Nenhum processamento assíncrono necessário para esta feature."}
+{If no jobs: "No async processing needed for this feature."}
 
-### Integrações externas
-| Serviço | Timeout | Retry | Circuit breaker | Métricas | Teste de falha |
-|---------|---------|-------|-----------------|----------|---------------|
-| {serviço} | {ms} | {policy} | {sim/não} | latência, erro | {descrição} |
+### External integrations
+| Service | Timeout | Retry | Circuit breaker | Metrics | Failure test |
+|---------|---------|-------|-----------------|---------|-------------|
+| {service} | {ms} | {policy} | {yes/no} | latency, error | {description} |
 
-### Observabilidade de escala
-| Métrica | Threshold de alerta | Como diagnosticar |
-|---------|-------------------|-------------------|
-| Latência P95 | > {ms} | {log + métrica} |
-| Taxa de erro 5xx | > {n}% | {log + métrica} |
-| Pool esgotado | > {n}% uso | {métrica de pool} |
-| Backlog de fila | > {n} mensagens | {métrica de fila} |
+### Scale observability
+| Metric | Alert threshold | How to diagnose |
+|--------|----------------|-----------------|
+| P95 latency | > {ms} | {log + metric} |
+| 5xx error rate | > {n}% | {log + metric} |
+| Pool exhausted | > {n}% usage | {pool metric} |
+| Queue backlog | > {n} messages | {queue metric} |
 
-### Validação de performance
-- **Teste**: {tipo — concorrente / query com volume / benchmark / smoke de carga}
-- **Cenário**: {descrição do teste}
-- **Critério de sucesso**: {resultado esperado}
-{Se não for necessário: "Feature não tem risco de escala — justificativa: ..."}
+### Performance validation
+- **Test**: {type — concurrent / query with volume / benchmark / load smoke}
+- **Scenario**: {test description}
+- **Success criterion**: {expected result}
+{If not needed: "Feature has no scale risk — justification: ..."}
 ```

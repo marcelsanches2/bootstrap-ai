@@ -1,19 +1,19 @@
 # /ship
 
-Checklist final antes de encerrar uma mudança.
+Final checklist before closing a change.
 
-1. Ler o plano em `plans/`.
-2. Confirmar que `/jarvis-test-flow` foi executado ou justificar por que não se aplica.
-3. Verificar `git diff --stat` e `git status`.
-4. Garantir que não há secrets, logs sensíveis ou arquivos temporários.
-5. Resumir arquivos alterados, comandos executados, riscos restantes e próximo passo.
-6. Não fazer push force.
+1. Read the plan in `plans/`.
+2. Confirm that `/jarvis-test-flow` was executed or justify why it doesn't apply.
+3. Check `git diff --stat` and `git status`.
+4. Ensure there are no secrets, sensitive logs, or temporary files.
+5. Summarize changed files, executed commands, remaining risks, and next steps.
+6. Do not force push.
 
 ## Approval Gate
 
-Antes de concluir, apresente o resumo e pergunte:
+Before concluding, present the summary and ask:
 
-**"Ship aprovado? Tudo pronto para commit/push? (sim/não)"**
+**"Ship approved? Ready to commit/push? (yes/no)"**
 
-- **Sim** → prosseguir com commit e push.
-- **Não** → parar, registrar o que falta, aguardar correção.
+- **Yes** → proceed with commit and push.
+- **No** → stop, document what's missing, wait for correction.

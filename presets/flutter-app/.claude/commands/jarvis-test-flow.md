@@ -1,136 +1,136 @@
 ---
-description: Validar um fluxo E2E garantindo massa deterministica, integration test, comparacao visual com Figma e relatorio atualizado.
+description: Validate an E2E flow ensuring deterministic test data, integration test, visual comparison with Figma and updated report.
 ---
 
 # /jarvis-test-flow
 
-Valida um fluxo end-to-end do app {{PROJECT_NAME}}. Argumento opcional: `flow_id` (ex.: `home_guest_location_zones`).
+Validates an end-to-end flow of the {{PROJECT_NAME}} app. Optional argument: `flow_id` (e.g.: `home_guest_location_zones`).
 
-## Sequencia obrigatoria
+## Mandatory sequence
 
-0. **Avaliar tamanho da task**
-   - Inspecionar `git diff --stat HEAD` e a natureza dos arquivos tocados em `lib/`, `integration_test/`, `pubspec.yaml`.
-   - **GRANDE** (rodar pipeline completo, etapas 1-8): nova feature, nova tela/page, mudanca de router/navigation, novo datasource ou repository, mudanca em entity/value object, integracao de package, mudanca que afeta fluxo do usuario ponta a ponta.
-   - **PEQUENA** (pular para etapa 7): typo, troca de log (`print` -> `AppLogger`), formatacao, comentario, ajuste fino em widget existente sem mudanca de comportamento, refactor sem mudanca de comportamento observavel, ajuste de assets/copia.
-   - **Em duvida**: perguntar ao usuario antes de classificar (uma frase: "task X — pequena ou grande?"). Nao chutar.
-   - Reportar a classificacao numa linha antes de prosseguir (ex: `task: PEQUENA — so print->AppLogger em dio_client.dart`).
+0. **Assess task size**
+   - Inspect `git diff --stat HEAD` and the nature of the files touched in `lib/`, `integration_test/`, `pubspec.yaml`.
+   - **LARGE** (run full pipeline, steps 1-8): new feature, new screen/page, router/navigation change, new datasource or repository, entity/value object change, package integration, change affecting end-to-end user flow.
+   - **SMALL** (skip to step 7): typo, log swap (`print` -> `AppLogger`), formatting, comment, fine-tuning of existing widget without behavior change, refactor without observable behavior change, asset/copy adjustment.
+   - **In doubt**: ask the user before classifying (one sentence: "task X — small or large?"). Do not guess.
+   - Report the classification in a single line before proceeding (e.g.: `task: SMALL — only print->AppLogger in dio_client.dart`).
 
-1. **Determinar o `flow_id`**
-   - Se foi passado como argumento, usar.
-   - Se nao, inferir pelo `git diff --name-only HEAD` (qual feature foi tocada). Mapear `lib/features/<X>/` -> `<X>_*` flow. Se ambiguo, perguntar ao usuario antes de seguir.
+1. **Determine the `flow_id`**
+   - If passed as argument, use it.
+   - If not, infer from `git diff --name-only HEAD` (which feature was touched). Map `lib/features/<X>/` -> `<X>_*` flow. If ambiguous, ask the user before proceeding.
 
-2. **Inventariar massa (mocks deterministicos)**
-   - Localizar os datasource mocks que cobrem o flow_id (`lib/features/**/data/datasources/*_mock.dart`).
-   - Validar que os dados esperados existem (cruzar com asserts do test em `integration_test/`).
-   - Se faltar massa, criar mock(s) deterministico(s) seguindo `docs/ai/CODING_STANDARDS.md` e `docs/ai/ARCHITECTURE.md`. Sem random, sem `Future.delayed`, sem chamada de rede.
-   - Garantir que `lib/app/config/app_config.dart` tem `useMockBackend: true` em `AppConfig.dev()` OU que o teste sobrescreve os providers de datasource via `ProviderScope.overrides`.
+2. **Inventory test data (deterministic mocks)**
+   - Locate the datasource mocks that cover the flow_id (`lib/features/**/data/datasources/*_mock.dart`).
+   - Validate that the expected data exists (cross-reference with test assertions in `integration_test/`).
+   - If test data is missing, create deterministic mock(s) following `docs/ai/CODING_STANDARDS.md` and `docs/ai/ARCHITECTURE.md`. No random data, no `Future.delayed`, no network calls.
+   - Ensure `lib/app/config/app_config.dart` has `useMockBackend: true` in `AppConfig.dev()` OR that the test overrides datasource providers via `ProviderScope.overrides`.
 
-3. **Inventariar teste**
-   - Procurar `integration_test/{flow_id}_test.dart` ou `integration_test/app_test.dart` que cubra o flow.
-   - Verificar se existe um relatorio de revisao (`docs/revisao_*.md`, `plans/*_revisao.md` ou similar) gerado pelo `/jarvis-plan` para o mesmo fluxo. Se existir, extrair os **Cenarios E2E sugeridos** da secao correspondente e considera-los como requisitos minimos de cobertura alem dos cenarios proprios do test-flow.
-   - Se nao existir, prosseguir normalmente.
-   - Se nao existir teste de integracao, criar com `package:integration_test`. Mockar `LocationService` via `ProviderScope.overrides` (sem tapar dialogos nativos). `IntegrationTestWidgetsFlutterBinding.ensureInitialized()` no inicio.
-   - Validar que o teste cobre as etapas criticas e usa os dados deterministicos da massa.
+3. **Inventory test**
+   - Look for `integration_test/{flow_id}_test.dart` or `integration_test/app_test.dart` that covers the flow.
+   - Check if there is a review report (`docs/revisao_*.md`, `plans/*_revisao.md` or similar) generated by `/jarvis-plan` for the same flow. If it exists, extract the **suggested E2E scenarios** from the corresponding section and consider them as minimum coverage requirements in addition to the test-flow's own scenarios.
+   - If it doesn't exist, proceed normally.
+   - If no integration test exists, create one with `package:integration_test`. Mock `LocationService` via `ProviderScope.overrides` (without masking native dialogs). `IntegrationTestWidgetsFlutterBinding.ensureInitialized()` at the beginning.
+   - Validate that the test covers critical steps and uses deterministic test data.
 
-4. **Executar o pipeline**
+4. **Run the pipeline**
    - `flutter clean`
    - `flutter pub get`
-   - `flutter analyze` — bloqueia se introduzir warnings novos (warnings pre-existentes em `dio_client.dart` por `avoid_print` sao aceitaveis).
-   - `flutter test` (unit/widget) — bloqueia se quebrar.
-   - `flutter test integration_test/<arquivo>.dart -d <UDID>` no iPhone 16 Plus simulator (UDID `71063C1A-B3F2-4F3E-83C6-FE2E689989BA`). Se outro device for desejado ou o simulator nao estiver disponivel, perguntar.
-   - **Se qualquer comando falhar, entrar no loop de diagnostico (etapa 4a) antes de prosseguir.** Nao maquiar, nao silenciar warning, nao remover assertion.
+   - `flutter analyze` — blocks if it introduces new warnings (pre-existing warnings in `dio_client.dart` due to `avoid_print` are acceptable).
+   - `flutter test` (unit/widget) — blocks if it fails.
+   - `flutter test integration_test/<file>.dart -d <UDID>` on iPhone 16 Plus simulator (UDID `71063C1A-B3F2-4F3E-83C6-FE2E689989BA`). If another device is desired or the simulator is unavailable, ask.
+   - **If any command fails, enter the diagnostic loop (step 4a) before proceeding.** Do not mask, do not silence warnings, do not remove assertions.
 
-4a. **Loop de diagnostico e correcao** (acionado quando algo na etapa 4, 4b ou no pre-commit hook da etapa 7 falha)
-   - **Diagnosticar**: ler atentamente a saida de erro completa. Classificar a causa em uma das categorias:
-     - `ambiente`: Flutter SDK, simulator nao bootado, dependencia ausente, cache corrompido.
-     - `mock/massa`: dado deterministico faltando, divergencia entre mock e assercao do teste, override de provider mal configurado.
-     - `teste`: assercao invalida, seletor inexistente, race condition (`pump`/`pumpAndSettle`), expectativa errada para o estado atual.
-     - `codigo`: regressao real introduzida pela mudanca da task, contrato quebrado, exception, logica errada.
-     - `design`: divergencia visual entre implementacao e Figma (cores, tipografia, espacamento, componentes, estados).
-   - **Planejar**: escrever 1-3 frases descrevendo: (a) qual e a causa-raiz hipotetica, (b) qual a correcao minima proposta, (c) qual arquivo sera tocado. Nao comecar a editar sem isso.
-   - **Corrigir**: aplicar somente a correcao minima planejada. Sem refactor adicional, sem "limpar de quebra".
-   - **Re-rodar**: executar de novo o(s) comando(s) que falhou(aram), na mesma ordem da etapa 4 (e 4b se aplicavel).
-   - **Limite de 3 tentativas por causa-raiz**. Se a mesma causa reaparecer ao 3 ciclo, ou se a correcao exigir mudancas fora do escopo da task original (ex.: refatorar arquitetura, criar feature nova), parar e escalar para o usuario com: causa observada, o que foi tentado, proxima hipotese.
-   - **Criterios para parar e escalar imediatamente** (sem esperar 3 tentativas):
-     - A correcao exigiria modificar `docs/ai/*` ou outro arquivo proibido pelas restricoes.
-     - A correcao exigiria criar feature/tela/datasource fora do escopo do flow_id.
-     - O erro indica problema de infraestrutura (simulator quebrado, `flutter doctor` reclamando de toolchain).
-     - Tentativas anteriores divergem (causa muda a cada rodada -> sinal de que o diagnostico esta raso).
-   - Registrar todas as causas e correcoes tentadas na tabela "Problemas encontrados / correcoes" do report (etapa 5), inclusive em caso de PASSOU.
+4a. **Diagnostic and correction loop** (triggered when something in step 4, 4b or the pre-commit hook in step 7 fails)
+   - **Diagnose**: carefully read the complete error output. Classify the cause into one of the categories:
+     - `environment`: Flutter SDK, simulator not booted, missing dependency, corrupted cache.
+     - `mock/data`: missing deterministic data, divergence between mock and test assertion, poorly configured provider override.
+     - `test`: invalid assertion, nonexistent selector, race condition (`pump`/`pumpAndSettle`), wrong expectation for current state.
+     - `code`: actual regression introduced by the task change, broken contract, exception, wrong logic.
+     - `design`: visual divergence between implementation and Figma (colors, typography, spacing, components, states).
+   - **Plan**: write 1-3 sentences describing: (a) what the hypothetical root cause is, (b) what the minimal proposed fix is, (c) which file will be touched. Do not start editing without this.
+   - **Fix**: apply only the minimal planned fix. No additional refactor, no "clean up while at it."
+   - **Re-run**: execute again the command(s) that failed, in the same order as step 4 (and 4b if applicable).
+   - **Limit of 3 attempts per root cause**. If the same cause reappears on the 3rd cycle, or if the fix requires changes outside the scope of the original task (e.g.: refactoring architecture, creating new feature), stop and escalate to the user with: observed cause, what was tried, next hypothesis.
+   - **Criteria to stop and escalate immediately** (without waiting for 3 attempts):
+     - The fix would require modifying `docs/ai/*` or another file prohibited by the restrictions.
+     - The fix would require creating feature/screen/datasource outside the flow_id scope.
+     - The error indicates an infrastructure problem (broken simulator, `flutter doctor` complaining about toolchain).
+     - Previous attempts diverge (cause changes each run -> sign that diagnosis is shallow).
+   - Record all causes and attempted fixes in the "Issues found / fixes" table of the report (step 5), including in case of PASS.
 
-4b. **Validacao visual contra Figma (criterio de aceite)**
-   - Apenas para tasks **GRANDES** que envolvam tela/page nova ou alteracao visual significativa.
-   - NUNCA rodar automaticamente ao salvar .dart. Sobre demanda explicita do usuario.
-   - **4b.1. Detectar emulador**
-     - Executar `flutter devices` e parsear o output.
-     - Se 1 device conectado: capturar o device ID (coluna do meio) e usar automaticamente.
-     - Se multiplos: listar numerados e perguntar qual usar, ou usar o primeiro avisando qual foi escolhido.
-     - Se nenhum: instruir iniciar um emulador e parar.
-     - Filtros opcionais: `--ios` ou `--android` filtram a lista antes de escolher.
-   - **4b.2. Exportar frame do Figma**
-     - Verificar se o plano mais recente em `plans/` contem um link do Figma (`figma.com/design/...`) e/ou node ID.
-     - Se houver link do Figma:
-       1. Extrair `fileKey` e `nodeId` do URL.
-       2. Usar o MCP Figma (`get_screenshot`) para exportar o frame informado para `/tmp/figma_design.png`.
-       3. Ajustar a escala do Figma para bater com a densidade do device (iOS @3x, Android @2x/@3x etc.) antes do diff. Passar o fator via `--scale-figma=X`.
-     - Se o frame/node ID nao for informado, perguntar ao usuario.
-     - Se o MCP Figma estiver indisponivel, pedir ao usuario para colocar manualmente a imagem em `/tmp/figma_design.png`.
-   - **4b.3. Tirar screenshot do app**
-     - Executar: `flutter screenshot --device-id=<id> --out=/tmp/flutter_screen.png`
-     - Se falhar, aguardar 2s e tentar novamente uma vez.
-     - Fallback Android se falhar: `adb exec-out screencap -p > /tmp/flutter_screen.png`
-     - Fallback iOS se falhar: `xcrun simctl io booted screenshot /tmp/flutter_screen.png --type=png`
-   - **4b.4. Comparacao visual**
-     - Executar:
-       `python3 .claude/scripts/compare_design.py /tmp/figma_design.png /tmp/flutter_screen.png /tmp/design_comparison.png --scale-figma=<fator>`
-     - Mostrar o caminho da imagem gerada no terminal.
-   - **4b.5. Analise**
-     - Descrever diferencas de: layout, cores (hex aproximado), tipografia, espacamentos, elementos faltantes/sobrando, proporcoes.
-     - Sugerir ajustes concretos no codigo Dart/Flutter (valores de padding, Theme colors, fontSize, etc.).
-   - **4b.6. Decisao**
-     - Se houver divergencia visivel: entrar no loop de diagnostico (etapa 4a) classificando como `design`.
-     - Corrigir os arquivos da feature ate ficar 1:1 com o Figma.
-     - Re-rodar etapa 4 (integration test) e etapa 4b (comparacao visual).
-     - Limite de 3 tentativas para ajustes de design.
-     - Só prosseguir para etapa 5 se a implementacao estiver 1:1 com o Figma.
-   - Se nao houver link do Figma no plano, pular esta etapa e prosseguir normalmente.
+4b. **Visual validation against Figma (acceptance criteria)**
+   - Only for **LARGE** tasks that involve a new screen/page or significant visual change.
+   - NEVER run automatically when saving .dart. Only on explicit user request.
+   - **4b.1. Detect emulator**
+     - Run `flutter devices` and parse the output.
+     - If 1 device connected: capture the device ID (middle column) and use it automatically.
+     - If multiple: list them numbered and ask which to use, or use the first one noting which was chosen.
+     - If none: instruct to start an emulator and stop.
+     - Optional filters: `--ios` or `--android` filter the list before choosing.
+   - **4b.2. Export Figma frame**
+     - Check if the most recent plan in `plans/` contains a Figma link (`figma.com/design/...`) and/or node ID.
+     - If there is a Figma link:
+       1. Extract `fileKey` and `nodeId` from the URL.
+       2. Use Figma MCP (`get_screenshot`) to export the informed frame to `/tmp/figma_design.png`.
+       3. Adjust Figma scale to match device density (iOS @3x, Android @2x/@3x etc.) before diff. Pass the factor via `--scale-figma=X`.
+     - If the frame/node ID is not provided, ask the user.
+     - If Figma MCP is unavailable, ask the user to manually place the image in `/tmp/figma_design.png`.
+   - **4b.3. Take app screenshot**
+     - Run: `flutter screenshot --device-id=<id> --out=/tmp/flutter_screen.png`
+     - If it fails, wait 2s and try once more.
+     - Android fallback if it fails: `adb exec-out screencap -p > /tmp/flutter_screen.png`
+     - iOS fallback if it fails: `xcrun simctl io booted screenshot /tmp/flutter_screen.png --type=png`
+   - **4b.4. Visual comparison**
+     - Run:
+       `python3 .claude/scripts/compare_design.py /tmp/figma_design.png /tmp/flutter_screen.png /tmp/design_comparison.png --scale-figma=<factor>`
+     - Show the path of the generated image in the terminal.
+   - **4b.5. Analysis**
+     - Describe differences in: layout, colors (approximate hex), typography, spacing, missing/extra elements, proportions.
+     - Suggest concrete adjustments in Dart/Flutter code (padding values, Theme colors, fontSize, etc.).
+   - **4b.6. Decision**
+     - If there is visible divergence: enter the diagnostic loop (step 4a) classifying as `design`.
+     - Fix the feature files until it's 1:1 with Figma.
+     - Re-run step 4 (integration test) and step 4b (visual comparison).
+     - Limit of 3 attempts for design adjustments.
+     - Only proceed to step 5 if the implementation is 1:1 with Figma.
+   - If there is no Figma link in the plan, skip this step and proceed normally.
 
-5. **Gerar relatorio**
-   - Escrever ou atualizar `docs/e2e_report_{flow_id}.md` com:
-     - Data, branch, device, estrategia
-     - Massa criada (tabela com IDs, nomes, status)
-     - Comandos executados (tabela: comando, resultado)
-     - Fluxo validado (tabela: etapa, validacao)
-     - Comparacao visual (se aplicavel): caminho da imagem, escala usada, divergencias encontradas, ajustes sugeridos
-     - Problemas encontrados / correcoes (tabela: causa, correcao)
-     - Status final: **PASSOU**, **PASSOU PARCIALMENTE**, ou **FALHOU**
-     - Arquivos criados/modificados
-     - Como rodar de novo
+5. **Generate report**
+   - Write or update `docs/e2e_report_{flow_id}.md` with:
+     - Date, branch, device, strategy
+     - Test data created (table with IDs, names, status)
+     - Commands executed (table: command, result)
+     - Validated flow (table: step, validation)
+     - Visual comparison (if applicable): image path, scale used, divergences found, suggested adjustments
+     - Issues found / fixes (table: cause, fix)
+     - Final status: **PASSED**, **PARTIALLY PASSED**, or **FAILED**
+     - Files created/modified
+     - How to run again
 
-6. **Encerrar**
-   - Reportar uma linha de resumo + caminho do relatorio em `docs/`.
+6. **Finish**
+   - Report a one-line summary + report path in `docs/`.
 
 7. **Commit**
-   - Executar `git add lib/ integration_test/ docs/ pubspec.yaml pubspec.lock`.
-   - Se nada foi staged (`git diff --cached --quiet`), pular o commit.
-   - Mensagem do commit:
-     - **PEQUENA**: `chore: <descricao curta da mudanca>` (ex: `chore: substitui prints por AppLogger no dio_client`).
-     - **GRANDE + PASSOU**: `feat|fix|refactor: <descricao> + e2e {flow_id}` conforme natureza da mudanca.
-     - **GRANDE + PASSOU PARCIALMENTE / FALHOU**: NAO commitar. Reportar e devolver para correcao.
-   - O commit dispara o `.githooks/pre-commit` (analyze + unit/widget tests). Se quebrar, NAO usar `--no-verify` — entrar no loop de diagnostico (etapa 4a), corrigir, e tentar o commit de novo.
+   - Run `git add lib/ integration_test/ docs/ pubspec.yaml pubspec.lock`.
+   - If nothing was staged (`git diff --cached --quiet`), skip the commit.
+   - Commit message:
+     - **SMALL**: `chore: <short description of change>` (e.g.: `chore: replace prints with AppLogger in dio_client`).
+     - **LARGE + PASSED**: `feat|fix|refactor: <description> + e2e {flow_id}` according to the nature of the change.
+     - **LARGE + PARTIALLY PASSED / FAILED**: DO NOT commit. Report and return for correction.
+   - The commit triggers `.githooks/pre-commit` (analyze + unit/widget tests). If it fails, DO NOT use `--no-verify` — enter the diagnostic loop (step 4a), fix, and try the commit again.
 
 8. **Push**
-   - So executar se a etapa 7 efetivamente criou um novo commit. Se foi pulada (nada staged) ou bloqueada (GRANDE + falha), NAO empurrar.
-   - Confirmar que a branch atual tem upstream: se `git rev-parse --abbrev-ref --symbolic-full-name @{u}` falhar, usar `git push -u origin HEAD`. Caso contrario, `git push`.
-   - NUNCA usar `--force` ou `--force-with-lease` aqui. Push de force so com pedido explicito do usuario e nunca em `master`.
-   - Se o push falhar por divergencia com o remoto (`non-fast-forward`), parar, reportar e perguntar antes de qualquer rebase/merge.
+   - Only execute if step 7 actually created a new commit. If it was skipped (nothing staged) or blocked (LARGE + failure), DO NOT push.
+   - Confirm that the current branch has upstream: if `git rev-parse --abbrev-ref --symbolic-full-name @{u}` fails, use `git push -u origin HEAD`. Otherwise, `git push`.
+   - NEVER use `--force` or `--force-with-lease` here. Force push only with explicit user request and never on `master`.
+   - If the push fails due to divergence with remote (`non-fast-forward`), stop, report and ask before any rebase/merge.
 
-## Restricoes obrigatorias
+## Mandatory restrictions
 
-- Nao criar feature nova fora do escopo do flow.
-- Nao modificar arquivos em `docs/ai/`.
-- Nao hardcodar credenciais ou secrets.
-- Nao pular etapas dentro de uma execucao completa (1-6) mesmo se "parecer simples". A unica forma legitima de pular e via etapa 0 (classificada PEQUENA), que vai direto para a etapa 7.
-- Nao remover assercao ou maquiar teste so para passar.
-- Se o fluxo exigir backend real e ele nao existir, registrar a divergencia claramente e propor o menor ajuste tecnico (ex.: mock in-app).
-- Respeitar a hierarquia de prioridade do `CLAUDE.md`: 1) CLAUDE.md, 2) ARCHITECTURE.md, 3) CODING_STANDARDS.md, 4) FEATURE_GUIDE.md, 5) DESIGN_SYSTEM.md.
+- Do not create new feature outside the flow scope.
+- Do not modify files in `docs/ai/`.
+- Do not hardcode credentials or secrets.
+- Do not skip steps within a full execution (1-6) even if "it seems simple." The only legitimate way to skip is via step 0 (classified as SMALL), which goes directly to step 7.
+- Do not remove assertions or mask tests just to pass.
+- If the flow requires a real backend and it doesn't exist, clearly register the divergence and propose the minimal technical adjustment (e.g.: in-app mock).
+- Respect the priority hierarchy of `CLAUDE.md`: 1) CLAUDE.md, 2) ARCHITECTURE.md, 3) CODING_STANDARDS.md, 4) FEATURE_GUIDE.md, 5) DESIGN_SYSTEM.md.

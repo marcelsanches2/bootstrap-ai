@@ -1,29 +1,29 @@
-# Guia de Feature — Fullstack Web
+# Feature Guide — Fullstack Web
 
-Como desenvolver features novas na aplicação fullstack (frontend + backend).
-
----
-
-## Plano mínimo
-
-Toda feature deve definir:
-
-1. **Objetivo do usuário** — o que o usuário quer accomplir
-2. **Rota/tela/componente afetado** — onde a feature vive no frontend
-3. **Schema do banco** — modelo Prisma/Drizzle necessário
-4. **Migration** — mudança no banco e caminho de rollback
-5. **Contrato de API** — endpoints, métodos, request/response shapes
-6. **Fluxo principal** — happy path de ponta a ponta
-7. **Fluxos alternativos** — edge cases e caminhos de erro
-8. **Estados de UI** — loading / empty / error / success
-9. **Dados consumidos/enviados** — tipos e validação (Zod)
-10. **Acessibilidade** — navegação, labels, foco, responsividade
-11. **Testes** — quais camadas testar (detalhes em `TESTING_GUIDE.md`)
-12. **Impacto em performance/build** — bundle, queries, índices
+How to develop new features in the fullstack application (frontend + backend).
 
 ---
 
-## Estrutura padrão de uma feature
+## Minimum plan
+
+Every feature must define:
+
+1. **User objective** — what the user wants to accomplish
+2. **Affected route/screen/component** — where the feature lives in the frontend
+3. **Database schema** — required Prisma/Drizzle model
+4. **Migration** — database change and rollback path
+5. **API contract** — endpoints, methods, request/response shapes
+6. **Main flow** — end-to-end happy path
+7. **Alternative flows** — edge cases and error paths
+8. **UI states** — loading / empty / error / success
+9. **Consumed/sent data** — types and validation (Zod)
+10. **Accessibility** — navigation, labels, focus, responsiveness
+11. **Tests** — which layers to test (details in `TESTING_GUIDE.md`)
+12. **Performance/build impact** — bundle, queries, indexes
+
+---
+
+## Standard feature structure
 
 ```
 features/
@@ -49,23 +49,23 @@ features/
       orders.schema.ts       # Zod schemas
 ```
 
-Nem toda feature precisa começar com todos os arquivos. Crie apenas o necessário para a tarefa atual.
+Not every feature needs to start with all files. Create only what is necessary for the current task.
 
-**Alternativa (colocada):** em frameworks como Next.js App Router, server logic pode ficar colocalizada em `app/` com server actions/loaders. O importante é manter a separação conceitual: types → validation → data access → business logic → HTTP → UI.
+**Alternative (colocated):** in frameworks like Next.js App Router, server logic can be colocated in `app/` with server actions/loaders. The important thing is to maintain conceptual separation: types → validation → data access → business logic → HTTP → UI.
 
 ---
 
-## Fluxo integrado — fatia vertical fullstack
+## Integrated flow — fullstack vertical slice
 
-Prefira entregar uma jornada pequena completa em vez de várias camadas ocas.
+Prefer delivering a small complete journey instead of several hollow layers.
 
-Ordem obrigatória:
+Mandatory order:
 
 ```
 types → Prisma schema → migration → Zod schema → repository → service → API route → API client → hook → components → page → register route → test all layers
 ```
 
-### 1. Tipos
+### 1. Types
 
 ```typescript
 // features/orders/types/order.types.ts
@@ -104,7 +104,7 @@ model Order {
 npx prisma migrate dev --name add_orders_table
 ```
 
-### 4. Zod schema (validação de API)
+### 4. Zod schema (API validation)
 
 ```typescript
 export const createOrderSchema = z.object({
@@ -188,7 +188,7 @@ export function useOrders(filters?: Record<string, string>) {
 }
 ```
 
-### 10–12. Componentes → Página → Registrar rota
+### 10–12. Components → Page → Register route
 
 ```tsx
 // features/orders/pages/OrdersPage.tsx
@@ -200,19 +200,19 @@ export function OrdersPage() {
 
   if (isLoading) return <OrderListSkeleton />;
   if (isError) return <ErrorState onRetry={refetch} />;
-  if (!orders?.length) return <EmptyState message="Nenhum pedido encontrado" />;
+  if (!orders?.length) return <EmptyState message="No orders found" />;
 
   return <OrderList orders={orders} />;
 }
 ```
 
-### 13. Testar todas as camadas
+### 13. Test all layers
 
-> Detalhes de como testar cada camada em `TESTING_GUIDE.md`.
+> Details on how to test each layer in `TESTING_GUIDE.md`.
 
 ---
 
-## Fluxo de dependência correto
+## Correct dependency flow
 
 ```
 Page
@@ -222,150 +222,150 @@ Page
 
 Page
   → Component
-    → recebe props (dados + callbacks)
+    → receives props (data + callbacks)
 
 Page
-  → Store (Zustand) apenas se estado global
+  → Store (Zustand) only if global state
 ```
 
 ---
 
-## Quando criar uma feature
+## When to create a feature
 
-Crie uma feature quando ela representar uma área funcional clara do produto:
+Create a feature when it represents a clear functional area of the product:
 
-- `auth` — login, registro, recuperação de senha
-- `dashboard` — painel principal com resumos
-- `orders` — listagem, criação, detalhe de pedidos
-- `profile` — edição de dados do usuário
-- `settings` — preferências e configurações
-- `notifications` — lista e detalhe de notificações
-
----
-
-## Quando não criar uma feature
-
-Não crie feature nova para:
-
-- Componente compartilhado → `shared/components/`
-- Hook genérico → `shared/hooks/`
-- Utilitário → `shared/utils/`
-- Configuração de API → `shared/api/`
-- Constantes globais → `shared/config/`
-- Tipos compartilhados → `shared/types/`
+- `auth` — login, registration, password recovery
+- `dashboard` — main panel with summaries
+- `orders` — listing, creation, order details
+- `profile` — user data editing
+- `settings` — preferences and configuration
+- `notifications` — notification list and details
 
 ---
 
-## Critérios de aceite
+## When not to create a feature
 
-Critérios devem ser verificáveis por teste ou inspeção objetiva:
+Do not create a new feature for:
+
+- Shared component → `shared/components/`
+- Generic hook → `shared/hooks/`
+- Utility → `shared/utils/`
+- API configuration → `shared/api/`
+- Global constants → `shared/config/`
+- Shared types → `shared/types/`
+
+---
+
+## Acceptance criteria
+
+Criteria must be verifiable by test or objective inspection:
 
 **Frontend:**
-- Botão desabilita durante submit
-- Erro X aparece no campo Y
-- Usuário sem permissão vê estado Z
-- Lista vazia mostra estado vazio
-- Loading é exibido durante operação assíncrona
-- Navegação por teclado alcança ações principais
-- Formulário não envia dados inválidos
+- Button disables during submit
+- Error X appears on field Y
+- User without permission sees state Z
+- Empty list shows empty state
+- Loading is displayed during async operation
+- Keyboard navigation reaches main actions
+- Form does not send invalid data
 
 **Backend:**
-- Endpoint retorna status correto para cada cenário
-- Validação rejeita dados inválidos campo a campo
-- Erro de domínio retorna mensagem e código previsíveis
-- Dados sensíveis não vazam na resposta (passwordHash, PII)
+- Endpoint returns correct status for each scenario
+- Validation rejects invalid data field by field
+- Domain error returns predictable message and code
+- Sensitive data does not leak in response (passwordHash, PII)
 
 ---
 
-## Checklist antes de finalizar feature
+## Checklist before finalizing feature
 
-- Feature respeita a estrutura de pastas?
-- Tipos estão explícitos e validados (Zod)?
-- Migration criada e testada (com rollback)?
-- Repository/Service não importa framework/ORM diretamente?
-- Endpoint com validação Zod no input?
-- Hook usa TanStack Query (não useEffect + useState)?
-- Componente não chama API diretamente?
-- Estados loading/error/empty estão tratados?
-- Acessibilidade: labels, foco, navegação por teclado?
-- Responsividade verificada?
-- `npm run build` passa?
-- `npm run lint` passa?
-- Testes das camadas alteradas passam?
-
----
-
-## Regra de escopo
-
-- Se a tarefa pedir "estrutura", não implemente feature.
-- Se a tarefa pedir "feature", implemente somente aquela feature.
-- Se a tarefa pedir "design", não mexa em regra de negócio.
-- Se a tarefa pedir "refatoração", não adicione comportamento novo.
+- Feature respects the folder structure?
+- Types are explicit and validated (Zod)?
+- Migration created and tested (with rollback)?
+- Repository/Service does not import framework/ORM directly?
+- Endpoint has Zod validation on input?
+- Hook uses TanStack Query (not useEffect + useState)?
+- Component does not call API directly?
+- Loading/error/empty states are handled?
+- Accessibility: labels, focus, keyboard navigation?
+- Responsiveness verified?
+- `npm run build` passes?
+- `npm run lint` passes?
+- Tests for altered layers pass?
 
 ---
 
-## Produto
+## Scope rule
 
-Quando comportamento estiver ambíguo, pare e exponha decisão pendente. Não invente regra de negócio no frontend.
+- If the task asks for "structure", do not implement a feature.
+- If the task asks for "feature", implement only that feature.
+- If the task asks for "design", do not touch business rules.
+- If the task asks for "refactoring", do not add new behavior.
 
-O frontend deve:
-- refletir o estado do backend
-- validar para UX (não para segurança)
-- exibir erros de forma clara
-- não criar regras que o backend não confirma
+---
+
+## Product
+
+When behavior is ambiguous, stop and expose the pending decision. Do not invent business rules in the frontend.
+
+The frontend must:
+- reflect backend state
+- validate for UX (not for security)
+- display errors clearly
+- not create rules that the backend does not confirm
 
 ---
 
 ## Anti-patterns
 
 **Frontend:**
-- Feature sem estados de UI (loading, error, empty).
-- Hook custom com useEffect para fetch — use TanStack Query.
-- Componente que faz tudo — separe página, lista, card, filtros.
-- Tipos duplicados entre features — extraia para `shared/types/`.
-- Feature que importa de outra feature diretamente — use `shared/` como ponte.
-- Teste que testa implementação (métodos internos) — teste comportamento.
-- Commit de feature sem build passing.
-- Estado global desnecessário — se o dado é da página, use estado local ou TanStack Query.
+- Feature without UI states (loading, error, empty).
+- Custom hook with useEffect for fetch — use TanStack Query.
+- Component that does everything — separate page, list, card, filters.
+- Duplicated types between features — extract to `shared/types/`.
+- Feature that imports from another feature directly — use `shared/` as bridge.
+- Test that tests implementation (internal methods) — test behavior.
+- Feature commit without passing build.
+- Unnecessary global state — if data is page-scoped, use local state or TanStack Query.
 
 **Backend:**
-- Endpoint sem validação Zod.
-- Service que depende de HTTP request/response diretamente.
-- Query N+1 sem eager loading ou batch.
-- Log de dados sensíveis (token, senha, PII).
-- Abstração criada antes de existir uso real.
-- Migration sem caminho de rollback documentado.
+- Endpoint without Zod validation.
+- Service that depends on HTTP request/response directly.
+- N+1 query without eager loading or batch.
+- Logging of sensitive data (token, password, PII).
+- Abstraction created before real use exists.
+- Migration without documented rollback path.
 
 ---
 
 ## Hard rules
 
-- Sempre seguir a ordem: types → schema → migration → Zod → repository → service → route → API client → hook → components → page → testes.
-- Nunca pular camada.
-- Nunca criar endpoint sem Zod schema de validação.
-- Nunca criar tabela sem migration.
-- Nunca criar feature sem testes.
+- Always follow the order: types → schema → migration → Zod → repository → service → route → API client → hook → components → page → tests.
+- Never skip a layer.
+- Never create an endpoint without Zod validation schema.
+- Never create a table without migration.
+- Never create a feature without tests.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-### Ordem e camadas
-- **Seguir a ordem obrigatória**: types → schema → migration → Zod → repository → service → route → API client → hook → components → page → testes.
-- **Nunca pular camada**: cada etapa depende da anterior.
+### Order and layers
+- **Follow the mandatory order**: types → schema → migration → Zod → repository → service → route → API client → hook → components → page → tests.
+- **Never skip a layer**: each step depends on the previous one.
 
-### Validação e banco
-- **Nunca criar endpoint sem Zod schema de validação**: todo input precisa ser validado.
-- **Nunca criar tabela sem migration**: migration com caminho de rollback documentado é obrigatória.
+### Validation and database
+- **Never create an endpoint without Zod validation schema**: every input must be validated.
+- **Never create a table without migration**: migration with documented rollback path is mandatory.
 
-### Testes
-- **Nunca criar feature sem testes**: toda feature precisa testes das camadas alteradas.
+### Tests
+- **Never create a feature without tests**: every feature needs tests for altered layers.
 
 ### Frontend
-- **Não inventar regra de negócio no frontend**: comportamento ambíguo deve ser exposto como decisão pendente.
-- **Feature sem estados de UI (loading, error, empty) é anti-pattern**: toda feature assíncrona deve tratar esses estados.
+- **Do not invent business rules in the frontend**: ambiguous behavior must be exposed as a pending decision.
+- **Feature without UI states (loading, error, empty) is an anti-pattern**: every async feature must handle these states.
 
 ### Backend
-- **Service não depende de HTTP request/response diretamente**: service é lógica de negócio pura.
-- **Endpoint sem validação Zod é proibido**: inclui body, query e params.
-- **Migration sem caminho de rollback documentado é proibido**.
+- **Service must not depend on HTTP request/response directly**: service is pure business logic.
+- **Endpoint without Zod validation is prohibited**: includes body, query, and params.
+- **Migration without documented rollback path is prohibited**.

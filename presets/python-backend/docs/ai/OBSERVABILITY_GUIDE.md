@@ -1,10 +1,10 @@
 # Observability Guide
 
-Logs, métricas, healthcheck e tracing para Python backend.
+Logs, metrics, healthcheck and tracing for Python backend.
 
 ## Structured logging
 
-### Setup com structlog
+### Setup with structlog
 
 ```python
 import structlog
@@ -21,17 +21,17 @@ structlog.configure(
 logger = structlog.get_logger()
 ```
 
-### Uso
+### Usage
 
 ```python
-# Eventos de negócio
+# Business events
 logger.info("user_created", user_id=user.id, email=user.email)
 logger.info("order_placed", order_id=order.id, total=order.total)
 
-# Erros com contexto
+# Errors with context
 logger.error("payment_failed", order_id=order.id, gateway_error=str(e))
 
-# Warning para situações anômalas
+# Warning for anomalous situations
 logger.warning("slow_query", query=query_str, duration_ms=elapsed)
 
 # Request logging via middleware
@@ -42,7 +42,7 @@ logger.info("request_completed", method=request.method, path=request.url.path,
 ### Context vars
 
 ```python
-# Middleware que adiciona request_id
+# Middleware that adds request_id
 import uuid
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -56,20 +56,20 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
         return response
 ```
 
-Todos os logs da request terão `request_id` automaticamente.
+All logs from the request will have `request_id` automatically.
 
-## Métricas
+## Metrics
 
-### O que medir
+### What to measure
 
-- **Latência**: histograma de tempo de response por endpoint.
-- **Throughput**: requests por segundo.
-- **Erro rate**: % de 5xx por endpoint.
+- **Latency**: response time histogram per endpoint.
+- **Throughput**: requests per second.
+- **Error rate**: % of 5xx per endpoint.
 - **DB connections**: pool usage, wait time.
-- **External calls**: latência e erro rate de serviços externos.
+- **External calls**: latency and error rate of external services.
 - **Business metrics**: orders/min, signups/min, revenue/min.
 
-### Com Prometheus
+### With Prometheus
 
 ```python
 from prometheus_client import Counter, Histogram, generate_latest
@@ -99,7 +99,7 @@ async def health(db: AsyncSession = Depends(get_db)):
     except Exception as e:
         checks["database"] = f"error: {e}"
 
-    # External service (ex: Redis)
+    # External service (e.g.: Redis)
     try:
         await redis.ping()
         checks["redis"] = "ok"
@@ -115,24 +115,24 @@ async def health(db: AsyncSession = Depends(get_db)):
     )
 ```
 
-### Regra
+### Rule
 
-- Healthcheck NÃO deve requerer autenticação.
-- Deve ser leve (sem query pesada).
-- Usado por load balancer e orchestrator.
-- Retornar 503 se qualquer dependência crítica está down.
+- Healthcheck must NOT require authentication.
+- Must be lightweight (no heavy query).
+- Used by load balancer and orchestrator.
+- Return 503 if any critical dependency is down.
 
 ## Tracing
 
 ### Correlation IDs
 
-Todo request recebe um `X-Request-ID`. Propagar para:
+Every request receives an `X-Request-ID`. Propagate to:
 
 - Logs (via context vars).
-- Chamadas externas (header).
+- External calls (header).
 - Responses (header).
 
-### OpenTelemetry (opcional)
+### OpenTelemetry (optional)
 
 ```python
 from opentelemetry import trace
@@ -142,21 +142,21 @@ tracer = trace.get_tracer(__name__)
 
 FastAPIInstrumentor.instrument_app(app)
 
-# Span customizado
+# Custom span
 with tracer.start_as_current_span("process_payment") as span:
     span.set_attribute("order.id", order.id)
     span.set_attribute("order.total", str(order.total))
     await payment_service.process(order)
 ```
 
-## Alertas
+## Alerts
 
-### Thresholds sugeridos
+### Suggested thresholds
 
-| Métrica | Warning | Critical |
+| Metric | Warning | Critical |
 |---|---|---|
 | 5xx rate | > 1% | > 5% |
-| P99 latência | > 2s | > 5s |
+| P99 latency | > 2s | > 5s |
 | DB pool usage | > 70% | > 90% |
 | Memory usage | > 80% | > 95% |
 | External error rate | > 5% | > 20% |
@@ -164,40 +164,40 @@ with tracer.start_as_current_span("process_payment") as span:
 
 ### Incident response
 
-1. Alerta disparado.
-2. Verificar logs com correlation ID.
-3. Verificar métricas no dashboard.
-4. Verificar deploy recente.
-5. Se necessário: rollback.
-6. Post-mortem em `docs/incidents/YYYY-MM-DD-<slug>.md`.
+1. Alert triggered.
+2. Check logs with correlation ID.
+3. Check metrics on dashboard.
+4. Check recent deploy.
+5. If necessary: rollback.
+6. Post-mortem in `docs/incidents/YYYY-MM-DD-<slug>.md`.
 
-## Sinais de escala
+## Scale signals
 
-Monitorar quando volume cresce:
+Monitor as volume grows:
 
-- Queries ficando lentas (P99 subindo).
-- Pool de conexões esgotando.
-- Memory crescendo (possível leak).
-- External calls acumulando timeout.
-- Queue depth crescendo sem consumir.
+- Queries getting slow (P99 rising).
+- Connection pool exhausting.
+- Memory growing (possible leak).
+- External calls accumulating timeouts.
+- Queue depth growing without consuming.
 
-## Regras duras
+## Hard rules
 
-- Nunca logar dados sensíveis (senha, token, PII).
-- Sempre ter healthcheck endpoint.
-- Sempre propagar request_id.
-- Sempre logar com structured logging.
-- Nunca usar `print()` para logging.
-- Sempre configurar alertas em produção.
+- Never log sensitive data (password, token, PII).
+- Always have healthcheck endpoint.
+- Always propagate request_id.
+- Always log with structured logging.
+- Never use `print()` for logging.
+- Always configure alerts in production.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
-- **Não logar dados sensíveis**: Nunca logar senha, token, PII sem mascaramento.
-- **Healthcheck obrigatório**: Sempre ter endpoint `/health` funcional.
-- **Request ID obrigatório**: Sempre propagar `X-Request-ID` em logs, chamadas externas e responses.
-- **Structured logging**: Sempre usar structlog (JSON), nunca `print()`.
-- **Alertas em produção**: Sempre configurar alertas para métricas críticas em produção.
-- **Healthcheck sem auth**: Healthcheck não deve requerer autenticação.
-- **503 em dependência down**: Retornar 503 se qualquer dependência crítica está down.
+- **Do not log sensitive data**: Never log password, token, PII without masking.
+- **Mandatory healthcheck**: Always have a functional `/health` endpoint.
+- **Mandatory request ID**: Always propagate `X-Request-ID` in logs, external calls and responses.
+- **Structured logging**: Always use structlog (JSON), never `print()`.
+- **Alerts in production**: Always configure alerts for critical metrics in production.
+- **Healthcheck without auth**: Healthcheck must not require authentication.
+- **503 on dependency down**: Return 503 if any critical dependency is down.

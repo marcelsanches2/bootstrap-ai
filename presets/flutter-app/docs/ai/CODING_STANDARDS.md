@@ -1,236 +1,223 @@
-# Padrões de Código Flutter/Dart
+# Coding Standards
 
-## Princípios
+## Objective
 
-O código deve ser:
-
-- simples
-- explícito
-- legível
-- testável
-- modular
-- incremental
-- fácil de refatorar
-
-Não criar abstrações desnecessárias.
-
-Não antecipar problemas que ainda não existem.
+Define consistent Dart and Flutter coding patterns. Reduce friction between files. Prevent common mistakes.
 
 ---
 
-## Nomeação
+## General rules
 
-Use nomes claros e específicos.
-
-Bom:
-
-```dart
-GetUserUseCase
-UserRepository
-ItemDto
-AuthController
-```
-
-Ruim:
-
-```dart
-Manager
-Helper
-ServiceHelper
-DataHandler
-Thing
-Utils
-```
-
-Evite nomes genéricos.
+- Use English for names, comments and documentation.
+- Use `final` for variables that are not reassigned.
+- Use `const` for immutable constructors and widgets.
+- Avoid `dynamic`. Prefer explicit types or generics.
+- One responsibility per class, file and function.
+- Maximum of 300 lines per file. If it exceeds, it needs to be split.
+- No magic numbers. Extract to named constants.
+- No print() in production. Use AppLogger.
 
 ---
 
-## Arquivos
+## Naming
 
-Evite arquivos muito grandes.
+| Element | Convention | Example |
+|---|---|---|
+| Files and folders | snake_case | `user_repository.dart` |
+| Classes | PascalCase | `UserRepository` |
+| Functions and variables | camelCase | `getUserProfile()` |
+| Constants | camelCase | `const maxRetryCount = 3` |
+| Private members | Prefix `_` | `_internalState` |
+| Extensions | PascalCase | `ContextExtensions` |
+| Mixins | PascalCase | `ReactiveMixin` |
 
-Como regra prática:
+---
 
-- widgets pequenos
-- controllers focados
-- usecases objetivos
-- repositories sem regra de UI
-- datasources sem regra de domínio
+## Imports
+
+Organize imports in this order:
+
+```dart
+// 1. Dart SDK
+import 'dart:convert';
+
+// 2. Flutter
+import 'package:flutter/material.dart';
+
+// 3. Packages
+import 'package:dio/dio.dart';
+import 'package:riverpod/riverpod.dart';
+
+// 4. Project (absolute)
+import 'package:{{PROJECT_NAME}}/core/network/dio_client.dart';
+
+// 5. Relative
+import 'user_entity.dart';
+```
+
+Do not use relative imports for files outside the same directory. Use absolute imports with the package name.
 
 ---
 
 ## Widgets
 
-Widgets devem:
-
-- renderizar UI
-- receber dados
-- emitir eventos
-- delegar ações para controllers/providers
-
-Widgets não devem:
-
-- chamar API
-- montar regra de negócio
-- converter DTO
-- acessar datasource
-- conter lógica complexa de estado
-
----
-
-## Controllers
-
-Controllers devem:
-
-- controlar estado de tela
-- chamar usecases
-- tratar loading/error/success
-- expor estado para a UI
-
-Controllers não devem:
-
-- usar Dio diretamente
-- acessar datasource diretamente
-- conhecer detalhes de API
-- conter regra de domínio pesada
-
----
-
-## Usecases
-
-Usecases devem:
-
-- representar uma ação clara
-- ter entrada e saída objetivas
-- conversar com repositories
-- conter regra de aplicação quando necessário
-
-Exemplo:
+### Order inside a widget
 
 ```dart
-class GetItemsUseCase {
-  final ItemRepository repository;
+class MyWidget extends StatelessWidget {
+  // 1. Constructor
+  const MyWidget({
+    super.key,
+    required this.title,
+    this.subtitle,
+  });
 
-  GetItemsUseCase(this.repository);
+  // 2. Final fields
+  final String title;
+  final String? subtitle;
 
-  Future<List<Item>> call({required String categoryId}) {
-    return repository.getItems(categoryId: categoryId);
+  // 3. Build
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+
+  // 4. Private helpers (if any)
+  Widget _buildHeader() => Container();
+}
+```
+
+### const whenever possible
+
+```dart
+// Yes
+const AppCard(
+  child: Text('Hello'),
+)
+
+// No
+AppCard(
+  child: Text('Hello'),
+)
+```
+
+### Extract widgets
+
+If a method builds a complex subtree, extract to a private widget:
+
+```dart
+// Prefer
+class _HeaderSection extends StatelessWidget {
+  const _HeaderSection({required this.title});
+  final String title;
+  @override
+  Widget build(BuildContext context) => Text(title);
+}
+```
+
+---
+
+## Null safety
+
+- Do not use `!` without guarantee. Prefer `?.`, null checks or default values.
+- Make optional parameters nullable. Do not use nullable for mandatory fields.
+- Do not use `late` as a shortcut. Only when initialization is guaranteed before use.
+
+---
+
+## Error handling
+
+- Convert all external errors (Dio, platform, etc.) to internal types.
+- Do not expose raw technical messages to the user.
+- Use `try/catch` only where the error is actually handled.
+- Prefer result types (Either, ApiResult) for expected failures.
+
+```dart
+// Prefer
+Future<ApiResult<User>> getUser(String id) async {
+  try {
+    final response = await dio.get('/users/$id');
+    return ApiResult.success(UserModel.fromJson(response.data));
+  } on DioException catch (e) {
+    return ApiResult.failure(e.toApiException());
   }
 }
 ```
 
 ---
 
-## Repositories
+## JSON serialization
 
-Interfaces ficam no domain.
+- Use `json_serializable` for models that need serialization.
+- Do not write manual `fromJson`/`toJson` for complex models.
+- Keep entities free of serialization logic.
 
-Implementações ficam no data.
+```dart
+@freezed
+class UserModel with _$UserModel {
+  const factory UserModel({
+    required String id,
+    required String name,
+    String? email,
+  }) = _UserModel;
 
-Exemplo:
-
-```txt
-domain/repositories/item_repository.dart
-data/repositories/item_repository_impl.dart
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
+}
 ```
 
 ---
 
-## DTOs
+## Dependency injection
 
-DTOs ficam apenas em:
-
-```txt
-data/dtos/
-```
-
-DTOs devem ser convertidos para entidades antes de sair da camada data.
-
-A UI nunca deve receber DTO.
+- Use Riverpod for DI.
+- Do not use `GetIt` or `get_it` unless there is an explicit justification.
+- Define providers close to what they provide.
+- Do not create global god-providers.
 
 ---
 
-## Erros
+## Comments
 
-Erros externos devem ser convertidos para estruturas internas:
-
-- ApiException
-- Failure
-- ApiResult
-
-Não deixar exceções técnicas vazarem para a UI sem tratamento.
+- Comments explain "why", not "what".
+- Code must be self-explanatory.
+- TODOs must have context: `// TODO(name): description of what's missing`.
 
 ---
 
-## Freezed e JSON
+## Testing patterns
 
-Use Freezed e json_serializable quando houver modelos reais.
-
-Não criar modelos Freezed vazios apenas para preencher estrutura.
-
-Ao alterar modelos gerados, rodar:
-
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
+- One test file per source file: `user_repository_test.dart` for `user_repository.dart`.
+- Use descriptive names: `test('should return user when API responds 200', () {...})`.
+- Mocks with `mocktail`. Do not create manual mocks for external dependencies.
+- Arrange-Act-Assert pattern in every test.
 
 ---
 
-## Dependências
+## Anti-patterns
 
-Antes de adicionar dependência:
+- Widget with 500 lines.
+- Direct Dio call inside a widget.
+- `dynamic` in parameters or returns.
+- `print()` left in the code.
+- Unjustified `late`.
+- `!` without null check.
+- Manually maintained JSON mapping for complex models.
+- God-class with 10 responsibilities.
+- Duplicated logic that "I'll refactor later."
+- Unnecessary stateful widget when stateless suffices.
 
-1. Verifique se já existe alternativa no projeto.
-2. Avalie se é realmente necessária.
-3. Justifique no resumo final.
+## Blocking rules
 
-Não adicionar dependência por conveniência pequena.
+Rules extracted from this guide. The plan MUST NOT be proposed if it violates any of the rules below.
 
----
-
-## Comentários
-
-Comente apenas quando o código não for autoexplicativo.
-
-Não usar comentários para explicar código ruim.
-
-Melhore o código primeiro.
-
----
-
-## Proibições
-
-Não fazer:
-
-- arquivos gigantes
-- métodos longos
-- providers globais demais
-- lógica duplicada
-- strings mágicas espalhadas
-- imports relativos confusos
-- dependência circular
-- regra de negócio em widgets
-
-## Regras bloqueantes
-
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
-
-- **Não criar abstrações desnecessárias**: criar abstração apenas quando houver necessidade real
-- **Não antecipar problemas que ainda não existem**: código deve ser incremental
-- **Widgets não chamam API / não montam regra de negócio / não convertem DTO / não acessam datasource**: widgets apenas renderizam UI e delegam para controllers
-- **Controllers não usam Dio diretamente / não acessam datasource / não conhecem detalhes de API / não contêm regra de domínio pesada**: controllers controlam estado e chamam usecases
-- **DTOs ficam apenas em data/dtos/**: DTOs nunca saem da camada data
-- **UI nunca deve receber DTO**: converter para entidade/view model antes de sair do data
-- **Exceções técnicas não vazam para a UI sem tratamento**: sempre converter para Failure/ApiResult
-- **Não criar modelos Freezed vazios apenas para preencher estrutura**: modelos devem ter dados reais
-- **Não adicionar dependência por conveniência pequena**: justificar toda dependência nova
-- **Não usar comentários para explicar código ruim**: melhorar o código primeiro
-- **Proibido: arquivos gigantes**: manter arquivos pequenos e focados
-- **Proibido: métodos longos**: métodos devem ser objetivos
-- **Proibido: providers globais demais**: distribuir por feature
-- **Proibido: lógica duplicada**: extrair e reaproveitar
-- **Proibido: strings mágicas espalhadas**: centralizar constantes
-- **Proibido: imports relativos confusos**: organizar imports
-- **Proibido: dependência circular**: manter dependências unidirecionais
-- **Proibido: regra de negócio em widgets**: separar UI de lógica
+- **One responsibility per class, file and function**: no classes mixing UI + logic + network
+- **Maximum 300 lines per file**: if it exceeds, it must be split before the task is considered complete
+- **No print() in production**: use AppLogger
+- **No magic numbers**: extract to named constants
+- **No dynamic without explicit justification**: use explicit types or generics
+- **Do not use ! without guarantee**: prefer null checks, ?. or default values
+- **Do not use late as a shortcut**: only when initialization is guaranteed before use
+- **Use json_serializable for complex models**: no manual fromJson/toJson for models with 4+ fields
+- **One test file per source file**: each tested file has its corresponding _test.dart
+- **Mocks with mocktail**: no manual mocks for external dependencies

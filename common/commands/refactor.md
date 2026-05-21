@@ -1,145 +1,145 @@
 # /refactor
 
-Planeja e conduz uma refatoração segura em projeto existente.
+Plans and conducts a safe refactoring in an existing project.
 
-Use quando este preset for aplicado em um projeto já em andamento e o objetivo for alinhar o código ao lifecycle, arquitetura, docs `docs/ai/`, roles e padrões do preset.
+Use when this preset has been applied to an in-progress project and the goal is to align the code with the lifecycle, architecture, `docs/ai/` docs, roles, and preset standards.
 
-## Regra principal
+## Main Rule
 
-Não comece refatorando código. Primeiro inventarie, gere plano, rode revisão e só então execute incrementalmente.
+Do not start refactoring code. First inventory, generate a plan, run a review, and only then execute incrementally.
 
-## Sequência obrigatória
+## Mandatory Sequence
 
-### 0. Classificar escopo
+### 0. Classify scope
 
-Classifique a refatoração:
+Classify the refactoring:
 
-- `PEQUENA`: módulo/feature isolado, sem mudança pública de contrato.
-- `MÉDIA`: múltiplos arquivos/features, mas sem alterar arquitetura central.
-- `GRANDE`: arquitetura, pastas, DI, router, banco, API pública, build/deploy ou mudança transversal.
+- `SMALL`: isolated module/feature, no public contract change.
+- `MEDIUM`: multiple files/features, but no central architecture change.
+- `LARGE`: architecture, folders, DI, router, database, public API, build/deploy, or cross-cutting change.
 
-Se for `GRANDE`, não execute tudo em uma tacada. Divida em fases pequenas.
+If it's `LARGE`, do not execute everything at once. Break it into small phases.
 
-### 1. Carregar contexto
+### 1. Load context
 
-Leia obrigatoriamente:
+Mandatory reads:
 
 - `CLAUDE.md`
 - `docs/ai/ARCHITECTURE.md`
 - `docs/ai/CODING_STANDARDS.md`
 - `docs/ai/FEATURE_GUIDE.md`
 - `docs/ai/TESTING_GUIDE.md`
-- demais guias específicos da stack, se existirem
+- other stack-specific guides, if they exist
 
-Liste também:
+Also list:
 
-- estrutura de diretórios principal
-- comandos de teste/build disponíveis
-- dependências principais
-- pontos de entrada
-- arquivos de configuração
+- main directory structure
+- available test/build commands
+- main dependencies
+- entry points
+- configuration files
 
-### 2. Inventário técnico
+### 2. Technical inventory
 
-Crie um inventário objetivo:
+Create an objective inventory:
 
-- padrões atuais do projeto
-- divergências contra `docs/ai/`
-- dívidas técnicas visíveis
-- duplicações
-- violações de camada/boundary
-- código morto ou arquivos vazios
-- testes ausentes ou frágeis
-- riscos de segurança/observabilidade/deploy, se aplicável
+- current project patterns
+- divergences against `docs/ai/`
+- visible technical debt
+- duplications
+- layer/boundary violations
+- dead code or empty files
+- missing or fragile tests
+- security/observability/deploy risks, if applicable
 
-Não confunda opinião com regra. Se uma regra não estiver nos docs, marque como recomendação.
+Do not confuse opinion with rule. If a rule isn't in the docs, mark it as a recommendation.
 
-### 3. Gerar plano de refatoração
+### 3. Generate refactoring plan
 
-Crie arquivo em:
+Create file at:
 
 ```txt
 plans/YYYY-MM-DD-refactor-<slug>.md
 ```
 
-Formato obrigatório:
+Mandatory format:
 
 ```md
-# Plano de Refatoração: <título>
+# Refactoring Plan: <title>
 
-## Objetivo
-## Contexto carregado
-## Estado atual
-## Problemas encontrados
-## Fora de escopo
-## Estratégia
-## Fases incrementais
-## Arquivos prováveis
-## Testes por fase
-## Riscos
+## Objective
+## Context loaded
+## Current state
+## Problems found
+## Out of scope
+## Strategy
+## Incremental phases
+## Likely files
+## Tests per phase
+## Risks
 ## Rollback
-## Critérios de aceite
+## Acceptance criteria
 ```
 
-Cada fase deve ser pequena o suficiente para validar com `/jarvis-test-flow`.
+Each phase must be small enough to validate with `/jarvis-test-flow`.
 
-### 4. Rodar revisão multi-role
+### 4. Run multi-role review
 
-Rode `/jarvis-plan` para gerar plano com perspectivas embutidas.
+Run `/jarvis-plan` to generate a plan with embedded perspectives.
 
-- Se houver BLOCKER: pare.
-- Se houver MAJOR: sane com o usuário antes de executar.
-- Só implemente depois do plano aprovado.
+- If there's a BLOCKER: stop.
+- If there's a MAJOR: resolve with the user before executing.
+- Only implement after the plan is approved.
 
 ### 4b. Approval Gate
 
-Após revisão aprovada (zero BLOCKER, zero MAJOR), apresente:
+After approved review (zero BLOCKER, zero MAJOR), present:
 
-- Resumo do plano de refatoração
-- Número de fases
-- Risco principal
-- Arquivos prováveis
+- Refactoring plan summary
+- Number of phases
+- Main risk
+- Likely files
 
-Pergunte: **"Aprovar execução da refatoração? (sim/não)"**
+Ask: **"Approve refactoring execution? (yes/no)"**
 
-Só execute após confirmação explícita.
+Only execute after explicit confirmation.
 
-### 5. Executar incrementalmente
+### 5. Execute incrementally
 
-Para cada fase aprovada:
+For each approved phase:
 
-1. aplicar mudança mínima
-2. rodar validação específica
-3. rodar `/jarvis-test-flow` quando a fase alterar comportamento, arquitetura, testes, build ou contrato
-4. registrar resultado no plano ou relatório
-5. parar se a causa raiz exigir ampliar escopo
+1. apply minimal change
+2. run specific validation
+3. run `/jarvis-test-flow` when the phase alters behavior, architecture, tests, build, or contracts
+4. record result in the plan or report
+5. stop if the root cause requires expanding scope
 
-### 6. Relatório final
+### 6. Final report
 
-Criar ou atualizar:
+Create or update:
 
 ```txt
 docs/refactor_report_<slug>.md
 ```
 
-Conteúdo:
+Content:
 
-- plano usado
-- fases executadas
-- arquivos alterados
-- comandos executados
-- problemas encontrados
-- decisões tomadas
-- pendências restantes
-- próximo passo recomendado
+- plan used
+- phases executed
+- files altered
+- commands executed
+- problems encountered
+- decisions made
+- remaining items
+- recommended next step
 
-## Regras duras
+## Hard Rules
 
-- Não fazer big-bang refactor.
-- Não misturar refatoração com feature nova.
-- Não alterar comportamento sem teste ou justificativa explícita.
-- Não apagar código sem confirmar uso/referências.
-- Não mexer em `.env` ou secrets.
-- Não usar `--no-verify`.
-- Não fazer push force.
-- Se o projeto já tem padrão divergente dos docs, registre o conflito antes de mudar.
+- No big-bang refactoring.
+- Do not mix refactoring with new features.
+- Do not change behavior without a test or explicit justification.
+- Do not delete code without confirming usage/references.
+- Do not touch `.env` or secrets.
+- Do not use `--no-verify`.
+- Do not force push.
+- If the project already has a divergent pattern from the docs, record the conflict before changing.

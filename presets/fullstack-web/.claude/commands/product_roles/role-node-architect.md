@@ -1,52 +1,52 @@
 # Role: Node Architect
 
-## Sua contribuição
-Gera a seção de patterns Node/TypeScript backend do plano, definindo camadas, middleware, serviços, ORM, migrations e convenções de código.
+## Your contribution
+Generates the Node/TypeScript backend patterns section of the plan, defining layers, middleware, services, ORM, migrations, and code conventions.
 
-## Referência
+## Reference
 - docs/ai/ARCHITECTURE.md
 - docs/ai/CODING_STANDARDS.md
 
-## O que incluir
-- **Camadas**: Controller → Service → Repository → Prisma. Cada camada com responsabilidade clara.
-  - Controller: recebe request, chama service, retorna response. Sem lógica de negócio, sem acesso direto ao Prisma.
-  - Service: lógica de negócio pura. Não conhece HTTP (sem Request/Response/status codes). Recebe dependências via construtor (DI).
-  - Repository: queries Prisma sem lógica de negócio. Apenas acesso a dados.
-- **Zod schemas**: separados de tipos TypeScript. Schemas validam input em boundaries (controller), tipos derivam dos schemas.
-- **Imports**: organizados (external → internal), sem import circular.
-- **Nomenclatura**: kebab-case para arquivos, PascalCase para classes, camelCase para funções.
-- **Async/await**: em toda operação de IO.
-- **Config**: via env vars validadas com Zod, nunca hardcoded.
-- **Tipos explícitos**: em funções públicas, sem `any` sem justificativa documentada.
+## What to include
+- **Layers**: Controller → Service → Repository → Prisma. Each layer with clear responsibility.
+  - Controller: receives request, calls service, returns response. No business logic, no direct Prisma access.
+  - Service: pure business logic. Does not know HTTP (no Request/Response/status codes). Receives dependencies via constructor (DI).
+  - Repository: Prisma queries without business logic. Data access only.
+- **Zod schemas**: separate from TypeScript types. Schemas validate input at boundaries (controller), types derive from schemas.
+- **Imports**: organized (external → internal), no circular imports.
+- **Naming**: kebab-case for files, PascalCase for classes, camelCase for functions.
+- **Async/await**: for all IO operations.
+- **Config**: via env vars validated with Zod, never hardcoded.
+- **Explicit types**: on public functions, no `any` without documented justification.
 
-## Regras
-- Controller jamais acessa Prisma diretamente.
-- Service jamais conhece HTTP.
-- `any` sem justificativa documentada é bloqueante.
-- Config hardcoded é bloqueante.
-- Se a task não envolve backend Node: escreva "Não se aplica" e explique por quê.
+## Rules
+- Controller never accesses Prisma directly.
+- Service never knows HTTP.
+- `any` without documented justification is blocking.
+- Hardcoded config is blocking.
+- If the task does not involve Node backend: write "Does not apply" and explain why.
 
-## Formato de saída
+## Output format
 
 ```md
 ## Backend — Patterns
 
-### Camadas
-| Camada | Arquivo | Responsabilidade |
+### Layers
+| Layer | File | Responsibility |
 |---|---|---|
-| Controller | {path} | {o que faz} |
-| Service | {path} | {o que faz} |
-| Repository | {path} | {o que faz} |
+| Controller | {path} | {what it does} |
+| Service | {path} | {what it does} |
+| Repository | {path} | {what it does} |
 
 ### Schemas (Zod)
-{lista de schemas com nome, arquivo e o que validam}
+{list of schemas with name, file, and what they validate}
 
-### Dependências (DI)
-{quais serviços recebem quais dependências no construtor}
+### Dependencies (DI)
+{which services receive which dependencies in the constructor}
 
 ### Config
-{env vars necessárias com validação Zod}
+{required env vars with Zod validation}
 
-### Convenções
-{nomenclatura, imports, async/await — diferenças do padrão se houver}
+### Conventions
+{naming, imports, async/await — differences from standard if any}
 ```

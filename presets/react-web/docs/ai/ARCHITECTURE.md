@@ -1,10 +1,10 @@
-# Arquitetura React Web
+# React Web Architecture
 
-## Objetivo
+## Objective
 
-Organizar UI, estado, data fetching e regras de apresentação sem transformar cada tela em framework próprio.
+Organize UI, state, data fetching, and presentation rules without turning each screen into its own framework.
 
-## Estrutura recomendada
+## Recommended structure
 
 ```txt
 src/
@@ -28,57 +28,57 @@ src/
       tests/
 ```
 
-Adapte ao framework. Em Next.js, respeite `app/`/`pages/`, mas preserve boundaries por feature.
+Adapt to the framework. In Next.js, respect `app/`/`pages/`, but preserve feature boundaries.
 
-## Componentes
+## Components
 
-- Page/container coordena dados e layout de alto nível.
-- Componentes de UI recebem props explícitas.
-- Componentes puros não chamam API diretamente.
-- Hooks encapsulam data fetching, eventos e integração com browser.
+- Page/container coordinates data and high-level layout.
+- UI components receive explicit props.
+- Pure components do not call APIs directly.
+- Hooks encapsulate data fetching, events, and browser integration.
 
 ## Data fetching
 
-- Centralize client HTTP e tratamento de erro.
-- Use TanStack Query ou padrão equivalente para cache/server state.
-- Não confunda server state com estado global client-side.
-- Defina loading, error, empty e retry.
+- Centralize HTTP client and error handling.
+- Use TanStack Query or equivalent pattern for cache/server state.
+- Do not confuse server state with client-side global state.
+- Define loading, error, empty, and retry.
 
-## Estado
+## State
 
-- `useState/useReducer`: estado local.
-- URL/search params: filtros e estado navegável.
-- TanStack Query: dados remotos/cache.
-- Zustand/Redux/context: estado global real e raro.
+- `useState/useReducer`: local state.
+- URL/search params: filters and navigable state.
+- TanStack Query: remote data/cache.
+- Zustand/Redux/context: truly global and rare state.
 
-## Rotas
+## Routes
 
-- Rotas públicas/protegidas precisam estar explícitas.
-- Tela nova deve declarar path, params e comportamento de navegação.
-- Não use strings soltas repetidas quando houver mapa de rotas.
+- Public/protected routes must be explicit.
+- New screen must declare path, params, and navigation behavior.
+- Do not use loose repeated strings when a route map exists.
 
-## Erros
+## Errors
 
-- Erro de API deve virar estado renderizável.
-- Boundary de erro deve existir em áreas críticas.
-- Mensagem técnica não deve vazar para usuário final.
+- API error must become renderable state.
+- Error boundary must exist in critical areas.
+- Technical message must not leak to the end user.
 
 ## Anti-patterns
 
-- Componente de 500 linhas fazendo fetch, regra, layout e formatação.
-- `useEffect` para derivar estado que poderia ser calculado.
-- Context global para evitar passar duas props.
-- API client duplicado por feature sem motivo.
+- 500-line component doing fetch, logic, layout, and formatting.
+- `useEffect` to derive state that could be calculated.
+- Global context to avoid passing two props.
+- Duplicated API client per feature without reason.
 
-## Regras bloqueantes
+## Blocking rules
 
-Regras extraídas deste guide. O plano NÃO pode ser proposto se violar qualquer uma abaixo.
+Rules extracted from this guide. The plan CANNOT be proposed if it violates any below.
 
-- **Componentes puros não chamam API**: componentes de UI recebem props; data fetching fica em hooks.
-- **Não confundir server state com estado global**: dados remotos pertencem ao TanStack Query, não a Zustand/Redux.
-- **Não usar strings soltas para rotas**: quando houver mapa de rotas, use-o em vez de strings repetidas.
-- **Mensagem técnica não pode vazar para o usuário**: erros de API devem virar estado renderizável, sem stack trace.
-- **Erro boundary em áreas críticas**: áreas críticas da UI devem ter error boundary.
-- **Evitar componente monolítico**: componente de 500+ linhas com fetch + regra + layout + formatação é anti-pattern.
-- **Não usar useEffect para derivar estado**: estado derivável de props/state deve ser calculado diretamente.
-- **Não usar Context global para evitar prop drilling leve**: Context global só quando realmente necessário.
+- **Pure components do not call APIs**: UI components receive props; data fetching stays in hooks.
+- **Do not confuse server state with global state**: remote data belongs to TanStack Query, not Zustand/Redux.
+- **Do not use loose strings for routes**: when a route map exists, use it instead of repeated strings.
+- **Technical message cannot leak to the user**: API errors must become renderable state, no stack traces.
+- **Error boundary in critical areas**: critical UI areas must have error boundaries.
+- **Avoid monolithic component**: 500+ line component with fetch + logic + layout + formatting is an anti-pattern.
+- **Do not use useEffect to derive state**: derivable state from props/state should be calculated directly.
+- **Do not use global Context to avoid light prop drilling**: global Context only when truly necessary.
