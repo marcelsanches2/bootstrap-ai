@@ -28,52 +28,14 @@ Generates the "Objective", "Scope", "Out of scope", and "Acceptance criteria" se
 
 ## Output format
 
-```md
-## Objective
-{1-3 sentences: user, problem, expected outcome}
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-## Scope
-- {included item}
-- {included item}
-- ...
+Required section(s):
+- `## Objective`
+- `## Scope`
+- `## Out of scope`
+- `## Acceptance criteria`
 
-## Out of scope
-- {excluded item}
-- {excluded item}
-
-## Main flow
-1. {user step}
-2. {user step}
-3. ...
-
-## Alternative flows
-- {scenario}: {what happens}
-
-## Error states
-| Scenario | Frontend | Backend |
-|---|---|---|
-| {error} | {error UI} | {status + action} |
-
-## Loading/empty states
-| State | UI |
-|---|---|
-| loading | {what the user sees} |
-| empty | {what the user sees} |
-
-## Acceptance criteria
-- [ ] {verifiable criterion 1}
-- [ ] {verifiable criterion 2}
-- ...
-
-## Test data
-{required data or seed}
-
-## Breaking changes
-{list or "None"}
-
-## Migration impact
-{impact or "No migration"}
-
-## Impact on existing features
-{side effects or "None"}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

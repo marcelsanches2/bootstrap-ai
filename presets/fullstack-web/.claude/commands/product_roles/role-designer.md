@@ -22,33 +22,11 @@ Generates the "UI / Components / Design" section of the plan, defining tokens, v
 
 ## Output format
 
-```md
-## UI / Components / Design
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Reused existing components
-| Component | Usage | Token/modification |
-|---|---|---|
-| {name} | {where used} | {none or adaptation} |
+Required section(s):
+- `## UI / Components / Design`
 
-### New components
-| Component | Responsibility | Tokens used |
-|---|---|---|
-| {name} | {what it does} | {colors, spacing, typography} |
-
-### Visual states
-| Component | Loading | Empty | Error | Success | Disabled | Focus |
-|---|---|---|---|---|---|---|
-| {name} | {UI} | {UI} | {UI} | {UI} | {UI} | {UI} |
-
-### Responsiveness
-| Breakpoint | Layout | Differences |
-|---|---|---|
-| mobile (<640px) | {description} | {adaptations} |
-| tablet (640-1024px) | {description} | {adaptations} |
-| desktop (>1024px) | {description} | {adaptations} |
-
-### Microcopy
-| Element | Text |
-|---|---|
-| {label/button/error} | {final text} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

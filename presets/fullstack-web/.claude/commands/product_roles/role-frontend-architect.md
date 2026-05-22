@@ -26,30 +26,11 @@ Generates the React/component patterns section of the plan, defining component s
 
 ## Output format
 
-```md
-## Frontend — Patterns
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Components
-{list of components/pages with responsibility and type (page | container | pure | hook)}
+Required section(s):
+- `## Frontend Architect`
 
-### Data fetching
-| Data | Hook/function | Cache | Loading | Error |
-|---|---|---|---|---|
-| {data} | {where fetched} | {strategy} | {loading UI} | {error UI} |
-
-### State
-| State | Type | Scope | Justification |
-|---|---|---|---|
-| {data} | local / URL / query cache / global | {where} | {why} |
-
-### Routes
-| Path | Component | Guard | Params |
-|---|---|---|---|
-| {path} | {page} | {auth/role/none} | {params} |
-
-### Error handling
-{error boundaries, messages, fallbacks by area}
-
-### SSR/CSR and code splitting
-{what is server-rendered vs client-rendered, what is lazy loaded}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

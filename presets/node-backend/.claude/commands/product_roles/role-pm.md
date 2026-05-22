@@ -25,43 +25,14 @@ Generates the "Objective", "Scope", "Out of scope", and "Acceptance criteria" se
 
 ## Output format
 
-```markdown
-## Objective
-{1–2 sentences: what it solves, for whom, what value}
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-## Scope
+Required section(s):
+- `## Objective`
+- `## Scope`
+- `## Out of scope`
+- `## Acceptance criteria`
 
-### Main flow
-1. {step}
-2. {step}
-3. {step}
-
-### Alternative flows
-- {scenario}: {behavior}
-- {scenario}: {behavior}
-
-### Error states
-- {error}: {behavior / message}
-- {error}: {behavior / message}
-
-### Loading states
-- {where}: {behavior}
-
-### Empty states
-- {where}: {behavior}
-
-### Impact on existing features
-- {feature}: {what changes}
-
-## Out of scope
-- {item 1}
-- {item 2}
-
-## Acceptance criteria
-- [ ] {testable criterion 1}
-- [ ] {testable criterion 2}
-- [ ] {testable criterion 3}
-
-### Test data
-- {fixtures needed to validate the criteria}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

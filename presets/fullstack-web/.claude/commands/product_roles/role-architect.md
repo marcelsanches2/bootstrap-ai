@@ -24,27 +24,12 @@ Generates the "Proposed architecture" section and the "Incremental plan" of the 
 
 ## Output format
 
-```md
-## Proposed architecture
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Boundaries
-{description of layers and where each responsibility lives}
+Required section(s):
+- `## Proposed architecture`
+- `## Incremental plan`
 
-### Dependencies
-{list of new deps with justification and import direction}
-
-### Names and structure
-{relevant folder/file structure with meaningful names}
-
-### API contracts
-{table: verb | path | request schema | response schema | status codes}
-
-### Data flow
-{description of the complete round-trip path}
-
-## Incremental plan
-
-1. **{Step name}** — {what it does} → validation: {how to confirm it works}
-2. **{Step name}** — {what it does} → validation: {how to confirm it works}
-3. ...
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

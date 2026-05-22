@@ -7,7 +7,6 @@ Generates the "UI / Components / Design" section of the plan, defining visual to
 - docs/ai/DESIGN_SYSTEM.md
 
 ## What to include
-
 - **Design tokens**: colors, typography, spacing, and border radii used in the feature. Reference existing tokens — do not propose hardcoded values.
 - **New components**: name, visual responsibility, main props. Before creating, check if an existing component in the design system already works.
 - **Reused components**: list which existing components are used and whether they need extension/modification.
@@ -17,7 +16,6 @@ Generates the "UI / Components / Design" section of the plan, defining visual to
 - **Microcopy**: label texts, CTAs, error messages, empty states, and confirmations. Texts should help the user — not be generic.
 
 ## Rules
-
 - Do not propose hardcoded color or spacing values when a token exists in the design system.
 - Do not create a parallel component when an equivalent exists in the design system — extend the existing one.
 - Every relevant visual state (loading, error, empty, disabled) must have an explicit decision.
@@ -26,42 +24,11 @@ Generates the "UI / Components / Design" section of the plan, defining visual to
 
 ## Output format
 
-```md
-## UI / Components / Design
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Tokens used
-| Token | Value | Usage |
-|-------|-------|-------|
-| color-{name} | {value or reference} | {where it's used} |
+Required section(s):
+- `## UI / Components / Design`
 
-### New components
-| Component | Responsibility | Main props |
-|-----------|---------------|------------|
-| {Name} | {What it renders} | {key props} |
-
-### Reused components
-| Existing component | Usage in feature | Modification needed |
-|-------------------|-----------------|--------------------|
-| {Name} | {where} | {yes/no + what} |
-
-### Visual states
-| State | Component | Appearance |
-|-------|-----------|------------|
-| loading | {which} | {description} |
-| empty | {which} | {description} |
-| error | {which} | {description} |
-| disabled | {which} | {description} |
-| focus | {which} | {description} |
-
-### Responsiveness
-| Breakpoint | Behavior |
-|-----------|----------|
-| mobile (~375px) | {layout/adjustments} |
-| tablet (~768px) | {layout/adjustments} |
-| desktop (~1280px) | {layout/adjustments} |
-
-### Microcopy
-| Context | Text |
-|---------|------|
-| {Label/CTA/error/empty} | "{text}" |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

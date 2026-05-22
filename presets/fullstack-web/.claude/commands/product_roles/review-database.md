@@ -26,36 +26,11 @@ Generates the "Database" section of the plan, defining schema, migrations, index
 
 ## Output format
 
-```md
-## Database
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Schema
-| Model | Field | Type | Constraint | Notes |
-|---|---|---|---|---|
-| {Model} | {field} | {type} | {unique/required/default} | {notes} |
+Required section(s):
+- `## Database`
 
-### Indexes
-| Model | Fields | Type | Justification |
-|---|---|---|---|
-| {Model} | {fields} | {unique/index} | {why} |
-
-### Migration
-| Name | Up command | Down command | Tested |
-|---|---|---|---|
-| {name} | {prisma migrate deploy} | {prisma migrate resolve --rolled-back} | {yes/no} |
-
-### Critical queries
-| Operation | Query | Optimization |
-|---|---|---|
-| {description} | {include/select/where} | {index/pagination/...} |
-
-### Transactions
-| Operation | Type | Scope |
-|---|---|---|
-| {description} | {batch/interactive} | {tables involved} |
-
-### Seed
-| Data | File | Condition |
-|---|---|---|
-| {initial data} | {seed.ts} | {when it runs} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

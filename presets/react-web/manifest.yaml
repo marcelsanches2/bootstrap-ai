@@ -33,10 +33,10 @@ features:
   - design system with Tailwind CSS tokens
   - accessibility with Radix UI or equivalent
   - performance with lazy loading and virtualized lists
-  - deployment for Vite (static) and Next.js (SSR/SSG)
+  - deployment for Vite static builds and Next server rendering
   - security headers and cache configuration
   - E2E testing with Playwright
-  - CI/CD ready
+  - CI ready
 commands:
   - jarvis-plan
   - jarvis-test-flow

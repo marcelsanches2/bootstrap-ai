@@ -29,59 +29,11 @@ Generates the "Scale" section of the plan, defining strategies for concurrency, 
 
 ## Output format
 
-```markdown
-## Scale
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Volume and hot paths
-| Resource | Expected volume | Strategy |
-|---------|----------------|----------|
-| {endpoint/job/query} | {RPS / volume} | {how to support} |
+Required section(s):
+- `## Scale`
 
-### Database and queries
-| Query | Risk | Index | Pagination | Note |
-|-------|------|-------|------------|------|
-| {query} | {N+1 / full scan / growing} | {proposed index} | {skip/limit or cursor} | {optimization} |
-
-### Concurrency and idempotency
-| Operation | Risk | Mitigation |
-|-----------|------|-----------|
-| {operation} | {race condition / duplication} | {transaction / lock / idempotency key / constraint} |
-
-### Limits and backpressure
-| Resource | Limit | Config |
-|---------|-------|--------|
-| Payload | {KB/MB} | {where to configure} |
-| Pagination | {max limit} | {default/max} |
-| Rate limit | {n/time} | {per endpoint} |
-| Connection pool | {n connections} | {ORM config} |
-| Request timeout | {ms} | {server config} |
-| Queue backlog | {max jobs} | {worker config} |
-| Memory | {estimate} | {monitoring} |
-
-### Cache
-| Key | TTL | Scope | Invalidation | Stale handling |
-|-----|-----|-------|-------------|----------------|
-| {pattern} | {time} | {global / per user / per tenant} | {event / TTL / manual} | {revalidate / serve stale} |
-
-### Queues and jobs
-| Job | Max concurrency | Retry / Backoff | Dead-letter | Idempotency |
-|-----|----------------|-----------------|-------------|-------------|
-| {job} | {n workers} | {n retries, backoff {ms}} | {DLQ queue} | {idempotency key / constraint} |
-
-### External integrations
-| Service | Timeout | Retry | Circuit breaker | Degradation |
-|---------|---------|-------|-----------------|-------------|
-| {service} | {ms} | {n, backoff} | {yes — config / no} | {fallback} |
-
-### Scale observability
-| Metric | Alert | Tool |
-|--------|-------|------|
-| {p95 latency} | {threshold} | {where to monitor} |
-| {error rate} | {threshold} | {where to monitor} |
-| {active pool} | {threshold} | {where to monitor} |
-
-### Performance validation
-| Test | Tool | Volume | Pass criteria |
-|------|------|--------|--------------|
-| {test type} | {tool} | {n requests / concurrency} | {latency < X, error < Y%} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

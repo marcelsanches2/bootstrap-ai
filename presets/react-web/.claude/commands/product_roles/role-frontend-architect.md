@@ -8,7 +8,6 @@ Complements the architecture with specific React patterns: hooks, component comp
 - docs/ai/CODING_STANDARDS.md
 
 ## What to include
-
 - **Hooks patterns**: propose custom hooks to encapsulate reusable logic (fetch, form, debounce, etc.). Name with `use*` and define the signature (params, return).
 - **Component composition**: define the hierarchy page → container → pure component. Show which components are "smart" (with logic) and which are "dumb" (presentational).
 - **SSR/CSR**: if the project uses Next.js or similar, define which parts run on server vs client. Justify the strategy.
@@ -17,7 +16,6 @@ Complements the architecture with specific React patterns: hooks, component comp
 - **UI states**: loading, error, empty, success, disabled — define how each state is rendered and who manages the transition.
 
 ## Rules
-
 - Visual component should not contain fetch or business logic — use hooks.
 - Propose composition over inheritance or excessive props.
 - Do not propose a parallel component library to the existing design system.
@@ -26,33 +24,11 @@ Complements the architecture with specific React patterns: hooks, component comp
 
 ## Output format
 
-```md
-## React Patterns
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Proposed hooks
-| Hook | Responsibility | Signature |
-|------|---------------|-----------|
-| use{Name} | {What it encapsulates} | `(param: Type) => ReturnType` |
+Required section(s):
+- `## Frontend Architect`
 
-### Component composition
-{Hierarchy page → container → pure, with responsibilities}
-
-### SSR/CSR
-{Strategy, if applicable}
-
-### Code splitting
-| Point | Strategy | Justification |
-|-------|----------|---------------|
-| {Route/modal/feature} | {React.lazy / dynamic / etc.} | {Why} |
-
-### Error boundaries
-{Where, fallback, recovery}
-
-### UI states
-| State | Affected component | Behavior |
-|-------|-------------------|----------|
-| loading | {which} | {what it shows} |
-| error | {which} | {what it shows} |
-| empty | {which} | {what it shows} |
-| success | {which} | {what it shows} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

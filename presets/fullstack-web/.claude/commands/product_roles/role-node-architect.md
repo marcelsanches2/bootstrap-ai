@@ -28,25 +28,11 @@ Generates the Node/TypeScript backend patterns section of the plan, defining lay
 
 ## Output format
 
-```md
-## Backend — Patterns
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Layers
-| Layer | File | Responsibility |
-|---|---|---|
-| Controller | {path} | {what it does} |
-| Service | {path} | {what it does} |
-| Repository | {path} | {what it does} |
+Required section(s):
+- `## Node Architect`
 
-### Schemas (Zod)
-{list of schemas with name, file, and what they validate}
-
-### Dependencies (DI)
-{which services receive which dependencies in the constructor}
-
-### Config
-{required env vars with Zod validation}
-
-### Conventions
-{naming, imports, async/await — differences from standard if any}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

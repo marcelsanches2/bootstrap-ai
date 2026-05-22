@@ -31,64 +31,11 @@ Generates the "Scale" section of the plan, covering concurrency, queues, cache, 
 
 ## Output format
 
-```markdown
-## Scale
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Volume and hot path
-| Endpoint/Job | Estimated RPS | Hot path? | Justification |
-|-------------|--------------|-----------|---------------|
-| {endpoint} | {n} | yes/no | {reason} |
+Required section(s):
+- `## Scale`
 
-### Database and queries
-| Query | Table (growth) | Strategy | Indexes |
-|-------|---------------|----------|---------|
-| {listing X} | {table} (~{n}/month) | offset/cursor pagination | {required indexes} |
-
-### Concurrency and idempotency
-| Operation | Risk | Mitigation |
-|-----------|------|------------|
-| {operation} | {read-modify-write / duplicate retry} | {lock / constraint / idempotency key} |
-
-### Limits and backpressure
-| Resource | Limit | Configuration |
-|----------|-------|---------------|
-| Connection pool | {max_connections} | `pool_size={n}, max_overflow={n}` |
-| Query timeout | {ms} | `statement_timeout` |
-| Maximum payload | {KB/MB} | {middleware/nginx} |
-| Pagination | limit max {n} | validation in schema |
-| Rate limit | {n}/{period} | {middleware/redis} |
-| Queue backlog | {max_size} | {configuration} |
-
-### Cache
-| Data | Key | TTL | Scope | Invalidation |
-|------|-----|-----|-------|-------------|
-| {data} | `{template}` | {seconds} | {global/user} | {event/timeout} |
-
-{If no cache: "No cache needed for this feature — justification: ..."}
-
-### Queues and jobs
-| Job | Idempotency | Retry | Backoff | Dead-letter | Max concurrency |
-|-----|------------|-------|---------|-------------|----------------|
-| {job} | {key} | {max retries} | {expo/random} | {queue} | {workers} |
-
-{If no jobs: "No async processing needed for this feature."}
-
-### External integrations
-| Service | Timeout | Retry | Circuit breaker | Metrics | Failure test |
-|---------|---------|-------|-----------------|---------|-------------|
-| {service} | {ms} | {policy} | {yes/no} | latency, error | {description} |
-
-### Scale observability
-| Metric | Alert threshold | How to diagnose |
-|--------|----------------|-----------------|
-| P95 latency | > {ms} | {log + metric} |
-| 5xx error rate | > {n}% | {log + metric} |
-| Pool exhausted | > {n}% usage | {pool metric} |
-| Queue backlog | > {n} messages | {queue metric} |
-
-### Performance validation
-- **Test**: {type — concurrent / query with volume / benchmark / load smoke}
-- **Scenario**: {test description}
-- **Success criterion**: {expected result}
-{If not needed: "Feature has no scale risk — justification: ..."}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

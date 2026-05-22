@@ -118,21 +118,24 @@ Structural library not covered by the selected preset → creates a new preset a
 
 ## Quality Rules for Presets
 
-- `jarvis-plan.md`: minimum 180 lines
-- `jarvis-test-flow.md`: minimum 200 lines
-- Each `role-*.md`: minimum 80 lines
-- Each `docs/ai/*.md`: minimum 100 lines
-- `CLAUDE.md`: minimum 80 lines
-- No file can be an empty placeholder
+Quality is measured by signal, not line count. Preset files must be concise enough to fit LLM context and specific enough to prevent guessing.
+
+Minimum validation thresholds are guardrails only:
+- `CLAUDE.md`: project contract, on-demand reading map, mandatory rules, after-change checks
+- `jarvis-plan.md`: complete planning flow, contributor selection, final plan format, approval stop
+- `jarvis-test-flow.md`: incremental validation flow with executable checks
+- `role-*.md` / `review-*.md`: no filler; keep roughly 25–60 lines unless the domain truly needs more
+- `docs/ai/*.md`: actionable rules, examples and blocking constraints; avoid tutorial prose
+- No file can be an empty placeholder or generic boilerplate
 
 ## Role Format
 
-Roles are contributors that generate plan sections. Each role MUST have:
-- Objective (1 sentence)
-- Reference (specific docs/ai it consults)
-- Expected input (what it receives from the task/plan)
-- Output format (template of the section it generates)
-- Hard rule (absolute restriction)
+Roles are contributors that generate plan sections. Each role/review MUST have:
+- `Your contribution`: one sentence naming the section it owns
+- `Reference`: specific `docs/ai` files it consults
+- `What to include`: compact checklist of domain-specific decisions/risks
+- `Rules`: blocking constraints and “does not apply” behavior
+- `Output format`: concise section names only; no long markdown/table templates
 
 ## Hooks (settings.json)
 

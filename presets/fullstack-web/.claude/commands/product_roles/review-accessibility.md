@@ -21,31 +21,11 @@ Generates the "Accessibility" section of the plan, defining semantics, keyboard,
 
 ## Output format
 
-```md
-## Accessibility
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### HTML semantics
-| Element | Tag used | Justification |
-|---|---|---|
-| {component/area} | {HTML tag} | {why} |
+Required section(s):
+- `## Accessibility`
 
-### Keyboard navigation
-| Interaction | Keys | Behavior |
-|---|---|---|
-| {action} | {Tab/Enter/Escape/...} | {what happens} |
-
-### Labels
-| Control | Accessible name | Method |
-|---|---|---|
-| {input/button/icon} | {text} | {aria-label / visible label / aria-labelledby} |
-
-### Contrast
-| Element | Text color | Background color | Ratio | Compliant |
-|---|---|---|---|---|
-| {element} | {color} | {color} | {ratio} | {AA/AAA} |
-
-### ARIA and dynamic focus
-| Dynamic component | ARIA role/attribute | Focus management |
-|---|---|---|
-| {modal/toast/error} | {role/aria-live/...} | {where focus goes} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

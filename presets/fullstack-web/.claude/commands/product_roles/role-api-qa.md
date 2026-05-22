@@ -25,36 +25,11 @@ Generates the "Backend tests" section of the plan, defining unit, integration, a
 
 ## Output format
 
-```md
-## Tests — Backend
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Happy path
-| Endpoint | Input | Expected output | File |
-|---|---|---|---|
-| {VERB /path} | {body/params} | {status + body} | {test path} |
+Required section(s):
+- `## Backend tests`
 
-### Negative scenarios
-| Endpoint | Scenario | Expected status | File |
-|---|---|---|---|
-| {VERB /path} | {400/401/403/404/409/422} | {status} | {path} |
-
-### Test data
-| Data | Factory/seed | File |
-|---|---|---|
-| {entity} | {how to create} | {path} |
-
-### Edge cases
-| Case | Test | File |
-|---|---|---|
-| {empty list / max field / null / ...} | {what it verifies} | {path} |
-
-### API contract
-| Endpoint | Response fields | Types verified |
-|---|---|---|
-| {VERB /path} | {field list} | {yes/no + how} |
-
-### Mocks
-| External service | Strategy | File |
-|---|---|---|
-| {service} | {mock/stub} | {path} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

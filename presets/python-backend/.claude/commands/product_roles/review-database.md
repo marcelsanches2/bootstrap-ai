@@ -29,48 +29,11 @@ Generates the "Database" section of the plan, defining schema, migrations, index
 
 ## Output format
 
-```markdown
-## Database
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Schema
+Required section(s):
+- `## Database`
 
-#### Table: {name}
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | UUID | PK, default uuid4 | Identifier |
-| {column} | {type} | {constraints} | {description} |
-
-**Relationships:**
-- {table_a} → {table_b}: {type (1:N, N:1, N:M)}
-
-### Migrations
-
-#### {alembic/versions/xxx_description.py}
-- **upgrade()**: {what it does}
-- **downgrade()**: {what it does}
-- **Safe rollback**: {how to test the downgrade}
-
-### Indexes
-| Table | Column(s) | Type | Reason |
-|-------|-----------|------|--------|
-| {table} | {column} | {unique/btree/} | {FK lookup, frequent WHERE} |
-
-### Constraints
-| Table | Type | Column(s) | Reason |
-|-------|------|-----------|--------|
-| {table} | UNIQUE | {column} | {unique email} |
-| {table} | CHECK | {column} | {value > 0} |
-
-### Critical queries
-| Query | Optimization | Pagination |
-|-------|-------------|------------|
-| {listing of X} | {eager loading, index} | {offset/cursor} |
-
-### Transactions
-| Flow | Operations | Lock |
-|------|-----------|------|
-| {order creation} | create order + update stock | {with_for_update on stock} |
-
-### Seeds/fixtures
-- `{seed_name}`: {data it inserts, when it is needed}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

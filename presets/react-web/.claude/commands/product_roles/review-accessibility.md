@@ -7,7 +7,6 @@ Generates the "Accessibility" section of the plan, defining keyboard navigation,
 - docs/ai/ACCESSIBILITY_GUIDE.md
 
 ## What to include
-
 - **Semantic HTML**: correct elements for every action, navigation, and structure — `<button>` for actions, `<nav>` for navigation, `<main>` for content, hierarchical headings. Never use `div`/`span` where a semantic element is more appropriate.
 - **Keyboard navigation**: logical Tab order, Enter/Space activate controls, Escape closes modals/drawers. Define the complete keyboard flow — no action can depend solely on mouse.
 - **Accessible labels**: every input, button, and icon must have an accessible name (`aria-label`, `aria-labelledby`, associated `<label>`, `alt` on images). No control can be invisible to screen readers.
@@ -16,7 +15,6 @@ Generates the "Accessibility" section of the plan, defining keyboard navigation,
 - **Contrast and visibility**: visible focus states, minimum text and functional border contrast. Define how focus is visually indicated.
 
 ## Rules
-
 - Every interactive action must work by keyboard — no exceptions.
 - Never replace a semantic element with a `div` with a click handler.
 - Controls without accessible labels are prohibited.
@@ -26,34 +24,11 @@ Generates the "Accessibility" section of the plan, defining keyboard navigation,
 
 ## Output format
 
-```md
-## Accessibility
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Semantic HTML
-| Element | Usage | Justification |
-|---------|-------|---------------|
-| {tag} | {where} | {why} |
+Required section(s):
+- `## Accessibility`
 
-### Keyboard navigation
-| Action | Key | Behavior |
-|--------|-----|----------|
-| {action} | {Tab/Enter/Escape/Space} | {what happens} |
-
-### Accessible labels
-| Control | Accessible name | Method |
-|---------|----------------|--------|
-| {element} | {visible or descriptive text} | {aria-label / label / alt} |
-
-### Focus management
-| Context | Focus on open | Focus on close |
-|---------|--------------|----------------|
-| {modal/drawer/error} | {where it goes} | {where it returns} |
-
-### Dynamic ARIA
-| Element | Attribute | Value | When |
-|---------|-----------|-------|------|
-| {element} | aria-live / role / aria-expanded | {value} | {trigger} |
-
-### Contrast and visual focus
-{How focus is indicated, minimum contrast guaranteed}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

@@ -32,39 +32,11 @@ Generates the "Security" section of the plan, defining auth, authorization, vali
 
 ## Output format
 
-```md
-## Security
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Authentication and authorization
-| Endpoint | Auth | Role/Ownership | Middleware |
-|---|---|---|---|
-| {VERB /path} | {public/protected} | {rule} | {middleware name} |
+Required section(s):
+- `## Security`
 
-### Input validation
-| Endpoint | Schema | Validated fields |
-|---|---|---|
-| {VERB /path} | {Zod schema} | {fields + rules} |
-
-### Sensitive data
-| Data | Storage | In logs | In response |
-|---|---|---|---|
-| {password/token/PII} | {hash/encrypt} | {masked/not logged} | {not returned} |
-
-### CORS
-| Environment | Origins | Methods | Headers |
-|---|---|---|---|
-| {dev/prod} | {URLs} | {methods} | {headers} |
-
-### Rate limiting
-| Endpoint | Limit | Window | Strategy |
-|---|---|---|---|
-| {path} | {N requests} | {time} | {IP/user} |
-
-### Security headers
-{headers configured via Helmet or manually}
-
-### Secrets
-| Variable | Usage | Never hardcoded |
-|---|---|---|
-| {NAME} | {what for} | {confirmed} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

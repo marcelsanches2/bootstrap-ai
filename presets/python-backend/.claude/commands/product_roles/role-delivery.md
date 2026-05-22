@@ -30,64 +30,11 @@ Generates the "Deploy and delivery" section of the plan, covering env vars, CI/C
 
 ## Output format
 
-```markdown
-## Deploy and delivery
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Delivery scope
-**Includes:**
-- {Item 1}
-- {Item 2}
+Required section(s):
+- `## Deploy and delivery`
 
-**Does not include:**
-- {Excluded item 1}
-
-### Changed files
-- `path/file1.py` — {what it does}
-- `path/file2.py` — {what it does}
-
-### External dependencies
-| Dependency | Version | Usage |
-|-----------|---------|-------|
-| {package/service} | {version} | {for what} |
-
-### Migrations
-- `alembic/versions/xxx_description.py`
-  - upgrade(): {what it does}
-  - downgrade(): {what it does}
-  - Tested: {yes/no + how}
-
-### Rollback
-1. {Step 1 — e.g.: `alembic downgrade -1`}
-2. {Step 2 — e.g.: redeploy previous version}
-3. {Step 3 — e.g.: verify healthcheck}
-
-### Deploy procedure
-1. {Step 1}
-2. {Step 2}
-3. ...
-
-### New env vars
-| Variable | Example | Description | Required? |
-|----------|---------|-------------|-----------|
-| `VAR_NAME` | `example_value` | {what it controls} | yes/no |
-
-### Breaking changes
-{None OR list with details and versioning}
-
-### Infra configuration
-- **nginx**: {change or "none"}
-- **systemd**: {change or "none"}
-- **docker**: {change or "none"}
-
-### Delivery acceptance criteria
-- [ ] {Verifiable criterion 1}
-- [ ] {Verifiable criterion 2}
-
-### Risks and mitigations
-| Risk | Probability | Mitigation |
-|------|------------|------------|
-| {Risk} | {high/medium/low} | {Action} |
-
-### Required communication
-- {Who needs to be notified and about what}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

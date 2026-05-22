@@ -7,7 +7,6 @@ Generates the "Performance" section of the plan, defining bundle size strategies
 - docs/ai/PERFORMANCE_GUIDE.md
 
 ## What to include
-
 - **Bundle size**: analyze new dependencies and their impact on the bundle. Prefer named imports, tree-shakeable. Heavy dependency without justification is prohibited.
 - **Lazy loading**: routes, heavy modals, and large features loaded on demand. Define `React.lazy` + `Suspense` or dynamic import points. Heavy screens should not load on the critical path.
 - **Web Vitals**: define relevant metrics (LCP, FID/INP, CLS) and targets. When performance is an explicit goal, propose before/after measurement.
@@ -16,7 +15,6 @@ Generates the "Performance" section of the plan, defining bundle size strategies
 - **Frontend scale**: for large features — server state caching (TanStack Query), long lists with pagination/virtualization, global context with minimal scope, frontend metrics observability.
 
 ## Rules
-
 - New heavy dependency (>50KB gzip) must be justified — consider lightweight alternatives.
 - Heavy screen on critical path without lazy loading is prohibited.
 - Images without explicit dimensions or optimized format are prohibited.
@@ -26,36 +24,11 @@ Generates the "Performance" section of the plan, defining bundle size strategies
 
 ## Output format
 
-```md
-## Performance
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Bundle
-| Item | Impact | Strategy |
-|------|--------|----------|
-| {dependency/import} | {estimated size or risk} | {tree-shaking / alternative / lazy} |
+Required section(s):
+- `## Performance`
 
-### Lazy loading
-| Point | Strategy | Justification |
-|-------|----------|---------------|
-| {route/modal/feature} | {React.lazy / dynamic / Suspense} | {why} |
-
-### Web Vitals
-| Metric | Target | How to measure |
-|--------|--------|---------------|
-| LCP | {e.g.: <2.5s} | {tool} |
-| INP | {e.g.: <200ms} | {tool} |
-| CLS | {e.g.: <0.1} | {tool} |
-
-### Images / Assets
-| Asset | Format | Dimensions | Lazy | srcset |
-|-------|--------|-----------|------|--------|
-| {file} | {WebP/AVIF/PNG} | {WxH} | {yes/no} | {yes/no} |
-
-### Rendering
-| Component | Risk | Strategy |
-|-----------|------|----------|
-| {component} | {rerenders / large list / etc.} | {memo / virtualize / minimal state} |
-
-### Frontend scale
-{Cache strategy, long lists, global context, observability — if applicable}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

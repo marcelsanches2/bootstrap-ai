@@ -23,34 +23,11 @@ Generates the "Frontend performance" section of the plan, defining bundle, rende
 
 ## Output format
 
-```md
-## Frontend performance
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Bundle
-| New dep | Approximate size | Justification | Alternative considered |
-|---|---|---|---|
-| {name} | {KB} | {why} | {alternative} |
+Required section(s):
+- `## Frontend performance`
 
-### Lazy loading
-| Route/area | Strategy | Condition |
-|---|---|---|
-| {name} | {React.lazy / dynamic / suspense} | {when it loads} |
-
-### Renders
-| Component | Risk | Mitigation |
-|---|---|---|
-| {name} | {re-render / large list / effect} | {memo / virtualization / cleanup} |
-
-### Images/assets
-| Asset | Format | Dimensions | Lazy | Optimization |
-|---|---|---|---|---|
-| {path} | {WebP/PNG/...} | {WxH} | {yes/no} | {compression/responsive} |
-
-### Measurement
-| Metric | Before (estimated) | Target | How to measure |
-|---|---|---|---|
-| {LCP/FID/CLS} | {value} | {value} | {tool} |
-
-### Frontend scale
-{strategies for large features: bundle, cache, lists, context split}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

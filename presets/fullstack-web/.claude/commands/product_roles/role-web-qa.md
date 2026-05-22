@@ -21,31 +21,11 @@ Generates the "Frontend tests" section of the plan, defining unit/component, E2E
 
 ## Output format
 
-```md
-## Tests — Frontend
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Unit/component
-| File | Tests | Tool |
-|---|---|---|
-| {path} | {behavior} | {vitest/jest/RTL} |
+Required section(s):
+- `## Frontend tests`
 
-### E2E
-| Journey | File | Criticality |
-|---|---|---|
-| {flow description} | {path} | {critical/high/medium} |
-
-### Mocks
-| API/data | Strategy | File |
-|---|---|---|
-| {endpoint/data} | {MSW/fixture/handler} | {path} |
-
-### Negative scenarios
-| Scenario | Test | File |
-|---|---|---|
-| {error/empty/permission} | {what it verifies} | {path} |
-
-### Build validation
-- [ ] `typecheck` — {command}
-- [ ] `lint` — {command}
-- [ ] `build` — {command}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

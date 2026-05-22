@@ -28,35 +28,11 @@ Complements the proposed architecture with Node.js and TypeScript specific patte
 
 ## Output format
 
-```markdown
-## Node/TypeScript Patterns
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Layer structure
-| Layer | Example file | Responsibility |
-|-------|-------------|---------------|
-| Controller | {example} | {responsibility} |
-| Service | {example} | {responsibility} |
-| Repository | {example} | {responsibility} |
-| Model/Schema | {example} | {responsibility} |
+Required section(s):
+- `## Node/TypeScript Architect`
 
-### Middleware chain
-| Order | Middleware | Responsibility |
-|-------|-----------|---------------|
-| 1 | {name} | {responsibility} |
-| 2 | {name} | {responsibility} |
-
-### Type safety
-- Zod schemas: {where they live, examples}
-- Exported types: {how to derive from Zod}
-- Prohibitions: any, type assertion without guard
-
-### DI (Dependency Injection)
-{How services receive dependencies — constructor, factory, container}
-
-### Import organization
-{Order rule and examples}
-
-### Config
-- Env vars: {list with names, types, and defaults}
-- Validation: {Zod schema or similar}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

@@ -24,38 +24,12 @@ Generates the "Proposed architecture" and "Incremental plan" sections of the pla
 
 ## Output format
 
-```markdown
-## Proposed architecture
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Layers
-| Layer | Responsibility | Example files |
-|-------|---------------|---------------|
-| {layer} | {responsibility} | {files} |
+Required section(s):
+- `## Proposed architecture`
+- `## Incremental plan`
 
-### Dependencies
-{Diagram or textual description of dependency direction}
-
-### Configuration
-- Environment variables: {list with names and validation}
-- How to load: {method}
-
-### Names and structure
-{Proposed directory tree with file names}
-
-### Extensibility
-{How the structure supports the next probable case}
-
-## Incremental plan
-
-### Step 1 — {name}
-- **Scope**: {what it does}
-- **Files**: {list}
-- **Validation**: {how to verify}
-
-### Step 2 — {name}
-- **Scope**: {what it does}
-- **Files**: {list}
-- **Validation**: {how to verify}
-
-{... more steps as needed}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

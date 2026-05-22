@@ -26,36 +26,11 @@ Generates the "Tests" section of the plan, defining unit, integration, API, and 
 
 ## Output format
 
-```markdown
-## Tests
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Strategy
-- **Runner**: {vitest/jest}
-- **When to run**: {pre-commit / CI / manual}
+Required section(s):
+- `## Tests`
 
-### Unit tests
-| Module | Scenario | Input | Expected output |
-|--------|----------|-------|----------------|
-| {module} | happy path | {input} | {output} |
-| {module} | {negative scenario} | {input} | {expected error} |
-
-### Integration / API tests
-| Endpoint | Method | Scenario | Expected status | Validation |
-|----------|--------|----------|----------------|------------|
-| {path} | {verb} | {scenario} | {status} | {what to verify} |
-
-### Edge cases
-- {edge case 1}: {expected behavior}
-- {edge case 2}: {expected behavior}
-
-### Test data
-- {seed/factory/fixture}: {description}
-
-### Mocks
-| Service | Tool | Mocked behavior |
-|---------|------|----------------|
-| {service} | {tool} | {behavior} |
-
-### Sensitive data
-- Fields that must NOT appear in response: {list}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

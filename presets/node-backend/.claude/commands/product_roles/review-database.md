@@ -26,45 +26,11 @@ Generates the "Database" section of the plan, defining schema, migrations, index
 
 ## Output format
 
-```markdown
-## Database
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Schema
-{ER diagram or table descriptions}
+Required section(s):
+- `## Database`
 
-#### Table: {name}
-| Column | Type | Constraints | Note |
-|--------|------|-------------|------|
-| {column} | {type} | {constraints} | {note} |
-
-### Relationships
-- {table_a}.{field} → {table_b}.{field} ({cardinality})
-
-### Indexes
-| Table | Column(s) | Reason |
-|-------|-----------|--------|
-| {table} | {column(s)} | {reason} |
-
-### Migrations
-- **Up command**: `{command}`
-- **Down command**: `{command}`
-- **Migration file**: `prisma/migrations/{timestamp}_{name}/migration.sql`
-
-### Critical queries
-| Operation | Query pattern | Note |
-|-----------|--------------|------|
-| {operation} | {explicit select / include} | {avoid N+1, pagination} |
-
-### Transactions
-- {operation}: `$transaction([{step1}, {step2}])` — {reason}
-- {concurrent operation}: interactive transaction with lock — {reason}
-
-### Seed
-- File: `prisma/seed.ts`
-- Data: {what is seeded}
-
-### Sensitive data
-| Data | Protection |
-|------|-----------|
-| {data} | {hash/encrypt/masking} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

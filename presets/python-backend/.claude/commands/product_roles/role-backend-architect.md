@@ -26,36 +26,11 @@ Complements the architecture with specific Python patterns: Router → Service �
 
 ## Output format
 
-```markdown
-## Backend Patterns
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Layer separation
-{Describe the Router → Service → Repository → Model flow for each relevant endpoint/flow}
+Required section(s):
+- `## Backend Architect`
 
-### Dependency injection
-```python
-# dependencies.py
-def get_repository(session: AsyncSession = Depends(get_session)) -> Repository:
-    ...
-
-def get_service(repo: Repository = Depends(get_repository)) -> Service:
-    ...
-```
-
-### Async/sync
-| Operation | Pattern | Example |
-|-----------|---------|---------|
-| Database | async + AsyncSession | `await session.execute(...)` |
-| External HTTP | async + httpx.AsyncClient | `async with httpx.AsyncClient() as client:` |
-| Local file | sync or aiofiles | depending on volume |
-| CPU-bound | run_in_executor | for heavy processing |
-
-### Schemas (Pydantic v2)
-{List request and response schemas for each endpoint, with types, validation and examples}
-
-### Naming and imports
-{Specific conventions for new files}
-
-### Transactions
-{How to delimit transactions in each flow — where it starts, where it commits, where it rolls back}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

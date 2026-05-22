@@ -29,51 +29,11 @@ Generates the "Scale" section of the plan, defining concurrency, queues, cache, 
 
 ## Output format
 
-```md
-## Scale
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Volume and hot path
-| Operation | Expected volume | Strategy |
-|---|---|---|
-| {endpoint/job/query} | {estimate} | {optimization} |
+Required section(s):
+- `## Scale`
 
-### Database and queries
-| Query | Risk | Index | Pagination |
-|---|---|---|---|
-| {operation} | {N+1/full scan/...} | {created/existing} | {skip/limit} |
-
-### Concurrency and idempotency
-| Operation | Risk | Mitigation |
-|---|---|---|
-| {read-modify-write/retry/webhook} | {duplication/inconsistency} | {transaction/lock/constraint/idempotency key} |
-
-### Limits and backpressure
-| Resource | Limit | Configuration |
-|---|---|---|
-| {payload/pagination/rate limit/pool/timeout/queue/workers/memory} | {value} | {where configured} |
-
-### Cache
-| Data | Key | TTL | Invalidation | Scope |
-|---|---|---|---|---|
-| {cached data} | {key format} | {time} | {event/timeout} | {global/user/tenant} |
-
-### Queues and jobs
-| Job | Idempotency | Retry | Dead-letter | Max concurrency |
-|---|---|---|---|---|
-| {name} | {how it guarantees} | {attempts + backoff} | {yes/no} | {workers} |
-
-### External integrations
-| Service | Timeout | Retry | Circuit breaker | Degradation |
-|---|---|---|---|---|
-| {name} | {ms} | {attempts} | {yes/no} | {fallback} |
-
-### Scale observability
-| Metric | Threshold | Alert |
-|---|---|---|
-| {p95/throughput/error rate/pool/backlog} | {value} | {when it fires} |
-
-### Performance validation
-| Test | Tool | Volume | Pass criteria |
-|---|---|---|---|
-| {type} | {k6/artillery/manual} | {RPS/connections} | {p95 < Xms / 0 errors} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

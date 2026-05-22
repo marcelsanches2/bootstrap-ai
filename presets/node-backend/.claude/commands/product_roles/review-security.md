@@ -31,50 +31,11 @@ Generates the "Security" section of the plan, defining authentication, authoriza
 
 ## Output format
 
-```markdown
-## Security
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Authentication
-- **Mechanism**: {JWT / session / API key}
-- **Access token**: {duration}
-- **Refresh token**: {duration}
-- **Middleware**: {name and where to apply}
-- **Revocation**: {mechanism when applicable}
+Required section(s):
+- `## Security`
 
-### Authorization
-| Endpoint | Role/Permission | Verification |
-|----------|----------------|-------------|
-| {path} | {role} | {how to verify ownership/role} |
-
-### Input validation
-- Body: Zod schema `{example}`
-- Query: Zod schema `{example}`
-- Params: Zod schema `{example}`
-
-### Sensitive data
-| Data | Storage | In log | In response |
-|------|----------|--------|-------------|
-| password | bcrypt hash | ❌ masked | ❌ never |
-| token | env var | ❌ masked | ❌ never |
-| PII {type} | {protection} | {masking} | {policy} |
-
-### CORS
-- Allowed origins: `{list}`
-- Never `*` in production.
-
-### Rate limiting
-| Endpoint | Limit | Window |
-|----------|-------|--------|
-| {path} | {n requests} | {time} |
-
-### Security headers
-- Helmet: {enabled with config}
-- Additional headers: {list if applicable}
-
-### Security checklist
-- [ ] No `eval` or `Function` with input
-- [ ] No hardcoded secrets
-- [ ] HTTPS in production
-- [ ] Parameterized SQL (via ORM)
-- [ ] Secrets via env vars
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

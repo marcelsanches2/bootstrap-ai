@@ -24,37 +24,11 @@ Generates the "Observability" section of the plan, defining structured logging, 
 
 ## Output format
 
-```md
-## Observability
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Structured logging
-| Event | Fields | Level | File |
-|---|---|---|---|
-| {business event} | {orderId, userId, ...} | {info/warn/error} | {where it logs} |
+Required section(s):
+- `## Observability`
 
-### Request ID
-{how it is generated, propagated, and correlated}
-
-### Healthcheck
-| Dependency | Check | Timeout |
-|---|---|---|
-| {service/database} | {query/ping/tcp} | {ms} |
-
-### Metrics
-| Metric | Type | Dimensions | Alert |
-|---|---|---|---|
-| {name} | {counter/histogram/gauge} | {labels} | {when it fires} |
-
-### Latency
-| Endpoint | Expected P95 | Expected P99 | How to measure |
-|---|---|---|---|
-| {VERB /path} | {ms} | {ms} | {tool} |
-
-### External calls
-| Service | Timeout | Retry | Circuit breaker | Failure log |
-|---|---|---|---|---|
-| {name} | {ms} | {attempts + backoff} | {yes/no} | {fields} |
-
-### Graceful shutdown
-{how SIGTERM/SIGINT signals are handled}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

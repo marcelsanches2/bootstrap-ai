@@ -26,33 +26,11 @@ Generates the "API" section of the plan, defining endpoints, contracts, status c
 
 ## Output format
 
-```md
-## API
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Endpoints
-| Verb | Path | Description | Auth | Rate limit |
-|---|---|---|---|---|
-| {VERB} | {/api/v1/path} | {what it does} | {public/auth/role} | {yes/no} |
+Required section(s):
+- `## API`
 
-### Request schemas
-| Endpoint | Schema | Required fields | Validations |
-|---|---|---|---|
-| {VERB /path} | {schema name} | {fields} | {rules} |
-
-### Response schemas
-| Endpoint | Status | Body |
-|---|---|---|
-| {VERB /path} | {200/201/...} | {fields and types} |
-
-### Pagination
-| Endpoint | Method | Parameters | Default |
-|---|---|---|---|
-| {GET /path} | {skip/limit or cursor} | {params} | {values} |
-
-### Standardized errors
-| Status | Code | Message | When |
-|---|---|---|---|
-| {400} | {VALIDATION_ERROR} | {message} | {scenario} |
-| {401} | {UNAUTHORIZED} | {message} | {scenario} |
-| ... | ... | ... | ... |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

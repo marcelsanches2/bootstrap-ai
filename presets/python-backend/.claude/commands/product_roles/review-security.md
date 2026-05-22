@@ -32,55 +32,11 @@ Generates the "Security" section of the plan, covering authentication, authoriza
 
 ## Output format
 
-```markdown
-## Security
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Authentication
-| Endpoint | Auth | Detail |
-|----------|------|--------|
-| POST /api/v1/auth/login | Public | Returns access_token (15min) + refresh_token (7d) |
-| GET /api/v1/{resource} | Depends(get_current_user) | JWT Bearer |
-| ... | ... | ... |
+Required section(s):
+- `## Security`
 
-### Authorization
-| Resource | Required role | Ownership check |
-|----------|--------------|-----------------|
-| {resource} | {role} | {how to verify} |
-
-### Input validation
-| Endpoint | Validated fields | Rules |
-|----------|-----------------|-------|
-| POST /api/v1/{resource} | {fields} | {size, range, regex} |
-
-### Passwords and tokens
-- Hash: {bcrypt/argon2}
-- Access token TTL: {15min}
-- Refresh token TTL: {7d}
-- Secret via: env var `{JWT_SECRET}`
-
-### Rate limiting
-| Endpoint | Limit | Implementation |
-|----------|-------|----------------|
-| POST /api/v1/auth/login | 5/minute | {decorator/middleware} |
-| POST /api/v1/auth/register | 3/minute | {decorator/middleware} |
-
-### CORS
-- Allowed origins: `{list}`
-- Never `*` in production: ✓
-
-### Security headers
-- X-Content-Type-Options: nosniff
-- Strict-Transport-Security: max-age=31536000
-- X-Frame-Options: DENY
-
-### Sensitive data protection
-- **Logs**: no password, token, PII without masking
-- **Response**: no password_hash, internal secret
-- **Database**: PII encrypted when necessary
-
-### Production checklist
-- [ ] HTTPS mandatory
-- [ ] Secrets via env vars (never hardcoded)
-- [ ] No eval/exec with external input
-- [ ] Raw queries verified against SQL injection
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

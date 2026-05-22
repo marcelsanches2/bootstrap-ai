@@ -1,17 +1,14 @@
 # Role: Flutter Architect
 
 ## Your contribution
-
 Generates the "Proposed architecture" section and the "Incremental plan" of the plan, defining layers, dependencies, DTOs, state, routes and file structure.
 
 ## Reference
-
 - docs/ai/ARCHITECTURE.md
 - docs/ai/CODING_STANDARDS.md
 - docs/ai/FEATURE_GUIDE.md
 
 ## What to include
-
 - **Layers involved** — list each layer (domain, data, presentation) touched by the task and describe the responsibility of each in this specific context. Explain the data flow between layers.
 - **Dependencies and injection** — declare which dependencies are needed, how they are injected (factory, provider, get_it) and where bindings are located. Do not import concrete implementation outside the factory.
 - **DTOs and models with mapping** — list entities (domain) and models (data), show the explicit mapping between them. Do not use entity as model or vice-versa.
@@ -21,7 +18,6 @@ Generates the "Proposed architecture" section and the "Incremental plan" of the 
 - **Incremental plan** — divide the implementation into ordered steps, where each step leaves the project compiling and testable.
 
 ## Rules
-
 - Respect the domain → data → presentation flow without skipping or mixing layers.
 - No concrete dependency outside the injection factory.
 - DTOs never leak to presentation; entities are never used as models.
@@ -32,72 +28,12 @@ Generates the "Proposed architecture" section and the "Incremental plan" of the 
 
 ## Output format
 
-```md
-## Proposed architecture
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Layers involved
+Required section(s):
+- `## Proposed architecture`
+- `## Incremental plan`
 
-| Layer | Responsibility | Files |
-|---|---|---|
-| domain | {description} | {files} |
-| data | {description} | {files} |
-| presentation | {description} | {files} |
-
-### Dependencies and injection
-
-- {dependency 1}: injected via {mechanism} in {location}
-- {dependency 2}: ...
-
-### DTOs and models
-
-| Type | Name | Layer | Mapping |
-|---|---|---|---|
-| Entity | {Name} | domain | — |
-| Model | {Name} | data | {Name}Entity ↔ {Name}Model |
-
-### State management
-
-- **Strategy**: {Provider/BLoC/Cubit/Riverpod}
-- **State**: {StateName} — responsibility: {description}
-- **Scope**: {global/feature/page}
-
-### Routes and navigation
-
-| Route | Destination | Parameters |
-|---|---|---|
-| {/route} | {Page/Screen} | {params} |
-
-### File structure
-
-```
-lib/
-  {feature}/
-    domain/
-      entities/
-        {file}.dart
-      repositories/
-        {file}.dart
-      usecases/
-        {file}.dart
-    data/
-      models/
-        {file}.dart
-      datasources/
-        {file}.dart
-      repositories/
-        {file}.dart
-    presentation/
-      pages/
-        {file}.dart
-      widgets/
-        {file}.dart
-      {state}/
-        {file}.dart
-```
-
-## Incremental plan
-
-1. **Step 1 — {title}**: {description}. Files: {list}. Validation: {how to verify}.
-2. **Step 2 — {title}**: {description}. Files: {list}. Validation: {how to verify}.
-3. ...
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

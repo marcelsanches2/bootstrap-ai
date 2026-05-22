@@ -32,69 +32,11 @@ Generates the "API" section of the plan, defining endpoints, HTTP contracts, sta
 
 ## Output format
 
-```markdown
-## API
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Endpoints
+Required section(s):
+- `## API`
 
-#### POST /api/v1/{resource}
-- **Description**: {what it does}
-- **Auth**: {public / authenticated / specific role}
-- **Rate limit**: {when applicable}
-
-**Request body:**
-```json
-{
-  "field1": "example_value",
-  "field2": 42
-}
-```
-
-**Response 201:**
-```json
-{
-  "id": "uuid",
-  "field1": "value",
-  "created_at": "2025-01-01T00:00:00Z"
-}
-```
-
-**Errors:**
-| Status | Code | When |
-|--------|------|------|
-| 400 | INVALID_INPUT | {condition} |
-| 401 | UNAUTHORIZED | No token |
-| 409 | CONFLICT | {condition} |
-| 422 | VALIDATION_ERROR | Invalid field |
-
-#### GET /api/v1/{resource}
-- **Description**: {what it does}
-- **Auth**: {public / authenticated}
-- **Pagination**: skip=0, limit=20 (max 100)
-- **Filters**: {when applicable}
-- **Sorting**: {when applicable}
-
-**Response 200:**
-```json
-{
-  "items": [...],
-  "total": 42,
-  "skip": 0,
-  "limit": 20
-}
-```
-
-{... repeat for each endpoint}
-
-### Pydantic Schemas
-{List schemas with fields, types, validation and examples}
-
-### Standardized error format
-```json
-{
-  "code": "ERROR_CODE",
-  "message": "Readable description",
-  "field": "field_with_error"  // optional, only for 422
-}
-```
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

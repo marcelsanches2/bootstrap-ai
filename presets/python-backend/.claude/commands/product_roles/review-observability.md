@@ -27,57 +27,11 @@ Generates the "Observability" section of the plan, covering structured logging, 
 
 ## Output format
 
-```markdown
-## Observability
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Structured logging
-| Event | Level | Included context | Trigger |
-|-------|-------|-----------------|---------|
-| {order_created} | info | order_id, user_id, total | POST /orders 201 |
-| {order_failed} | error | order_id, user_id, reason | POST /orders 500 |
-| {payment_timeout} | warning | order_id, gateway, duration | timeout on call |
+Required section(s):
+- `## Observability`
 
-**Format**: structlog JSON
-**Prohibited fields**: password, token, cookie, unmasked PII
-
-### Request ID
-- Header: `X-Request-ID`
-- Propagation: {middleware/decorator}
-- Log: included in all events from the request
-
-### Latency metrics
-| Endpoint | Expected P50 | Expected P95 | Expected P99 |
-|----------|-------------|-------------|-------------|
-| {endpoint} | {ms} | {ms} | {ms} |
-
-**Collection**: {middleware/decorator}
-
-### Healthcheck
-- `GET /health`
-- **Checks**:
-  - Database: {simple query, e.g.: SELECT 1}
-  - {Redis}: {PING}
-  - {External service}: {how to verify}
-  - {Queue}: {active connection}
-
-### Business metrics
-| Metric | Type | Label | Export |
-|--------|------|-------|--------|
-| {orders_total} | counter | status | /metrics |
-
-### Alerts
-| Alert | Condition | Severity | Channel |
-|-------|-----------|----------|---------|
-| High error rate | 5xx > 5% in 5min | critical | {slack/pagerduty} |
-| High latency | P95 > {ms} in 5min | warning | {slack} |
-| Pool exhausted | connections > 90% | critical | {slack/pagerduty} |
-
-### External calls
-| Service | Timeout | Failure log | Retry |
-|---------|---------|-------------|-------|
-| {gateway} | 30s | ✅ with request_id + duration | {policy} |
-
-### Graceful shutdown
-- SIGTERM → {what happens: closes connections, completes in-progress requests, stops workers}
-- Shutdown timeout: {seconds}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

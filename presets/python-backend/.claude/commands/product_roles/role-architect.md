@@ -24,52 +24,12 @@ Generates the "Proposed architecture" section and the "Incremental plan" of the 
 
 ## Output format
 
-```markdown
-## Proposed architecture
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Layers
-| Layer | Responsibility | Examples |
-|-------|---------------|----------|
-| API/Router | Receives HTTP, validates edge, calls service, returns response | routers/*.py |
-| Service/Domain | Business logic, orchestration, transactions | services/*.py |
-| Repository/Data | Queries, database access, ORM mapping | repositories/*.py |
-| Infra | Config, DI, logging, external clients | core/, dependencies.py |
-| Models | Table definitions, no logic | models/*.py |
-| Schemas | Pydantic contracts (request/response), separated from models | schemas/*.py |
+Required section(s):
+- `## Proposed architecture`
+- `## Incremental plan`
 
-### Dependencies (direction)
-{Diagram or textual list showing that dependencies point inward}
-
-### Dependency injection
-{How dependencies are injected: constructors, FastAPI Depends, factories}
-
-### Configuration
-{Which Settings, env vars, how it is loaded}
-
-### Directory structure
-```
-app/
-├── core/
-├── models/
-├── schemas/
-├── repositories/
-├── services/
-├── routers/
-└── dependencies.py
-```
-
-## Incremental plan
-
-### Step 1: {name}
-- **What**: {description}
-- **Files**: {list}
-- **Validation**: {how to test}
-
-### Step 2: {name}
-- **Depends on**: Step 1
-- **What**: {description}
-- **Files**: {list}
-- **Validation**: {how to test}
-
-{... subsequent steps}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

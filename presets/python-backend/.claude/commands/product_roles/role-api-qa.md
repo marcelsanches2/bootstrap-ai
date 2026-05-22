@@ -29,52 +29,11 @@ Generates the "Tests" section of the plan, detailing unit, integration, API and 
 
 ## Output format
 
-```markdown
-## Tests
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Strategy
-| Type | When to use | Tool |
-|------|------------|------|
-| Unit | Service/domain logic | pytest |
-| Integration | Flow with database/DI | pytest + test AsyncSession |
-| API | Endpoint contract | pytest + httpx TestClient |
-| E2E | Full flow across layers | pytest + TestClient |
+Required section(s):
+- `## Tests`
 
-### Tests per endpoint
-
-#### POST /api/v1/{resource}
-**Happy path:**
-- Input: `{example body}`
-- Expected: status 201, response with `{expected fields}`
-
-**Negative scenarios:**
-| Scenario | Input | Expected status | Detail |
-|----------|-------|----------------|--------|
-| Invalid input | {body} | 422 | {invalid field} |
-| Not authenticated | no header | 401 | — |
-| Conflict | {body} | 409 | {reason} |
-
-**Edge cases:**
-- {Edge case 1}: {expected result}
-
-#### GET /api/v1/{resource}
-**Pagination:**
-- skip=0, limit=10 → first page
-- skip=100, limit=10 with 50 total → empty list
-- skip=-1 → 422
-
-{... repeat for each endpoint}
-
-### Test data
-- `{fixture/factory}`: {what it generates}
-- `{fixture/factory}`: {what it generates}
-
-### External mocks
-| Service | Mock | When |
-|---------|------|------|
-| {service} | {how to mock} | {which test} |
-
-### Security checks
-- Password_hash does not appear in any response
-- Token is not exposed in response body
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

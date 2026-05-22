@@ -1,16 +1,13 @@
 # Role: QA Flutter
 
 ## Your contribution
-
 Generates the "Tests" section of the plan, defining unit tests, widget tests, integration tests, pipeline and Gherkin scenarios.
 
 ## Reference
-
 - docs/ai/CODING_STANDARDS.md
 - docs/ai/FEATURE_GUIDE.md
 
 ## What to include
-
 - **Unit tests** — for each layer:
   - **Business rule / use case**: test domain logic with mock repository. Cover success and failure cases.
   - **Repository**: test mapping between DTO and entity, datasource calls, error handling.
@@ -24,7 +21,6 @@ Generates the "Tests" section of the plan, defining unit tests, widget tests, in
 - **Gherkin scenarios** — write E2E scenarios in Gherkin format for happy path and negative scenarios. Each scenario must be deterministic and not depend on external environment.
 
 ## Rules
-
 - Every feature that depends on API or integration must have mock/fake/deterministic test data. No exceptions.
 - Gherkin scenarios must be self-contained: the "Given" step prepares all necessary state.
 - Widget tests must use `Key` on critical widgets for stability.
@@ -34,60 +30,11 @@ Generates the "Tests" section of the plan, defining unit tests, widget tests, in
 
 ## Output format
 
-```md
-## Tests
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Unit tests
+Required section(s):
+- `## Tests`
 
-| Layer | Target | Scenarios | File |
-|---|---|---|---|
-| Domain / Use case | {UseCaseName} | success, failure, edge cases | test/{feature}/domain/usecases/{name}_test.dart |
-| Repository | {RepositoryImplName} | mapping OK, datasource error | test/{feature}/data/repositories/{name}_test.dart |
-| Datasource | {DatasourceName} | parsing OK, timeout, status error | test/{feature}/data/datasources/{name}_test.dart |
-
-### Widget tests
-
-| Widget | What it tests | File |
-|---|---|---|
-| {WidgetName} | renders default state, loading, error, empty | test/{feature}/presentation/widgets/{name}_test.dart |
-| {PageName} | navigation, interaction, states | test/{feature}/presentation/pages/{name}_test.dart |
-
-### Integration tests
-
-| Flow | Setup | File |
-|---|---|---|
-| {flow name} | {data/initial state} | integration_test/{feature}/{name}_test.dart |
-
-### Pipeline
-
-```bash
-flutter test
-flutter analyze
-# Golden tests (if applicable):
-flutter test --update-goldens
-```
-
-### Gherkin scenarios
-
-#### Happy path
-
-```gherkin
-Scenario: {scenario name}
-  Given {precondition}
-  And {test data/initial state}
-  When {user action}
-  Then {expected result}
-```
-
-#### Negative scenarios
-
-```gherkin
-Scenario: {error scenario name}
-  Given {precondition}
-  And {simulated error condition}
-  When {user action}
-  Then {expected error behavior}
-```
-
-{Repeat for each relevant negative scenario}
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

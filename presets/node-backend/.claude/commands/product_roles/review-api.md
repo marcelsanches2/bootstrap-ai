@@ -27,70 +27,11 @@ Generates the "API" section of the plan, defining endpoints, contracts, status c
 
 ## Output format
 
-```markdown
-## API
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Endpoints
+Required section(s):
+- `## API`
 
-#### `POST /api/v1/{resource}`
-- **Auth**: {required / no}
-- **Rate limit**: {yes — config / no}
-- **Request body**:
-  ```typescript
-  { // Zod schema or TypeScript type
-    field: type // validation
-  }
-  ```
-- **Response 201**:
-  ```typescript
-  {
-    field: type
-  }
-  ```
-- **Errors**:
-  - `400` — {scenario}: `{ code, message }`
-  - `409` — {scenario}: `{ code, message }`
-  - `422` — {scenario}: `{ code, message, field }`
-
-#### `GET /api/v1/{resource}`
-- **Auth**: {required / no}
-- **Query params**:
-  ```typescript
-  {
-    skip: number // default 0
-    limit: number // default 20, max 100
-    // additional filters
-  }
-  ```
-- **Response 200**:
-  ```typescript
-  {
-    data: { field: type }[]
-    meta: { total: number, skip: number, limit: number, hasMore: boolean }
-  }
-  ```
-- **Errors**:
-  - `400` — {scenario}
-  - `401` — {scenario}
-
-{... more endpoints}
-
-### Standard error format
-```typescript
-{
-  code: string    // e.g.: "VALIDATION_ERROR"
-  message: string // human-readable message
-  field?: string  // invalid field when applicable
-}
-```
-
-### Auth
-| Endpoint | Middleware | Note |
-|----------|-----------|------|
-| {path} | {middleware} | {note} |
-
-### Rate limiting
-| Endpoint | Config |
-|----------|--------|
-| {path} | {limit / window} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

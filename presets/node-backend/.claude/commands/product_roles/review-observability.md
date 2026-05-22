@@ -25,55 +25,11 @@ Generates the "Observability" section of the plan, defining structured logs, met
 
 ## Output format
 
-```markdown
-## Observability
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Structured logs
-| Event | Mandatory fields | Level |
-|-------|-----------------|-------|
-| {event} | {requestId, userId, ...} | info/warn/error |
+Required section(s):
+- `## Observability`
 
-### Errors
-- Format: `{ error, message, stack, requestId, {entity}Id }`
-- No sensitive data in log.
-
-### Request ID
-- Header: `X-Request-ID`
-- Generation: {middleware/tool}
-- Propagation: {logs, external calls, async context}
-
-### Latency
-| Endpoint | Acceptable p95 | Acceptable p99 |
-|----------|---------------|---------------|
-| {path} | {ms} | {ms} |
-
-### Healthcheck
-```
-GET /health
-Response 200:
-{
-  status: "ok",
-  checks: {
-    database: "ok",
-    {dependency}: "ok"
-  }
-}
-```
-
-### Business metrics
-| Metric | Type | Source |
-|--------|------|--------|
-| {metric} | {counter/gauge/histogram} | {where to collect} |
-
-### External calls
-| Service | Timeout | Failure log |
-|---------|---------|-------------|
-| {service} | {ms} | {logged fields} |
-
-### Graceful shutdown
-1. Receive SIGTERM/SIGINT
-2. Stop accepting new connections
-3. Complete in-progress requests (deadline: {ms})
-4. Close connection pool
-5. Log: "shutdown complete"
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.

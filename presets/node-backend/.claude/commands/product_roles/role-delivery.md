@@ -26,45 +26,11 @@ Generates the "Deploy and delivery" section of the plan, covering env vars, CI/C
 
 ## Output format
 
-```markdown
-## Deploy and delivery
+Return Markdown only. Be concise; prefer bullets over prose and tables only for real comparisons.
 
-### Changed/created files
-- `{full/file/path}` — {what it does}
+Required section(s):
+- `## Deploy and delivery`
 
-### External dependencies
-| Package/Service | Version | Reason |
-|----------------|---------|--------|
-| {name} | {version} | {reason} |
-
-### Migrations
-- **Up**: {command or description}
-- **Down**: {command or description}
-- **Data rollback**: {how to revert if needed}
-
-### New env vars
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| {NAME} | {type} | {default} | {description} |
-
-### Deploy procedure
-1. {step}
-2. {step}
-3. {step}
-
-### Rollback
-1. {step}
-2. {step}
-
-### Breaking changes
-{None / list with versioning}
-
-### Delivery acceptance criteria
-- [ ] {criterion}
-- [ ] {criterion}
-
-### Risks and mitigations
-| Risk | Probability | Mitigation |
-|------|------------|-----------|
-| {risk} | {high/medium/low} | {action} |
-```
+For each section include only: decision, risk, validation. Skip boilerplate.
+If the role does not apply, write exactly one sentence: `Does not apply — {reason}`.
+Do not duplicate sections owned by another selected role; mention cross-cutting dependencies in one bullet.
